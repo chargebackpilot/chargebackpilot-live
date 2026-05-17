@@ -21,13 +21,20 @@ export const casesTable = pgTable("cases", {
 export type CaseAnalysis = {
   strength: "stark" | "mittel" | "schwach";
   strengthLabel: string;
+  successProbability: number;
+  successProbabilityLabel: string;
   summary: string;
   reasoning: string;
   missingEvidence: string[];
   nextSteps: string[];
   recommendedCategory: string;
+  legalBasis: string[];
+  counterarguments: string[];
+  urgencyLevel: "hoch" | "mittel" | "niedrig";
+  deadline: string;
   merchantTemplate: string;
   bankTemplate: string;
+  escalationTemplate: string;
   disclaimer: string;
 };
 

@@ -132,13 +132,20 @@ components:
       required:
         - strength
         - strengthLabel
+        - successProbability
+        - successProbabilityLabel
         - summary
         - reasoning
         - missingEvidence
         - nextSteps
         - recommendedCategory
+        - legalBasis
+        - counterarguments
+        - urgencyLevel
+        - deadline
         - merchantTemplate
         - bankTemplate
+        - escalationTemplate
         - disclaimer
       properties:
         strength:
@@ -146,6 +153,12 @@ components:
           description: "stark, mittel, schwach"
         strengthLabel:
           type: string
+        successProbability:
+          type: integer
+          description: "0-100 success probability score"
+        successProbabilityLabel:
+          type: string
+          description: "Hoch, Mittel, Niedrig"
         summary:
           type: string
         reasoning:
@@ -160,10 +173,29 @@ components:
             type: string
         recommendedCategory:
           type: string
+        legalBasis:
+          type: array
+          items:
+            type: string
+          description: "Relevant German/EU legal references"
+        counterarguments:
+          type: array
+          items:
+            type: string
+          description: "Potential merchant/bank counterarguments and how to respond"
+        urgencyLevel:
+          type: string
+          description: "hoch, mittel, niedrig — based on deadlines"
+        deadline:
+          type: string
+          description: "Important deadline information"
         merchantTemplate:
           type: string
         bankTemplate:
           type: string
+        escalationTemplate:
+          type: string
+          description: "Escalation letter if first attempts fail"
         disclaimer:
           type: string
 

@@ -56,13 +56,20 @@ export const GetCaseResponse = zod.object({
   "analysis": zod.object({
   "strength": zod.string().describe('stark, mittel, schwach'),
   "strengthLabel": zod.string(),
+  "successProbability": zod.number().describe('0-100 success probability score'),
+  "successProbabilityLabel": zod.string().describe('Hoch, Mittel, Niedrig'),
   "summary": zod.string(),
   "reasoning": zod.string(),
   "missingEvidence": zod.array(zod.string()),
   "nextSteps": zod.array(zod.string()),
   "recommendedCategory": zod.string(),
+  "legalBasis": zod.array(zod.string()).describe('Relevant German\/EU legal references'),
+  "counterarguments": zod.array(zod.string()).describe('Potential merchant\/bank counterarguments and how to respond'),
+  "urgencyLevel": zod.string().describe('hoch, mittel, niedrig — based on deadlines'),
+  "deadline": zod.string().describe('Important deadline information'),
   "merchantTemplate": zod.string(),
   "bankTemplate": zod.string(),
+  "escalationTemplate": zod.string().describe('Escalation letter if first attempts fail'),
   "disclaimer": zod.string()
 }),
   "createdAt": zod.string()

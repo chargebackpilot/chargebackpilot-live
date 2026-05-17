@@ -30,13 +30,27 @@ export interface CaseAnalysis {
   /** stark, mittel, schwach */
   strength: string;
   strengthLabel: string;
+  /** 0-100 success probability score */
+  successProbability: number;
+  /** Hoch, Mittel, Niedrig */
+  successProbabilityLabel: string;
   summary: string;
   reasoning: string;
   missingEvidence: string[];
   nextSteps: string[];
   recommendedCategory: string;
+  /** Relevant German/EU legal references */
+  legalBasis: string[];
+  /** Potential merchant/bank counterarguments and how to respond */
+  counterarguments: string[];
+  /** hoch, mittel, niedrig — based on deadlines */
+  urgencyLevel: string;
+  /** Important deadline information */
+  deadline: string;
   merchantTemplate: string;
   bankTemplate: string;
+  /** Escalation letter if first attempts fail */
+  escalationTemplate: string;
   disclaimer: string;
 }
 
