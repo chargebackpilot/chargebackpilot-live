@@ -1,0 +1,36 @@
+import { pgTable, text, serial, real, boolean, timestamp, jsonb } from "drizzle-orm/pg-core";
+import { createInsertSchema } from "drizzle-zod";
+import { z } from "zod/v4";
+
+export const casesTable = pgTable("cases", {
+  id: serial("id").primaryKey(),
+  paymentMethod: text("payment_method").notNull(),
+  problemType: text("problem_type").notNull(),
+  merchantName: text("merchant_name").notNull(),
+  amount: real("amount").notNull(),
+  paymentDate: text("payment_date").notNull(),
+  merchantCountry: text("merchant_country"),
+  merchantContacted: boolean("merchant_contacted").notNull().default(false),
+  merchantResponse: text("merchant_response"),
+  evidence: jsonb("evidence").$type<string[]>().notNull().default([]),
+  description: text("description").notNull(),
+  analysis: jsonb("analysis").$type<CaseAnalysis>().notNull(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+
+export type CaseAnalysis = {
+  strength: "stark" | "mittel" | "schwach";
+  strengthLabel: string;
+  summary: string;
+  reasoning: string;
+  missingEvidence: string[];
+  nextSteps: string[];
+  recommendedCategory: string;
+  merchantTemplate: string;
+  bankTemplate: string;
+  disclaimer: string;
+};
+
+export const insertCaseSchema = createInsertSchema(casesTable).omit({ id: true, createdAt: true });
+export type InsertCase = z.infer<typeof insertCaseSchema>;
+export type Case = typeof casesTable.$inferSelect;

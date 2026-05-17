@@ -3,13 +3,15 @@ info:
   # Do not change the title, if the title changes, the import paths will be broken
   title: Api
   version: 0.1.0
-  description: API specification
+  description: ChargebackPilot API
 servers:
   - url: /api
     description: Base API path
 tags:
   - name: health
     description: Health operations
+  - name: cases
+    description: Chargeback case operations
 paths:
   /healthz:
     get:
@@ -24,6 +26,62 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/HealthStatus"
+
+  /cases:
+    post:
+      operationId: createCase
+      tags: [cases]
+      summary: Submit a chargeback case for analysis
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CaseInput"
+      responses:
+        "201":
+          description: Case created with analysis
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Case"
+        "400":
+          description: Validation error
+
+  /cases/{id}:
+    get:
+      operationId: getCase
+      tags: [cases]
+      summary: Get a case by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Case details
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Case"
+        "404":
+          description: Not found
+
+  /cases/stats:
+    get:
+      operationId: getCaseStats
+      tags: [cases]
+      summary: Get aggregate case statistics
+      responses:
+        "200":
+          description: Case statistics
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CaseStats"
+
 components:
   schemas:
     HealthStatus:
@@ -34,3 +92,160 @@ components:
       required:
         - status
 
+    CaseInput:
+      type: object
+      required:
+        - paymentMethod
+        - problemType
+        - merchantName
+        - amount
+        - paymentDate
+        - description
+      properties:
+        paymentMethod:
+          type: string
+          description: "Payment method: paypal, visa_mastercard, amex, klarna, apple_google_pay, bank_transfer, other"
+        problemType:
+          type: string
+          description: "Problem type: not_received, defective, service_not_rendered, flight_travel, subscription, fraud, food_delivery, refund_promised, other"
+        merchantName:
+          type: string
+        amount:
+          type: number
+        paymentDate:
+          type: string
+        merchantCountry:
+          type: ["string", "null"]
+        merchantContacted:
+          type: boolean
+        merchantResponse:
+          type: ["string", "null"]
+        evidence:
+          type: array
+          items:
+            type: string
+        description:
+          type: string
+
+    CaseAnalysis:
+      type: object
+      required:
+        - strength
+        - strengthLabel
+        - summary
+        - reasoning
+        - missingEvidence
+        - nextSteps
+        - recommendedCategory
+        - merchantTemplate
+        - bankTemplate
+        - disclaimer
+      properties:
+        strength:
+          type: string
+          description: "stark, mittel, schwach"
+        strengthLabel:
+          type: string
+        summary:
+          type: string
+        reasoning:
+          type: string
+        missingEvidence:
+          type: array
+          items:
+            type: string
+        nextSteps:
+          type: array
+          items:
+            type: string
+        recommendedCategory:
+          type: string
+        merchantTemplate:
+          type: string
+        bankTemplate:
+          type: string
+        disclaimer:
+          type: string
+
+    Case:
+      type: object
+      required:
+        - id
+        - paymentMethod
+        - problemType
+        - merchantName
+        - amount
+        - paymentDate
+        - description
+        - merchantContacted
+        - evidence
+        - analysis
+        - createdAt
+      properties:
+        id:
+          type: string
+        paymentMethod:
+          type: string
+        problemType:
+          type: string
+        merchantName:
+          type: string
+        amount:
+          type: number
+        paymentDate:
+          type: string
+        merchantCountry:
+          type: ["string", "null"]
+        merchantContacted:
+          type: boolean
+        merchantResponse:
+          type: ["string", "null"]
+        evidence:
+          type: array
+          items:
+            type: string
+        description:
+          type: string
+        analysis:
+          $ref: "#/components/schemas/CaseAnalysis"
+        createdAt:
+          type: string
+
+    CaseStats:
+      type: object
+      required:
+        - totalCases
+        - strongCases
+        - mediumCases
+        - weakCases
+        - topPaymentMethods
+        - topProblemTypes
+      properties:
+        totalCases:
+          type: integer
+        strongCases:
+          type: integer
+        mediumCases:
+          type: integer
+        weakCases:
+          type: integer
+        topPaymentMethods:
+          type: array
+          items:
+            type: object
+            properties:
+              method:
+                type: string
+              count:
+                type: integer
+            required: [method, count]
+        topProblemTypes:
+          type: array
+          items:
+            type: object
+            properties:
+              type:
+                type: string
+              count:
+                type: integer
+            required: [type, count]
