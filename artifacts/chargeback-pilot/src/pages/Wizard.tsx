@@ -370,7 +370,7 @@ export default function Wizard() {
           merchantCountry: formData.merchantCountry || undefined,
           merchantContacted: formData.merchantContacted,
           merchantResponse: formData.merchantResponse || undefined,
-          evidence: formData.evidence,
+          evidence: formData.evidence || [],
           description: formData.description || "Keine Beschreibung",
         },
       },
@@ -386,7 +386,8 @@ export default function Wizard() {
 
   const toggleEvidence = (id: string) => {
     if (id === "none") { setFormData({ ...formData, evidence: ["none"] }); return; }
-    const filtered = formData.evidence.filter((e) => e !== "none");
+    const currentEvidence = formData.evidence || [];
+    const filtered = currentEvidence.filter((e) => e !== "none");
     const newEvidence = filtered.includes(id) ? filtered.filter((e) => e !== id) : [...filtered, id];
     setFormData({ ...formData, evidence: newEvidence });
   };
@@ -408,7 +409,12 @@ export default function Wizard() {
   const canGoNext =
     (step === 1 && !!formData.paymentMethod) ||
     (step === 2 && !!formData.problemType) ||
-    step === 3 || step === 4;
+    (step === 3 && !!formData.merchantName && !!formData.amount && !!formData.paymentDate) ||
+    step === 4;
+
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }, [step]);
 
   return (
     <MainLayout>
@@ -559,9 +565,9 @@ export default function Wizard() {
                     <label
                       key={ev.id}
                       htmlFor={`ev-${ev.id}`}
-                      className={`flex items-start space-x-3 border-2 p-3.5 rounded-xl cursor-pointer select-none transition-all ${formData.evidence.includes(ev.id) ? "border-primary bg-primary/5" : "border-border hover:border-primary/40 hover:bg-muted/30"}`}
+                      className={`flex items-start space-x-3 border-2 p-3.5 rounded-xl cursor-pointer select-none transition-all ${(formData.evidence || []).includes(ev.id) ? "border-primary bg-primary/5" : "border-border hover:border-primary/40 hover:bg-muted/30"}`}
                     >
-                      <Checkbox id={`ev-${ev.id}`} checked={formData.evidence.includes(ev.id)} onCheckedChange={() => toggleEvidence(ev.id)} className="mt-0.5 flex-shrink-0" />
+                      <Checkbox id={`ev-${ev.id}`} checked={(formData.evidence || []).includes(ev.id)} onCheckedChange={() => toggleEvidence(ev.id)} className="mt-0.5 flex-shrink-0" />
                       <div className="min-w-0">
                         <span className="font-medium text-sm block">{ev.label}</span>
                         {ev.hint && <p className="text-xs text-muted-foreground mt-0.5">{ev.hint}</p>}
@@ -569,10 +575,10 @@ export default function Wizard() {
                     </label>
                   ))}
                 </div>
-                {formData.evidence.filter((e) => e !== "none").length > 0 && (
+                {(formData.evidence || []).filter((e) => e !== "none").length > 0 && (
                   <div className="flex items-center gap-2 text-sm text-emerald-700 bg-emerald-50 border border-emerald-200 rounded-lg px-3 py-2">
                     <CheckCircle2 className="w-4 h-4 flex-shrink-0" />
-                    {formData.evidence.filter((e) => e !== "none").length} Beweis{formData.evidence.filter((e) => e !== "none").length !== 1 ? "e" : ""} ausgewählt
+                    {(formData.evidence || []).filter((e) => e !== "none").length} Beweis{(formData.evidence || []).filter((e) => e !== "none").length !== 1 ? "e" : ""} ausgewählt
                   </div>
                 )}
               </div>
@@ -610,7 +616,7 @@ export default function Wizard() {
                         <li>• Wie viele Monate wurden nach Kündigung noch abgebucht?</li>
                         <li>• Hast du eine Kündigungsbestätigung erhalten?</li>
                       </>}
-                      {!["food_delivery","flight_travel","not_received","subscription"].includes(formData.problemType) && <>
+                      {!["food_delivery","flight_travel","not_received","subscription"].includes(formData.problemType || "") && <>
                         <li>• Wann genau ist das Problem aufgetreten?</li>
                         <li>• Was wurde versprochen und was wurde tatsächlich geliefert?</li>
                         <li>• Wie hat der Händler auf deine Kontaktaufnahme reagiert?</li>
@@ -629,8 +635,8 @@ export default function Wizard() {
                   />
                   <div className="flex justify-between items-center">
                     <p className="text-xs text-muted-foreground">Nenne konkrete Daten, Beträge und Reaktionen des Händlers.</p>
-                    <span className={`text-xs font-medium ${formData.description.length >= 20 ? "text-emerald-600" : "text-muted-foreground"}`}>
-                      {formData.description.length} Zeichen
+                    <span className={`text-xs font-medium ${(formData.description || "").length >= 20 ? "text-emerald-600" : "text-muted-foreground"}`}>
+                      {(formData.description || "").length} Zeichen
                     </span>
                   </div>
                 </div>
@@ -792,7 +798,7 @@ export default function Wizard() {
                     Weiter<ArrowRight className="w-4 h-4" />
                   </Button>
                 ) : (
-                  <Button onClick={handleSubmit} disabled={formData.description.length < 20 || createCase.isPending} className="gap-2 cursor-pointer">
+                  <Button onClick={handleSubmit} disabled={(formData.description || "").length < 20 || createCase.isPending} className="gap-2 cursor-pointer">
                     <Shield className="w-4 h-4" />Fall analysieren
                   </Button>
                 )}
