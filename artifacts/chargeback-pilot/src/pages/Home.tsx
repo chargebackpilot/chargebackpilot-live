@@ -35,7 +35,7 @@ const SCENARIOS = [
     detail: "Du hast bei Lieferando, Wolt oder UberEats bestellt — und erhalten, was du nicht bestellt hast, oder die Bestellung kam komplett ungenießbar an.",
     brands: ["Lieferando", "Wolt", "UberEats", "Gorillas"],
     recovery: "Bis zu 100% Rückerstattung möglich",
-    href: "/lieferando-rueckerstattung",
+    href: "/fall-pruefen?problem=food_delivery",
   },
   {
     icon: Plane,
@@ -48,7 +48,7 @@ const SCENARIOS = [
     detail: "Dein Flug wurde gestrichen oder du hast ihn nicht genutzt — Steuern und Gebühren werden von Airlines wie Ryanair oder Easyjet oft nicht automatisch erstattet.",
     brands: ["Ryanair", "Easyjet", "Condor", "TUI Fly"],
     recovery: "Steuern & Gebühren zurückfordern",
-    href: "/flug-chargeback",
+    href: "/fall-pruefen?problem=flight_travel",
   },
   {
     icon: Building2,
@@ -61,7 +61,7 @@ const SCENARIOS = [
     detail: "Das gebuchte Zimmer entsprach nicht der Beschreibung — Schimmel, fehlendes Meerblick-Zimmer, kaputte Klimaanlage, oder die Unterkunft war bei Ankunft gar nicht verfügbar.",
     brands: ["Booking.com", "Airbnb", "Hotels.com", "HRS"],
     recovery: "Chargeback über Kreditkarte möglich",
-    href: "/visa-mastercard-chargeback",
+    href: "/fall-pruefen?problem=flight_travel",
   },
   {
     icon: Package,
@@ -74,7 +74,7 @@ const SCENARIOS = [
     detail: "Du hast bei Amazon, Temu oder SHEIN bestellt — die Ware kam nie an, wurde als zugestellt markiert, oder du hast etwas völlig anderes erhalten.",
     brands: ["Amazon", "Temu", "SHEIN", "Aliexpress"],
     recovery: "PayPal Käuferschutz oder Kreditkarte",
-    href: "/ware-nicht-erhalten",
+    href: "/fall-pruefen?problem=not_received",
   },
   {
     icon: RefreshCcw,
@@ -87,7 +87,7 @@ const SCENARIOS = [
     detail: "Der Händler hat dir schriftlich eine Rückerstattung zugesagt — aber das Geld ist nie auf deinem Konto angekommen. Dein stärkstes Argument für einen Chargeback.",
     brands: ["Alle Händler", "Online-Shops", "Dienstleister"],
     recovery: "Stärkste Chargeback-Position",
-    href: "/paypal-chargeback",
+    href: "/fall-pruefen?problem=refund_promised",
   },
   {
     icon: Repeat2,
@@ -100,7 +100,7 @@ const SCENARIOS = [
     detail: "Du hast ein Abo gekündigt — aber es wird weiter abgebucht. Oder du bist in eine Abofalle getappt, die du nie bewusst abgeschlossen hast.",
     brands: ["Netflix", "Spotify", "Amazon Prime", "Klarna"],
     recovery: "Rückbuchung mehrerer Monate möglich",
-    href: "/abo-falle-chargeback",
+    href: "/fall-pruefen?problem=subscription",
   },
 ];
 
@@ -232,7 +232,7 @@ export default function Home() {
                 num: "02",
                 icon: Scale,
                 title: "KI analysiert deinen Fall",
-                desc: "Gemini prüft Beweislage, Rechtslage und Fristen — und berechnet deine Erfolgswahrscheinlichkeit.",
+                desc: "Unsere KI prüft Beweislage, Rechtslage und Fristen — und berechnet deine Erfolgswahrscheinlichkeit.",
               },
               {
                 num: "03",
