@@ -1,8 +1,9 @@
 import { Link, useLocation } from "wouter";
-import { Plane, ShieldAlert, BookOpen, Menu, X, ArrowRight } from "lucide-react";
+import { ShieldAlert, BookOpen, Menu, X, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
 import { DisclaimerBanner } from "./DisclaimerBanner";
+import { Logo } from "../ui/Logo";
 
 export function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
@@ -15,7 +16,7 @@ export function Navbar() {
       <DisclaimerBanner />
       <div className="container mx-auto max-w-7xl px-4 h-16 flex items-center justify-between">
         <Link href="/" className="flex items-center gap-2 font-bold text-lg text-primary">
-          <Plane className="w-6 h-6 rotate-45" />
+          <Logo />
           <span>ChargebackPilot</span>
         </Link>
 
