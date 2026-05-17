@@ -1,5 +1,5 @@
 import { Link, useLocation } from "wouter";
-import { ShieldAlert, BookOpen, Menu, X, ArrowRight } from "lucide-react";
+import { Menu, X, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
 import { DisclaimerBanner } from "./DisclaimerBanner";

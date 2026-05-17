@@ -335,10 +335,10 @@ function MerchantQuickSelect({
 // --- Paywall Component ---
 function Paywall({ onUnlock, isPaying }: { onUnlock: () => void; isPaying: boolean }) {
   return (
-    <div className="absolute inset-0 z-10 rounded-2xl flex items-center justify-center p-4">
+    <div className="absolute inset-0 z-10 rounded-2xl flex items-center justify-center p-4 bg-background/80 backdrop-blur-sm">
       <div className="text-center">
-        <Button size="lg" className="w-full text-base h-12 shadow-lg gap-2" onClick={onUnlock} disabled={isPaying}>
-          {isPaying ? <Loader2 className="w-5 h-5 animate-spin" /> : "Vollständige Anleitung für 0,99 € freischalten"}
+        <Button size="lg" className="text-base h-12 shadow-lg gap-2" onClick={onUnlock} disabled={isPaying}>
+          {isPaying ? <Loader2 className="w-5 h-5 animate-spin" /> : "Für 0,99 € freischalten"}
         </Button>
         <div className="text-xs text-emerald-800 font-semibold flex items-center justify-center gap-1.5 mt-2">
           <ShieldCheck className="w-3.5 h-3.5 text-emerald-600" />
@@ -348,15 +348,115 @@ function Paywall({ onUnlock, isPaying }: { onUnlock: () => void; isPaying: boole
     </div>
   );
 }
-// ...
-// In the main Wizard component, within the return statement:
-// ...
-<div className="relative">
-  <div className={`transition-all duration-300 ${hasUnlocked ? "" : "blur-sm"}`}>
-    {children}
-  </div>
-  {!hasUnlocked && <Paywall onUnlock={handlePayment} isPaying={isPaying} />}
-</div>
+
+// --- Content Locker ---
+function ContentLocker({ hasUnlocked, onUnlock, isPaying, children }: { hasUnlocked: boolean, onUnlock: () => void, isPaying: boolean, children: React.ReactNode }) {
+  if (hasUnlocked) {
+    return <>{children}</>;
+  }
+  
+  return (
+    <div className="relative">
+      <div className="blur-sm">
+        {children}
+      </div>
+      <Paywall onUnlock={onUnlock} isPaying={isPaying} />
+    </div>
+  )
+}
+
+// --- Deadline Alert ---
+function DeadlineAlert({ paymentDate, paymentMethod }: { paymentDate: string, paymentMethod: string }) {
+  const getDeadlineInfo = () => {
+    if (!paymentDate) return null;
+
+    const startDate = new Date(paymentDate);
+    let deadlineDays: number;
+
+    switch (paymentMethod) {
+      case "paypal":
+      case "klarna":
+        deadlineDays = 180;
+        break;
+      case "visa_mastercard":
+      case "amex":
+        deadlineDays = 120;
+        break;
+      default:
+        return null;
+    }
+
+    const deadlineDate = new Date(startDate);
+    deadlineDate.setDate(deadlineDate.getDate() + deadlineDays);
+    
+    const today = new Date();
+    today.setHours(0, 0, 0, 0); // Compare dates only
+    
+    const remainingTime = deadlineDate.getTime() - today.getTime();
+    const remainingDays = Math.ceil(remainingTime / (1000 * 60 * 60 * 24));
+
+    if (remainingDays < 0) {
+      return {
+        level: "expired",
+        text: `Die Standardfrist von ${deadlineDays} Tagen ist bereits abgelaufen.`,
+        details: "Ein Chargeback ist eventuell noch möglich, aber die Chancen sind geringer."
+      };
+    } else if (remainingDays <= 14) {
+      return {
+        level: "urgent",
+        text: `Handeln Sie schnell! Ihre Frist endet in ca. ${remainingDays} Tag${remainingDays === 1 ? "" : "en"}.`,
+        details: `Voraussichtliches Fristende: ${deadlineDate.toLocaleDateString("de-DE")}.`
+      };
+    } else {
+       return {
+        level: "info",
+        text: `Ihre Frist endet in ca. ${remainingDays} Tagen.`,
+        details: `Voraussichtliches Fristende: ${deadlineDate.toLocaleDateString("de-DE")}. Trotzdem nicht zögern!`
+      };
+    }
+  };
+
+  const info = getDeadlineInfo();
+  if (!info) return null;
+
+  const config = {
+    urgent: { icon: Siren, color: "red" },
+    expired: { icon: AlertTriangle, color: "amber" },
+    info: { icon: Clock, color: "sky" }
+  };
+  
+  const Icon = config[info.level].icon;
+  const color = config[info.level].color;
+
+  return (
+    <div className={`flex items-start gap-4 bg-${color}-50 border border-${color}-200 rounded-xl p-4 text-${color}-800 text-sm`}>
+      <Icon className={`w-5 h-5 flex-shrink-0 mt-0.5 text-${color}-500`} />
+      <div>
+        <p className="font-bold">{info.text}</p>
+        <p className={`text-${color}-700`}>{info.details}</p>
+      </div>
+    </div>
+  )
+}
+
+// --- Social Proof ---
+function SocialProof({ merchantName }: { merchantName?: string }) {
+  const [userCount] = useState(Math.floor(Math.random() * (150 - 20 + 1)) + 20);
+
+  return (
+    <div className="flex items-center gap-3 bg-primary/5 border border-primary/20 rounded-xl p-4 text-sm">
+      <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
+        <Users className="w-4 h-4 text-primary" />
+      </div>
+      <div>
+        <p className="font-semibold text-primary">Du bist nicht allein</p>
+        <p className="text-muted-foreground text-xs">
+          Bereits {userCount} Nutzer haben erfolgreich einen Fall {merchantName ? `gegen ${merchantName} ` : ""} gestartet.
+        </p>
+      </div>
+    </div>
+  )
+}
 
 // --- Main Wizard ---
 import { ErrorBoundary } from "@/components/ErrorBoundary";
@@ -808,27 +908,16 @@ export default function Wizard() {
                           {/* Steps 2+ are behind paywall */}
                           {analysis.nextSteps.length > 1 && (
                             <li>
-                              {hasUnlocked ? (
+                              <ContentLocker hasUnlocked={hasUnlocked} onUnlock={handlePayment} isPaying={isPaying}>
                                 <ol className="space-y-3 pt-3">
                                   {analysis.nextSteps.slice(1).map((s, i) => (
                                     <li key={i} className="flex gap-3 text-sm">
-                                      <span className="flex-shrink-0 w-6 h-6 rounded-full bg-primary/10 text-primary font-bold text-xs flex items-center justify-center">{i + 2}</span>
+                                      <span className="flex-shrink-0 w-6 h-6 rounded-full bg-muted text-muted-foreground font-bold text-xs flex items-center justify-center">{i + 2}</span>
                                       <span className="leading-relaxed pt-0.5">{s}</span>
                                     </li>
                                   ))}
                                 </ol>
-                              ) : (
-                                <Paywall onUnlock={handlePayment} isPaying={isPaying}>
-                                  <ol className="space-y-3 pt-3">
-                                    {analysis.nextSteps.slice(1).map((s, i) => (
-                                      <li key={i} className="flex gap-3 text-sm">
-                                        <span className="flex-shrink-0 w-6 h-6 rounded-full bg-muted text-muted-foreground font-bold text-xs flex items-center justify-center">{i + 2}</span>
-                                        <span className="leading-relaxed pt-0.5">{s}</span>
-                                      </li>
-                                    ))}
-                                  </ol>
-                                </Paywall>
-                              )}
+                              </ContentLocker>
                             </li>
                           )}
                         </ol>
@@ -838,7 +927,7 @@ export default function Wizard() {
                     {analysis?.counterarguments && analysis.counterarguments.length > 0 && (
                       <div className="border rounded-xl p-5">
                         <h3 className="font-bold text-base mb-3 flex items-center gap-2"><Shield className="w-4 h-4 text-primary" />Mögliche Gegenargumente — und wie du sie entkräftest</h3>
-                        {hasUnlocked ? (
+                        <ContentLocker hasUnlocked={hasUnlocked} onUnlock={handlePayment} isPaying={isPaying}>
                           <ul className="space-y-3">
                             {analysis.counterarguments.map((arg, i) => (
                               <li key={i} className="flex items-start gap-2 text-sm bg-muted/50 border rounded-lg px-3 py-2.5">
@@ -846,17 +935,7 @@ export default function Wizard() {
                               </li>
                             ))}
                           </ul>
-                        ) : (
-                          <Paywall onUnlock={handlePayment} isPaying={isPaying}>
-                            <ul className="space-y-3">
-                              {analysis.counterarguments.map((arg, i) => (
-                                <li key={i} className="flex items-start gap-2 text-sm bg-muted/50 border rounded-lg px-3 py-2.5">
-                                  <Shield className="w-3.5 h-3.5 text-primary flex-shrink-0 mt-0.5" /><span>{arg}</span>
-                                </li>
-                              ))}
-                            </ul>
-                          </Paywall>
-                        )}
+                        </ContentLocker>
                       </div>
                     )}
 
@@ -865,31 +944,19 @@ export default function Wizard() {
                       <p className="text-sm text-muted-foreground">KI-generiert für {result.merchantName || "deinen Fall"} — bitte vor dem Versenden prüfen und ggf. anpassen.</p>
 
                       {analysis?.merchantTemplate && (
-                        hasUnlocked ? (
+                        <ContentLocker hasUnlocked={hasUnlocked} onUnlock={handlePayment} isPaying={isPaying}>
                           <CopyableTemplate title="Anschreiben an den Händler" icon={<Building2 className="w-4 h-4" />} text={analysis.merchantTemplate} onCopy={() => copyToClipboard(analysis.merchantTemplate, "Händler-Vorlage")} />
-                        ) : (
-                          <Paywall onUnlock={handlePayment} isPaying={isPaying}>
-                            <CopyableTemplate title="Anschreiben an den Händler" icon={<Building2 className="w-4 h-4" />} text={analysis.merchantTemplate} onCopy={() => {}} />
-                          </Paywall>
-                        )
+                        </ContentLocker>
                       )}
                       {analysis?.bankTemplate && (
-                        hasUnlocked ? (
+                        <ContentLocker hasUnlocked={hasUnlocked} onUnlock={handlePayment} isPaying={isPaying}>
                           <CopyableTemplate title="Chargeback-Antrag an Bank / PayPal / Klarna" icon={<Landmark className="w-4 h-4" />} text={analysis.bankTemplate} onCopy={() => copyToClipboard(analysis.bankTemplate, "Bank-Vorlage")} />
-                        ) : (
-                          <Paywall onUnlock={handlePayment} isPaying={isPaying}>
-                             <CopyableTemplate title="Chargeback-Antrag an Bank / PayPal / Klarna" icon={<Landmark className="w-4 h-4" />} text={analysis.bankTemplate} onCopy={() => {}} />
-                          </Paywall>
-                        )
+                        </ContentLocker>
                       )}
                       {analysis?.escalationTemplate && (
-                        hasUnlocked ? (
-                           <CopyableTemplate title="Eskalationsschreiben (falls erster Versuch erfolglos)" icon={<Siren className="w-4 h-4" />} text={analysis.escalationTemplate} onCopy={() => copyToClipboard(analysis.escalationTemplate, "Eskalations-Vorlage")} />
-                        ) : (
-                          <Paywall onUnlock={handlePayment} isPaying={isPaying}>
-                            <CopyableTemplate title="Eskalationsschreiben (falls erster Versuch erfolglos)" icon={<Siren className="w-4 h-4" />} text={analysis.escalationTemplate} onCopy={() => {}} />
-                          </Paywall>
-                        )
+                        <ContentLocker hasUnlocked={hasUnlocked} onUnlock={handlePayment} isPaying={isPaying}>
+                          <CopyableTemplate title="Eskalationsschreiben (falls erster Versuch erfolglos)" icon={<Siren className="w-4 h-4" />} text={analysis.escalationTemplate} onCopy={() => copyToClipboard(analysis.escalationTemplate, "Eskalations-Vorlage")} />
+                        </ContentLocker>
                       )}
                     </div>
 
@@ -950,97 +1017,4 @@ export default function Wizard() {
       </ErrorBoundary>
     </MainLayout>
   );
-}
-
-// --- Deadline Alert ---
-function DeadlineAlert({ paymentDate, paymentMethod }: { paymentDate: string, paymentMethod: string }) {
-  const getDeadlineInfo = () => {
-    if (!paymentDate) return null;
-
-    const startDate = new Date(paymentDate);
-    let deadlineDays: number;
-
-    switch (paymentMethod) {
-      case "paypal":
-      case "klarna":
-        deadlineDays = 180;
-        break;
-      case "visa_mastercard":
-      case "amex":
-        deadlineDays = 120;
-        break;
-      default:
-        return null;
-    }
-
-    const deadlineDate = new Date(startDate);
-    deadlineDate.setDate(deadlineDate.getDate() + deadlineDays);
-    
-    const today = new Date();
-    today.setHours(0, 0, 0, 0); // Compare dates only
-    
-    const remainingTime = deadlineDate.getTime() - today.getTime();
-    const remainingDays = Math.ceil(remainingTime / (1000 * 60 * 60 * 24));
-
-    if (remainingDays < 0) {
-      return {
-        level: "expired",
-        text: `Die Standardfrist von ${deadlineDays} Tagen ist bereits abgelaufen.`,
-        details: "Ein Chargeback ist eventuell noch möglich, aber die Chancen sind geringer."
-      };
-    } else if (remainingDays <= 14) {
-      return {
-        level: "urgent",
-        text: `Handeln Sie schnell! Ihre Frist endet in ca. ${remainingDays} Tag${remainingDays === 1 ? "" : "en"}.`,
-        details: `Voraussichtliches Fristende: ${deadlineDate.toLocaleDateString("de-DE")}.`
-      };
-    } else {
-       return {
-        level: "info",
-        text: `Ihre Frist endet in ca. ${remainingDays} Tagen.`,
-        details: `Voraussichtliches Fristende: ${deadlineDate.toLocaleDateString("de-DE")}. Trotzdem nicht zögern!`
-      };
-    }
-  };
-
-  const info = getDeadlineInfo();
-  if (!info) return null;
-
-  const config = {
-    urgent: { icon: Siren, color: "red" },
-    expired: { icon: AlertTriangle, color: "amber" },
-    info: { icon: Clock, color: "sky" }
-  };
-  
-  const Icon = config[info.level].icon;
-  const color = config[info.level].color;
-
-  return (
-    <div className={`flex items-start gap-4 bg-${color}-50 border border-${color}-200 rounded-xl p-4 text-${color}-800 text-sm`}>
-      <Icon className={`w-5 h-5 flex-shrink-0 mt-0.5 text-${color}-500`} />
-      <div>
-        <p className="font-bold">{info.text}</p>
-        <p className={`text-${color}-700`}>{info.details}</p>
-      </div>
-    </div>
-  )
-}
-
-// --- Social Proof ---
-function SocialProof({ merchantName }: { merchantName?: string }) {
-  const [userCount] = useState(Math.floor(Math.random() * (150 - 20 + 1)) + 20);
-
-  return (
-    <div className="flex items-center gap-3 bg-primary/5 border border-primary/20 rounded-xl p-4 text-sm">
-      <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
-        <Users className="w-4 h-4 text-primary" />
-      </div>
-      <div>
-        <p className="font-semibold text-primary">Du bist nicht allein</p>
-        <p className="text-muted-foreground text-xs">
-          Bereits {userCount} Nutzer haben erfolgreich einen Fall {merchantName ? `gegen ${merchantName} ` : ""} gestartet.
-        </p>
-      </div>
-    </div>
-  )
 }
