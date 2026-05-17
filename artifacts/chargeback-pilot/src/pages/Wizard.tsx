@@ -357,6 +357,7 @@ export default function Wizard() {
   const handleBack = () => { if (step > 1) setStep(step - 1); };
 
   const handleSubmit = () => {
+    if (createCase.isPending) return;
     setStep(6);
     createCase.mutate(
       {
@@ -791,7 +792,7 @@ export default function Wizard() {
                     Weiter<ArrowRight className="w-4 h-4" />
                   </Button>
                 ) : (
-                  <Button onClick={handleSubmit} disabled={formData.description.length < 20} className="gap-2 cursor-pointer">
+                  <Button onClick={handleSubmit} disabled={formData.description.length < 20 || createCase.isPending} className="gap-2 cursor-pointer">
                     <Shield className="w-4 h-4" />Fall analysieren
                   </Button>
                 )}

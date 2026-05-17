@@ -96,9 +96,9 @@ Analysiere diesen Fall und antworte AUSSCHLIESSLICH mit einem validen JSON-Objek
   ],
   "urgencyLevel": "hoch" | "mittel" | "niedrig",
   "deadline": "<Konkrete Fristinformation: z.B. 'PayPal Käuferschutz: 180 Tage ab Zahldatum – Frist läuft am [berechnet] ab. Jetzt handeln!'>",
-  "merchantTemplate": "<Vollständiges, professionelles Anschreiben an den Händler auf Deutsch, formell, rechtlich korrekt, mit konkreten Forderungen und Fristen, mind. 300 Wörter>",
-  "bankTemplate": "<Vollständiges, professionelles Chargeback-Anschreiben an Bank/PayPal/Klarna auf Deutsch, mit Reason Code, konkreten Fakten und Belegnachweisen, mind. 300 Wörter>",
-  "escalationTemplate": "<Vollständiges Eskalationsschreiben für den Fall, dass der erste Versuch erfolglos bleibt – an höhere Instanz (Schlichtungsstelle, Verbraucherzentrale, BaFin o.ä.), mind. 250 Wörter>",
+  "merchantTemplate": "<Professionelles Anschreiben an den Händler auf Deutsch, formell, max 150 Wörter>",
+  "bankTemplate": "<Professionelles Chargeback-Anschreiben an Bank/PayPal/Klarna auf Deutsch, max 150 Wörter>",
+  "escalationTemplate": "<Eskalationsschreiben für Schlichtungsstelle oder Verbraucherzentrale, max 150 Wörter>",
   "disclaimer": "Keine Rechtsberatung. Keine Erfolgsgarantie. ChargebackPilot bietet allgemeine Informationen und KI-gestützte Formulierungshilfe. Die generierten Texte ersetzen keine anwaltliche Beratung und stellen keine Rechtsdienstleistung dar."
 }
 

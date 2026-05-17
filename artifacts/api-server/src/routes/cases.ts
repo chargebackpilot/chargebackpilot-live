@@ -3,11 +3,20 @@ import { db } from "@workspace/db";
 import { casesTable } from "@workspace/db";
 import { CreateCaseBody, GetCaseParams } from "@workspace/api-zod";
 import { eq, count, sql } from "drizzle-orm";
+import rateLimit from "express-rate-limit";
 import { analyzeWithGemini } from "../lib/gemini-analysis";
 
 const router = Router();
 
-router.post("/cases", async (req, res) => {
+const limiter = rateLimit({
+  windowMs: 60 * 60 * 1000, // 1 hour
+  max: 3, // Limit each IP to 3 create case requests per `window` (here, per hour)
+  message: { error: "Zu viele Anfragen. Bitte versuche es in einer Stunde erneut." },
+  standardHeaders: true, // Return rate limit info in the `RateLimit-*` headers
+  legacyHeaders: false, // Disable the `X-RateLimit-*` headers
+});
+
+router.post("/cases", limiter, async (req, res) => {
   const parseResult = CreateCaseBody.safeParse(req.body);
   if (!parseResult.success) {
     res.status(400).json({ error: "Ungültige Eingabedaten", details: parseResult.error.issues });
