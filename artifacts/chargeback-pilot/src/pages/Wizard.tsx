@@ -416,7 +416,11 @@ export default function Wizard() {
     step === 4;
 
   useEffect(() => {
-    window.scrollTo(0, 0);
+    // Timeout prevents mobile Safari rendering bugs when scrolling and changing layout simultaneously
+    const timer = setTimeout(() => {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }, 50);
+    return () => clearTimeout(timer);
   }, [step]);
 
   return (
@@ -452,14 +456,14 @@ export default function Wizard() {
                 </div>
                 <RadioGroup value={formData.paymentMethod} onValueChange={(val) => setFormData({ ...formData, paymentMethod: val })} className="space-y-2">
                   {PAYMENT_METHODS.map((pm) => (
-                    <label
+                    <div
                       key={pm.id}
-                      htmlFor={`pm-${pm.id}`}
+                      onClick={() => setFormData({ ...formData, paymentMethod: pm.id })}
                       className={`flex items-center space-x-3 border-2 p-4 rounded-xl cursor-pointer transition-all select-none ${formData.paymentMethod === pm.id ? "border-primary bg-primary/5" : "border-border hover:border-primary/40 hover:bg-muted/40"}`}
                     >
                       <RadioGroupItem value={pm.id} id={`pm-${pm.id}`} />
                       <span className="flex-1 font-medium">{pm.label}</span>
-                    </label>
+                    </div>
                   ))}
                 </RadioGroup>
               </div>
@@ -480,9 +484,9 @@ export default function Wizard() {
                 )}
                 <RadioGroup value={formData.problemType} onValueChange={(val) => setFormData({ ...formData, problemType: val })} className="space-y-2">
                   {PROBLEM_TYPES.map((pt) => (
-                    <label
+                    <div
                       key={pt.id}
-                      htmlFor={`pt-${pt.id}`}
+                      onClick={() => setFormData({ ...formData, problemType: pt.id })}
                       className={`flex items-center space-x-3 border-2 p-4 rounded-xl cursor-pointer transition-all select-none ${formData.problemType === pt.id ? "border-primary bg-primary/5" : "border-border hover:border-primary/40 hover:bg-muted/40"}`}
                     >
                       <RadioGroupItem value={pt.id} id={`pt-${pt.id}`} />
@@ -490,7 +494,7 @@ export default function Wizard() {
                         <pt.icon className={`w-4 h-4 ${formData.problemType === pt.id ? "text-primary" : "text-muted-foreground"}`} />
                       </div>
                       <span className="flex-1 font-medium">{pt.label}</span>
-                    </label>
+                    </div>
                   ))}
                 </RadioGroup>
               </div>
@@ -537,8 +541,8 @@ export default function Wizard() {
                 </div>
 
                 <div className="pt-4 border-t space-y-4">
-                  <label
-                    htmlFor="contacted"
+                  <div
+                    onClick={() => setFormData({ ...formData, merchantContacted: !formData.merchantContacted })}
                     className={`flex items-start space-x-3 border-2 p-4 rounded-xl cursor-pointer select-none transition-all ${formData.merchantContacted ? "border-primary bg-primary/5" : "border-border hover:border-primary/40"}`}
                   >
                     <Checkbox id="contacted" checked={formData.merchantContacted} onCheckedChange={(c) => setFormData({ ...formData, merchantContacted: Boolean(c) })} className="mt-0.5" />
@@ -546,7 +550,7 @@ export default function Wizard() {
                       <span className="font-medium block">Ich habe den Händler bereits kontaktiert</span>
                       <p className="text-xs text-muted-foreground mt-0.5">Vorheriger Kontakt stärkt deine Chargeback-Position deutlich.</p>
                     </div>
-                  </label>
+                  </div>
                   {formData.merchantContacted && (
                     <div className="space-y-1.5">
                       <Label htmlFor="response">Was hat der Händler geantwortet?</Label>
@@ -566,9 +570,9 @@ export default function Wizard() {
                 </div>
                 <div className="grid sm:grid-cols-2 gap-2.5">
                   {EVIDENCE_OPTIONS.map((ev) => (
-                    <label
+                    <div
                       key={ev.id}
-                      htmlFor={`ev-${ev.id}`}
+                      onClick={() => toggleEvidence(ev.id)}
                       className={`flex items-start space-x-3 border-2 p-3.5 rounded-xl cursor-pointer select-none transition-all ${(formData.evidence || []).includes(ev.id) ? "border-primary bg-primary/5" : "border-border hover:border-primary/40 hover:bg-muted/30"}`}
                     >
                       <Checkbox id={`ev-${ev.id}`} checked={(formData.evidence || []).includes(ev.id)} onCheckedChange={() => toggleEvidence(ev.id)} className="mt-0.5 flex-shrink-0" />
@@ -576,7 +580,7 @@ export default function Wizard() {
                         <span className="font-medium text-sm block">{ev.label}</span>
                         {ev.hint && <p className="text-xs text-muted-foreground mt-0.5">{ev.hint}</p>}
                       </div>
-                    </label>
+                    </div>
                   ))}
                 </div>
                 {(formData.evidence || []).filter((e) => e !== "none").length > 0 && (
@@ -633,7 +637,7 @@ export default function Wizard() {
                   <Textarea
                     rows={7}
                     placeholder="Beschreibe den Vorfall konkret: Wann bestellt? Was wurde geliefert/nicht geliefert? Wie hat der Händler reagiert? Gibt es Fristen oder Zusagen?"
-                    value={formData.description}
+                    value={formData.description || ""}
                     onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                     className="resize-none"
                   />
