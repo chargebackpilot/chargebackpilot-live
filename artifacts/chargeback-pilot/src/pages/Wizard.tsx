@@ -330,6 +330,40 @@ function MerchantQuickSelect({
   );
 }
 
+// --- Paywall Component ---
+function Paywall({
+  children,
+  onUnlock,
+  isPaying,
+}: {
+  children: React.ReactNode;
+  onUnlock: () => void;
+  isPaying: boolean;
+}) {
+  return (
+    <div className="relative">
+      <div className="absolute inset-0 bg-background/80 backdrop-blur-md z-10 rounded-2xl flex flex-col items-center justify-center p-6 text-center">
+        <div className="bg-gradient-to-br from-primary/10 to-primary/5 border border-primary/20 rounded-2xl p-8 max-w-md shadow-2xl">
+          <div className="inline-flex items-center gap-1 bg-primary text-primary-foreground text-xs font-bold uppercase tracking-widest px-3 py-1 rounded-full mb-4">
+            Vollzugriff
+          </div>
+          <h3 className="font-black text-2xl text-foreground mb-2">Maximale Erfolgschancen</h3>
+          <p className="text-muted-foreground mb-6 text-sm">
+            Schalte professionelle Textvorlagen, detaillierte Schritt-für-Schritt-Anleitungen und die Entkräftung von Gegenargumenten frei.
+          </p>
+          <Button size="lg" className="w-full text-base h-12 shadow-lg mb-3 gap-2" onClick={onUnlock} disabled={isPaying}>
+            {isPaying ? <Loader2 className="w-5 h-5 animate-spin" /> : "Jetzt für 0,99 € freischalten"}
+          </Button>
+          <div className="text-xs text-muted-foreground">
+            Sichere Zahlung via Apple Pay, Google Pay, Kreditkarte (Stripe)
+          </div>
+        </div>
+      </div>
+      <div className="blur-sm">{children}</div>
+    </div>
+  );
+}
+
 // --- Main Wizard ---
 import { ErrorBoundary } from "@/components/ErrorBoundary";
 
