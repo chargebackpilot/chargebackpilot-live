@@ -153,7 +153,6 @@ const LOADING_STEPS = [
 function AnalysisLoader({ merchantName }: { merchantName: string }) {
   const [completedSteps, setCompletedSteps] = useState<number[]>([]);
   const [allDone, setAllDone] = useState(false);
-  const [acceptedLegal, setAcceptedLegal] = useState(false);
 
   useEffect(() => {
     const t1 = setTimeout(() => setCompletedSteps([0]), 7000);
@@ -339,6 +338,7 @@ export default function Wizard() {
   const prefilledProblem = params.get("problem") ?? "";
 
   const [step, setStep] = useState(prefilledProblem ? 2 : 1);
+  const [acceptedLegal, setAcceptedLegal] = useState(false);
   const [formData, setFormData] = useState({
     paymentMethod: "",
     problemType: prefilledProblem,
