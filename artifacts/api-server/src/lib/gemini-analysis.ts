@@ -57,7 +57,9 @@ function buildPrompt(input: CaseInput): string {
   const paymentLabel = PAYMENT_METHOD_LABELS[input.paymentMethod] || input.paymentMethod;
   const problemLabel = PROBLEM_TYPE_LABELS[input.problemType] || input.problemType;
 
-  return `Du bist ein hochspezialisierter Experte für Verbraucherrecht, Zahlungsstreitigkeiten und Chargeback-Verfahren in Deutschland und der EU. Deine Aufgabe ist es, den folgenden Streitfall zu analysieren und eine vollständige, professionelle Einschätzung sowie maßgeschneiderte Textvorlagen zu erstellen.
+  return `Du bist ein neutraler KI-Sprachassistent. Deine Aufgabe ist es, Verbraucher-Sachverhalte logisch zu strukturieren und sachliche, formelle Textentwürfe für Reklamationen zu generieren. 
+WICHTIG: Du bist KEIN Anwalt, erteilst keine Rechtsberatung und fällst keine rechtlich bindenden Urteile. 
+Formuliere Einschätzungen zu Erfolgschancen immer vorsichtig und im Konjunktiv (z. B. 'könnte', 'möglicherweise', 'es besteht die Aussicht'). Formuliere die Textvorlagen so, dass der Nutzer als Absender auftritt.
 
 FALLDATEN:
 - Zahlungsmethode: ${paymentLabel}
