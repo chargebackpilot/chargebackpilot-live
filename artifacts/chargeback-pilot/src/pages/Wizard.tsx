@@ -534,10 +534,6 @@ export default function Wizard() {
                     <Label htmlFor="paymentDate">Zahlungsdatum *</Label>
                     <Input id="paymentDate" type="date" value={formData.paymentDate} onChange={(e) => setFormData({ ...formData, paymentDate: e.target.value })} />
                   </div>
-                  <div className="space-y-1.5">
-                    <Label htmlFor="merchantCountry">Land des Händlers (optional)</Label>
-                    <Input id="merchantCountry" placeholder="z.B. Deutschland, USA, ..." value={formData.merchantCountry} onChange={(e) => setFormData({ ...formData, merchantCountry: e.target.value })} />
-                  </div>
                 </div>
 
                 <div className="pt-4 border-t space-y-4">

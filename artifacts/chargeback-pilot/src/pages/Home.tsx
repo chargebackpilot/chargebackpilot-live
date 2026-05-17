@@ -145,20 +145,19 @@ export default function Home() {
       <section className="relative overflow-hidden bg-gradient-to-b from-primary/5 via-primary/3 to-background py-24 px-4">
         <div className="container mx-auto max-w-5xl text-center relative">
           <span className="inline-block mb-6 px-4 py-1.5 rounded-full bg-primary/10 text-primary text-sm font-semibold tracking-wide">
-            KI-gestützte Formulierungshilfe
+            Käuferschutz für Verbraucher
           </span>
           <h1 className="text-4xl md:text-6xl font-black tracking-tight text-foreground mb-6 leading-tight">
-            Dein KI-Pilot für Chargebacks &{" "}
-            <span className="text-primary">Zahlungsreklamationen</span>
+            Probleme beim Online-Kauf? <br className="hidden md:block" />
+            <span className="text-primary">Dein Assistent für jede Reklamation.</span>
           </h1>
           <p className="text-xl text-muted-foreground mb-10 max-w-3xl mx-auto leading-relaxed">
-            Strukturiere deinen Fall, erkenne fehlende Beweise und erhalte professionelle
-            Formulierungen für PayPal, Kreditkarte, Amex, Klarna und Händler — in Minuten.
+            Lieferung fehlt, Flug gestrichen oder falsches Essen? Wir leiten dich als Privatperson perfekt durch den Käuferschutz-Prozess. Erhalte strukturierte Anleitungen und exakte Textvorlagen für PayPal, Kreditkarte und Händler, damit du genau weißt, was du schreiben musst.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link href="/fall-pruefen">
               <Button size="lg" className="w-full sm:w-auto text-base px-8 gap-2 h-12" data-testid="hero-cta-primary">
-                Fall kostenlos prüfen
+                Kostenlose Hilfe starten
                 <ArrowRight className="w-5 h-5" />
               </Button>
             </Link>
@@ -256,7 +255,7 @@ export default function Home() {
           <div className="text-center mt-10">
             <Link href="/fall-pruefen">
               <Button size="lg" className="gap-2">
-                Jetzt Fall prüfen
+                Jetzt kostenlose Hilfe starten
                 <ArrowRight className="w-4 h-4" />
               </Button>
             </Link>
@@ -321,7 +320,7 @@ export default function Home() {
             <p className="text-muted-foreground text-sm mb-4">Dein Fall ist nicht dabei?</p>
             <Link href="/fall-pruefen">
               <Button variant="outline" className="gap-2">
-                Trotzdem Fall prüfen
+                Trotzdem kostenlos Hilfe starten
                 <ArrowRight className="w-4 h-4" />
               </Button>
             </Link>
