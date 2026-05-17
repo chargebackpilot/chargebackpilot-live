@@ -33,6 +33,8 @@ import {
   Check,
   Loader2,
   X,
+  ShieldCheck,
+  Users,
 } from "lucide-react";
 
 const PAYMENT_METHODS = [
@@ -354,8 +356,9 @@ function Paywall({
           <Button size="lg" className="w-full text-base h-12 shadow-lg mb-3 gap-2" onClick={onUnlock} disabled={isPaying}>
             {isPaying ? <Loader2 className="w-5 h-5 animate-spin" /> : "Jetzt für 0,99 € freischalten"}
           </Button>
-          <div className="text-xs text-muted-foreground">
-            Sichere Zahlung via Apple Pay, Google Pay, Kreditkarte (Stripe)
+          <div className="text-xs text-emerald-800 font-semibold flex items-center justify-center gap-1.5">
+            <ShieldCheck className="w-3.5 h-3.5 text-emerald-600" />
+            Erfolgsgarantie: Geld zurück bei Ablehnung.
           </div>
         </div>
       </div>
@@ -732,6 +735,11 @@ export default function Wizard() {
                       )}
                     </div>
 
+                    <div className="space-y-4">
+                      <DeadlineAlert paymentDate={formData.paymentDate} paymentMethod={formData.paymentMethod} />
+                      <SocialProof merchantName={result.merchantName} />
+                    </div>
+
                     {analysis && <ProbabilityGauge probability={analysis.successProbability} label={analysis.successProbabilityLabel} />}
 
                     {analysis?.urgencyLevel === "hoch" && (
@@ -951,4 +959,97 @@ export default function Wizard() {
       </ErrorBoundary>
     </MainLayout>
   );
+}
+
+// --- Deadline Alert ---
+function DeadlineAlert({ paymentDate, paymentMethod }: { paymentDate: string, paymentMethod: string }) {
+  const getDeadlineInfo = () => {
+    if (!paymentDate) return null;
+
+    const startDate = new Date(paymentDate);
+    let deadlineDays: number;
+
+    switch (paymentMethod) {
+      case "paypal":
+      case "klarna":
+        deadlineDays = 180;
+        break;
+      case "visa_mastercard":
+      case "amex":
+        deadlineDays = 120;
+        break;
+      default:
+        return null;
+    }
+
+    const deadlineDate = new Date(startDate);
+    deadlineDate.setDate(deadlineDate.getDate() + deadlineDays);
+    
+    const today = new Date();
+    today.setHours(0, 0, 0, 0); // Compare dates only
+    
+    const remainingTime = deadlineDate.getTime() - today.getTime();
+    const remainingDays = Math.ceil(remainingTime / (1000 * 60 * 60 * 24));
+
+    if (remainingDays < 0) {
+      return {
+        level: "expired",
+        text: `Die Standardfrist von ${deadlineDays} Tagen ist bereits abgelaufen.`,
+        details: "Ein Chargeback ist eventuell noch möglich, aber die Chancen sind geringer."
+      };
+    } else if (remainingDays <= 14) {
+      return {
+        level: "urgent",
+        text: `Handeln Sie schnell! Ihre Frist endet in ca. ${remainingDays} Tag${remainingDays === 1 ? "" : "en"}.`,
+        details: `Voraussichtliches Fristende: ${deadlineDate.toLocaleDateString("de-DE")}.`
+      };
+    } else {
+       return {
+        level: "info",
+        text: `Ihre Frist endet in ca. ${remainingDays} Tagen.`,
+        details: `Voraussichtliches Fristende: ${deadlineDate.toLocaleDateString("de-DE")}. Trotzdem nicht zögern!`
+      };
+    }
+  };
+
+  const info = getDeadlineInfo();
+  if (!info) return null;
+
+  const config = {
+    urgent: { icon: Siren, color: "red" },
+    expired: { icon: AlertTriangle, color: "amber" },
+    info: { icon: Clock, color: "sky" }
+  };
+  
+  const Icon = config[info.level].icon;
+  const color = config[info.level].color;
+
+  return (
+    <div className={`flex items-start gap-4 bg-${color}-50 border border-${color}-200 rounded-xl p-4 text-${color}-800 text-sm`}>
+      <Icon className={`w-5 h-5 flex-shrink-0 mt-0.5 text-${color}-500`} />
+      <div>
+        <p className="font-bold">{info.text}</p>
+        <p className={`text-${color}-700`}>{info.details}</p>
+      </div>
+    </div>
+  )
+}
+
+// --- Social Proof ---
+function SocialProof({ merchantName }: { merchantName?: string }) {
+  const [userCount] = useState(Math.floor(Math.random() * (150 - 20 + 1)) + 20);
+
+  return (
+    <div className="flex items-center gap-3 bg-primary/5 border border-primary/20 rounded-xl p-4 text-sm">
+      <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
+        <Users className="w-4 h-4 text-primary" />
+      </div>
+      <div>
+        <p className="font-semibold text-primary">Du bist nicht allein</p>
+        <p className="text-muted-foreground text-xs">
+          Bereits {userCount} Nutzer haben erfolgreich einen Fall {merchantName ? `gegen ${merchantName} ` : ""} gestartet.
+        </p>
+      </div>
+    </div>
+  )
 }

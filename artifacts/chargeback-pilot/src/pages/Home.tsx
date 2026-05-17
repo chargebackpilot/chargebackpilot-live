@@ -427,9 +427,15 @@ export default function Home() {
                     </li>
                   ))}
                 </ul>
-                <Link href="/fall-pruefen">
-                  <Button className="w-full mt-2">Fall für 0,99 € freischalten</Button>
-                </Link>
+                <div className="!mt-5">
+                  <Link href="/fall-pruefen">
+                    <Button className="w-full">Fall für 0,99 € freischalten</Button>
+                  </Link>
+                  <div className="flex items-center gap-2 text-xs text-muted-foreground mt-3 justify-center bg-emerald-50 text-emerald-800 p-2 rounded-lg border border-emerald-200">
+                    <ShieldCheck className="w-3.5 h-3.5 flex-shrink-0" />
+                    <span><b>Erfolgsgarantie:</b> Geld zurück bei Ablehnung.</span>
+                  </div>
+                </div>
               </CardContent>
             </Card>
             
