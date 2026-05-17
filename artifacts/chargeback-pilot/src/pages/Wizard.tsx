@@ -796,101 +796,104 @@ export default function Wizard() {
                       </div>
                     )}
 
-                    <div className="relative">
-                      {/* Paywall Blocker */}
-                      {!hasUnlocked && (
-                        <div className="absolute inset-0 bg-background/80 backdrop-blur-md z-10 rounded-2xl flex flex-col items-center justify-center p-6 text-center">
-                          <div className="bg-gradient-to-br from-primary/10 to-primary/5 border border-primary/20 rounded-2xl p-8 max-w-md shadow-2xl">
-                            <div className="inline-flex items-center gap-1 bg-primary text-primary-foreground text-xs font-bold uppercase tracking-widest px-3 py-1 rounded-full mb-4">
-                              Vollzugriff
-                            </div>
-                            <h3 className="font-black text-2xl text-foreground mb-2">Maximale Erfolgschancen</h3>
-                            <p className="text-muted-foreground mb-6 text-sm">
-                              Schalte professionelle Textvorlagen, detaillierte Schritt-für-Schritt-Anleitungen und die Entkräftung von Gegenargumenten frei.
-                            </p>
-                            <Button size="lg" className="w-full text-base h-12 shadow-lg mb-3 gap-2" onClick={handlePayment} disabled={isPaying}>
-                              {isPaying ? <Loader2 className="w-5 h-5 animate-spin" /> : "Jetzt für 0,99 € freischalten"}
-                            </Button>
-                            <div className="text-xs text-muted-foreground">
-                              Sichere Zahlung via Apple Pay, Google Pay, Kreditkarte (Stripe)
-                            </div>
-                          </div>
-                        </div>
-                      )}
+                    {analysis?.nextSteps && analysis.nextSteps.length > 0 && (
+                      <div className="border rounded-xl p-5">
+                        <h3 className="font-bold text-base mb-3 flex items-center gap-2"><ArrowRight className="w-4 h-4 text-primary" />Nächste Schritte</h3>
+                        <ol className="space-y-3">
+                          {/* Step 1 is always visible */}
+                          <li className="flex gap-3 text-sm">
+                            <span className="flex-shrink-0 w-6 h-6 rounded-full bg-primary/10 text-primary font-bold text-xs flex items-center justify-center">1</span>
+                            <span className="leading-relaxed pt-0.5">{analysis.nextSteps[0]}</span>
+                          </li>
 
-                      {/* Blurred Content */}
-                      <div className={`space-y-4 ${!hasUnlocked ? "blur-sm" : ""}`}>
-                        {analysis?.nextSteps && analysis.nextSteps.length > 0 && (
-                          <div className="border rounded-xl p-5">
-                            <h3 className="font-bold text-base mb-3 flex items-center gap-2">
-                              <ArrowRight className="w-4 h-4 text-primary" />
-                              Nächste Schritte
-                            </h3>
-                            <ol className="space-y-3">
-                              {analysis.nextSteps.map((s, i) => (
-                                <li key={i} className="flex gap-3 text-sm">
-                                  <span className="flex-shrink-0 w-6 h-6 rounded-full bg-primary/10 text-primary font-bold text-xs flex items-center justify-center">
-                                    {i + 1}
-                                  </span>
-                                  <span className="leading-relaxed pt-0.5">{s}</span>
-                                </li>
-                              ))}
-                            </ol>
-                          </div>
-                        )}
+                          {/* Steps 2+ are behind paywall */}
+                          {analysis.nextSteps.length > 1 && (
+                            <li>
+                              {hasUnlocked ? (
+                                <ol className="space-y-3 pt-3">
+                                  {analysis.nextSteps.slice(1).map((s, i) => (
+                                    <li key={i} className="flex gap-3 text-sm">
+                                      <span className="flex-shrink-0 w-6 h-6 rounded-full bg-primary/10 text-primary font-bold text-xs flex items-center justify-center">{i + 2}</span>
+                                      <span className="leading-relaxed pt-0.5">{s}</span>
+                                    </li>
+                                  ))}
+                                </ol>
+                              ) : (
+                                <Paywall onUnlock={handlePayment} isPaying={isPaying}>
+                                  <ol className="space-y-3 pt-3">
+                                    {analysis.nextSteps.slice(1).map((s, i) => (
+                                      <li key={i} className="flex gap-3 text-sm">
+                                        <span className="flex-shrink-0 w-6 h-6 rounded-full bg-muted text-muted-foreground font-bold text-xs flex items-center justify-center">{i + 2}</span>
+                                        <span className="leading-relaxed pt-0.5">{s}</span>
+                                      </li>
+                                    ))}
+                                  </ol>
+                                </Paywall>
+                              )}
+                            </li>
+                          )}
+                        </ol>
+                      </div>
+                    )}
 
-                        {analysis?.counterarguments && analysis.counterarguments.length > 0 && (
-                          <div className="border rounded-xl p-5">
-                            <h3 className="font-bold text-base mb-3 flex items-center gap-2">
-                              <Shield className="w-4 h-4 text-primary" />
-                              Mögliche Gegenargumente — und wie du sie entkräftest
-                            </h3>
+                    {analysis?.counterarguments && analysis.counterarguments.length > 0 && (
+                      <div className="border rounded-xl p-5">
+                        <h3 className="font-bold text-base mb-3 flex items-center gap-2"><Shield className="w-4 h-4 text-primary" />Mögliche Gegenargumente — und wie du sie entkräftest</h3>
+                        {hasUnlocked ? (
+                          <ul className="space-y-3">
+                            {analysis.counterarguments.map((arg, i) => (
+                              <li key={i} className="flex items-start gap-2 text-sm bg-muted/50 border rounded-lg px-3 py-2.5">
+                                <Shield className="w-3.5 h-3.5 text-primary flex-shrink-0 mt-0.5" /><span>{arg}</span>
+                              </li>
+                            ))}
+                          </ul>
+                        ) : (
+                          <Paywall onUnlock={handlePayment} isPaying={isPaying}>
                             <ul className="space-y-3">
                               {analysis.counterarguments.map((arg, i) => (
                                 <li key={i} className="flex items-start gap-2 text-sm bg-muted/50 border rounded-lg px-3 py-2.5">
-                                  <Shield className="w-3.5 h-3.5 text-primary flex-shrink-0 mt-0.5" />
-                                  <span>{arg}</span>
+                                  <Shield className="w-3.5 h-3.5 text-primary flex-shrink-0 mt-0.5" /><span>{arg}</span>
                                 </li>
                               ))}
                             </ul>
-                          </div>
+                          </Paywall>
                         )}
-
-                        <div className="space-y-4 pt-4">
-                          <h3 className="text-lg font-bold border-b pb-3">Deine professionellen Textvorlagen</h3>
-                          <p className="text-sm text-muted-foreground">
-                            KI-generiert für {result.merchantName || "deinen Fall"} — bitte vor dem Versenden prüfen und ggf. anpassen.
-                          </p>
-
-                          {analysis?.merchantTemplate && (
-                            <CopyableTemplate
-                              title="Anschreiben an den Händler"
-                              icon={<Building2 className="w-4 h-4" />}
-                              text={analysis.merchantTemplate}
-                              onCopy={() => copyToClipboard(analysis.merchantTemplate, "Händler-Vorlage")}
-                            />
-                          )}
-                          {analysis?.bankTemplate && (
-                            <CopyableTemplate
-                              title="Chargeback-Antrag an Bank / PayPal / Klarna"
-                              icon={<Landmark className="w-4 h-4" />}
-                              text={analysis.bankTemplate}
-                              onCopy={() => copyToClipboard(analysis.bankTemplate, "Bank-Vorlage")}
-                            />
-                          )}
-                          {analysis?.escalationTemplate && (
-                            <CopyableTemplate
-                              title="Eskalationsschreiben (falls erster Versuch erfolglos)"
-                              icon={<Siren className="w-4 h-4" />}
-                              text={analysis.escalationTemplate}
-                              onCopy={() => copyToClipboard(analysis.escalationTemplate, "Eskalations-Vorlage")}
-                            />
-                          )}
-                        </div>
                       </div>
+                    )}
+
+                    <div className="space-y-4">
+                      <h3 className="text-lg font-bold border-b pb-3">Deine professionellen Textvorlagen</h3>
+                      <p className="text-sm text-muted-foreground">KI-generiert für {result.merchantName || "deinen Fall"} — bitte vor dem Versenden prüfen und ggf. anpassen.</p>
+
+                      {analysis?.merchantTemplate && (
+                        hasUnlocked ? (
+                          <CopyableTemplate title="Anschreiben an den Händler" icon={<Building2 className="w-4 h-4" />} text={analysis.merchantTemplate} onCopy={() => copyToClipboard(analysis.merchantTemplate, "Händler-Vorlage")} />
+                        ) : (
+                          <Paywall onUnlock={handlePayment} isPaying={isPaying}>
+                            <CopyableTemplate title="Anschreiben an den Händler" icon={<Building2 className="w-4 h-4" />} text={analysis.merchantTemplate} onCopy={() => {}} />
+                          </Paywall>
+                        )
+                      )}
+                      {analysis?.bankTemplate && (
+                        hasUnlocked ? (
+                          <CopyableTemplate title="Chargeback-Antrag an Bank / PayPal / Klarna" icon={<Landmark className="w-4 h-4" />} text={analysis.bankTemplate} onCopy={() => copyToClipboard(analysis.bankTemplate, "Bank-Vorlage")} />
+                        ) : (
+                          <Paywall onUnlock={handlePayment} isPaying={isPaying}>
+                             <CopyableTemplate title="Chargeback-Antrag an Bank / PayPal / Klarna" icon={<Landmark className="w-4 h-4" />} text={analysis.bankTemplate} onCopy={() => {}} />
+                          </Paywall>
+                        )
+                      )}
+                      {analysis?.escalationTemplate && (
+                        hasUnlocked ? (
+                           <CopyableTemplate title="Eskalationsschreiben (falls erster Versuch erfolglos)" icon={<Siren className="w-4 h-4" />} text={analysis.escalationTemplate} onCopy={() => copyToClipboard(analysis.escalationTemplate, "Eskalations-Vorlage")} />
+                        ) : (
+                          <Paywall onUnlock={handlePayment} isPaying={isPaying}>
+                            <CopyableTemplate title="Eskalationsschreiben (falls erster Versuch erfolglos)" icon={<Siren className="w-4 h-4" />} text={analysis.escalationTemplate} onCopy={() => {}} />
+                          </Paywall>
+                        )
+                      )}
                     </div>
 
-                    {/* Unlocked Actions */}
                     {hasUnlocked && (
                        <div className="bg-gradient-to-br from-primary/10 to-primary/5 border border-primary/20 rounded-2xl p-6 text-center space-y-3 animate-in fade-in slide-in-from-bottom-2 duration-500">
                          <div className="inline-flex items-center gap-1 bg-primary/20 text-primary text-xs font-bold uppercase tracking-widest px-3 py-1 rounded-full">Freigeschaltet</div>
