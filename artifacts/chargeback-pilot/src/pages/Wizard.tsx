@@ -332,6 +332,8 @@ function MerchantQuickSelect({
 }
 
 // --- Main Wizard ---
+import { ErrorBoundary } from "@/components/ErrorBoundary";
+
 export default function Wizard() {
   const params = new URLSearchParams(window.location.search);
   const prefilledProblem = params.get("problem") ?? "";
@@ -414,12 +416,13 @@ export default function Wizard() {
     step === 4;
 
   useEffect(() => {
-    window.scrollTo({ top: 0, behavior: "smooth" });
+    window.scrollTo(0, 0);
   }, [step]);
 
   return (
     <MainLayout>
-      <div className="container mx-auto max-w-3xl py-10 px-4">
+      <ErrorBoundary>
+        <div className="container mx-auto max-w-3xl py-10 px-4">
         {step < 6 && (
           <div className="mb-8">
             <h1 className="text-3xl font-bold mb-1">Fall prüfen</h1>
@@ -833,6 +836,7 @@ export default function Wizard() {
           </CardContent>
         </Card>
       </div>
+      </ErrorBoundary>
     </MainLayout>
   );
 }
