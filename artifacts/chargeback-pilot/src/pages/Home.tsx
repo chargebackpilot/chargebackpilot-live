@@ -377,24 +377,25 @@ export default function Home() {
       </section>
 
       {/* PRICING */}
-      <section className="py-20 px-4 bg-background">
+      <section className="py-20 px-4 bg-background" id="pricing">
         <div className="container mx-auto max-w-5xl">
           <div className="text-center mb-14">
-            <h2 className="text-3xl font-bold mb-3">Einfache Preisgestaltung</h2>
+            <h2 className="text-3xl font-bold mb-3">Ein Preis. Alle Features.</h2>
             <p className="text-muted-foreground max-w-md mx-auto">
-              Die KI-Analyse mit drei Textvorlagen ist kostenlos. Premium schaltet PDF-Export und erweiterte Argumentation frei.
+              Deine kostenlose Analyse zeigt dir deine Erfolgsaussichten. Schalte für nur 0,99 € alle professionellen Textvorlagen und detaillierten Anleitungen frei, um deine Chancen zu maximieren.
             </p>
           </div>
-          <div className="grid md:grid-cols-3 gap-6 max-w-4xl mx-auto">
+          <div className="grid md:grid-cols-2 gap-6 max-w-4xl mx-auto">
+            {/* Free Plan */}
             <Card className="border">
               <CardHeader className="pb-4">
-                <CardTitle className="text-lg">Basisanalyse</CardTitle>
+                <CardTitle className="text-lg">Basis-Analyse</CardTitle>
                 <CardDescription>Kostenlose KI-Ersteinschätzung</CardDescription>
                 <div className="text-4xl font-black mt-3">0 <span className="text-lg font-normal text-muted-foreground">€</span></div>
               </CardHeader>
               <CardContent className="space-y-4">
                 <ul className="space-y-2.5 text-sm">
-                  {["Gemini-Erfolgswahrscheinlichkeit", "Beweis-Checkliste", "3 Textvorlagen", "Rechtliche Grundlagen", "Gegenargumente"].map((f) => (
+                  {["Gemini-Erfolgswahrscheinlichkeit", "Beweis-Checkliste", "Fallzusammenfassung", "Rechtliche Grundlagen", "Prüfung der Gegenargumente"].map((f) => (
                     <li key={f} className="flex gap-2.5 items-center">
                       <CheckCircle2 className="w-4 h-4 text-emerald-500 flex-shrink-0" />
                       {f}
@@ -402,49 +403,33 @@ export default function Home() {
                   ))}
                 </ul>
                 <Link href="/fall-pruefen">
-                  <Button className="w-full mt-2" variant="outline">Jetzt starten</Button>
+                  <Button className="w-full mt-2" variant="outline">Jetzt kostenlos starten</Button>
                 </Link>
               </CardContent>
             </Card>
 
+            {/* Premium Unlock */}
             <Card className="border-2 border-primary shadow-lg relative">
               <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 bg-primary text-primary-foreground text-xs font-bold px-4 py-1.5 rounded-full whitespace-nowrap">
-                Empfohlen
+                Beste Erfolgschancen
               </div>
               <CardHeader className="pb-4">
-                <CardTitle className="text-lg">Premium Bericht</CardTitle>
+                <CardTitle className="text-lg">Vollzugriff freischalten</CardTitle>
                 <CardDescription>Einmalig pro Fall</CardDescription>
-                <div className="text-4xl font-black mt-3">7,99 <span className="text-lg font-normal text-muted-foreground">€</span></div>
+                <div className="text-4xl font-black mt-3">0,99 <span className="text-lg font-normal text-muted-foreground">€</span></div>
               </CardHeader>
               <CardContent className="space-y-4">
                 <ul className="space-y-2.5 text-sm">
-                  {["Alles aus Basis", "Druckfertiges PDF", "Erweiterte Argumentation", "Gerichtsbarkeitsanalyse", "Prioritäts-Support"].map((f) => (
+                  {["Alles aus Basis-Analyse", "Professionelle Textvorlagen", "Detaillierte Schritt-für-Schritt-Anleitungen", "Druckfertiges PDF & E-Mail-Versand", "Entkräftung von Gegenargumenten", "Priorisierter Support"].map((f) => (
                     <li key={f} className="flex gap-2.5 items-center">
-                      <CheckCircle2 className="w-4 h-4 text-emerald-500 flex-shrink-0" />
+                      <CheckCircle2 className="w-4 h-4 text-primary flex-shrink-0" />
                       {f}
                     </li>
                   ))}
                 </ul>
-                <Button className="w-full mt-2">Premium wählen</Button>
-              </CardContent>
-            </Card>
-
-            <Card className="border">
-              <CardHeader className="pb-4">
-                <CardTitle className="text-lg">Abo</CardTitle>
-                <CardDescription>Für mehrere Fälle</CardDescription>
-                <div className="text-4xl font-black mt-3">9,99 <span className="text-lg font-normal text-muted-foreground">€/mtl.</span></div>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <ul className="space-y-2.5 text-sm">
-                  {["Unbegrenzte Fälle", "Gespeicherte Fälle", "Alle Premium-Features", "Fristen-Reminder", "E-Mail-Support"].map((f) => (
-                    <li key={f} className="flex gap-2.5 items-center">
-                      <CheckCircle2 className="w-4 h-4 text-emerald-500 flex-shrink-0" />
-                      {f}
-                    </li>
-                  ))}
-                </ul>
-                <Button className="w-full mt-2" variant="outline">Abo abschließen</Button>
+                <Link href="/fall-pruefen">
+                  <Button className="w-full mt-2">Jetzt für 0,99 € freischalten</Button>
+                </Link>
               </CardContent>
             </Card>
           </div>
