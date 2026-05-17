@@ -153,6 +153,7 @@ const LOADING_STEPS = [
 function AnalysisLoader({ merchantName }: { merchantName: string }) {
   const [completedSteps, setCompletedSteps] = useState<number[]>([]);
   const [allDone, setAllDone] = useState(false);
+  const [acceptedLegal, setAcceptedLegal] = useState(false);
 
   useEffect(() => {
     const t1 = setTimeout(() => setCompletedSteps([0]), 7000);
@@ -633,17 +634,33 @@ export default function Wizard() {
                     onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                     className="resize-none"
                   />
-                  <div className="flex justify-between items-center">
-                    <p className="text-xs text-muted-foreground">Nenne konkrete Daten, Beträge und Reaktionen des Händlers.</p>
+                  <div className="flex justify-between items-start pt-1">
+                    <p className="text-[11px] text-red-600 font-medium max-w-[80%]">
+                      Wichtig: Bitte gib keine sensiblen Daten (wie Kontonummern, echte Namen oder Passwörter) ein. Schreibe am besten anonymisiert.
+                    </p>
                     <span className={`text-xs font-medium ${(formData.description || "").length >= 20 ? "text-emerald-600" : "text-muted-foreground"}`}>
                       {(formData.description || "").length} Zeichen
                     </span>
                   </div>
                 </div>
 
-                <div className="bg-blue-50 border border-blue-200 rounded-xl p-4 text-sm text-blue-800">
+                <div className="bg-blue-50 border border-blue-200 rounded-xl p-4 text-sm text-blue-800 mb-4">
                   <p className="font-semibold mb-1 flex items-center gap-2"><Shield className="w-4 h-4" /> KI-Fallanalyse</p>
-                  <p>Deine Angaben werden von unserer KI analysiert — maßgeschneiderte Textvorlagen für {formData.merchantName || "deinen Händler"} inklusive. Dauer: ca. 15–30 Sekunden.</p>
+                  <p>Deine Angaben werden von unserer KI analysiert — maßgeschneiderte Textvorlagen für {formData.merchantName || "deinen Fall"} inklusive. Dauer: ca. 15–30 Sekunden.</p>
+                </div>
+
+                <div className="border border-border rounded-xl p-4 space-y-3">
+                  <label htmlFor="legal-accept" className="flex items-start gap-3 cursor-pointer">
+                    <Checkbox 
+                      id="legal-accept" 
+                      checked={acceptedLegal} 
+                      onCheckedChange={(c) => setAcceptedLegal(Boolean(c))}
+                      className="mt-1"
+                    />
+                    <div className="text-xs text-muted-foreground leading-relaxed">
+                      Ich stimme zu, dass meine eingegebenen Daten zur Texterstellung an eine Künstliche Intelligenz (Google LLC, USA) übertragen werden. Ich habe verstanden, dass ChargebackPilot <strong>keine Rechtsberatung</strong> ist, keine Fristen überwacht und keine anwaltliche Prüfung ersetzt. Ich akzeptiere die <a href="/agb" target="_blank" className="underline hover:text-foreground">AGB</a> und <a href="/datenschutz" target="_blank" className="underline hover:text-foreground">Datenschutzerklärung</a>.
+                    </div>
+                  </label>
                 </div>
               </div>
             )}
@@ -778,7 +795,16 @@ export default function Wizard() {
                       <Button className="w-full sm:w-auto cursor-pointer">Premium freischalten — 7,99 €</Button>
                     </div>
 
-                    <div className="text-xs text-muted-foreground bg-muted/50 rounded-xl p-4 leading-relaxed">{analysis?.disclaimer}</div>
+                    <div className="bg-red-50 border-l-4 border-red-500 rounded-r-xl p-5 mb-8">
+                      <h4 className="text-red-800 font-bold mb-2 flex items-center gap-2">
+                        <AlertTriangle className="w-5 h-5" />
+                        Wichtiger Haftungsausschluss
+                      </h4>
+                      <div className="text-sm text-red-900 leading-relaxed">
+                        {analysis?.disclaimer} Nutzer sind selbst verantwortlich, die Richtigkeit der Vorlagen und die Einhaltung sämtlicher Fristen zu prüfen. Sende diese Texte niemals ungeprüft ab.
+                      </div>
+                    </div>
+                    
                     <div className="text-center border-t pt-6">
                       <Button variant="outline" onClick={resetForm} className="cursor-pointer">Neuen Fall prüfen</Button>
                     </div>
@@ -798,7 +824,7 @@ export default function Wizard() {
                     Weiter<ArrowRight className="w-4 h-4" />
                   </Button>
                 ) : (
-                  <Button onClick={handleSubmit} disabled={(formData.description || "").length < 20 || createCase.isPending} className="gap-2 cursor-pointer">
+                  <Button onClick={handleSubmit} disabled={(formData.description || "").length < 20 || !acceptedLegal || createCase.isPending} className="gap-2 cursor-pointer">
                     <Shield className="w-4 h-4" />Fall analysieren
                   </Button>
                 )}

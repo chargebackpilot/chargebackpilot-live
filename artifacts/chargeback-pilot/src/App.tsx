@@ -7,7 +7,7 @@ import NotFound from "@/pages/not-found";
 import Home from "@/pages/Home";
 import Wizard from "@/pages/Wizard";
 import RatgeberIndex from "@/pages/RatgeberIndex";
-import { Impressum, Datenschutz, Disclaimer } from "@/pages/LegalPages";
+import { Impressum, Datenschutz, Disclaimer, AGB } from "@/pages/LegalPages";
 import { 
   PayPalSEO, AmexSEO, VisaMastercardSEO, 
   KlarnaSEO, FlugSEO, LieferandoSEO, 
@@ -42,6 +42,7 @@ function Router() {
       <Route path="/impressum" component={Impressum} />
       <Route path="/datenschutz" component={Datenschutz} />
       <Route path="/disclaimer" component={Disclaimer} />
+      <Route path="/agb" component={AGB} />
       
       {/* SEO Landing Pages */}
       <Route path="/paypal-chargeback" component={PayPalSEO} />

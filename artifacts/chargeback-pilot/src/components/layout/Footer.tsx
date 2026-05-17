@@ -27,6 +27,7 @@ export function Footer() {
           </div>
           <div className="flex flex-col gap-2">
             <h3 className="font-semibold text-sm">Rechtliches</h3>
+            <Link href="/agb" className="text-sm text-muted-foreground hover:text-foreground">AGB</Link>
             <Link href="/impressum" className="text-sm text-muted-foreground hover:text-foreground">Impressum</Link>
             <Link href="/datenschutz" className="text-sm text-muted-foreground hover:text-foreground">Datenschutz</Link>
             <Link href="/disclaimer" className="text-sm text-muted-foreground hover:text-foreground">Disclaimer</Link>

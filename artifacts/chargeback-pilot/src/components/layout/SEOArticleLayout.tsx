@@ -121,6 +121,13 @@ export function SEOArticleLayout({ title, category, whenApplies, evidence, steps
             </Link>
           </section>
 
+          {/* Trademark Disclaimer */}
+          <section className="mt-16 text-xs text-muted-foreground bg-muted/50 p-4 rounded-lg border border-border/50 text-center">
+            <p>
+              <strong>Markenrechtlicher Hinweis:</strong> Genannte Markenbezeichnungen (wie z.B. PayPal, Klarna, Visa, Mastercard, American Express, Ryanair, Lieferando etc.) sind eingetragene Warenzeichen der jeweiligen Eigentümer. ChargebackPilot steht in keinerlei Verbindung, Partnerschaft oder Kooperation mit diesen Unternehmen. Die Nennung dient ausschließlich der Beschreibung des Anwendungsbereichs unseres Text-Generators.
+            </p>
+          </section>
+
         </div>
       </article>
     </MainLayout>
