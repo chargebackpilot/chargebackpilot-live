@@ -15,7 +15,7 @@ export function Footer() {
             Schnell, strukturiert und professionell formuliert.
           </p>
           <p className="text-xs text-muted-foreground border-l-2 border-primary/20 pl-3">
-            <strong>Wichtiger Hinweis:</strong> ChargebackPilot bietet keine Rechtsberatung, keine Rechtsdienstleistung und keine Vertretung gegenüber Banken, Zahlungsdienstleistern oder Händlern. Die Inhalte dienen nur der allgemeinen Information und Formulierungshilfe.
+            <strong>Wichtiger Hinweis:</strong> ChargebackPilot bietet keine Rechtsberatung, keine Rechtsdienstleistung und keine Vertretung gegenüber Banken, Zahlungsdienstleistern oder Händlern. Die KI-Analyse erfolgt über die Gemini API von Google LLC und dient ausschließlich der allgemeinen Formulierungshilfe.
           </p>
         </div>
         

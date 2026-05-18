@@ -107,8 +107,8 @@ const SCENARIOS = [
 const FEATURES = [
   { icon: ShieldCheck, title: "Chargeback-Strategie", desc: "Passende Vorgehensweise je nach Zahlungsart und Problemtyp — PayPal, Kreditkarte, Klarna und mehr." },
   { icon: CheckCircle2, title: "Beweis-Checkliste", desc: "Welche Dokumente für deinen spezifischen Fall entscheidend sind — und was du noch beschaffen solltest." },
-  { icon: FileSignature, title: "KI-Textassistent", desc: "KI-gestützte Textvorschläge, die deinen Fall klar strukturieren." },
-  { icon: Clock, title: "Fristen-Überblick", desc: "PayPal 180 Tage, Kreditkarte 60–120 Tage — wir zeigen dir wie viel Zeit du noch hast." },
+    { icon: FileSignature, title: "KI-Textassistent", desc: "KI-gestützte Textvorlagen, die deinen Fall klar strukturieren." },
+    { icon: Clock, title: "Fristen-Überblick", desc: "PayPal 180 Tage, Kreditkarte 60–120 Tage — wir zeigen dir, worauf du jetzt achten musst." },
   { icon: AlertTriangle, title: "Gegenargumente entschärfen", desc: "Bereite dich auf typische Ausreden der Händler vor — mit konkreten Antworten." },
   { icon: FileText, title: "3 Textvorlagen pro Fall", desc: "Händler-Anschreiben, Bank-Chargeback-Antrag und Eskalationsschreiben — sofort kopierbereit." },
 ];
@@ -132,7 +132,7 @@ const FAQS = [
   },
   {
     q: "Wie sicher sind meine Daten?",
-    a: "Deine Angaben werden für die KI-Analyse verwendet und in unserer Datenbank gespeichert. Zur Verarbeitung nutzen wir Google LLC (Gemini API) als Dienstleister. Wir geben die Daten nicht an weitere Dritte weiter, soweit dies nicht zur Bereitstellung des Dienstes erforderlich ist.",
+    a: "Deine Angaben werden für die KI-Analyse verwendet und in unserer Datenbank gespeichert. Zur Verarbeitung nutzen wir die Gemini API von Google LLC als Dienstleister. Wir geben die Daten nicht an weitere Dritte weiter, soweit dies nicht zur Bereitstellung des Dienstes erforderlich ist.",
   },
 ];
 
@@ -231,7 +231,7 @@ export default function Home() {
                 num: "02",
                 icon: Scale,
                 title: "KI analysiert deinen Fall",
-                desc: "Unsere KI prüft Beweislage, Rechtslage und Fristen — und berechnet deine Erfolgswahrscheinlichkeit.",
+                desc: "Unsere KI wertet deine Angaben aus, identifiziert relevante Hinweise und liefert strukturierte Textvorlagen für deinen Fall.",
               },
               {
                 num: "03",
@@ -395,7 +395,7 @@ export default function Home() {
               </CardHeader>
               <CardContent className="space-y-4">
                 <ul className="space-y-2.5 text-sm">
-                  {["Erfolgswahrscheinlichkeit", "Beweis-Checkliste", "Fallzusammenfassung", "Rechtliche Grundlagen", "Erster Schritt der Anleitung"].map((f) => (
+                  {["Orientierung zur Erfolgsaussicht", "Beweis-Checkliste", "Fallzusammenfassung", "Mögliche rechtliche Hinweise", "Erster Schritt der Anleitung"].map((f) => (
                     <li key={f} className="flex gap-2.5 items-center">
                       <CheckCircle2 className="w-4 h-4 text-emerald-500 flex-shrink-0" />
                       {f}
