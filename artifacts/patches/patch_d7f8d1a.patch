@@ -1,0 +1,344 @@
+From d7f8d1af5501984c94da7b0e8558865fe16c3740 Mon Sep 17 00:00:00 2001
+From: chargebackpilot <lote.tagsueber.0j@icloud.com>
+Date: Mon, 18 May 2026 19:09:04 +0000
+Subject: [PATCH] Add PayPal paywall scroll button and update paywall branding
+
+---
+ artifacts/chargeback-pilot/public/logo.svg    | 52 ++++++++++++++
+ .../src/components/PaywallModal.tsx           | 71 ++++++++++++++-----
+ .../src/components/ui/Logo.tsx                | 49 +++++++++++--
+ .../chargeback-pilot/src/pages/Wizard.tsx     | 46 +++++++++---
+ 4 files changed, 184 insertions(+), 34 deletions(-)
+ create mode 100644 artifacts/chargeback-pilot/public/logo.svg
+
+diff --git a/artifacts/chargeback-pilot/public/logo.svg b/artifacts/chargeback-pilot/public/logo.svg
+new file mode 100644
+index 0000000..4e5ba6f
+--- /dev/null
++++ b/artifacts/chargeback-pilot/public/logo.svg
+@@ -0,0 +1,52 @@
++<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" role="img" aria-label="ChargebackPilot Logo">
++  <defs>
++    <linearGradient id="shieldStroke" x1="0" y1="0" x2="1" y2="1">
++      <stop offset="0%" stop-color="#082054" />
++      <stop offset="45%" stop-color="#2058ff" />
++      <stop offset="100%" stop-color="#0a4bff" />
++    </linearGradient>
++    <linearGradient id="ringGradient" x1="0" y1="0" x2="1" y2="1">
++      <stop offset="0%" stop-color="#0b2a7c" />
++      <stop offset="40%" stop-color="#2c7dff" />
++      <stop offset="100%" stop-color="#0787ff" />
++    </linearGradient>
++    <radialGradient id="shieldFill" cx="50%" cy="40%" r="80%" fx="45%" fy="35%">
++      <stop offset="0%" stop-color="#ffffff" />
++      <stop offset="70%" stop-color="#f4f9ff" />
++      <stop offset="100%" stop-color="#e8f0ff" />
++    </radialGradient>
++  </defs>
++
++  <!-- Orbit ring behind the shield -->
++  <path
++    d="M18 72C25 52 44 34 69 28C87 24 103 36 105 53C106 63 101 72 93 78C88 82 81 84 73 84C56 84 39 78 26 66C24 64 20 72 18 72Z"
++    fill="url(#ringGradient)"
++    opacity="0.96"
++  />
++
++  <!-- Shield -->
++  <path
++    d="M35 22L60 12L85 22C94 30 98 45 92 60C86 78 69 96 60 100C51 96 34 78 28 60C22 45 26 30 35 22Z"
++    fill="url(#shieldFill)"
++    stroke="url(#shieldStroke)"
++    stroke-width="8"
++    stroke-linejoin="round"
++  />
++
++  <!-- Ring front highlight -->
++  <path
++    d="M30 80C42 72 60 66 80 66C90 66 98 70 104 76C99 82 94 86 88 88C78 92 66 92 54 88C42 84 31 78 30 80Z"
++    fill="url(#ringGradient)"
++    opacity="0.96"
++  />
++
++  <!-- Check mark -->
++  <path
++    d="M43 58L54 70L77 46"
++    fill="none"
++    stroke="#06103a"
++    stroke-width="8"
++    stroke-linecap="round"
++    stroke-linejoin="round"
++  />
++</svg>
+diff --git a/artifacts/chargeback-pilot/src/components/PaywallModal.tsx b/artifacts/chargeback-pilot/src/components/PaywallModal.tsx
+index e7b9516..0c6b0c5 100644
+--- a/artifacts/chargeback-pilot/src/components/PaywallModal.tsx
++++ b/artifacts/chargeback-pilot/src/components/PaywallModal.tsx
+@@ -1,4 +1,4 @@
+-import { useState } from "react";
++import { useEffect, useState } from "react";
+ import { Button } from "@/components/ui/button";
+ import {
+   Shield,
+@@ -6,12 +6,11 @@ import {
+   Check,
+   Loader2,
+   CreditCard,
+-  Smartphone,
++  Apple,
+   FileText,
+   TrendingUp,
+   ListChecks,
+   Star,
+-  ChevronRight,
+   AlertCircle,
+ } from "lucide-react";
+ import { generatePdf } from "@/lib/pdf-generator";
+@@ -69,8 +68,21 @@ export function PaywallModal({
+ }: PaywallProps) {
+   const [loading, setLoading] = useState(false);
+   const [error, setError] = useState("");
++  const [applePayAvailable, setApplePayAvailable] = useState(false);
+ 
+   const isPaypal = paymentMethod === "paypal";
++  const isApplePay = paymentMethod === "apple_google_pay";
++
++  useEffect(() => {
++    if (typeof window === "undefined") return;
++    const apple = (window as any).ApplePaySession;
++    if (apple?.canMakePayments) {
++      apple
++        .canMakePayments()
++        .then((canMake: boolean) => setApplePayAvailable(Boolean(canMake)))
++        .catch(() => setApplePayAvailable(false));
++    }
++  }, []);
+ 
+   const handleCheckout = async () => {
+     setLoading(true);
+@@ -178,7 +190,15 @@ export function PaywallModal({
+         <div className="space-y-3 pt-1">
+           <Button
+             size="lg"
+-            className="w-full h-13 text-base font-bold gap-2 shadow-lg shadow-primary/20"
++            className={
++              `w-full h-13 text-base font-bold gap-2 shadow-lg shadow-primary/20 ${
++                isApplePay && applePayAvailable
++                  ? "bg-black text-white"
++                  : isPaypal
++                    ? "bg-[#003087] text-white"
++                    : ""
++              }`
++            }
+             onClick={handleCheckout}
+             disabled={loading || isPaying}
+           >
+@@ -186,25 +206,35 @@ export function PaywallModal({
+               <Loader2 className="w-5 h-5 animate-spin" />
+             ) : (
+               <>
+-                <CreditCard className="w-5 h-5" />
+-                Jetzt für 0,99 € freischalten
++                {isApplePay && applePayAvailable ? (
++                  <>
++                    <Apple className="w-5 h-5" />
++                    Mit Apple Pay bezahlen
++                  </>
++                ) : isPaypal ? (
++                  <>
++                    <CreditCard className="w-5 h-5" />
++                    Mit PayPal freischalten
++                  </>
++                ) : (
++                  <>
++                    <CreditCard className="w-5 h-5" />
++                    Jetzt für 0,99 € freischalten
++                  </>
++                )}
+               </>
+             )}
+           </Button>
+ 
+           {/* Payment method icons */}
+-          <div className="flex items-center justify-center gap-3">
++          <div className="flex flex-col items-center gap-3">
+             <span className="text-xs text-muted-foreground">Bezahlen mit:</span>
+-            <div className="flex items-center gap-2">
++            <div className="flex flex-wrap items-center justify-center gap-2">
+               <PaymentBadge label="Visa" />
+-              <PaymentBadge label="MC" />
++              <PaymentBadge label="Mastercard" />
+               <PaymentBadge label="Amex" />
+-              <div className="flex items-center gap-1 bg-black text-white text-[10px] font-bold px-2 py-1 rounded-md">
+-                <Smartphone className="w-2.5 h-2.5" /> Pay
+-              </div>
+-              <div className="flex items-center gap-1 bg-[#003087] text-white text-[10px] font-bold px-2 py-1 rounded-md">
+-                Pay<span className="text-[#009cde]">Pal</span>
+-              </div>
++              <PaymentBadge label="Apple Pay" variant="apple" />
++              <PaymentBadge label="PayPal" variant="paypal" />
+             </div>
+           </div>
+ 
+@@ -230,9 +260,16 @@ export function PaywallModal({
+   );
+ }
+ 
+-function PaymentBadge({ label }: { label: string }) {
++function PaymentBadge({ label, variant }: { label: string; variant?: "paypal" | "apple" }) {
++  const styles =
++    variant === "apple"
++      ? "bg-black text-white border-black"
++      : variant === "paypal"
++        ? "bg-[#003087] text-white border-[#003087]"
++        : "bg-white border border-gray-200 text-gray-700";
++
+   return (
+-    <div className="bg-white border border-gray-200 text-gray-700 text-[10px] font-bold px-2 py-1 rounded-md shadow-sm">
++    <div className={`${styles} text-[10px] font-bold px-2 py-1 rounded-md shadow-sm`}>
+       {label}
+     </div>
+   );
+diff --git a/artifacts/chargeback-pilot/src/components/ui/Logo.tsx b/artifacts/chargeback-pilot/src/components/ui/Logo.tsx
+index b73be77..1213056 100644
+--- a/artifacts/chargeback-pilot/src/components/ui/Logo.tsx
++++ b/artifacts/chargeback-pilot/src/components/ui/Logo.tsx
+@@ -2,16 +2,51 @@ export function Logo() {
+   return (
+     <svg
+       xmlns="http://www.w3.org/2000/svg"
+-      viewBox="0 0 24 24"
+-      fill="currentColor"
+-      className="w-6 h-6 text-primary"
++      viewBox="0 0 120 120"
++      role="img"
++      aria-label="ChargebackPilot Logo"
++      className="w-6 h-6"
+     >
+-      <path d="M12 2L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-3z" />
++      <defs>
++        <linearGradient id="shieldStroke" x1="0" y1="0" x2="1" y2="1">
++          <stop offset="0%" stopColor="#082054" />
++          <stop offset="45%" stopColor="#2058ff" />
++          <stop offset="100%" stopColor="#0a4bff" />
++        </linearGradient>
++        <linearGradient id="ringGradient" x1="0" y1="0" x2="1" y2="1">
++          <stop offset="0%" stopColor="#0b2a7c" />
++          <stop offset="40%" stopColor="#2c7dff" />
++          <stop offset="100%" stopColor="#0787ff" />
++        </linearGradient>
++        <radialGradient id="shieldFill" cx="50%" cy="40%" r="80%" fx="45%" fy="35%">
++          <stop offset="0%" stopColor="#ffffff" />
++          <stop offset="70%" stopColor="#f4f9ff" />
++          <stop offset="100%" stopColor="#e8f0ff" />
++        </radialGradient>
++      </defs>
++
+       <path
+-        d="M15 9a4 4 0 1 0 0 6M6 12h7M6 15h7"
++        d="M18 72C25 52 44 34 69 28C87 24 103 36 105 53C106 63 101 72 93 78C88 82 81 84 73 84C56 84 39 78 26 66C24 64 20 72 18 72Z"
++        fill="url(#ringGradient)"
++        opacity="0.96"
++      />
++      <path
++        d="M35 22L60 12L85 22C94 30 98 45 92 60C86 78 69 96 60 100C51 96 34 78 28 60C22 45 26 30 35 22Z"
++        fill="url(#shieldFill)"
++        stroke="url(#shieldStroke)"
++        strokeWidth="8"
++        strokeLinejoin="round"
++      />
++      <path
++        d="M30 80C42 72 60 66 80 66C90 66 98 70 104 76C99 82 94 86 88 88C78 92 66 92 54 88C42 84 31 78 30 80Z"
++        fill="url(#ringGradient)"
++        opacity="0.96"
++      />
++      <path
++        d="M43 58L54 70L77 46"
+         fill="none"
+-        stroke="white"
+-        strokeWidth="1.5"
++        stroke="#06103a"
++        strokeWidth="8"
+         strokeLinecap="round"
+         strokeLinejoin="round"
+       />
+diff --git a/artifacts/chargeback-pilot/src/pages/Wizard.tsx b/artifacts/chargeback-pilot/src/pages/Wizard.tsx
+index 8f27920..facb28c 100644
+--- a/artifacts/chargeback-pilot/src/pages/Wizard.tsx
++++ b/artifacts/chargeback-pilot/src/pages/Wizard.tsx
+@@ -2,7 +2,7 @@ import { MainLayout } from "@/components/layout/MainLayout";
+ import { Card, CardContent } from "@/components/ui/card";
+ import { Button } from "@/components/ui/button";
+ import { useCreateCase } from "@workspace/api-client-react";
+-import { useState, useEffect } from "react";
++import { useState, useEffect, useRef } from "react";
+ import { Input } from "@/components/ui/input";
+ import { Label } from "@/components/ui/label";
+ import { Textarea } from "@/components/ui/textarea";
+@@ -865,6 +865,7 @@ export default function Wizard() {
+   const [acceptedLegal, setAcceptedLegal] = useState(false);
+   const [hasUnlocked, setHasUnlocked] = useState(paymentSuccess);
+   const [isPaying, setIsPaying] = useState(false);
++  const paywallRef = useRef<HTMLDivElement | null>(null);
+   const [formData, setFormData] = useState<FormData>({
+     paymentMethod: "",
+     problemType: prefilledProblem,
+@@ -959,6 +960,13 @@ export default function Wizard() {
+     window.history.replaceState({}, "", "/fall-pruefen");
+   };
+ 
++  const isPaypalCase = (result?.paymentMethod === "paypal" || formData.paymentMethod === "paypal");
++  const scrollToPaywall = () => {
++    if (paywallRef.current) {
++      paywallRef.current.scrollIntoView({ behavior: "smooth", block: "center" });
++    }
++  };
++
+   const handlePayment = () => {
+     setIsPaying(true);
+     setTimeout(() => {
+@@ -1472,15 +1480,33 @@ export default function Wizard() {
+ 
+                       {/* ===== PAYWALL or UNLOCKED CONTENT ===== */}
+                       {!hasUnlocked ? (
+-                        <PaywallModal
+-                          onUnlock={handlePayment}
+-                          isPaying={isPaying}
+-                          caseId={result.id}
+-                          merchantName={result.merchantName ?? formData.merchantName}
+-                          amount={(result.amount ?? (Number(formData.disputedAmount) || Number(formData.purchaseAmount) || 0))}
+-                          successProbability={analysis?.successProbability ?? 0}
+-                          paymentMethod={result.paymentMethod ?? formData.paymentMethod}
+-                        />
++                        <div className="space-y-6">
++                          {isPaypalCase ? (
++                            <div className="rounded-3xl border border-yellow-200 bg-yellow-50 p-5 shadow-sm">
++                              <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
++                                <div className="space-y-2">
++                                  <p className="text-sm font-semibold text-yellow-900">PayPal-Zahlung</p>
++                                  <p className="text-sm text-slate-700">Noch nicht bezahlt? Diese Schaltfläche bringt dich direkt zur Paywall.</p>
++                                </div>
++                                <Button variant="secondary" onClick={scrollToPaywall} size="sm">
++                                  Zur Paywall scrollen
++                                </Button>
++                              </div>
++                            </div>
++                          ) : null}
++
++                          <div ref={paywallRef}>
++                            <PaywallModal
++                              onUnlock={handlePayment}
++                              isPaying={isPaying}
++                              caseId={result.id}
++                              merchantName={result.merchantName ?? formData.merchantName}
++                              amount={(result.amount ?? (Number(formData.disputedAmount) || Number(formData.purchaseAmount) || 0))}
++                              successProbability={analysis?.successProbability ?? 0}
++                              paymentMethod={result.paymentMethod ?? formData.paymentMethod}
++                            />
++                          </div>
++                        </div>
+                       ) : (
+                         <div className="space-y-6 animate-in fade-in duration-500">
+ 
+-- 
+2.53.0
+
