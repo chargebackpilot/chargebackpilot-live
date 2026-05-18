@@ -107,7 +107,7 @@ const SCENARIOS = [
 const FEATURES = [
   { icon: ShieldCheck, title: "Chargeback-Strategie", desc: "Passende Vorgehensweise je nach Zahlungsart und Problemtyp — PayPal, Kreditkarte, Klarna und mehr." },
   { icon: CheckCircle2, title: "Beweis-Checkliste", desc: "Welche Dokumente für deinen spezifischen Fall entscheidend sind — und was du noch beschaffen solltest." },
-  { icon: FileSignature, title: "Gemini-Formulierungsassistent", desc: "KI-generierte, rechtlich saubere Texte auf deinen individuellen Fall zugeschnitten." },
+  { icon: FileSignature, title: "KI-Textassistent", desc: "KI-gestützte Textvorschläge, die deinen Fall klar strukturieren." },
   { icon: Clock, title: "Fristen-Überblick", desc: "PayPal 180 Tage, Kreditkarte 60–120 Tage — wir zeigen dir wie viel Zeit du noch hast." },
   { icon: AlertTriangle, title: "Gegenargumente entschärfen", desc: "Bereite dich auf typische Ausreden der Händler vor — mit konkreten Antworten." },
   { icon: FileText, title: "3 Textvorlagen pro Fall", desc: "Händler-Anschreiben, Bank-Chargeback-Antrag und Eskalationsschreiben — sofort kopierbereit." },
@@ -132,7 +132,7 @@ const FAQS = [
   },
   {
     q: "Wie sicher sind meine Daten?",
-    a: "Deine Angaben werden nur für die KI-Analyse verwendet und in unserer Datenbank gespeichert. Wir geben keine Daten an Dritte weiter. Die Analyse läuft über die Gemini AI von Google.",
+    a: "Deine Angaben werden für die KI-Analyse verwendet und in unserer Datenbank gespeichert. Zur Verarbeitung nutzen wir Google LLC (Gemini API) als Dienstleister. Wir geben die Daten nicht an weitere Dritte weiter, soweit dies nicht zur Bereitstellung des Dienstes erforderlich ist.",
   },
 ];
 

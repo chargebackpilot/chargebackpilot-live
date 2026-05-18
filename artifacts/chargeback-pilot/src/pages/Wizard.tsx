@@ -796,7 +796,7 @@ export default function Wizard() {
 
                     {analysis?.legalBasis && analysis.legalBasis.length > 0 && (
                       <div className="border rounded-xl p-5">
-                        <h3 className="font-bold text-base mb-3 flex items-center gap-2"><Scale className="w-4 h-4 text-primary" />Rechtliche Grundlagen</h3>
+                        <h3 className="font-bold text-base mb-3 flex items-center gap-2"><Scale className="w-4 h-4 text-primary" />Mögliche rechtliche Hinweise</h3>
                         <ul className="space-y-2">
                           {analysis.legalBasis.map((basis, i) => (
                             <li key={i} className="flex items-start gap-2 text-sm">
