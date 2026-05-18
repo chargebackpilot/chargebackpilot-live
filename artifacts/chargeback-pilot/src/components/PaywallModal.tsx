@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Shield,
@@ -6,12 +6,11 @@ import {
   Check,
   Loader2,
   CreditCard,
-  Smartphone,
+  Apple,
   FileText,
   TrendingUp,
   ListChecks,
   Star,
-  ChevronRight,
   AlertCircle,
 } from "lucide-react";
 import { generatePdf } from "@/lib/pdf-generator";
@@ -69,8 +68,21 @@ export function PaywallModal({
 }: PaywallProps) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [applePayAvailable, setApplePayAvailable] = useState(false);
 
   const isPaypal = paymentMethod === "paypal";
+  const isApplePay = paymentMethod === "apple_google_pay";
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const apple = (window as any).ApplePaySession;
+    if (apple?.canMakePayments) {
+      apple
+        .canMakePayments()
+        .then((canMake: boolean) => setApplePayAvailable(Boolean(canMake)))
+        .catch(() => setApplePayAvailable(false));
+    }
+  }, []);
 
   const handleCheckout = async () => {
     setLoading(true);
@@ -178,7 +190,15 @@ export function PaywallModal({
         <div className="space-y-3 pt-1">
           <Button
             size="lg"
-            className="w-full h-13 text-base font-bold gap-2 shadow-lg shadow-primary/20"
+            className={
+              `w-full h-13 text-base font-bold gap-2 shadow-lg shadow-primary/20 ${
+                isApplePay && applePayAvailable
+                  ? "bg-black text-white"
+                  : isPaypal
+                    ? "bg-[#003087] text-white"
+                    : ""
+              }`
+            }
             onClick={handleCheckout}
             disabled={loading || isPaying}
           >
@@ -186,25 +206,35 @@ export function PaywallModal({
               <Loader2 className="w-5 h-5 animate-spin" />
             ) : (
               <>
-                <CreditCard className="w-5 h-5" />
-                Jetzt für 0,99 € freischalten
+                {isApplePay && applePayAvailable ? (
+                  <>
+                    <Apple className="w-5 h-5" />
+                    Mit Apple Pay bezahlen
+                  </>
+                ) : isPaypal ? (
+                  <>
+                    <CreditCard className="w-5 h-5" />
+                    Mit PayPal freischalten
+                  </>
+                ) : (
+                  <>
+                    <CreditCard className="w-5 h-5" />
+                    Jetzt für 0,99 € freischalten
+                  </>
+                )}
               </>
             )}
           </Button>
 
           {/* Payment method icons */}
-          <div className="flex items-center justify-center gap-3">
+          <div className="flex flex-col items-center gap-3">
             <span className="text-xs text-muted-foreground">Bezahlen mit:</span>
-            <div className="flex items-center gap-2">
+            <div className="flex flex-wrap items-center justify-center gap-2">
               <PaymentBadge label="Visa" />
-              <PaymentBadge label="MC" />
+              <PaymentBadge label="Mastercard" />
               <PaymentBadge label="Amex" />
-              <div className="flex items-center gap-1 bg-black text-white text-[10px] font-bold px-2 py-1 rounded-md">
-                <Smartphone className="w-2.5 h-2.5" /> Pay
-              </div>
-              <div className="flex items-center gap-1 bg-[#003087] text-white text-[10px] font-bold px-2 py-1 rounded-md">
-                Pay<span className="text-[#009cde]">Pal</span>
-              </div>
+              <PaymentBadge label="Apple Pay" variant="apple" />
+              <PaymentBadge label="PayPal" variant="paypal" />
             </div>
           </div>
 
@@ -230,9 +260,16 @@ export function PaywallModal({
   );
 }
 
-function PaymentBadge({ label }: { label: string }) {
+function PaymentBadge({ label, variant }: { label: string; variant?: "paypal" | "apple" }) {
+  const styles =
+    variant === "apple"
+      ? "bg-black text-white border-black"
+      : variant === "paypal"
+        ? "bg-[#003087] text-white border-[#003087]"
+        : "bg-white border border-gray-200 text-gray-700";
+
   return (
-    <div className="bg-white border border-gray-200 text-gray-700 text-[10px] font-bold px-2 py-1 rounded-md shadow-sm">
+    <div className={`${styles} text-[10px] font-bold px-2 py-1 rounded-md shadow-sm`}>
       {label}
     </div>
   );

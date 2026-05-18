@@ -2,7 +2,7 @@ import { MainLayout } from "@/components/layout/MainLayout";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useCreateCase } from "@workspace/api-client-react";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
@@ -865,6 +865,7 @@ export default function Wizard() {
   const [acceptedLegal, setAcceptedLegal] = useState(false);
   const [hasUnlocked, setHasUnlocked] = useState(paymentSuccess);
   const [isPaying, setIsPaying] = useState(false);
+  const paywallRef = useRef<HTMLDivElement | null>(null);
   const [formData, setFormData] = useState<FormData>({
     paymentMethod: "",
     problemType: prefilledProblem,
@@ -957,6 +958,13 @@ export default function Wizard() {
       evidence: [], structuredAnswers: {},
     });
     window.history.replaceState({}, "", "/fall-pruefen");
+  };
+
+  const isPaypalCase = (result?.paymentMethod === "paypal" || formData.paymentMethod === "paypal");
+  const scrollToPaywall = () => {
+    if (paywallRef.current) {
+      paywallRef.current.scrollIntoView({ behavior: "smooth", block: "center" });
+    }
   };
 
   const handlePayment = () => {
@@ -1472,15 +1480,33 @@ export default function Wizard() {
 
                       {/* ===== PAYWALL or UNLOCKED CONTENT ===== */}
                       {!hasUnlocked ? (
-                        <PaywallModal
-                          onUnlock={handlePayment}
-                          isPaying={isPaying}
-                          caseId={result.id}
-                          merchantName={result.merchantName ?? formData.merchantName}
-                          amount={(result.amount ?? (Number(formData.disputedAmount) || Number(formData.purchaseAmount) || 0))}
-                          successProbability={analysis?.successProbability ?? 0}
-                          paymentMethod={result.paymentMethod ?? formData.paymentMethod}
-                        />
+                        <div className="space-y-6">
+                          {isPaypalCase ? (
+                            <div className="rounded-3xl border border-yellow-200 bg-yellow-50 p-5 shadow-sm">
+                              <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                                <div className="space-y-2">
+                                  <p className="text-sm font-semibold text-yellow-900">PayPal-Zahlung</p>
+                                  <p className="text-sm text-slate-700">Noch nicht bezahlt? Diese Schaltfläche bringt dich direkt zur Paywall.</p>
+                                </div>
+                                <Button variant="secondary" onClick={scrollToPaywall} size="sm">
+                                  Zur Paywall scrollen
+                                </Button>
+                              </div>
+                            </div>
+                          ) : null}
+
+                          <div ref={paywallRef}>
+                            <PaywallModal
+                              onUnlock={handlePayment}
+                              isPaying={isPaying}
+                              caseId={result.id}
+                              merchantName={result.merchantName ?? formData.merchantName}
+                              amount={(result.amount ?? (Number(formData.disputedAmount) || Number(formData.purchaseAmount) || 0))}
+                              successProbability={analysis?.successProbability ?? 0}
+                              paymentMethod={result.paymentMethod ?? formData.paymentMethod}
+                            />
+                          </div>
+                        </div>
                       ) : (
                         <div className="space-y-6 animate-in fade-in duration-500">
 
