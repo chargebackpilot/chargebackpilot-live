@@ -1,17 +1,14 @@
-import { GoogleGenAI } from "@google/genai";
+import { GoogleGenerativeAI } from "@google/generative-ai";
 import { type CaseAnalysis } from "@workspace/db";
 import { logger } from "./logger";
 
 const PRIMARY_KEY = process.env.GEMINI_API_KEY || "";
 const FALLBACK_KEY = process.env.GEMINI_API_KEY_FALLBACK || "";
 
-logger.info({ 
-  hasPrimary: !!PRIMARY_KEY, 
-  hasFallback: !!FALLBACK_KEY 
-}, "Initializing Gemini clients");
+console.log(`[Gemini Init] Primary key set: ${!!PRIMARY_KEY}, Fallback key set: ${!!FALLBACK_KEY}`);
 
-const primaryAi = PRIMARY_KEY ? new GoogleGenAI(PRIMARY_KEY) : null;
-const fallbackAi = FALLBACK_KEY ? new GoogleGenAI(FALLBACK_KEY) : null;
+const primaryAi = PRIMARY_KEY ? new GoogleGenerativeAI(PRIMARY_KEY) : null;
+const fallbackAi = FALLBACK_KEY ? new GoogleGenerativeAI(FALLBACK_KEY) : null;
 
 export interface CaseInput {
   paymentMethod: string;
@@ -126,90 +123,74 @@ WICHTIGE RICHTLINIEN FÜR DIE ANALYSE:
 - KEIN Markdown in den Template-Feldern, nur plain text mit Zeilenumbrüchen`;
 }
 
-function isQuotaOrRateError(err: unknown): boolean {
-  const msg = err instanceof Error ? err.message : String(err);
-  const lower = msg.toLowerCase();
-  return (
-    lower.includes("quota") ||
-    lower.includes("rate") ||
-    lower.includes("resource_exhausted") ||
-    lower.includes("resource exhausted") ||
-    lower.includes("429") ||
-    lower.includes("exceeded") ||
-    lower.includes("limit")
-  );
-}
+// ... (nach buildPrompt)
 
-async function callGemini(client: GoogleGenAI, prompt: string): Promise<CaseAnalysis> {
-  const model = client.getGenerativeModel({ 
-    model: "gemini-1.5-flash",
-    generationConfig: {
-      maxOutputTokens: 2000,
-      temperature: 0.3,
-      responseMimeType: "application/json",
+async function callGemini(genAI: any, prompt: string): Promise<CaseAnalysis> {
+  try {
+    const model = genAI.getGenerativeModel({ 
+      model: "gemini-1.5-flash",
+      generationConfig: {
+        temperature: 0.3,
+        topP: 0.8,
+        topK: 40,
+        maxOutputTokens: 2048,
+        responseMimeType: "application/json",
+      }
+    });
+
+    const result = await model.generateContent(prompt);
+    const response = await result.response;
+    const rawText = response.text();
+    
+    if (!rawText) {
+      throw new Error("Gemini returned an empty string");
     }
-  });
 
-  const result = await model.generateContent(prompt);
-  const response = await result.response;
-  const rawText = response.text();
-  
-  if (!rawText) {
-    throw new Error("Empty response from Gemini");
+    console.log("[Gemini Response] Raw text received, parsing JSON...");
+
+    // Cleanup potential markdown blocks if Gemini ignores the mime-type hint
+    const jsonText = rawText.replace(/```json\n?|```/g, "").trim();
+    const parsed = JSON.parse(jsonText) as CaseAnalysis;
+
+    if (!parsed.strength || typeof parsed.successProbability !== "number") {
+      throw new Error("Parsed JSON is missing critical fields (strength or successProbability)");
+    }
+
+    return parsed;
+  } catch (error: any) {
+    console.error("[Gemini API Error]", error?.message || error);
+    throw error;
   }
-
-  // Cleanup potential markdown blocks if Gemini ignores the mime-type hint
-  const jsonText = rawText.replace(/```json\n?|```/g, "").trim();
-  const parsed = JSON.parse(jsonText) as CaseAnalysis;
-
-  if (
-    typeof parsed.strength !== "string" ||
-    typeof parsed.successProbability !== "number" ||
-    typeof parsed.merchantTemplate !== "string"
-  ) {
-    throw new Error("Invalid Gemini response structure");
-  }
-
-  return parsed;
 }
 
 export async function analyzeWithGemini(input: CaseInput): Promise<CaseAnalysis> {
   const prompt = buildPrompt(input);
 
-  // Try primary key first (if configured)
+  // Try primary key first
   if (primaryAi) {
+    console.log("[Gemini] Attempting analysis with primary key...");
     try {
       const result = await callGemini(primaryAi, prompt);
-      logger.info({ key: "primary" }, "Gemini analysis succeeded");
+      console.log("[Gemini] Primary key SUCCESS");
       return result;
-    } catch (err) {
-      const quotaErr = isQuotaOrRateError(err);
-      logger.warn(
-        { err: err instanceof Error ? err.message : String(err), quotaErr },
-        quotaErr
-          ? "Primary Gemini key quota/rate-limited, trying fallback key"
-          : "Primary Gemini call failed, trying fallback key",
-      );
+    } catch (err: any) {
+      console.warn(`[Gemini] Primary key FAILED: ${err?.message || err}`);
     }
-  } else {
-    logger.warn("GEMINI_API_KEY not set, using fallback key directly");
   }
 
-  // Try fallback key (if configured)
+  // Try fallback key
   if (fallbackAi) {
+    console.log("[Gemini] Attempting analysis with fallback key...");
     try {
       const result = await callGemini(fallbackAi, prompt);
-      logger.info({ key: "fallback" }, "Gemini analysis succeeded via fallback key");
+      console.log("[Gemini] Fallback key SUCCESS");
       return result;
-    } catch (err) {
-      logger.error(
-        { err: err instanceof Error ? err.message : String(err) },
-        "Both Gemini keys failed, using local fallback analysis",
-      );
+    } catch (err: any) {
+      console.error(`[Gemini] Fallback key FAILED: ${err?.message || err}`);
     }
   }
 
-  logger.warn("No functional Gemini API keys available, using local fallback analysis");
+  console.warn("[Gemini] All API keys failed or missing. Using local fallback logic.");
   return buildFallbackAnalysis(input);
 }
 
