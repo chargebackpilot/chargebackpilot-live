@@ -84,46 +84,74 @@ Analysiere diesen Fall und antworte AUSSCHLIESSLICH mit einem validen JSON-Objek
 {
   "strength": "stark" | "mittel" | "schwach",
   "strengthLabel": "Starke Ausgangslage" | "Mittlere Ausgangslage" | "Schwache Ausgangslage",
-  "successProbability": <Ganzzahl 0-100>,
+  "successProbability": <Ganzzahl 0-100, realistische Schätzung der Erfolgswahrscheinlichkeit eines Chargeback-Verfahrens>,
   "successProbabilityLabel": "Hoch" | "Mittel" | "Niedrig",
-  "summary": "...",
-  "reasoning": "...",
-  "missingEvidence": ["..."],
-  "nextSteps": ["..."],
-  "recommendedCategory": "...",
-  "legalBasis": ["..."],
-  "counterarguments": ["..."],
+  "summary": "<2-3 Sätze prägnante Fallzusammenfassung aus Sicht des Verbrauchers>",
+  "reasoning": "<4-6 Sätze detaillierte Begründung der Einschätzung: Zahlungsmethode, Beweislage, Problemtyp, rechtliche Situation>",
+  "missingEvidence": ["<Fehlender Beweis 1 mit konkreter Erklärung warum er wichtig ist>", ...],
+  "nextSteps": [
+    "<Konkreter Schritt 1 mit genauen Anweisungen, Fristen und ggf. direkten Links>",
+    ...mindestens 4 Schritte...
+  ],
+  "recommendedCategory": "<Exakter Chargeback-Reason-Code bzw. Kategorie für die spezifische Zahlungsmethode>",
+  "legalBasis": [
+    "<Relevante Rechtsgrundlage 1, z.B. § 437 BGB – Käuferrechte bei Sachmängeln>",
+    ...mindestens 2 Rechtsgrundlagen...
+  ],
+  "counterarguments": [
+    "<Mögliches Gegenargument des Händlers/der Bank und wie man es entkräftet>",
+    ...mindestens 2 Gegenargumente...
+  ],
   "urgencyLevel": "hoch" | "mittel" | "niedrig",
-  "deadline": "...",
-  "merchantTemplate": "...",
-  "bankTemplate": "...",
-  "escalationTemplate": "...",
-  "disclaimer": "..."
+  "deadline": "<Konkrete Fristinformation: z.B. 'PayPal Käuferschutz: 180 Tage ab Zahldatum – Frist läuft am [berechnet] ab. Jetzt handeln!'>",
+  "merchantTemplate": "<Professionelles Anschreiben an den Händler auf Deutsch, formell, max 150 Wörter>",
+  "bankTemplate": "<Professionelles Chargeback-Anschreiben an Bank/PayPal/Klarna auf Deutsch, max 150 Wörter>",
+  "escalationTemplate": "<Eskalationsschreiben für Schlichtungsstelle oder Verbraucherzentrale, max 150 Wörter>",
+  "disclaimer": "Keine Rechtsberatung. Keine Erfolgsgarantie. ChargebackPilot bietet allgemeine Informationen und KI-gestützte Formulierungshilfe. Die generierten Texte ersetzen keine anwaltliche Beratung und stellen keine Rechtsdienstleistung dar."
 }
 
-WICHTIGE RICHTLINIEN:
-- Antworte NUR im JSON-Format.
-- Antworte IMMER auf Deutsch.
-- Die Textvorlagen sollen den spezifischen Sachverhalt (${input.merchantName}, ${input.amount.toFixed(2)} EUR, ${input.paymentDate}) konkret aufgreifen.`;
+WICHTIGE RICHTLINIEN FÜR DIE ANALYSE:
+- Sei realistisch und ehrlich bei der successProbability. Keine falschen Hoffnungen wecken.
+- Die successProbability soll folgende Faktoren berücksichtigen: Beweislage (40%), Zahlungsmethode/Chargeback-Möglichkeit (30%), Problemtyp/Rechtslage (20%), ob Händler bereits kontaktiert wurde (10%)
+- Für PayPal/Kreditkarten: Chargeback ist oft möglich, also eher höhere Wahrscheinlichkeit wenn Beweise gut sind
+- Für Banküberweisung: deutlich schwieriger, niedrigere Wahrscheinlichkeit
+- Die Textvorlagen müssen vollständig, professionell und sofort verwendbar sein
+- Nutze konkrete Gesetzesangaben (BGB, EU-Zahlungsdiensterichtlinie, etc.)
+- Erwähne spezifische Fristen für die jeweilige Zahlungsmethode
+- Die Vorlagen sollen den spezifischen Sachverhalt (${input.merchantName}, ${input.amount.toFixed(2)} EUR, ${input.paymentDate}) konkret aufgreifen
+- Antworte IMMER auf Deutsch
+- KEIN Markdown in den Template-Feldern, nur plain text mit Zeilenumbrüchen`;
+}
+
+function isQuotaOrRateError(err: unknown): boolean {
+  const msg = err instanceof Error ? err.message : String(err);
+  const lower = msg.toLowerCase();
+  return (
+    lower.includes("quota") ||
+    lower.includes("rate") ||
+    lower.includes("resource_exhausted") ||
+    lower.includes("resource exhausted") ||
+    lower.includes("429") ||
+    lower.includes("exceeded") ||
+    lower.includes("limit")
+  );
 }
 
 async function callGemini(genAI: any, prompt: string): Promise<CaseAnalysis> {
-  // Wir probieren gemini-1.5-flash, was der Standardname ist.
-  const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+  const model = genAI.getGenerativeModel({ 
+    model: "gemini-1.5-flash",
+    generationConfig: {
+      temperature: 0.3,
+      topP: 0.8,
+      topK: 40,
+      maxOutputTokens: 2048,
+      responseMimeType: "application/json",
+    }
+  });
 
   try {
     console.log("[Gemini] Sending request to gemini-1.5-flash...");
-    const result = await model.generateContent({
-      contents: [{ role: "user", parts: [{ text: prompt }] }],
-      generationConfig: {
-        temperature: 0.4,
-        topP: 0.8,
-        topK: 40,
-        maxOutputTokens: 2048,
-        // Manche Versionen haben Probleme mit responseMimeType in v1beta
-      },
-    });
-
+    const result = await model.generateContent(prompt);
     const response = await result.response;
     const rawText = response.text();
     
@@ -151,7 +179,6 @@ async function callGemini(genAI: any, prompt: string): Promise<CaseAnalysis> {
     console.error("[Gemini API Detail Error]", {
       message: error.message,
       status: error.status,
-      statusText: error.statusText,
       stack: error.stack
     });
     throw error;
@@ -169,7 +196,8 @@ export async function analyzeWithGemini(input: CaseInput): Promise<CaseAnalysis>
       console.log("[Gemini] Primary key SUCCESS");
       return result;
     } catch (err: any) {
-      console.warn(`[Gemini] Primary key FAILED: ${err?.message || err}`);
+      const quotaErr = isQuotaOrRateError(err);
+      console.warn(`[Gemini] Primary key FAILED (quota=${quotaErr}): ${err?.message || err}`);
     }
   }
 
