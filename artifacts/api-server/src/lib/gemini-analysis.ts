@@ -3,10 +3,10 @@ import { type CaseAnalysis } from "@workspace/db";
 import { logger } from "./logger";
 
 const PRIMARY_KEY = process.env.GEMINI_API_KEY ?? "";
-const FALLBACK_KEY = "AIzaSyBlY5w_g0JaIwDHWGCSIkhG_8H7aM63r58";
+const FALLBACK_KEY = process.env.GEMINI_API_KEY_FALLBACK ?? "";
 
 const primaryAi = PRIMARY_KEY ? new GoogleGenAI({ apiKey: PRIMARY_KEY }) : null;
-const fallbackAi = new GoogleGenAI({ apiKey: FALLBACK_KEY });
+const fallbackAi = FALLBACK_KEY ? new GoogleGenAI({ apiKey: FALLBACK_KEY }) : null;
 
 export interface CaseInput {
   paymentMethod: string;
@@ -185,18 +185,22 @@ export async function analyzeWithGemini(input: CaseInput): Promise<CaseAnalysis>
     logger.warn("GEMINI_API_KEY not set, using fallback key directly");
   }
 
-  // Try fallback key
-  try {
-    const result = await callGemini(fallbackAi, prompt);
-    logger.info({ key: "fallback" }, "Gemini analysis succeeded via fallback key");
-    return result;
-  } catch (err) {
-    logger.error(
-      { err: err instanceof Error ? err.message : String(err) },
-      "Both Gemini keys failed, using local fallback analysis",
-    );
-    return buildFallbackAnalysis(input);
+  // Try fallback key (if configured)
+  if (fallbackAi) {
+    try {
+      const result = await callGemini(fallbackAi, prompt);
+      logger.info({ key: "fallback" }, "Gemini analysis succeeded via fallback key");
+      return result;
+    } catch (err) {
+      logger.error(
+        { err: err instanceof Error ? err.message : String(err) },
+        "Both Gemini keys failed, using local fallback analysis",
+      );
+    }
   }
+
+  logger.warn("No functional Gemini API keys available, using local fallback analysis");
+  return buildFallbackAnalysis(input);
 }
 
 function buildFallbackAnalysis(input: CaseInput): CaseAnalysis {
