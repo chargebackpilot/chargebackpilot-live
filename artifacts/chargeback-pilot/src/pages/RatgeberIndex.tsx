@@ -1,0 +1,132 @@
+import { MainLayout } from "@/components/layout/MainLayout";
+import { Link } from "wouter";
+import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
+import { ArrowRight, BookOpen, AlertTriangle, GitCompare, Store } from "lucide-react";
+import { Breadcrumbs } from "@/components/Breadcrumbs";
+import { SeoHead } from "@/components/SeoHead";
+import { MERCHANTS } from "@/data/merchants";
+
+export const GUIDES = [
+  { path: "/paypal-chargeback", title: "PayPal Käuferschutz", desc: "Wie du dein Geld bei PayPal zurückholst." },
+  { path: "/amex-chargeback", title: "Amex Chargeback", desc: "American Express Reklamationen erfolgreich einreichen." },
+  { path: "/visa-mastercard-chargeback", title: "Visa & Mastercard Chargeback", desc: "Der Weg zur Rückerstattung bei Kreditkartenzahlungen." },
+  { path: "/klarna-reklamation", title: "Klarna Reklamation", desc: "Käuferschutz bei Klarna-Zahlungen nutzen." },
+  { path: "/flug-chargeback", title: "Flug Chargeback", desc: "Reiserückerstattung bei Ausfällen und Stornierungen." },
+  { path: "/lieferando-rueckerstattung", title: "Lieferando Rückerstattung", desc: "Geld zurück bei falschem oder fehlendem Essen." },
+  { path: "/ware-nicht-erhalten", title: "Ware nicht erhalten", desc: "Was tun, wenn das Paket nie ankommt?" },
+  { path: "/abo-falle-chargeback", title: "Abo-Falle", desc: "Ungewollte Abbuchungen stoppen und Geld zurückfordern." }
+];
+
+const HIGHLIGHTS = [
+  {
+    path: "/vergleich/paypal-vs-kreditkarte-vs-klarna",
+    icon: GitCompare,
+    title: "PayPal vs. Kreditkarte vs. Klarna",
+    desc: "Großer Vergleich 2026 — welcher Käuferschutz ist im Streitfall wirklich am stärksten?",
+    tag: "Vergleich",
+  },
+  {
+    path: "/scam-shops-2026",
+    icon: AlertTriangle,
+    title: "Scam-Shops & Fake-Anbieter 2026",
+    desc: "8 Warnsignale, 4 Scam-Kategorien und die exakte Anleitung, wie du dein Geld zurückholst.",
+    tag: "Betrugsschutz",
+  },
+];
+
+export default function RatgeberIndex() {
+  return (
+    <MainLayout>
+      <SeoHead
+        title="Ratgeber & Chargeback-Guides 2026 | ChargebackPilot"
+        description="Über 30 Schritt-für-Schritt-Anleitungen für Käuferschutz, Chargeback und Reklamation — sortiert nach Zahlungsart, Anbieter und Problemtyp."
+        canonical="/ratgeber"
+      />
+      <Breadcrumbs items={[{ label: "Ratgeber" }]} />
+
+      <div className="container mx-auto max-w-5xl py-12 px-4">
+        <div className="text-center mb-12">
+          <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-primary/10 text-primary mb-6">
+            <BookOpen className="w-8 h-8" />
+          </div>
+          <h1 className="text-4xl font-bold mb-4">Ratgeber & Chargeback-Guides</h1>
+          <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
+            Umfassende Informationen, Tipps und Schritt-für-Schritt-Anleitungen für jede Art von Zahlungsproblem.
+          </p>
+        </div>
+
+        {/* Highlights */}
+        <section className="mb-16">
+          <h2 className="text-2xl font-bold mb-5">Top-Empfehlungen</h2>
+          <div className="grid md:grid-cols-2 gap-4">
+            {HIGHLIGHTS.map((h, i) => {
+              const Icon = h.icon;
+              return (
+                <Link key={i} href={h.path}>
+                  <Card className="h-full hover:border-primary transition-colors cursor-pointer group">
+                    <CardHeader>
+                      <div className="flex items-start justify-between mb-2">
+                        <div className="w-10 h-10 rounded-lg bg-primary/10 text-primary flex items-center justify-center">
+                          <Icon className="w-5 h-5" />
+                        </div>
+                        <span className="text-[10px] font-bold uppercase tracking-wider bg-primary/10 text-primary px-2 py-0.5 rounded">{h.tag}</span>
+                      </div>
+                      <CardTitle className="flex items-start justify-between gap-3">
+                        <span>{h.title}</span>
+                        <ArrowRight className="w-5 h-5 text-muted-foreground group-hover:text-primary transition-colors shrink-0" />
+                      </CardTitle>
+                      <CardDescription className="mt-2 text-sm leading-relaxed">{h.desc}</CardDescription>
+                    </CardHeader>
+                  </Card>
+                </Link>
+              );
+            })}
+          </div>
+        </section>
+
+        {/* Core guides */}
+        <section className="mb-16">
+          <h2 className="text-2xl font-bold mb-5">Nach Zahlungsart & Problemtyp</h2>
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {GUIDES.map((guide, i) => (
+              <Link key={i} href={guide.path}>
+                <Card className="h-full hover:border-primary transition-colors cursor-pointer group">
+                  <CardHeader>
+                    <CardTitle className="flex items-start justify-between gap-4 text-lg">
+                      <span>{guide.title}</span>
+                      <ArrowRight className="w-5 h-5 text-muted-foreground group-hover:text-primary transition-colors shrink-0" />
+                    </CardTitle>
+                    <CardDescription className="mt-2 text-sm leading-relaxed">{guide.desc}</CardDescription>
+                  </CardHeader>
+                </Card>
+              </Link>
+            ))}
+          </div>
+        </section>
+
+        {/* Merchant hubs */}
+        <section>
+          <h2 className="text-2xl font-bold mb-2 flex items-center gap-2">
+            <Store className="w-6 h-6 text-primary" />
+            Nach Anbieter
+          </h2>
+          <p className="text-sm text-muted-foreground mb-5">
+            Direkt zu deinem Anbieter — mit individuellen Anleitungen pro Problemtyp.
+          </p>
+          <div className="grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2.5">
+            {MERCHANTS.map((m) => (
+              <Link key={m.slug} href={`/hilfe/${m.slug}`}>
+                <Card className="hover:border-primary transition-colors cursor-pointer">
+                  <CardContent className="p-3 flex items-center justify-between gap-2">
+                    <span className="font-medium text-sm">{m.name}</span>
+                    <ArrowRight className="w-4 h-4 text-muted-foreground shrink-0" />
+                  </CardContent>
+                </Card>
+              </Link>
+            ))}
+          </div>
+        </section>
+      </div>
+    </MainLayout>
+  );
+}

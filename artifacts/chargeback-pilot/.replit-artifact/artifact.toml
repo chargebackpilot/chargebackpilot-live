@@ -1,0 +1,31 @@
+kind = "web"
+previewPath = "/"
+title = "ChargebackPilot"
+version = "1.0.0"
+id = "artifacts/chargeback-pilot"
+router = "path"
+
+[[integratedSkills]]
+name = "react-vite"
+version = "1.0.0"
+
+[[services]]
+name = "web"
+paths = [ "/" ]
+localPort = 22472
+
+[services.development]
+run = "pnpm --filter @workspace/chargeback-pilot run dev"
+
+[services.production]
+build = [ "pnpm", "--filter", "@workspace/chargeback-pilot", "run", "build" ]
+publicDir = "artifacts/chargeback-pilot/dist/public"
+serve = "static"
+
+[[services.production.rewrites]]
+from = "/*"
+to = "/index.html"
+
+[services.env]
+PORT = "22472"
+BASE_PATH = "/"

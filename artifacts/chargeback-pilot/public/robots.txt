@@ -1,0 +1,6 @@
+User-agent: *
+Allow: /
+Disallow: /admin
+Disallow: /fall-pruefen?
+
+Sitemap: https://chargebackpilot.de/sitemap.xml

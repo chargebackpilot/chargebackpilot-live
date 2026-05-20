@@ -1,0 +1,239 @@
+Build a production-ready MVP SaaS web app for “ChargebackPilot.de”.
+
+Goal:
+ChargebackPilot is an AI-guided chargeback and payment dispute assistant for German consumers. It helps users structure their case, understand which evidence may be useful, choose the right dispute category, and generate professional text templates for PayPal, credit card issuers, Amex, Visa/Mastercard banks, Klarna, and merchants.
+
+IMPORTANT LEGAL POSITIONING:
+This is NOT legal advice, NOT a law firm, NOT claims enforcement, and NOT a guarantee of success. It is an AI-powered information, organization, and wording assistant. Add clear disclaimers throughout the product:
+“Keine Rechtsberatung. Keine Erfolgsgarantie. ChargebackPilot bietet allgemeine Informationen und KI-gestützte Formulierungshilfe.”
+Do not use wording like “we win your case” or “guaranteed refund”.
+
+Tech stack:
+- Next.js 14+ with App Router
+- TypeScript
+- Tailwind CSS
+- shadcn/ui components
+- Supabase for auth and database
+- Stripe for payments later, but create placeholder structure
+- OpenAI API integration placeholder
+- Fully responsive, mobile-first
+- Clean professional fintech-style UI
+- German language as default
+- SEO optimized
+
+Brand:
+Name: ChargebackPilot
+Domain: chargebackpilot.de
+Tone: trustworthy, modern, calm, professional, consumer-friendly.
+Visual style: premium fintech SaaS, white background, dark navy/black text, subtle green/blue accents, rounded cards, clean forms, high trust.
+
+Pages to build:
+
+1. Homepage `/`
+SEO title:
+“ChargebackPilot – KI-Hilfe für Chargebacks, PayPal Käuferschutz & Zahlungsreklamationen”
+Meta description:
+“ChargebackPilot hilft dir, Zahlungsprobleme strukturiert aufzubereiten, Beweise zu prüfen und professionelle Texte für PayPal, Kreditkarte, Amex, Visa/Mastercard, Klarna und Händler zu erstellen.”
+
+Homepage sections:
+- Hero:
+  Headline: “Dein KI-Pilot für Chargebacks & Zahlungsreklamationen”
+  Subheadline: “Strukturiere deinen Fall, erkenne fehlende Beweise und erstelle professionelle Formulierungen für PayPal, Kreditkarte, Amex, Klarna und Händler.”
+  CTA: “Fall kostenlos prüfen”
+  Secondary CTA: “So funktioniert es”
+- Trust disclaimer below hero
+- “So funktioniert es” 3 steps:
+  1. Fall beschreiben
+  2. Beweise prüfen
+  3. Textvorlagen erhalten
+- Use cases:
+  PayPal Käuferschutz, Kreditkarten-Chargeback, Flug nicht genutzt/erstattet, Ware nicht erhalten, Abo-Falle, Lieferdienst/Hotel/Tickets
+- Feature cards:
+  Chargeback-Strategie, Beweis-Checkliste, Formulierungsassistent, Fristen-Überblick, Gegenargumente, PDF-Export placeholder
+- FAQ section
+- Footer with Impressum placeholder, Datenschutz placeholder, Disclaimer
+
+2. Main tool `/fall-pruefen`
+Create a multi-step form with progress indicator.
+
+Step 1: Zahlungsart
+Options:
+- PayPal
+- Kreditkarte Visa/Mastercard
+- American Express
+- Klarna
+- Apple Pay / Google Pay
+- Banküberweisung
+- Sonstiges
+
+Step 2: Problemtyp
+Options:
+- Ware nicht erhalten
+- Ware defekt / anders als beschrieben
+- Dienstleistung nicht erbracht
+- Flug / Reise / Hotel Problem
+- Abo / ungewollte Abbuchung
+- Betrug / Scam Verdacht
+- Lieferdienst / Essen unbrauchbar
+- Rückerstattung zugesagt aber nicht erhalten
+- Sonstiges
+
+Step 3: Anbieter/Händler
+Fields:
+- Händlername
+- Betrag
+- Zahlungsdatum
+- Land des Händlers
+- Wurde der Händler bereits kontaktiert? yes/no
+- Was hat der Händler geantwortet?
+
+Step 4: Beweise
+Checkboxes:
+- Zahlungsnachweis
+- Bestellbestätigung
+- E-Mail-Verlauf
+- Chat-Screenshots
+- Fotos/Videos
+- Tracking
+- Stornierungsbestätigung
+- Refund-Zusage
+- AGB/Screenshots
+- Keine Beweise vorhanden
+
+Step 5: Freitext
+Textarea:
+“Beschreibe kurz, was passiert ist.”
+
+Step 6: Ergebnis
+Show generated structured analysis using mock AI logic for now:
+- Fall-Zusammenfassung
+- Einschätzung: Stark / Mittel / Schwach
+- Warum diese Einschätzung?
+- Fehlende Beweise
+- Empfohlene nächste Schritte
+- Empfohlene Kategorie für PayPal/Kreditkarte
+- Professionelle Textvorlage
+- Händler-Vorlage
+- Bank-/PayPal-Vorlage
+- Disclaimer
+
+Create a clean result card with copy buttons for templates.
+Add CTA: “Premium-Bericht freischalten” placeholder.
+
+3. SEO landing pages:
+Create these pages with strong SEO content, FAQs, internal links to `/fall-pruefen`:
+- `/paypal-chargeback`
+- `/amex-chargeback`
+- `/visa-mastercard-chargeback`
+- `/klarna-reklamation`
+- `/flug-chargeback`
+- `/lieferando-rueckerstattung`
+- `/ware-nicht-erhalten`
+- `/abo-falle-chargeback`
+
+Each SEO page should include:
+- H1 with target keyword
+- Short explanation
+- When a chargeback/dispute may be relevant
+- Evidence checklist
+- Step-by-step guide
+- Common mistakes
+- FAQ
+- CTA to use the tool
+- Legal disclaimer
+
+4. Blog index `/ratgeber`
+Show article cards for all SEO pages.
+
+5. Legal pages placeholders:
+- `/impressum`
+- `/datenschutz`
+- `/disclaimer`
+The disclaimer page must clearly state:
+“ChargebackPilot bietet keine Rechtsberatung, keine Rechtsdienstleistung und keine Vertretung gegenüber Banken, Zahlungsdienstleistern oder Händlern. Die Inhalte dienen nur der allgemeinen Information und Formulierungshilfe.”
+
+Components:
+- Navbar with logo “ChargebackPilot”
+- Mobile menu
+- Footer
+- TrustBadge component
+- DisclaimerBanner component
+- StepForm component
+- ResultCard component
+- SEOArticleLayout component
+- FAQ component
+- CTA component
+
+SEO requirements:
+- Use proper metadata for every page
+- Add JSON-LD structured data:
+  - WebSite
+  - FAQPage on SEO pages
+  - SoftwareApplication on homepage
+- Use clean semantic HTML
+- H1 only once per page
+- Internal linking between relevant pages
+- Fast loading
+- Mobile-first
+- Accessible forms and buttons
+- Add robots.txt and sitemap.xml generation if possible
+
+UI requirements:
+- Very professional fintech SaaS look
+- No cheesy design
+- Clean spacing
+- Rounded cards
+- Strong CTA buttons
+- Trust-focused copy
+- Use icons from lucide-react
+- Add subtle gradients but keep it serious
+- Mobile view must be excellent
+
+Important copy rules:
+- Never promise success.
+- Never say “we recover your money”.
+- Say “hilft dir bei Strukturierung, Beweisübersicht und Formulierungen”.
+- Always mention “Keine Rechtsberatung. Keine Erfolgsgarantie.”
+
+Mock AI:
+For now, implement a deterministic mock analysis function based on form answers.
+Example:
+- If payment method is credit card/Amex/PayPal and evidence includes payment proof + merchant communication + refund promise, show stronger case.
+- If no evidence and merchant not contacted, show weaker case and recommend first contacting merchant.
+- Generate text templates dynamically from user inputs.
+
+Database:
+Create Supabase schema suggestions in comments:
+users
+cases
+case_evidence
+case_outputs
+subscriptions
+
+Payment placeholder:
+Add pricing section:
+Free:
+- Basisanalyse
+Premium one-time 7,99€:
+- Vollständiger Bericht
+- bessere Textvorlagen
+- PDF Export
+- Gegenargumente
+Subscription 9,99€/month:
+- mehrere Fälle
+- gespeicherte Fälle
+
+Do not actually require Stripe to use the free MVP yet. Just create placeholder buttons.
+
+Deliverables:
+- Fully working app
+- Clean folder structure
+- No broken imports
+- Professional German copy
+- SEO-ready pages
+- Responsive design
+- Easy to deploy
+
+Mein Tipp: Gib Replit danach direkt noch diesen zweiten Prompt:
+
+Now improve the app like a serious fintech SaaS landing page. Make it visually more premium, mobile-first, conversion optimized, and trust-focused. Add better spacing, professional cards, stronger CTAs, better FAQ design, and make the multi-step form feel extremely smooth and simple.
