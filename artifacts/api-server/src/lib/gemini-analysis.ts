@@ -138,21 +138,32 @@ function isQuotaOrRateError(err: unknown): boolean {
 }
 
 async function callGemini(genAI: any, prompt: string): Promise<CaseAnalysis> {
-  const modelNames = ["gemini-1.5-flash", "gemini-1.5-flash-latest", "gemini-pro"];
+  // Erweiterte Liste bekannter Modell-IDs
+  const modelNames = [
+    "gemini-1.5-flash",
+    "gemini-1.5-flash-latest",
+    "gemini-1.5-pro",
+    "gemini-pro"
+  ];
+  
   let lastError: any = null;
 
   for (const modelName of modelNames) {
     try {
       console.log(`[Gemini] Attempting with model: ${modelName}...`);
-      const model = genAI.getGenerativeModel({ 
-        model: modelName,
+      const model = genAI.getGenerativeModel({ model: modelName });
+
+      const result = await model.generateContent({
+        contents: [{ role: "user", parts: [{ text: prompt }] }],
         generationConfig: {
           temperature: 0.3,
-          responseMimeType: "application/json",
-        }
+          topP: 0.8,
+          topK: 40,
+          maxOutputTokens: 2048,
+          // Wir lassen responseMimeType weg, falls das Modell es in v1beta nicht mag
+        },
       });
 
-      const result = await model.generateContent(prompt);
       const response = await result.response;
       const rawText = response.text();
       
