@@ -12,6 +12,9 @@ function getStripe(): Stripe {
 }
 
 function getBaseUrl(): string {
+  if (process.env.RENDER_EXTERNAL_URL) {
+    return process.env.RENDER_EXTERNAL_URL;
+  }
   const domains = process.env.REPLIT_DOMAINS;
   if (domains) {
     const first = domains.split(",")[0].trim();

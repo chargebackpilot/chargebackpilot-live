@@ -137,7 +137,7 @@ function isQuotaOrRateError(err: unknown): boolean {
 
 async function callGemini(client: GoogleGenAI, prompt: string): Promise<CaseAnalysis> {
   const response = await client.models.generateContent({
-    model: "gemini-2.5-flash",
+    model: "gemini-1.5-flash",
     contents: [{ role: "user", parts: [{ text: prompt }] }],
     config: {
       maxOutputTokens: 32768,
@@ -147,6 +147,9 @@ async function callGemini(client: GoogleGenAI, prompt: string): Promise<CaseAnal
   });
 
   const rawText = response.text ?? "";
+  if (!rawText) {
+    throw new Error("Empty response from Gemini");
+  }
   const parsed = JSON.parse(rawText) as CaseAnalysis;
 
   if (

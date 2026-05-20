@@ -33,6 +33,28 @@ app.use(express.urlencoded({ extended: true }));
 
 app.use("/api", router);
 
+// Global Error Handler
+app.use(
+  (
+    err: unknown,
+    req: express.Request,
+    res: express.Response,
+    next: express.NextFunction,
+  ) => {
+    logger.error(
+      err instanceof Error ? err.message : String(err),
+      err.stack,
+      "Unhandled error in API",
+    );
+    res.status(500).json({
+      error: "Ein interner Serverfehler ist aufgetreten.",
+      details: process.env.NODE_ENV === "development"
+        ? (err instanceof Error ? err.message : String(err))
+        : undefined,
+    });
+  },
+);
+
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const staticDir = path.resolve(__dirname, "../..", "chargeback-pilot", "dist", "public");
