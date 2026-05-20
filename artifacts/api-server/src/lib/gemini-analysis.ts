@@ -138,51 +138,49 @@ function isQuotaOrRateError(err: unknown): boolean {
 }
 
 async function callGemini(genAI: any, prompt: string): Promise<CaseAnalysis> {
-  const model = genAI.getGenerativeModel({ 
-    model: "gemini-1.5-flash",
-    generationConfig: {
-      temperature: 0.3,
-      topP: 0.8,
-      topK: 40,
-      maxOutputTokens: 2048,
-      responseMimeType: "application/json",
+  const modelNames = ["gemini-1.5-flash", "gemini-1.5-flash-latest", "gemini-pro"];
+  let lastError: any = null;
+
+  for (const modelName of modelNames) {
+    try {
+      console.log(`[Gemini] Attempting with model: ${modelName}...`);
+      const model = genAI.getGenerativeModel({ 
+        model: modelName,
+        generationConfig: {
+          temperature: 0.3,
+          responseMimeType: "application/json",
+        }
+      });
+
+      const result = await model.generateContent(prompt);
+      const response = await result.response;
+      const rawText = response.text();
+      
+      if (!rawText) continue;
+
+      const jsonStart = rawText.indexOf('{');
+      const jsonEnd = rawText.lastIndexOf('}');
+      if (jsonStart === -1 || jsonEnd === -1) {
+        console.warn(`[Gemini] No JSON found in response from ${modelName}`);
+        continue;
+      }
+
+      const jsonText = rawText.substring(jsonStart, jsonEnd + 1);
+      const parsed = JSON.parse(jsonText) as CaseAnalysis;
+
+      if (parsed.strength && parsed.merchantTemplate) {
+        console.log(`[Gemini] Success with model: ${modelName}`);
+        return parsed;
+      }
+    } catch (err: any) {
+      lastError = err;
+      console.warn(`[Gemini] Model ${modelName} failed: ${err.message}`);
+      if (err.status === 404 || err.message?.includes("not found")) continue;
+      throw err;
     }
-  });
-
-  try {
-    console.log("[Gemini] Sending request to gemini-1.5-flash...");
-    const result = await model.generateContent(prompt);
-    const response = await result.response;
-    const rawText = response.text();
-    
-    if (!rawText) {
-      throw new Error("Gemini returned empty text");
-    }
-
-    // JSON Extraktion verbessern
-    const jsonStart = rawText.indexOf('{');
-    const jsonEnd = rawText.lastIndexOf('}');
-    
-    if (jsonStart === -1 || jsonEnd === -1) {
-      throw new Error("No JSON found in response");
-    }
-
-    const jsonText = rawText.substring(jsonStart, jsonEnd + 1);
-    const parsed = JSON.parse(jsonText) as CaseAnalysis;
-
-    if (!parsed.strength || !parsed.merchantTemplate) {
-      throw new Error("JSON missing critical fields");
-    }
-
-    return parsed;
-  } catch (error: any) {
-    console.error("[Gemini API Detail Error]", {
-      message: error.message,
-      status: error.status,
-      stack: error.stack
-    });
-    throw error;
   }
+
+  throw lastError || new Error("All models failed to return valid analysis");
 }
 
 export async function analyzeWithGemini(input: CaseInput): Promise<CaseAnalysis> {
