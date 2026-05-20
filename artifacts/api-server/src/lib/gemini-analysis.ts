@@ -2,10 +2,10 @@ import { GoogleGenerativeAI } from "@google/generative-ai";
 import { type CaseAnalysis } from "@workspace/db";
 import { logger } from "./logger";
 
-const PRIMARY_KEY = process.env.GEMINI_API_KEY || "";
-const FALLBACK_KEY = process.env.GEMINI_API_KEY_FALLBACK || "";
+const PRIMARY_KEY = (process.env.GEMINI_API_KEY || "").trim();
+const FALLBACK_KEY = (process.env.GEMINI_API_KEY_FALLBACK || "").trim();
 
-console.log(`[Gemini Init] Primary key set: ${!!PRIMARY_KEY}, Fallback key set: ${!!FALLBACK_KEY}`);
+console.log(`[Gemini Init] Primary key length: ${PRIMARY_KEY.length}, Fallback key length: ${FALLBACK_KEY.length}`);
 
 const primaryAi = PRIMARY_KEY ? new GoogleGenerativeAI(PRIMARY_KEY) : null;
 const fallbackAi = FALLBACK_KEY ? new GoogleGenerativeAI(FALLBACK_KEY) : null;
