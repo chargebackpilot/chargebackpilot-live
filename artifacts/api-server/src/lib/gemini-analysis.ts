@@ -1,4 +1,3 @@
-import { GoogleGenerativeAI } from "@google/generative-ai";
 import { type CaseAnalysis } from "@workspace/db";
 import { logger } from "./logger";
 
@@ -6,9 +5,6 @@ const PRIMARY_KEY = (process.env.GEMINI_API_KEY || "").trim();
 const FALLBACK_KEY = (process.env.GEMINI_API_KEY_FALLBACK || "").trim();
 
 console.log(`[Gemini Init] Primary key length: ${PRIMARY_KEY.length}, Fallback key length: ${FALLBACK_KEY.length}`);
-
-const primaryAi = PRIMARY_KEY ? new GoogleGenerativeAI(PRIMARY_KEY) : null;
-const fallbackAi = FALLBACK_KEY ? new GoogleGenerativeAI(FALLBACK_KEY) : null;
 
 export interface CaseInput {
   paymentMethod: string;
@@ -137,8 +133,7 @@ function isQuotaOrRateError(err: unknown): boolean {
   );
 }
 
-async function callGemini(genAI: any, prompt: string): Promise<CaseAnalysis> {
-  // Erweiterte Liste bekannter Modell-IDs
+async function callGemini(apiKey: string, prompt: string): Promise<CaseAnalysis> {
   const modelNames = [
     "gemini-1.5-flash",
     "gemini-1.5-flash-latest",
@@ -150,24 +145,38 @@ async function callGemini(genAI: any, prompt: string): Promise<CaseAnalysis> {
 
   for (const modelName of modelNames) {
     try {
-      console.log(`[Gemini] Attempting with model: ${modelName}...`);
-      const model = genAI.getGenerativeModel({ model: modelName });
-
-      const result = await model.generateContent({
+      console.log(`[Gemini] Attempting pure REST fetch with model: ${modelName}...`);
+      
+      const url = `https://generativelanguage.googleapis.com/v1beta/models/${modelName}:generateContent?key=${apiKey}`;
+      
+      const payload = {
         contents: [{ role: "user", parts: [{ text: prompt }] }],
         generationConfig: {
           temperature: 0.3,
           topP: 0.8,
           topK: 40,
-          maxOutputTokens: 2048,
-          // Wir lassen responseMimeType weg, falls das Modell es in v1beta nicht mag
-        },
+          maxOutputTokens: 2048
+        }
+      };
+
+      const response = await fetch(url, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload)
       });
 
-      const response = await result.response;
-      const rawText = response.text();
+      if (!response.ok) {
+        const errText = await response.text();
+        throw new Error(`HTTP ${response.status}: ${errText}`);
+      }
+
+      const result = await response.json();
       
-      if (!rawText) continue;
+      const rawText = result?.candidates?.[0]?.content?.parts?.[0]?.text;
+      
+      if (!rawText) {
+        throw new Error("No text found in API response");
+      }
 
       const jsonStart = rawText.indexOf('{');
       const jsonEnd = rawText.lastIndexOf('}');
@@ -186,8 +195,8 @@ async function callGemini(genAI: any, prompt: string): Promise<CaseAnalysis> {
     } catch (err: any) {
       lastError = err;
       console.warn(`[Gemini] Model ${modelName} failed: ${err.message}`);
-      if (err.status === 404 || err.message?.includes("not found")) continue;
-      throw err;
+      if (err.message?.includes("HTTP 404")) continue;
+      throw err; 
     }
   }
 
@@ -198,10 +207,10 @@ export async function analyzeWithGemini(input: CaseInput): Promise<CaseAnalysis>
   const prompt = buildPrompt(input);
 
   // Try primary key first
-  if (primaryAi) {
+  if (PRIMARY_KEY) {
     console.log("[Gemini] Attempting analysis with primary key...");
     try {
-      const result = await callGemini(primaryAi, prompt);
+      const result = await callGemini(PRIMARY_KEY, prompt);
       console.log("[Gemini] Primary key SUCCESS");
       return result;
     } catch (err: any) {
@@ -211,10 +220,10 @@ export async function analyzeWithGemini(input: CaseInput): Promise<CaseAnalysis>
   }
 
   // Try fallback key
-  if (fallbackAi) {
+  if (FALLBACK_KEY) {
     console.log("[Gemini] Attempting analysis with fallback key...");
     try {
-      const result = await callGemini(fallbackAi, prompt);
+      const result = await callGemini(FALLBACK_KEY, prompt);
       console.log("[Gemini] Fallback key SUCCESS");
       return result;
     } catch (err: any) {
