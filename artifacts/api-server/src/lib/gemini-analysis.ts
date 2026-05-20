@@ -108,9 +108,11 @@ WICHTIGE RICHTLINIEN:
 }
 
 async function callGemini(genAI: any, prompt: string): Promise<CaseAnalysis> {
+  // Wir probieren gemini-1.5-flash, was der Standardname ist.
   const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 
   try {
+    console.log("[Gemini] Sending request to gemini-1.5-flash...");
     const result = await model.generateContent({
       contents: [{ role: "user", parts: [{ text: prompt }] }],
       generationConfig: {
@@ -118,6 +120,7 @@ async function callGemini(genAI: any, prompt: string): Promise<CaseAnalysis> {
         topP: 0.8,
         topK: 40,
         maxOutputTokens: 2048,
+        // Manche Versionen haben Probleme mit responseMimeType in v1beta
       },
     });
 
