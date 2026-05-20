@@ -61,21 +61,21 @@ function buildPrompt(input: CaseInput): string {
   const paymentLabel = PAYMENT_METHOD_LABELS[input.paymentMethod] || input.paymentMethod;
   const problemLabel = PROBLEM_TYPE_LABELS[input.problemType] || input.problemType;
 
-  return \`Du bist ein neutraler KI-Sprachassistent. Deine Aufgabe ist es, Verbraucher-Sachverhalte logisch zu strukturieren und sachliche, formelle Textentwürfe für Reklamationen zu generieren. 
+  return `Du bist ein neutraler KI-Sprachassistent. Deine Aufgabe ist es, Verbraucher-Sachverhalte logisch zu strukturieren und sachliche, formelle Textentwürfe für Reklamationen zu generieren. 
 WICHTIG: Du bist KEIN Anwalt, erteilst keine Rechtsberatung und fällst keine rechtlich bindenden Urteile. 
 Formuliere Einschätzungen zu Erfolgschancen immer vorsichtig und im Konjunktiv (z. B. 'könnte', 'möglicherweise', 'es besteht die Aussicht'). Formuliere die Textvorlagen so, dass der Nutzer als Absender auftritt.
 
 FALLDATEN:
-- Zahlungsmethode: \${paymentLabel}
-- Problemtyp: \${problemLabel}
-- Händler: \${input.merchantName}
-- Betrag: \${input.amount.toFixed(2)} EUR
-- Zahlungsdatum: \${input.paymentDate}
-- Land des Händlers: \${input.merchantCountry || "Nicht angegeben"}
-- Händler bereits kontaktiert: \${input.merchantContacted ? "Ja" : "Nein"}
-- Antwort des Händlers: \${input.merchantResponse || "Keine"}
-- Vorhandene Beweise: \${evidenceList}
-- Fallbeschreibung: \${input.description}
+- Zahlungsmethode: ${paymentLabel}
+- Problemtyp: ${problemLabel}
+- Händler: ${input.merchantName}
+- Betrag: ${input.amount.toFixed(2)} EUR
+- Zahlungsdatum: ${input.paymentDate}
+- Land des Händlers: ${input.merchantCountry || "Nicht angegeben"}
+- Händler bereits kontaktiert: ${input.merchantContacted ? "Ja" : "Nein"}
+- Antwort des Händlers: ${input.merchantResponse || "Keine"}
+- Vorhandene Beweise: ${evidenceList}
+- Fallbeschreibung: ${input.description}
 
 Analysiere diesen Fall und antworte AUSSCHLIESSLICH mit einem validen JSON-Objekt (kein Markdown, keine Erklärungen außerhalb des JSON) mit folgender Struktur:
 
@@ -116,9 +116,9 @@ WICHTIGE RICHTLINIEN FÜR DIE ANALYSE:
 - Die Textvorlagen müssen vollständig, professionell und sofort verwendbar sein
 - Nutze konkrete Gesetzesangaben (BGB, EU-Zahlungsdiensterichtlinie, etc.)
 - Erwähne spezifische Fristen für die jeweilige Zahlungsmethode
-- Die Vorlagen sollen den spezifischen Sachverhalt (\${input.merchantName}, \${input.amount.toFixed(2)} EUR, \${input.paymentDate}) konkret aufgreifen
+- Die Vorlagen sollen den spezifischen Sachverhalt (${input.merchantName}, ${input.amount.toFixed(2)} EUR, ${input.paymentDate}) konkret aufgreifen
 - Antworte IMMER auf Deutsch
-- KEIN Markdown in den Template-Feldern, nur plain text mit Zeilenumbrüchen\`;
+- KEIN Markdown in den Template-Feldern, nur plain text mit Zeilenumbrüchen`;
 }
 
 function isQuotaOrRateError(err: unknown): boolean {
@@ -233,14 +233,14 @@ function buildFallbackAnalysis(input: CaseInput): CaseAnalysis {
     strengthLabel,
     successProbability: probability,
     successProbabilityLabel: probability >= 65 ? "Hoch" : probability >= 40 ? "Mittel" : "Niedrig",
-    summary: \`Ihr Fall (\${problemLabel} bei \${input.merchantName} über \${input.amount.toFixed(2)} EUR via \${paymentLabel}) wurde analysiert. Die Ausgangslage ist \${strengthLabel.toLowerCase()}.\`,
-    reasoning: \`Die Einschätzung basiert auf der Zahlungsmethode (\${paymentLabel}), dem Problemtyp (\${problemLabel}) sowie \${input.evidence.filter((e) => e !== "none").length} vorliegenden Beweismitteln. \${input.merchantContacted ? "Der Händler wurde bereits kontaktiert, was die Position stärkt." : "Der Händler sollte zunächst direkt kontaktiert werden."}\`,
+    summary: `Ihr Fall (${problemLabel} bei ${input.merchantName} über ${input.amount.toFixed(2)} EUR via ${paymentLabel}) wurde analysiert. Die Ausgangslage ist ${strengthLabel.toLowerCase()}.`,
+    reasoning: `Die Einschätzung basiert auf der Zahlungsmethode (${paymentLabel}), dem Problemtyp (${problemLabel}) sowie ${input.evidence.filter((e) => e !== "none").length} vorliegenden Beweismitteln. ${input.merchantContacted ? "Der Händler wurde bereits kontaktiert, was die Position stärkt." : "Der Händler sollte zunächst direkt kontaktiert werden."}`,
     missingEvidence: input.evidence.includes("none") || input.evidence.length === 0
       ? ["Zahlungsnachweis (Kontoauszug oder Screenshot der Abbuchung)", "Kommunikationsverlauf mit dem Händler"]
       : [],
     nextSteps: [
-      \`\${input.merchantContacted ? "Händler erneut schriftlich kontaktieren und Frist setzen" : "Händler schriftlich kontaktieren – nutze die generierte Händler-Vorlage"}\`,
-      \`Chargeback bei \${paymentLabel} einleiten – nutze die generierte Bank-Vorlage\`,
+      `${input.merchantContacted ? "Händler erneut schriftlich kontaktieren und Frist setzen" : "Händler schriftlich kontaktieren – nutze die generierte Händler-Vorlage"}`,
+      `Chargeback bei ${paymentLabel} einleiten – nutze die generierte Bank-Vorlage`,
       "Alle Belege sicher aufbewahren (Screenshots, E-Mails, Quittungen)",
       "Fristen beachten und zeitnah handeln",
     ],
@@ -255,9 +255,9 @@ function buildFallbackAnalysis(input: CaseInput): CaseAnalysis {
       paymentLabel === "PayPal"
         ? "PayPal Käuferschutz: 180 Tage ab Zahldatum. Handeln Sie zeitnah!"
         : "Chargeback-Fristen variieren: meist 60–120 Tage ab Kontoauszugsdatum. Bitte sofort handeln!",
-    merchantTemplate: \`Betreff: Formelle Reklamation – Transaktion vom \${input.paymentDate} über \${input.amount.toFixed(2)} EUR\n\nSehr geehrte Damen und Herren,\n\nich wende mich an Sie bezüglich einer Transaktion vom \${input.paymentDate} in Höhe von \${input.amount.toFixed(2)} EUR bei Ihrem Unternehmen (\${input.merchantName}).\n\n\${input.description}\n\nIch fordere Sie auf, mir den Betrag von \${input.amount.toFixed(2)} EUR bis spätestens 14 Tage nach Eingang dieses Schreibens zurückzuerstatten.\n\nMit freundlichen Grüßen\n\n---\nKeine Rechtsberatung. ChargebackPilot.de\`,
-    bankTemplate: \`Betreff: Antrag auf Chargeback – \${input.merchantName} – \${input.amount.toFixed(2)} EUR – \${input.paymentDate}\n\nSehr geehrte Damen und Herren,\n\nIch beantrage die Einleitung eines Chargeback-Verfahrens für folgende Transaktion:\n• Händler: \${input.merchantName}\n• Betrag: \${input.amount.toFixed(2)} EUR\n• Datum: \${input.paymentDate}\n• Zahlungsmethode: \${paymentLabel}\n\n\${input.description}\n\nMit freundlichen Grüßen\n\n---\nKeine Rechtsberatung. ChargebackPilot.de\`,
-    escalationTemplate: \`Betreff: Eskalation – Ungelöster Streitfall – \${input.merchantName} – \${input.amount.toFixed(2)} EUR\n\nSehr geehrte Damen und Herren,\n\nDer bisherige Chargeback-Antrag für obigen Fall blieb erfolglos. Ich wende mich daher an die zuständige Schlichtungsstelle und bitte um Überprüfung.\n\nMit freundlichen Grüßen\n\n---\nKeine Rechtsberatung. ChargebackPilot.de\`,
+    merchantTemplate: `Betreff: Formelle Reklamation – Transaktion vom ${input.paymentDate} über ${input.amount.toFixed(2)} EUR\n\nSehr geehrte Damen und Herren,\n\nich wende mich an Sie bezüglich einer Transaktion vom ${input.paymentDate} in Höhe von ${input.amount.toFixed(2)} EUR bei Ihrem Unternehmen (${input.merchantName}).\n\n${input.description}\n\nIch fordere Sie auf, mir den Betrag von ${input.amount.toFixed(2)} EUR bis spätestens 14 Tage nach Eingang dieses Schreibens zurückzuerstatten.\n\nMit freundlichen Grüßen\n\n---\nKeine Rechtsberatung. ChargebackPilot.de`,
+    bankTemplate: `Betreff: Antrag auf Chargeback – ${input.merchantName} – ${input.amount.toFixed(2)} EUR – ${input.paymentDate}\n\nSehr geehrte Damen und Herren,\n\nIch beantrage die Einleitung eines Chargeback-Verfahrens für folgende Transaktion:\n• Händler: ${input.merchantName}\n• Betrag: ${input.amount.toFixed(2)} EUR\n• Datum: ${input.paymentDate}\n• Zahlungsmethode: ${paymentLabel}\n\n${input.description}\n\nMit freundlichen Grüßen\n\n---\nKeine Rechtsberatung. ChargebackPilot.de`,
+    escalationTemplate: `Betreff: Eskalation – Ungelöster Streitfall – ${input.merchantName} – ${input.amount.toFixed(2)} EUR\n\nSehr geehrte Damen und Herren,\n\nDer bisherige Chargeback-Antrag für obigen Fall blieb erfolglos. Ich wende mich daher an die zuständige Schlichtungsstelle und bitte um Überprüfung.\n\nMit freundlichen Grüßen\n\n---\nKeine Rechtsberatung. ChargebackPilot.de`,
     disclaimer:
       "Keine Rechtsberatung. Keine Erfolgsgarantie. ChargebackPilot bietet allgemeine Informationen und KI-gestützte Formulierungshilfe. Die generierten Texte ersetzen keine anwaltliche Beratung.",
   };
