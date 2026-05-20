@@ -2,11 +2,16 @@ import { GoogleGenAI } from "@google/genai";
 import { type CaseAnalysis } from "@workspace/db";
 import { logger } from "./logger";
 
-const PRIMARY_KEY = process.env.GEMINI_API_KEY ?? "";
-const FALLBACK_KEY = process.env.GEMINI_API_KEY_FALLBACK ?? "";
+const PRIMARY_KEY = process.env.GEMINI_API_KEY || "";
+const FALLBACK_KEY = process.env.GEMINI_API_KEY_FALLBACK || "";
 
-const primaryAi = PRIMARY_KEY ? new GoogleGenAI({ apiKey: PRIMARY_KEY }) : null;
-const fallbackAi = FALLBACK_KEY ? new GoogleGenAI({ apiKey: FALLBACK_KEY }) : null;
+logger.info({ 
+  hasPrimary: !!PRIMARY_KEY, 
+  hasFallback: !!FALLBACK_KEY 
+}, "Initializing Gemini clients");
+
+const primaryAi = PRIMARY_KEY ? new GoogleGenAI(PRIMARY_KEY) : null;
+const fallbackAi = FALLBACK_KEY ? new GoogleGenAI(FALLBACK_KEY) : null;
 
 export interface CaseInput {
   paymentMethod: string;
@@ -136,21 +141,26 @@ function isQuotaOrRateError(err: unknown): boolean {
 }
 
 async function callGemini(client: GoogleGenAI, prompt: string): Promise<CaseAnalysis> {
-  const response = await client.models.generateContent({
+  const model = client.getGenerativeModel({ 
     model: "gemini-1.5-flash",
-    contents: [{ role: "user", parts: [{ text: prompt }] }],
-    config: {
-      maxOutputTokens: 32768,
+    generationConfig: {
+      maxOutputTokens: 2000,
       temperature: 0.3,
       responseMimeType: "application/json",
-    },
+    }
   });
 
-  const rawText = response.text ?? "";
+  const result = await model.generateContent(prompt);
+  const response = await result.response;
+  const rawText = response.text();
+  
   if (!rawText) {
     throw new Error("Empty response from Gemini");
   }
-  const parsed = JSON.parse(rawText) as CaseAnalysis;
+
+  // Cleanup potential markdown blocks if Gemini ignores the mime-type hint
+  const jsonText = rawText.replace(/```json\n?|```/g, "").trim();
+  const parsed = JSON.parse(jsonText) as CaseAnalysis;
 
   if (
     typeof parsed.strength !== "string" ||
