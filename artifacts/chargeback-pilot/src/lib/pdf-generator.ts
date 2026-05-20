@@ -111,7 +111,7 @@ export function generatePdf(data: PdfData): void {
 
   doc.setFontSize(9);
   doc.setFont("helvetica", "normal");
-  doc.text("Fallanalyse & Textvorlagen", margin, 19);
+  doc.text("KI-Strukturierung & Textvorlagen", margin, 19);
 
   const dateStr = data.generatedAt ?? new Date().toLocaleDateString("de-DE");
   doc.text(`Erstellt am: ${dateStr}`, pageW - margin, 19, { align: "right" });
@@ -119,7 +119,7 @@ export function generatePdf(data: PdfData): void {
   doc.setFontSize(8);
   doc.setTextColor(180, 200, 255);
   doc.text(
-    "Keine Rechtsberatung. Indikative KI-Einschätzung. Vorlagen vor Verwendung prüfen.",
+    "Keine Rechtsberatung. Vorlagen vor Verwendung prüfen.",
     margin,
     25,
   );

@@ -167,24 +167,117 @@ export function LieferandoSEO() {
     category="Lieferdienst"
     whenApplies={[
       "Essen wurde nie geliefert",
+      "Essen eiskalt geliefert (z.B. Fahrer hat Umweg gemacht)",
       "Falsches Gericht geliefert",
       "Essen ungenießbar/verdorbene Zutaten"
     ]}
     evidence={[
       "Fotos des falschen oder ungenießbaren Essens (sofort machen!)",
-      "Screenshot des Bestellstatus in der App"
+      "Screenshot des Bestellstatus in der App (insb. wenn der Fahrer einen Umweg macht)",
+      "Bestellbestätigung"
     ]}
     steps={[
-      "Mache umgehend Fotos von Fehlern.",
+      "Mache umgehend Fotos von Fehlern oder dem kalten Essen.",
       "Kontaktiere den Lieferando-Support über die App oder Website.",
-      "Falls keine Einigung erfolgt: Kontaktiere PayPal oder dein Kreditkartenunternehmen für einen Konfliktfall."
+      "Falls keine Einigung erfolgt oder man dir nur einen 5€ Gutschein anbietet: Kontaktiere PayPal oder dein Kreditkartenunternehmen für einen Chargeback."
     ]}
     mistakes={[
       "Keine Beweisfotos gemacht: Essen direkt weggeworfen oder aufgegessen – ohne Foto keine Erstattung.",
-      "Zu lange gewartet: Reklamationen bei Lebensmitteln müssen sofort erfolgen."
+      "Zu lange gewartet: Reklamationen bei Lebensmitteln müssen sofort erfolgen.",
+      "Sich mit einem 3€ Gutschein abspeisen lassen, wenn das 30€ Essen kalt und ungenießbar war."
     ]}
     faq={[
-      { q: "Muss das Restaurant oder Lieferando erstatten?", a: "Dein Vertragspartner für die Zahlung ist meist Lieferando, daher erfolgt die Erstattung über sie." }
+      { q: "Muss das Restaurant oder Lieferando erstatten?", a: "Dein Vertragspartner für die Zahlung ist meist Lieferando, daher erfolgt die Erstattung über sie." },
+      { q: "Essen war kalt, weil der Fahrer einen Umweg gemacht hat - Geld zurück?", a: "Ja, wenn das Essen dadurch ungenießbar ist (z.B. kalte Pommes), ist das ein klarer Mangel. Lieferando wehrt sich oft, aber über PayPal oder Kreditkarte (Chargeback) hast du gute Chancen auf eine Voll- oder Teilerstattung." }
+    ]}
+  />;
+}
+
+export function WoltSEO() {
+  return <SEOArticleLayout 
+    title="Wolt Rückerstattung (Essen kalt / nicht geliefert)"
+    category="Lieferdienst"
+    whenApplies={[
+      "Essen komplett kalt angekommen",
+      "Fehlende Artikel in der Lieferung",
+      "Bestellung wurde storniert aber trotzdem abgebucht"
+    ]}
+    evidence={[
+      "Beweisfotos vom Zustand des Essens",
+      "Chat-Verlauf mit dem Wolt-Support",
+      "GPS-Screenshot der Fahrer-Route (falls Umweg ersichtlich)"
+    ]}
+    steps={[
+      "Schreibe dem Wolt In-App-Support.",
+      "Mache deutlich, dass das Essen aufgrund der Lieferzeit / des Zustands mangelhaft ist.",
+      "Bietet Wolt nur Wolt-Credits, bestehe auf einer Rückerstattung auf dein Zahlungsmittel.",
+      "Verweigert Wolt die Rückerstattung, nutze den Chargeback-Prozess bei deiner Bank/PayPal."
+    ]}
+    mistakes={[
+      "Wolt-Credits akzeptieren, wenn man eigentlich das Geld zurück will.",
+      "Die Frist für eine Reklamation (meist 24h) verstreichen lassen."
+    ]}
+    faq={[
+      { q: "Kann ich Chargeback machen, wenn Wolt mein Konto danach sperrt?", a: "Ja. Ein Chargeback ist dein gutes Recht bei Nichterfüllung. Wolt könnte theoretisch dein Konto sperren, was aber eher selten passiert, wenn es sich um einen berechtigten Einzelfall handelt." }
+    ]}
+  />;
+}
+
+export function UberEatsSEO() {
+  return <SEOArticleLayout 
+    title="Uber Eats Erstattung & Chargeback"
+    category="Lieferdienst"
+    whenApplies={[
+      "Fahrer hat das Essen an die falsche Adresse geliefert",
+      "Essen kalt wegen Mehrfach-Lieferungen (Stacked Orders)",
+      "Bestellung nie angekommen"
+    ]}
+    evidence={[
+      "Screenshots von der App-Tracking-Karte",
+      "Fotos der Lieferung (oder Foto des Ortes, wo es fälschlicherweise abgestellt wurde)",
+      "Support-Tickets in der Uber-App"
+    ]}
+    steps={[
+      "Problem direkt in der Uber Eats App unter 'Hilfe' melden.",
+      "Problem genau beschreiben (z.B. 'Bestellung nicht erhalten' oder 'Lebensmittelsicherheitsproblem').",
+      "Uber Eats Support entscheidet oft automatisiert. Wenn abgelehnt: Chargeback über PayPal/Apple Pay/Kreditkarte einleiten."
+    ]}
+    mistakes={[
+      "Sich vom Bot-Support abspeisen lassen.",
+      "Die Lieferung nicht sofort bei Ankunft überprüfen."
+    ]}
+    faq={[
+      { q: "Uber Eats Support lehnt ab, was nun?", a: "Der automatisierte Support lehnt oft erst einmal ab. Eskaliere den Fall über deinen Zahlungsdienstleister (PayPal Käuferschutz oder Kreditkarten-Chargeback)." }
+    ]}
+  />;
+}
+
+export function KiwiSEO() {
+  return <SEOArticleLayout 
+    title="Kiwi.com Steuern & Gebühren ohne 59€ Servicegebühr zurückholen"
+    category="Flug/Reise"
+    whenApplies={[
+      "Du hast den Flug selbst storniert (nicht-erstattbares Ticket)",
+      "Flug wurde verpasst (No-Show)",
+      "Du willst Flughafensteuern und Gebühren zurückfordern"
+    ]}
+    evidence={[
+      "Buchungsbestätigung",
+      "Nachweis über Stornierung / No-Show",
+      "Kiwi.com AGB (die eine Bearbeitungsgebühr von 59€ fordern)"
+    ]}
+    steps={[
+      "Fordere Kiwi.com formlos auf, dir die personenbezogenen Steuern und Gebühren zu erstatten.",
+      "Wenn Kiwi.com antwortet, dass sie eine Bearbeitungsgebühr (oft 59€) einbehalten: Widerspreche! Solche Gebühren sind nach gängiger Rechtsprechung (z.B. in Deutschland) für Steuerrückerstattungen unzulässig.",
+      "Reagiert Kiwi.com nicht oder verweigert die volle Auszahlung: Reiche einen Chargeback bei deiner Kreditkarte ein (Grund: Guthaben nicht erstattet / Credit not processed)."
+    ]}
+    mistakes={[
+      "Den geringen Restbetrag (nach Abzug der 59€) akzeptieren.",
+      "Glauben, dass man bei nicht-erstattbaren Tickets kein Geld zurückbekommt."
+    ]}
+    faq={[
+      { q: "Warum verlangt Kiwi.com 59€?", a: "Es ist ein Geschäftsmodell, um Kunden von der Rückforderung der Steuern abzuhalten oder daran zu verdienen. Du musst das nicht akzeptieren." },
+      { q: "Wie hole ich mir die vollen Steuern zurück?", a: "Durch Hartnäckigkeit oder einen Chargeback über dein Zahlungsmittel, da dir die Gebühren gesetzlich zustehen." }
     ]}
   />;
 }

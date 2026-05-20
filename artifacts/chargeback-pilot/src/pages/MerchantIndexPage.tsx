@@ -28,7 +28,7 @@ export default function MerchantIndexPage() {
             <p className="text-lg text-muted-foreground mb-6">{merchant.description}</p>
             <Link href="/fall-pruefen">
               <Button size="lg" className="gap-2">
-                Fall kostenlos prüfen <ArrowRight className="w-4 h-4" />
+                Generator starten <ArrowRight className="w-4 h-4" />
               </Button>
             </Link>
           </div>
@@ -46,8 +46,13 @@ export default function MerchantIndexPage() {
                     <CardContent className="p-5 flex items-center justify-between gap-3">
                       <div>
                         <div className="font-semibold">{merchant.name}: {p.label}</div>
-                        <div className="text-sm text-muted-foreground mt-0.5">
-                          Schritt-für-Schritt-Anleitung, Beweise, Vorlagen
+                        <div className="text-sm text-muted-foreground leading-relaxed mt-2">
+                          <p><strong>3 wichtige Schritte bei {merchant.name}:</strong></p>
+                          <ol className="list-decimal pl-4 mt-2 space-y-1">
+                            <li>Kontaktiere den Support von {merchant.name} schriftlich.</li>
+                            <li>Sichere Beweise (Bestellbestätigung, Chat-Verläufe, Fotos).</li>
+                            <li>Generiere mit ChargebackPilot die perfekten Anschreiben für Händler und Bank.</li>
+                          </ol>
                         </div>
                       </div>
                       <ArrowRight className="w-5 h-5 text-muted-foreground shrink-0" />

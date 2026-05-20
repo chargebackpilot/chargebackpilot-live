@@ -3,52 +3,61 @@ import { LogoLockup } from "../ui/Logo";
 
 export function Footer() {
   return (
-    <footer className="bg-muted py-12 border-t">
-      <div className="container mx-auto max-w-7xl px-4">
-        <div className="flex flex-col md:flex-row justify-between gap-10">
-          <div className="max-w-sm">
-            <Link href="/" className="inline-flex items-center mb-4">
-              <LogoLockup size={28} />
-            </Link>
-            <p className="text-sm text-muted-foreground mb-4">
-              Dein KI-Pilot für Chargebacks & Zahlungsreklamationen — schnell, strukturiert und professionell formuliert.
-            </p>
-            <p className="text-xs text-muted-foreground border-l-2 border-primary/30 pl-3">
-              <strong>Wichtiger Hinweis:</strong> ChargebackPilot bietet keine Rechtsberatung, keine Rechtsdienstleistung und keine Vertretung gegenüber Banken, Zahlungsdienstleistern oder Händlern. Die KI-Analyse erfolgt über die Gemini API von Google LLC und dient ausschließlich der allgemeinen Formulierungshilfe.
-            </p>
-          </div>
-
-          <div className="grid grid-cols-2 sm:grid-cols-3 gap-10">
-            <div className="flex flex-col gap-2">
-              <h3 className="font-semibold text-sm mb-1">Produkt</h3>
-              <Link href="/fall-pruefen" className="text-sm text-muted-foreground hover:text-foreground">Fall kostenlos prüfen</Link>
-              <Link href="/ratgeber" className="text-sm text-muted-foreground hover:text-foreground">Ratgeber</Link>
-            </div>
-            <div className="flex flex-col gap-2">
-              <h3 className="font-semibold text-sm mb-1">Themen</h3>
-              <Link href="/paypal-chargeback" className="text-sm text-muted-foreground hover:text-foreground">PayPal-Käuferschutz</Link>
-              <Link href="/visa-mastercard-chargeback" className="text-sm text-muted-foreground hover:text-foreground">Kreditkarte</Link>
-              <Link href="/klarna-reklamation" className="text-sm text-muted-foreground hover:text-foreground">Klarna</Link>
-              <Link href="/flug-chargeback" className="text-sm text-muted-foreground hover:text-foreground">Flug & Reise</Link>
-            </div>
-            <div className="flex flex-col gap-2">
-              <h3 className="font-semibold text-sm mb-1">Rechtliches</h3>
-              <Link href="/agb" className="text-sm text-muted-foreground hover:text-foreground">AGB</Link>
-              <Link href="/impressum" className="text-sm text-muted-foreground hover:text-foreground">Impressum</Link>
-              <Link href="/datenschutz" className="text-sm text-muted-foreground hover:text-foreground">Datenschutz</Link>
-              <Link href="/disclaimer" className="text-sm text-muted-foreground hover:text-foreground">Disclaimer</Link>
-            </div>
-          </div>
+    <footer className="bg-muted/20 border-t py-12 px-4 mt-auto">
+      <div className="container mx-auto max-w-7xl grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
+        <div className="md:col-span-2">
+          <Link href="/" className="inline-block mb-4">
+            <LogoLockup size={24} />
+          </Link>
+          <p className="text-sm text-muted-foreground mb-4 max-w-md leading-relaxed">
+            KI-gestützte Text-Generierung für Chargebacks und Käuferschutz. 
+            Strukturierte Briefvorlagen für PayPal, Visa, Mastercard und Klarna.
+          </p>
+          <p className="text-xs text-muted-foreground border-l-2 border-primary/30 pl-3">
+            <strong>Wichtiger Hinweis:</strong> ChargebackPilot bietet keine Rechtsberatung, keine Rechtsdienstleistung und keine Vertretung gegenüber Banken, Zahlungsdienstleistern oder Händlern. Die KI-Textgenerierung erfolgt über die Gemini API von Google LLC und dient ausschließlich der allgemeinen Formulierungshilfe.
+          </p>
         </div>
 
-        <div className="mt-10 pt-6 border-t border-border/60 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-muted-foreground">
-          <span>© {new Date().getFullYear()} ChargebackPilot — Keine Rechtsberatung. Keine Erfolgsgarantie.</span>
-          <span className="flex items-center gap-3">
-            <Link href="/impressum" className="hover:text-foreground">Impressum</Link>
-            <span className="opacity-40">·</span>
-            <Link href="/datenschutz" className="hover:text-foreground">Datenschutz</Link>
-          </span>
+        <div>
+          <h3 className="font-bold mb-4">Produkt</h3>
+          <ul className="space-y-2 text-sm text-muted-foreground">
+            <li><Link href="/fall-pruefen" className="hover:text-foreground transition-colors">Fall kostenlos prüfen</Link></li>
+            <li><Link href="/ratgeber" className="hover:text-foreground transition-colors">Ratgeber</Link></li>
+          </ul>
         </div>
+
+        <div>
+          <h3 className="font-bold mb-4">Themen</h3>
+          <ul className="space-y-2 text-sm text-muted-foreground">
+            <li><Link href="/paypal-chargeback" className="hover:text-foreground transition-colors">PayPal-Käuferschutz</Link></li>
+            <li><Link href="/visa-mastercard-chargeback" className="hover:text-foreground transition-colors">Kreditkarte</Link></li>
+            <li><Link href="/klarna-reklamation" className="hover:text-foreground transition-colors">Klarna</Link></li>
+            <li><Link href="/flug-chargeback" className="hover:text-foreground transition-colors">Flug & Reise</Link></li>
+          </ul>
+        </div>
+
+        <div>
+          <h3 className="font-bold mb-4">Rechtliches</h3>
+          <ul className="space-y-2 text-sm text-muted-foreground">
+            <li><Link href="/impressum" className="hover:text-foreground transition-colors">Impressum</Link></li>
+            <li><Link href="/datenschutz" className="hover:text-foreground transition-colors">Datenschutz</Link></li>
+            <li><Link href="/agb" className="hover:text-foreground transition-colors">AGB</Link></li>
+            <li><Link href="/widerruf" className="hover:text-foreground transition-colors">Widerruf</Link></li>
+            
+          </ul>
+        </div>
+      </div>
+      
+      <div className="container mx-auto max-w-7xl pt-8 border-t text-center text-sm text-muted-foreground">
+        <p className="mb-2">
+          ChargebackPilot ist ein unabhängiges Software-Tool und bietet keine Rechtsberatung oder rechtliche Vertretung an. 
+        </p>
+        <p>
+          Alle generierten Texte sind Formulierungshilfen und müssen vom Nutzer selbstständig auf Richtigkeit geprüft und versendet werden.
+        </p>
+        <p className="mt-4">
+          &copy; {new Date().getFullYear()} ChargebackPilot. Alle Rechte vorbehalten.
+        </p>
       </div>
     </footer>
   );

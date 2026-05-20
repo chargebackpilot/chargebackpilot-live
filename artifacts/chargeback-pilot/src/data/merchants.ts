@@ -181,10 +181,10 @@ export const MERCHANTS: MerchantDef[] = [
     slug: "lieferando",
     name: "Lieferando",
     sector: "food_delivery",
-    country: "Deutschland / Niederlande",
+    country: "Niederlande / Deutschland",
     trustLevel: "trusted",
-    description: "Marktführer für Essenslieferung in Deutschland (Just Eat Takeaway). Beschwerden gehen primär an Lieferando-Support, bei Ablehnung Chargeback möglich.",
-    problems: ["lieferung-falsch"],
+    description: "Größter Lieferdienst in Deutschland. Häufige Gründe für Chargebacks sind unvollständige, kalte oder gar nicht gelieferte Bestellungen.",
+    problems: ["lieferung-falsch", "ware-nicht-erhalten", "abbuchung-ohne-zustimmung"],
   },
   {
     slug: "wolt",
@@ -192,17 +192,26 @@ export const MERCHANTS: MerchantDef[] = [
     sector: "food_delivery",
     country: "Finnland",
     trustLevel: "trusted",
-    description: "Lieferdienst mit starkem Premium-Anspruch. Kulante Erstattung bei dokumentierten Problemen, sonst PayPal- oder Karten-Chargeback.",
-    problems: ["lieferung-falsch"],
+    description: "Lebensmittel- und Essenslieferant. Erstattungen werden oft beim Support angefragt, wenn das Essen kalt ankommt oder fehlt.",
+    problems: ["lieferung-falsch", "ware-nicht-erhalten"],
   },
   {
-    slug: "uber-eats",
+    slug: "ubereats",
     name: "Uber Eats",
     sector: "food_delivery",
-    country: "USA",
+    country: "USA / Niederlande",
     trustLevel: "trusted",
-    description: "Globaler Lieferdienst von Uber. Erstattungen erfolgen über die App; bei Ablehnung kann ein Kreditkarten-Chargeback eingereicht werden.",
-    problems: ["lieferung-falsch"],
+    description: "Internationaler Essenslieferdienst. Wenn Bestellungen storniert werden oder Fahrer den Umweg nehmen, kommt das Essen oft kalt an.",
+    problems: ["lieferung-falsch", "ware-nicht-erhalten"],
+  },
+  {
+    slug: "kiwicom",
+    name: "Kiwi.com",
+    sector: "travel",
+    country: "Tschechien",
+    trustLevel: "mixed",
+    description: "Flugsuchmaschine und Buchungsportal. Verlangt oft hohe eigene Gebühren für die Erstattung von Steuern und Flughafengebühren.",
+    problems: ["flug-storniert", "abbuchung-ohne-zustimmung"],
   },
 
   // ── Subscription services ──────────────────────────────────────
@@ -339,7 +348,7 @@ function introParagraphs(m: MerchantDef, p: ProblemDef, sector: string): string[
   const para2 =
     `Die größten Hebel sind 2026: der Käuferschutz bei PayPal (bis 180 Tage), das Chargeback-Verfahren der Banken bei Kreditkartenzahlung (60–120 Tage Frist je Bank), die SEPA-Lastschriftrückgabe (8 Wochen ohne Begründung) sowie der Klarna-Käuferschutz. Welcher Hebel bei dir greift, hängt davon ab, womit du bei ${m.name} bezahlt hast — die Anleitung weiter unten zeigt für jede Zahlungsart den exakten Klick-Pfad und die richtige Reason-Code-Begründung.`;
   const para3 =
-    `Wichtig: Vor jedem Chargeback oder Käuferschutz-Antrag musst du nachweisbar versucht haben, ${m.name} direkt zu erreichen. Eine schriftliche Frist von 14 Tagen reicht in der Regel aus und ist juristisch sauber. ChargebackPilot übernimmt dabei die Formulierung — von der ersten Reklamation bis zum Eskalations-Anschreiben an deine Bank. Die KI-Erst­analyse ist kostenlos; nur die fertigen Vorlagen mit dem korrekten Reason-Code kosten einmalig 0,99 € (mit Geld-zurück-Garantie bei Ablehnung).`;
+    `Wichtig: Vor jedem Chargeback oder Käuferschutz-Antrag musst du nachweisbar versucht haben, ${m.name} direkt zu erreichen. Eine schriftliche Frist von 14 Tagen reicht in der Regel aus und ist juristisch sauber. ChargebackPilot übernimmt dabei die Formulierung — von der ersten Reklamation bis zum Eskalations-Anschreiben an deine Bank. Die KI-gestützte Strukturierung ist kostenlos; nur die fertigen Vorlagen als PDF kosten einmalig 0,99 €.`;
   return [para1, para2, para3];
 }
 

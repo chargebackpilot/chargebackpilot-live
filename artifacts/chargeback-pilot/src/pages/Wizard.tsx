@@ -456,8 +456,8 @@ const STRUCTURED_QUESTIONS: Record<string, Question[]> = {
 const STEP_TITLES = ["Zahlungsart", "Problemtyp", "Händlerdetails", "Beweislage", "Falldetails"];
 
 const LOADING_STEPS = [
-  "Falldetails & Beweislage auswerten",
-  "Rechtslage & Fristen prüfen",
+  "Falldetails strukturieren",
+  "Begründungen & Fristen zuordnen",
   "Professionelle Textvorlagen generieren",
 ];
 
@@ -535,9 +535,9 @@ function AnalysisLoader({ merchantName }: { merchantName: string }) {
         </div>
       </div>
       <div>
-        <h2 className="text-2xl font-bold mb-1">Unsere KI analysiert deinen Fall</h2>
+        <h2 className="text-2xl font-bold mb-1">KI-Generator arbeitet</h2>
         <p className="text-muted-foreground text-sm">
-          {merchantName ? `Fall gegen ${merchantName} wird geprüft...` : "KI-Analyse läuft..."}
+          {merchantName ? `Fall gegen ${merchantName} wird erstellt...` : "Generierung läuft..."}
         </p>
       </div>
       <div className="flex flex-col gap-3 w-full max-w-xs">
@@ -570,7 +570,7 @@ function AnalysisLoader({ merchantName }: { merchantName: string }) {
       {allDone && (
         <div className="animate-in fade-in slide-in-from-bottom-2 duration-500 flex items-center gap-2 text-emerald-700 font-semibold">
           <CheckCircle2 className="w-5 h-5" />
-          Analyse abgeschlossen — Ergebnisse laden...
+          Vorlagen erstellt — Ergebnisse laden...
         </div>
       )}
     </div>
@@ -884,11 +884,12 @@ export default function Wizard() {
   // Wizard ALWAYS starts at step 1 for new flows — even when problem/payment/merchant
   // are prefilled. Prefills only seed form data; the user still walks every step that
   // needs input, so nothing gets silently skipped.
+  const [acceptedLegal, setAcceptedLegal] = useState(!!restoredResult);
   const [step, setStep] = useState<number>(() => {
     if (restoredResult) return 6;
     return 1;
   });
-  const [acceptedLegal, setAcceptedLegal] = useState(!!restoredResult);
+  
   // hasUnlocked: bound to specific caseId; flatrate also unlocks
   const [hasUnlocked, setHasUnlocked] = useState<boolean>(() => {
     if (isFlatrateActive()) return true;
@@ -1117,7 +1118,7 @@ export default function Wizard() {
             {step < 6 && (
               <aside className="hidden lg:block">
                 <div className="sticky top-6">
-                  <h1 className="text-2xl font-bold mb-1">Fall kostenlos prüfen</h1>
+                  <h1 className="text-2xl font-bold mb-1">Vorlagen generieren</h1>
                   <p className="text-xs text-muted-foreground mb-6">Schritt {step} von 5</p>
                   <ol className="space-y-1.5">
                     {STEP_TITLES.map((title, i) => {
@@ -1145,7 +1146,7 @@ export default function Wizard() {
                     <div className="flex items-center gap-1.5 mb-1 font-semibold text-foreground">
                       <Shield className="w-3.5 h-3.5 text-primary" /> Sicher & DSGVO-konform
                     </div>
-                    Deine Angaben werden nur für die Fallanalyse genutzt.
+                    Deine Angaben werden für die Textgenerierung genutzt.
                   </div>
                 </div>
               </aside>
@@ -1156,7 +1157,7 @@ export default function Wizard() {
               {/* Mobile compact header */}
               {step < 6 && (
                 <div className="lg:hidden mb-6">
-                  <h1 className="text-2xl font-bold mb-1">Fall kostenlos prüfen</h1>
+                  <h1 className="text-2xl font-bold mb-1">Vorlagen generieren</h1>
                   <p className="text-xs text-muted-foreground mb-3">
                     Schritt {step} von 5 — <span className="font-semibold text-foreground">{STEP_TITLES[step - 1]}</span>
                   </p>
@@ -1485,8 +1486,8 @@ export default function Wizard() {
                   </div>
 
                   <div className="bg-blue-50 border border-blue-200 rounded-xl p-4 text-sm text-blue-800">
-                    <p className="font-semibold mb-1 flex items-center gap-2"><Shield className="w-4 h-4" /> KI-Fallanalyse</p>
-                    <p>Deine Angaben werden von unserer KI ausgewertet und in strukturierte Textbausteine überführt. Dauer: ca. 15–30 Sekunden.</p>
+                    <p className="font-semibold mb-1 flex items-center gap-2"><Shield className="w-4 h-4" /> KI-Generierung</p>
+                    <p>Deine Angaben werden von unserer KI strukturiert und in perfekte Vorlagen überführt. Dauer: ca. 15–30 Sekunden.</p>
                   </div>
 
                   <div className="border border-border rounded-xl p-4 space-y-3">
@@ -1518,7 +1519,7 @@ export default function Wizard() {
                         <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-primary/10 mb-3">
                           <TrendingUp className="w-7 h-7 text-primary" />
                         </div>
-                        <h2 className="text-2xl font-bold">Deine Fall-Analyse</h2>
+                        <h2 className="text-2xl font-bold">Deine Vorlagen</h2>
                         {result.merchantName && (
                           <p className="text-muted-foreground text-sm mt-1">
                             Fall gegen <strong>{result.merchantName}</strong> — {new Date().toLocaleDateString("de-DE")}
@@ -1772,7 +1773,7 @@ export default function Wizard() {
                             </div>
                             <h3 className="font-bold text-lg">Alles als PDF herunterladen</h3>
                             <p className="text-sm text-muted-foreground max-w-sm mx-auto">
-                              Alle 3 Textvorlagen, deine Fallanalyse und nächsten Schritte in einem druckfertigen Dokument.
+                              Alle 3 Textvorlagen, deine Fall-Strukturierung und nächsten Schritte in einem druckfertigen Dokument.
                             </p>
                             <Button className="gap-2 cursor-pointer shadow-sm" onClick={handleDownloadPdf}>
                               <Download className="w-4 h-4" />PDF herunterladen
@@ -1792,7 +1793,7 @@ export default function Wizard() {
                       </div>
 
                       <div className="text-center border-t pt-6">
-                        <Button variant="outline" onClick={resetForm} className="cursor-pointer">Neuen Fall prüfen</Button>
+                        <Button variant="outline" onClick={resetForm} className="cursor-pointer">Neuen Fall generieren</Button>
                       </div>
                     </div>
                   )}
@@ -1811,7 +1812,7 @@ export default function Wizard() {
                     </Button>
                   ) : (
                     <Button onClick={handleSubmit} disabled={!step5Valid || !acceptedLegal || createCase.isPending} className="gap-2 cursor-pointer">
-                      <Shield className="w-4 h-4" />Fall analysieren
+                      <Shield className="w-4 h-4" />Vorlagen generieren
                     </Button>
                   )}
                 </div>

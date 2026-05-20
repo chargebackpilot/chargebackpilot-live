@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { MainLayout } from "@/components/layout/MainLayout";
+import { SeoHead } from "@/components/SeoHead";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Link } from "wouter";
@@ -132,11 +133,11 @@ const FAQS = [
   },
   {
     q: "Gibt es eine Erfolgsgarantie?",
-    a: "Nein, und jeder der das verspricht, lügt. Ob ein Chargeback erfolgreich ist, entscheiden die Bank und der Zahlungsdienstleister nach ihren eigenen Richtlinien. ChargebackPilot erhöht deine Chancen durch professionelle Formulierungen und vollständige Beweisführung — garantieren können wir nichts.",
+    a: "Nein, und jeder der das verspricht, lügt. Ob ein Chargeback oder eine Händler-Rückzahlung erfolgreich ist, entscheiden die Bank und der Zahlungsdienstleister nach ihren eigenen Richtlinien. ChargebackPilot hilft dir lediglich bei der professionellen Formulierung — garantieren können wir nichts.",
   },
   {
     q: "Wie sicher sind meine Daten?",
-    a: "Deine Angaben werden für die KI-Analyse verwendet und in unserer Datenbank gespeichert. Zur Verarbeitung nutzen wir die Gemini API von Google LLC als Dienstleister. Wir geben die Daten nicht an weitere Dritte weiter, soweit dies nicht zur Bereitstellung des Dienstes erforderlich ist.",
+    a: "Deine Angaben werden für die KI-Textgenerierung verwendet und in unserer Datenbank gespeichert. Zur Verarbeitung nutzen wir die Gemini API von Google LLC als Dienstleister. Wir geben die Daten nicht an weitere Dritte weiter, soweit dies nicht zur Bereitstellung des Dienstes erforderlich ist.",
   },
 ];
 
@@ -206,8 +207,14 @@ export default function Home() {
 
   return (
     <MainLayout>
-      {/* HERO */}
-      <section className="relative overflow-hidden bg-gradient-to-b from-primary/5 via-primary/3 to-background py-24 px-4">
+      <SeoHead 
+        title="ChargebackPilot | Käuferschutz & Rückerstattung online"
+        description="Geld zurück bei Betrug, Scam-Shops, Lieferando, Flugausfall oder Abo-Fallen. Einfache Chargeback-Generierung für PayPal und Kreditkarten."
+        canonical="/"
+      />
+      
+      {/* Hero Section */}
+      <section className="relative overflow-hidden bg-background pt-16 md:pt-24 pb-32">
         <div className="container mx-auto max-w-5xl text-center relative">
           <span className="inline-block mb-6 px-4 py-1.5 rounded-full bg-primary/10 text-primary text-sm font-semibold tracking-wide">
             Käuferschutz für Verbraucher
@@ -275,121 +282,79 @@ export default function Home() {
         </div>
       </section>
 
-      {/* HOW IT WORKS */}
-      <section className="py-20 px-4 bg-background">
-        <div className="container mx-auto max-w-5xl">
-          <div className="text-center mb-14">
-            <h2 className="text-3xl font-bold mb-3">So funktioniert ChargebackPilot</h2>
-            <p className="text-muted-foreground max-w-xl mx-auto">
-              In drei Schritten zu professionellen Textvorlagen — ohne Vorkenntnisse.
-            </p>
-          </div>
-          <div className="grid md:grid-cols-3 gap-6">
-            {[
-              {
-                num: "01",
-                icon: FileSignature,
-                title: "Fall beschreiben",
-                desc: "Beantworte einfache Fragen zu Zahlungsart, Problem und Händler. Wähle bekannte Anbieter direkt aus.",
-              },
-              {
-                num: "02",
-                icon: Scale,
-                title: "KI analysiert deinen Fall",
-                desc: "Unsere KI wertet deine Angaben aus, identifiziert relevante Hinweise und liefert strukturierte Textvorlagen für deinen Fall.",
-              },
-              {
-                num: "03",
-                icon: FileText,
-                title: "Textvorlagen erhalten",
-                desc: "Kopiere fertige Anschreiben für Händler, Bank/PayPal und Eskalation — sofort einsetzbar.",
-              },
-            ].map((step, i) => (
-              <div key={i} className="relative bg-card border rounded-2xl p-6 shadow-sm">
-                <div className="text-6xl font-black text-primary/8 absolute top-4 right-5 leading-none select-none">
-                  {step.num}
-                </div>
-                <div className="w-12 h-12 rounded-xl bg-primary/10 text-primary flex items-center justify-center mb-4">
-                  <step.icon className="w-6 h-6" />
-                </div>
-                <h3 className="font-bold text-lg mb-2">{step.title}</h3>
-                <p className="text-muted-foreground text-sm leading-relaxed">{step.desc}</p>
-              </div>
-            ))}
-          </div>
-          <div className="text-center mt-10">
-            <Link href="/fall-pruefen">
-              <Button size="lg" className="gap-2">
-                Jetzt kostenlose Hilfe starten
-                <ArrowRight className="w-4 h-4" />
-              </Button>
-            </Link>
-          </div>
+      {/* SEO-Text / Intro */}
+      <section className="py-16 bg-muted/30 border-y">
+        <div className="container mx-auto max-w-4xl px-4 text-center">
+          <h2 className="text-2xl md:text-3xl font-bold mb-6">Chargeback & Käuferschutz: Hole dir dein Geld zurück</h2>
+          <p className="text-muted-foreground leading-relaxed mb-4">
+            Egal ob <strong>kaltes Essen von Lieferando oder Wolt</strong>, <strong>nicht gelieferte Pakete</strong> von Fake-Shops oder <strong>einbehaltene Steuern und Gebühren bei Flugstornierungen</strong> (z.B. Kiwi.com) – in den meisten Fällen musst du das nicht hinnehmen. Mit dem sogenannten <strong>Chargeback-Verfahren</strong> bei Kreditkarten (Visa, Mastercard, Amex) oder dem Käuferschutz von PayPal und Klarna kannst du dir dein Geld direkt über deinen Zahlungsdienstleister zurückholen.
+          </p>
+          <p className="text-muted-foreground leading-relaxed">
+            ChargebackPilot analysiert deinen individuellen Fall per KI, zeigt dir genau auf, welche Beweise du brauchst und generiert das perfekte Anschreiben für Händler und Bank. Erhöhe deine Erfolgschancen und spare Zeit, Nerven und teure Anwaltskosten.
+          </p>
         </div>
       </section>
 
-      {/* REAL-WORLD SCENARIO CARDS */}
-      <section className="py-20 px-4 bg-muted/40 border-y">
-        <div className="container mx-auto max-w-6xl">
-          <div className="text-center mb-14">
-            <h2 className="text-3xl font-bold mb-3">Erkennst du dich wieder?</h2>
-            <p className="text-muted-foreground max-w-xl mx-auto">
-              ChargebackPilot ist auf diese konkreten Alltagssituationen ausgelegt — mit spezifischen Vorlagen für jeden Fall.
-            </p>
-          </div>
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
-            {SCENARIOS.map((sc, i) => (
-              <Link key={i} href={sc.href}>
-                <div
-                  className={`group bg-white border-2 ${sc.accentBorder} rounded-2xl p-5 h-full flex flex-col gap-4 hover:shadow-md transition-all cursor-pointer hover:-translate-y-0.5`}
-                  data-testid={`scenario-card-${i}`}
-                >
-                  {/* Top row */}
-                  <div className="flex items-start justify-between gap-3">
-                    <div className={`w-11 h-11 rounded-xl ${sc.iconBg} ${sc.iconColor} flex items-center justify-center flex-shrink-0`}>
-                      <sc.icon className="w-5 h-5" />
-                    </div>
-                    <span className={`text-xs font-semibold px-2.5 py-1 rounded-full ${sc.tagBg} flex-shrink-0`}>
-                      {sc.tag}
-                    </span>
+      {/* Typical Scenarios (SEO rich) */}
+      <section className="py-16 md:py-24 container mx-auto px-4 max-w-6xl">
+        <div className="text-center mb-16">
+          <h2 className="text-3xl font-bold mb-4">Typische Fälle für einen erfolgreichen Chargeback</h2>
+          <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
+            ChargebackPilot ist auf diese konkreten Alltagssituationen ausgelegt — mit spezifischen Vorlagen für jeden Fall.
+          </p>
+        </div>
+        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
+          {SCENARIOS.map((sc, i) => (
+            <Link key={i} href={sc.href}>
+              <div
+                className={`group bg-white border-2 ${sc.accentBorder} rounded-2xl p-5 h-full flex flex-col gap-4 hover:shadow-md transition-all cursor-pointer hover:-translate-y-0.5`}
+                data-testid={`scenario-card-${i}`}
+              >
+                {/* Top row */}
+                <div className="flex items-start justify-between gap-3">
+                  <div className={`w-11 h-11 rounded-xl ${sc.iconBg} ${sc.iconColor} flex items-center justify-center flex-shrink-0`}>
+                    <sc.icon className="w-5 h-5" />
                   </div>
-
-                  {/* Content */}
-                  <div className="flex-1">
-                    <h3 className="font-bold text-base leading-snug mb-2">{sc.headline}</h3>
-                    <p className="text-sm text-muted-foreground leading-relaxed">{sc.detail}</p>
-                  </div>
-
-                  {/* Brands */}
-                  <div className="flex flex-wrap gap-1.5">
-                    {sc.brands.map((brand, j) => (
-                      <span key={j} className="text-xs bg-muted px-2 py-0.5 rounded-full font-medium text-muted-foreground">
-                        {brand}
-                      </span>
-                    ))}
-                  </div>
-
-                  {/* Recovery + Arrow */}
-                  <div className="flex items-center justify-between pt-3 border-t border-dashed">
-                    <span className="text-xs font-semibold text-emerald-700 bg-emerald-50 border border-emerald-200 px-2.5 py-1 rounded-full">
-                      {sc.recovery}
-                    </span>
-                    <ArrowRight className="w-4 h-4 text-muted-foreground group-hover:text-primary transition-colors" />
-                  </div>
+                  <span className={`text-xs font-semibold px-2.5 py-1 rounded-full ${sc.tagBg} flex-shrink-0`}>
+                    {sc.tag}
+                  </span>
                 </div>
-              </Link>
-            ))}
-          </div>
 
-          <div className="text-center mt-12">
-            <p className="text-muted-foreground text-sm mb-4">Dein Fall ist nicht dabei?</p>
-            <Link href="/fall-pruefen">
-              <Button variant="outline" className="gap-2">
-                Trotzdem kostenlos Hilfe starten
-                <ArrowRight className="w-4 h-4" />
-              </Button>
+                {/* Content */}
+                <div className="flex-1">
+                  <h3 className="font-bold text-base leading-snug mb-2">{sc.headline}</h3>
+                  <p className="text-sm text-muted-foreground leading-relaxed">{sc.detail}</p>
+                </div>
+
+                {/* Brands */}
+                <div className="flex flex-wrap gap-1.5">
+                  {sc.brands.map((brand, j) => (
+                    <span key={j} className="text-xs bg-muted px-2 py-0.5 rounded-full font-medium text-muted-foreground">
+                      {brand}
+                    </span>
+                  ))}
+                </div>
+
+                {/* Recovery + Arrow */}
+                <div className="flex items-center justify-between pt-3 border-t border-dashed">
+                  <span className="text-xs font-semibold text-emerald-700 bg-emerald-50 border border-emerald-200 px-2.5 py-1 rounded-full">
+                    {sc.recovery}
+                  </span>
+                  <ArrowRight className="w-4 h-4 text-muted-foreground group-hover:text-primary transition-colors" />
+                </div>
+              </div>
             </Link>
-          </div>
+          ))}
+        </div>
+
+        <div className="text-center mt-12">
+          <p className="text-muted-foreground text-sm mb-4">Dein Fall ist nicht dabei?</p>
+          <Link href="/fall-pruefen">
+            <Button variant="outline" className="gap-2">
+              Trotzdem kostenlos Hilfe starten
+              <ArrowRight className="w-4 h-4" />
+            </Button>
+          </Link>
         </div>
       </section>
 
@@ -425,14 +390,14 @@ export default function Home() {
             <span className="inline-block mb-3 px-3 py-1 rounded-full bg-emerald-50 text-emerald-700 text-xs font-semibold border border-emerald-100">
               Hilfe nach Zahlungsart
             </span>
-            <h2 className="text-3xl font-bold mb-3">Wie hast du bezahlt? So holen wir dein Geld zurück.</h2>
+            <h2 className="text-3xl font-bold mb-3">Wie hast du bezahlt? So generieren wir deine Briefe.</h2>
             <p className="text-muted-foreground max-w-2xl mx-auto">
-              Jede Zahlungsart hat eigene Schutzregeln, eigene Fristen und eigene Rückforderungs­wege. Klicke deine Zahlungs­methode an — wir starten sofort die passende Anleitung mit dem richtigen Verfahren.
+              Jede Zahlungsart hat eigene Schutzregeln, eigene Fristen und eigene Rückforderungswege. Klicke deine Zahlungsmethode an — wir starten sofort den Text-Generator für das passende Verfahren.
             </p>
           </div>
           <PaymentHelpGrid />
           <p className="text-center text-xs text-muted-foreground mt-6 max-w-xl mx-auto">
-            Kein Häkchen, keine Anmeldung — die KI-Analyse ist kostenlos. Du zahlst erst, wenn du die fertigen Vorlagen brauchst (0,99 € pro Fall, Geld-zurück bei Ablehnung).
+            Kein Häkchen, keine Anmeldung — die Text-Generierung startet kostenlos. Du zahlst erst, wenn du die fertigen Brief-Vorlagen brauchst (0,99 € pro Fall).
           </p>
         </div>
       </section>
@@ -443,20 +408,20 @@ export default function Home() {
           <div className="text-center mb-14">
             <h2 className="text-3xl font-bold mb-3">Flexible Preisgestaltung</h2>
             <p className="text-muted-foreground max-w-lg mx-auto">
-              Beginne mit einer kostenlosen Analyse. Schalte für einen kleinen Betrag deinen spezifischen Fall frei oder nutze im Abo alle Funktionen unbegrenzt.
+              Beginne kostenlos. Lade für einen kleinen Betrag die Brief-Vorlagen für deinen Fall herunter oder nutze im Abo alle Funktionen unbegrenzt.
             </p>
           </div>
           <div className="grid md:grid-cols-3 gap-6 max-w-6xl mx-auto">
             {/* Free Plan */}
             <Card className="border">
               <CardHeader className="pb-4">
-                <CardTitle className="text-lg">Basis-Analyse</CardTitle>
-                <CardDescription>Kostenlose KI-Ersteinschätzung</CardDescription>
+                <CardTitle className="text-lg">Basis-Formulierungshilfe</CardTitle>
+                <CardDescription>Kostenlose Text-Generierung</CardDescription>
                 <div className="text-4xl font-black mt-3">0 <span className="text-lg font-normal text-muted-foreground">€</span></div>
               </CardHeader>
               <CardContent className="space-y-4">
                 <ul className="space-y-2.5 text-sm">
-                  {["Strategie-Einschätzung (indikativ)", "Beweis-Checkliste", "Fallzusammenfassung", "Mögliche rechtliche Hinweise", "Erster Schritt der Anleitung"].map((f) => (
+                  {["Text-Strukturierung (indikativ)", "Beweis-Checkliste", "Fallzusammenfassung", "Mögliche rechtliche Hinweise", "Erster Schritt der Anleitung"].map((f) => (
                     <li key={f} className="flex gap-2.5 items-center">
                       <CheckCircle2 className="w-4 h-4 text-emerald-500 flex-shrink-0" />
                       {f}
@@ -476,12 +441,12 @@ export default function Home() {
               </div>
               <CardHeader className="pb-4">
                 <CardTitle className="text-lg">Einzelfall Freischaltung</CardTitle>
-                <CardDescription>Einmalig pro Fall</CardDescription>
+                <CardDescription>Einmalig pro Vorlagen-Paket</CardDescription>
                 <div className="text-4xl font-black mt-3">0,99 <span className="text-lg font-normal text-muted-foreground">€</span></div>
               </CardHeader>
               <CardContent className="space-y-4">
                 <ul className="space-y-2.5 text-sm">
-                    {["Alles aus Basis-Analyse", "Alle Textvorlagen", "Vollständige Anleitung", "PDF & E-Mail Export", "Entkräftung von Gegenargumenten"].map((f) => (
+                    {["Alles aus Basis-Variante", "Alle Textvorlagen", "Vollständige Anleitung", "PDF & E-Mail Export", "Entkräftung von Gegenargumenten"].map((f) => (
                     <li key={f} className="flex gap-2.5 items-center">
                       <CheckCircle2 className="w-4 h-4 text-primary flex-shrink-0" />
                       {f}
@@ -490,12 +455,8 @@ export default function Home() {
                 </ul>
                 <div className="!mt-5">
                   <Link href="/fall-pruefen">
-                    <Button className="w-full">Fall für 0,99 € freischalten</Button>
+                    <Button className="w-full">Paket für 0,99 € freischalten</Button>
                   </Link>
-                  <div className="flex items-start gap-2 text-xs text-emerald-900 mt-3 bg-emerald-50 border border-emerald-200 p-2 rounded-lg">
-                    <ShieldCheck className="w-3.5 h-3.5 flex-shrink-0 mt-0.5 text-emerald-700" />
-                    <span><strong>Geld-zurück-Garantie:</strong> Wird dein Chargeback nachweislich abgelehnt, erstatten wir die 0,99 €.</span>
-                  </div>
                 </div>
               </CardContent>
             </Card>
@@ -509,7 +470,7 @@ export default function Home() {
               </CardHeader>
               <CardContent className="space-y-4">
                 <ul className="space-y-2.5 text-sm">
-                  {["Unbegrenzte Fall-Freischaltungen", "Alle Premium-Features", "Gültig 12 Monate ab Kauf", "Keine Abbuchung danach", "Geld-zurück-Garantie pro Fall"].map((f) => (
+                  {["Unbegrenzte Fall-Freischaltungen", "Alle Premium-Features", "Gültig 12 Monate ab Kauf", "Keine Abbuchung danach"].map((f) => (
                     <li key={f} className="flex gap-2.5 items-center">
                       <CheckCircle2 className="w-4 h-4 text-emerald-500 flex-shrink-0" />
                       {f}
@@ -551,13 +512,42 @@ export default function Home() {
           </Accordion>
 
           <div className="mt-12 text-center">
-            <p className="text-muted-foreground mb-4 text-sm">Bereit, deinen Fall zu prüfen?</p>
+            <p className="text-muted-foreground mb-4 text-sm">Bereit, Brief-Vorlagen zu generieren?</p>
             <Link href="/fall-pruefen">
               <Button size="lg" className="gap-2">
-                Fall kostenlos analysieren
+                Jetzt kostenlos starten
                 <ArrowRight className="w-4 h-4" />
               </Button>
             </Link>
+          </div>
+        </div>
+      </section>
+
+      {/* SEO Bottom Content */}
+      <section className="py-16 bg-muted/10 border-t">
+        <div className="container mx-auto max-w-5xl px-4">
+          <div className="grid md:grid-cols-2 gap-12">
+            <div>
+              <h2 className="text-2xl font-bold mb-4">Wann greift ein Chargeback?</h2>
+              <p className="text-muted-foreground mb-4">
+                Das Chargeback-Verfahren ist dein Rettungsanker, wenn der Händler nicht kooperiert. Es ist international standardisiert durch Visa und Mastercard (sogenannte <em>Reason Codes</em>). Typische Gründe sind:
+              </p>
+              <ul className="list-disc pl-5 space-y-2 text-muted-foreground">
+                <li><strong>Ware nicht geliefert:</strong> Der Shop behauptet, es sei verschickt, aber du hast nichts erhalten.</li>
+                <li><strong>Falsche oder defekte Ware:</strong> Du bestellst ein Markenprodukt und bekommst eine billige Fälschung aus Asien.</li>
+                <li><strong>Leistung nicht erbracht:</strong> Der Flug wurde gestrichen oder das Lieferessen (Lieferando, UberEats) kam komplett kalt an.</li>
+                <li><strong>Ungewollte Abonnements:</strong> Versteckte Abofallen und unautorisierte Abbuchungen auf der Kreditkarte.</li>
+              </ul>
+            </div>
+            <div>
+              <h2 className="text-2xl font-bold mb-4">PayPal & Klarna Käuferschutz</h2>
+              <p className="text-muted-foreground mb-4">
+                Neben dem klassischen Kreditkarten-Chargeback bieten auch moderne Zahlungsanbieter starke Schutzmechanismen. Der <strong>PayPal Käuferschutz</strong> greift bis zu 180 Tage nach dem Kauf. Wichtig ist hier, niemals per "Geld an Freunde senden" zu zahlen.
+              </p>
+              <p className="text-muted-foreground">
+                Bei Zahlungen über <strong>Klarna</strong> solltest du umgehend eine <em>Zahlungspause</em> in der App einlegen, wenn ein Problem auftritt. So verhinderst du Mahngebühren, während der Fall geklärt wird. Unser Tool generiert dir für all diese Plattformen die exakt passenden Begründungstexte.
+              </p>
+            </div>
           </div>
         </div>
       </section>

@@ -98,7 +98,7 @@ function getBenefits(paymentMethod: string): Benefit[] {
     {
       icon: FileSignature,
       title: "DIN-Briefe als PDF",
-      desc: "Druckfertige DIN-5008-Briefe mit deiner Adresse, Bestellnummer und Unterschrift­zeile.",
+      desc: "Druckfertige DIN-5008-Briefe mit deiner Adresse, Bestellnummer und Unterschriftzeile.",
     },
     channelBenefit,
     {
@@ -146,8 +146,13 @@ export function PaywallModal({
   const benefits = getBenefits(paymentMethod);
   const band = toStrategyBand(strategyLabel);
   const bandClass = TONE_CLASSES[band.tone] ?? TONE_CLASSES.slate;
+  const [consentWiderruf, setConsentWiderruf] = useState(false);
 
   const handleCheckout = async () => {
+    if (!consentWiderruf) {
+      setError("Bitte bestätige den Verzicht auf das Widerrufsrecht, um fortzufahren.");
+      return;
+    }
     setLoading(true);
     setError("");
     try {
@@ -176,7 +181,7 @@ export function PaywallModal({
       <div className="bg-primary px-5 py-3 flex items-center justify-between">
         <div className="flex items-center gap-2 text-white font-bold text-sm">
           <Lock className="w-4 h-4" />
-          Vollständige Analyse freischalten
+          Alle Dokumente freischalten
         </div>
         <div className="bg-white/20 text-white text-xs font-bold px-3 py-1 rounded-full">
           0,99 €

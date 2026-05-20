@@ -8,11 +8,11 @@ import Home from "@/pages/Home";
 import Wizard from "@/pages/Wizard";
 import RatgeberIndex from "@/pages/RatgeberIndex";
 import Admin from "@/pages/Admin";
-import Rechtsrisiko from "@/pages/Rechtsrisiko";
-import { Impressum, Datenschutz, Disclaimer, AGB } from "@/pages/LegalPages";
+import AdminDemo from "@/pages/AdminDemo";
+import { Impressum, Datenschutz, AGB, Widerruf } from "@/pages/LegalPages";
 import { 
   PayPalSEO, AmexSEO, VisaMastercardSEO, 
-  KlarnaSEO, FlugSEO, LieferandoSEO, 
+  KlarnaSEO, FlugSEO, LieferandoSEO, WoltSEO, UberEatsSEO, KiwiSEO,
   WareNichtErhaltenSEO, AboFalleSEO 
 } from "@/pages/SEOPages";
 import MerchantProblemPage from "@/pages/MerchantProblemPage";
@@ -44,13 +44,14 @@ function Router() {
       <Route path="/fall-pruefen" component={Wizard} />
       <Route path="/ratgeber" component={RatgeberIndex} />
       <Route path="/admin" component={Admin} />
-      <Route path="/admin/rechtsrisiko" component={Rechtsrisiko} />
+      <Route path="/admin/demo" component={AdminDemo} />
       
       {/* Legal Pages */}
       <Route path="/impressum" component={Impressum} />
       <Route path="/datenschutz" component={Datenschutz} />
-      <Route path="/disclaimer" component={Disclaimer} />
+      
       <Route path="/agb" component={AGB} />
+      <Route path="/widerruf" component={Widerruf} />
       
       {/* SEO Landing Pages */}
       <Route path="/paypal-chargeback" component={PayPalSEO} />
@@ -58,7 +59,10 @@ function Router() {
       <Route path="/visa-mastercard-chargeback" component={VisaMastercardSEO} />
       <Route path="/klarna-reklamation" component={KlarnaSEO} />
       <Route path="/flug-chargeback" component={FlugSEO} />
+      <Route path="/kiwi-rueckerstattung" component={KiwiSEO} />
       <Route path="/lieferando-rueckerstattung" component={LieferandoSEO} />
+      <Route path="/wolt-rueckerstattung" component={WoltSEO} />
+      <Route path="/ubereats-rueckerstattung" component={UberEatsSEO} />
       <Route path="/ware-nicht-erhalten" component={WareNichtErhaltenSEO} />
       <Route path="/abo-falle-chargeback" component={AboFalleSEO} />
 

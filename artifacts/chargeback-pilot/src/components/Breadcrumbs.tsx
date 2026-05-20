@@ -32,28 +32,30 @@ export function Breadcrumbs({ items }: BreadcrumbsProps) {
 
   return (
     <>
-      <nav aria-label="Breadcrumb" className="container mx-auto max-w-5xl px-4 pt-4">
-        <ol className="flex items-center flex-wrap gap-1 text-xs text-muted-foreground">
-          {all.map((item, i) => {
-            const last = i === all.length - 1;
-            return (
-              <li key={i} className="flex items-center gap-1">
-                {i === 0 && <Home className="w-3 h-3" aria-hidden />}
-                {item.href && !last ? (
-                  <Link href={item.href} className="hover:text-foreground transition-colors">
-                    {item.label}
-                  </Link>
-                ) : (
-                  <span className={last ? "text-foreground font-medium" : ""} aria-current={last ? "page" : undefined}>
-                    {item.label}
-                  </span>
-                )}
-                {!last && <ChevronRight className="w-3 h-3 opacity-60" />}
-              </li>
-            );
-          })}
-        </ol>
-      </nav>
+      <div className="w-full bg-muted/20 border-b">
+        <nav aria-label="Breadcrumb" className="container mx-auto max-w-7xl px-4 py-3">
+          <ol className="flex items-center flex-wrap gap-1.5 text-xs sm:text-sm text-muted-foreground">
+            {all.map((item, i) => {
+              const last = i === all.length - 1;
+              return (
+                <li key={i} className="flex items-center gap-1.5 truncate">
+                  {i === 0 && <Home className="w-3.5 h-3.5 shrink-0" aria-hidden />}
+                  {item.href && !last ? (
+                    <Link href={item.href} className="hover:text-foreground transition-colors truncate">
+                      {item.label}
+                    </Link>
+                  ) : (
+                    <span className={`truncate ${last ? "text-foreground font-medium" : ""}`} aria-current={last ? "page" : undefined}>
+                      {item.label}
+                    </span>
+                  )}
+                  {!last && <ChevronRight className="w-3.5 h-3.5 opacity-60 shrink-0" />}
+                </li>
+              );
+            })}
+          </ol>
+        </nav>
+      </div>
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}

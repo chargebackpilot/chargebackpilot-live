@@ -12,7 +12,10 @@ export const GUIDES = [
   { path: "/visa-mastercard-chargeback", title: "Visa & Mastercard Chargeback", desc: "Der Weg zur Rückerstattung bei Kreditkartenzahlungen." },
   { path: "/klarna-reklamation", title: "Klarna Reklamation", desc: "Käuferschutz bei Klarna-Zahlungen nutzen." },
   { path: "/flug-chargeback", title: "Flug Chargeback", desc: "Reiserückerstattung bei Ausfällen und Stornierungen." },
-  { path: "/lieferando-rueckerstattung", title: "Lieferando Rückerstattung", desc: "Geld zurück bei falschem oder fehlendem Essen." },
+  { path: "/kiwi-rueckerstattung", title: "Kiwi.com Erstattung", desc: "Steuern & Gebühren ohne 59€ Gebühr zurückholen." },
+  { path: "/lieferando-rueckerstattung", title: "Lieferando Rückerstattung", desc: "Geld zurück bei kaltem oder fehlendem Essen." },
+  { path: "/wolt-rueckerstattung", title: "Wolt Erstattung", desc: "Chargeback bei kalten Bestellungen oder Umwegen." },
+  { path: "/ubereats-rueckerstattung", title: "Uber Eats Chargeback", desc: "Essen nicht angekommen? So gibt's das Geld zurück." },
   { path: "/ware-nicht-erhalten", title: "Ware nicht erhalten", desc: "Was tun, wenn das Paket nie ankommt?" },
   { path: "/abo-falle-chargeback", title: "Abo-Falle", desc: "Ungewollte Abbuchungen stoppen und Geld zurückfordern." }
 ];
