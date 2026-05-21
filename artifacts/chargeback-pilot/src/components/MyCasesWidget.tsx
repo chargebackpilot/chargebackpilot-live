@@ -148,7 +148,7 @@ export function MyCasesWidget() {
               return (
                 <li key={c.caseId} className="group">
                   <Link
-                    href={`/fall-pruefen?caseId=${encodeURIComponent(c.caseId)}`}
+                    href={`/vorlagen-generator?caseId=${encodeURIComponent(c.caseId)}`}
                     onClick={() => setOpen(false)}
                     className="flex items-start gap-2 px-4 py-3 hover:bg-muted/60 transition-colors"
                     data-testid={`case-item-${c.caseId}`}
@@ -180,7 +180,7 @@ export function MyCasesWidget() {
         )}
 
         <div className="p-3 border-t bg-muted/20">
-          <Link href="/fall-pruefen" onClick={() => setOpen(false)}>
+          <Link href="/vorlagen-generator" onClick={() => setOpen(false)}>
             <Button size="sm" className="w-full gap-2">
               Neuen Fall analysieren
               <ArrowRight className="w-3.5 h-3.5" />

@@ -54,7 +54,7 @@ export default function MerchantProblemPage() {
     merchant: merchant.name,
     ...(wizardPayment ? { payment: wizardPayment } : {}),
   });
-  const wizardHref = `/fall-pruefen?${wizardParams.toString()}`;
+  const wizardHref = `/vorlagen-generator?${wizardParams.toString()}`;
 
   const breadcrumbItems = [
     { label: "Ratgeber", href: "/ratgeber" },
@@ -174,7 +174,7 @@ export default function MerchantProblemPage() {
               <div className="bg-background border rounded-lg p-3">
                 <ShieldCheck className="w-4 h-4 mx-auto text-primary mb-1" />
                 <div className="text-xs text-muted-foreground">Preis</div>
-                <div className="font-semibold text-sm">0,99 €</div>
+                <div className="font-semibold text-sm">0,99 € (inkl. MwSt.)</div>
               </div>
             </div>
           </div>
@@ -312,7 +312,7 @@ export default function MerchantProblemPage() {
           <section className="bg-primary text-primary-foreground p-6 md:p-8 rounded-2xl text-center">
             <h2 className="text-xl md:text-2xl font-bold mb-2">Lass die KI deinen {merchant.name}-Fall prüfen</h2>
             <p className="opacity-90 mb-5 text-sm md:text-base">
-              60 Sekunden, kostenlose Einschätzung — Vorlagen für 0,99 € freischalten. Geld-zurück bei Ablehnung.
+              60 Sekunden, kostenlose Einschätzung — Vorlagen für 0,99 € (inkl. MwSt.) freischalten. Geld-zurück bei Ablehnung.
             </p>
             <Link href={wizardHref}>
               <Button size="lg" variant="secondary" className="gap-2">

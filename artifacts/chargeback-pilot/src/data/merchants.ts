@@ -123,7 +123,7 @@ export const MERCHANTS: MerchantDef[] = [
     sector: "marketplace",
     country: "USA / Deutschland",
     trustLevel: "trusted",
-    description: "Größter Online-Händler in Deutschland. Eigener A-bis-Z-Garantie-Schutz; bei Drittanbietern oft zusätzlicher Chargeback nötig.",
+    description: "Größter Online-Händler in Deutschland. Eigener A-bis-Z--Schutz; bei Drittanbietern oft zusätzlicher Chargeback nötig.",
     problems: ["ware-nicht-erhalten", "ware-defekt", "abbuchung-ohne-zustimmung"],
   },
 
@@ -348,7 +348,7 @@ function introParagraphs(m: MerchantDef, p: ProblemDef, sector: string): string[
   const para2 =
     `Die größten Hebel sind 2026: der Käuferschutz bei PayPal (bis 180 Tage), das Chargeback-Verfahren der Banken bei Kreditkartenzahlung (60–120 Tage Frist je Bank), die SEPA-Lastschriftrückgabe (8 Wochen ohne Begründung) sowie der Klarna-Käuferschutz. Welcher Hebel bei dir greift, hängt davon ab, womit du bei ${m.name} bezahlt hast — die Anleitung weiter unten zeigt für jede Zahlungsart den exakten Klick-Pfad und die richtige Reason-Code-Begründung.`;
   const para3 =
-    `Wichtig: Vor jedem Chargeback oder Käuferschutz-Antrag musst du nachweisbar versucht haben, ${m.name} direkt zu erreichen. Eine schriftliche Frist von 14 Tagen reicht in der Regel aus und ist juristisch sauber. ChargebackPilot übernimmt dabei die Formulierung — von der ersten Reklamation bis zum Eskalations-Anschreiben an deine Bank. Die KI-gestützte Strukturierung ist kostenlos; nur die fertigen Vorlagen als PDF kosten einmalig 0,99 €.`;
+    `Wichtig: Vor jedem Chargeback oder Käuferschutz-Antrag musst du nachweisbar versucht haben, ${m.name} direkt zu erreichen. Eine schriftliche Frist von 14 Tagen reicht in der Regel aus und ist juristisch sauber. ChargebackPilot übernimmt dabei die Formulierung — von der ersten Reklamation bis zum Eskalations-Anschreiben an deine Bank. Die KI-gestützte Strukturierung ist kostenlos; nur die fertigen Vorlagen als PDF kosten einmalig 0,99 € (inkl. MwSt.).`;
   return [para1, para2, para3];
 }
 
@@ -574,7 +574,7 @@ function faqForCombo(m: MerchantDef, p: ProblemDef, sector: string): { q: string
     },
     {
       q: `Was kostet die Hilfe von ChargebackPilot?`,
-      a: `Die KI-Ersteinschätzung deines Falls ist komplett kostenlos. Wenn du die fertigen Textvorlagen (Händler-Anschreiben, Bank-Chargeback-Antrag, Eskalationsschreiben) freischalten willst, zahlst du einmalig 0,99 € pro Fall — mit Geld-zurück-Garantie, falls der Chargeback nachweislich abgelehnt wird. Eine Flatrate für unbegrenzte Fälle gibt es für 9,99 € (12 Monate).`,
+      a: `Die KI-Ersteinschätzung deines Falls ist komplett kostenlos. Wenn du die fertigen Textvorlagen (Händler-Anschreiben, Bank-Chargeback-Antrag, Eskalationsschreiben) freischalten willst, zahlst du einmalig 0,99 € (inkl. MwSt.) pro Fall — mit Geld-zurück-, falls der Chargeback nachweislich abgelehnt wird. Eine Flatrate für unbegrenzte Fälle gibt es für 9,99 € (inkl. MwSt.) (12 Monate).`,
     },
     {
       q: `Kann ich gegen ${m.name} auch klagen, wenn der Chargeback scheitert?`,

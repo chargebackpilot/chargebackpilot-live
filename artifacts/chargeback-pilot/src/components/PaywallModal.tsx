@@ -110,7 +110,7 @@ function getBenefits(paymentMethod: string): Benefit[] {
 }
 
 const TRUST_SIGNALS = [
-  "Einmalig 0,99 € — kein Abo",
+  "Einmalig 0,99 € (inkl. MwSt.) — kein Abo",
   "Sicherer Checkout via Stripe",
   "Sofortzugang nach Zahlung",
 ];
@@ -184,7 +184,7 @@ export function PaywallModal({
           Alle Dokumente freischalten
         </div>
         <div className="bg-white/20 text-white text-xs font-bold px-3 py-1 rounded-full">
-          0,99 €
+          0,99 € (inkl. MwSt.)
         </div>
       </div>
 
@@ -199,7 +199,7 @@ export function PaywallModal({
           <div className="text-right flex-shrink-0 pl-3">
             <p className="text-[10px] font-semibold uppercase tracking-wide opacity-70">Strategie-Einschätzung</p>
             <p className="text-lg font-black leading-tight">{band.name}</p>
-            <p className="text-[10px] opacity-70 italic">indikativ, keine Garantie</p>
+            <p className="text-[10px] opacity-70 italic">indikativ, keine </p>
           </div>
         </div>
 
@@ -232,7 +232,7 @@ export function PaywallModal({
             <ShieldCheck className="w-4 h-4 text-emerald-700" />
           </div>
           <div>
-            <p className="text-sm font-bold text-emerald-900">Geld-zurück-Garantie auf die 0,99 €</p>
+            <p className="text-sm font-bold text-emerald-900">Geld-zurück- auf die 0,99 € (inkl. MwSt.)</p>
             <p className="text-xs text-emerald-800 leading-snug mt-0.5">
               Falls dein Chargeback trotz unserer Strategie endgültig abgelehnt wird, schickst
               du uns einfach die schriftliche Ablehnung deiner Bank/PayPal — und wir erstatten
@@ -262,7 +262,7 @@ export function PaywallModal({
             ) : (
               <>
                 <CreditCard className="w-5 h-5" />
-                Jetzt für 0,99 € freischalten
+                Zahlungspflichtig bestellen (0,99 € inkl. MwSt.)
               </>
             )}
           </Button>

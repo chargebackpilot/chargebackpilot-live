@@ -40,7 +40,7 @@ const SCENARIOS = [
     detail: "Du hast bei Lieferando, Wolt oder UberEats bestellt — und erhalten, was du nicht bestellt hast, oder die Bestellung kam komplett ungenießbar an.",
     brands: ["Lieferando", "Wolt", "UberEats", "Gorillas"],
     recovery: "Bis zu 100% Rückerstattung möglich",
-    href: "/fall-pruefen?problem=food_delivery",
+    href: "/vorlagen-generator?problem=food_delivery",
   },
   {
     icon: Plane,
@@ -53,7 +53,7 @@ const SCENARIOS = [
     detail: "Dein Flug wurde gestrichen oder du hast ihn nicht genutzt — Steuern und Gebühren werden von Airlines wie Ryanair oder Easyjet oft nicht automatisch erstattet.",
     brands: ["Ryanair", "Easyjet", "Condor", "TUI Fly"],
     recovery: "Steuern & Gebühren zurückfordern",
-    href: "/fall-pruefen?problem=flight_travel",
+    href: "/vorlagen-generator?problem=flight_travel",
   },
   {
     icon: Building2,
@@ -66,7 +66,7 @@ const SCENARIOS = [
     detail: "Das gebuchte Zimmer entsprach nicht der Beschreibung — Schimmel, fehlendes Meerblick-Zimmer, kaputte Klimaanlage, oder die Unterkunft war bei Ankunft gar nicht verfügbar.",
     brands: ["Booking.com", "Airbnb", "Hotels.com", "HRS"],
     recovery: "Chargeback über Kreditkarte möglich",
-    href: "/fall-pruefen?problem=flight_travel",
+    href: "/vorlagen-generator?problem=flight_travel",
   },
   {
     icon: Package,
@@ -79,7 +79,7 @@ const SCENARIOS = [
     detail: "Du hast bei Amazon, Temu oder SHEIN bestellt — die Ware kam nie an, wurde als zugestellt markiert, oder du hast etwas völlig anderes erhalten.",
     brands: ["Amazon", "Temu", "SHEIN", "Aliexpress"],
     recovery: "PayPal Käuferschutz oder Kreditkarte",
-    href: "/fall-pruefen?problem=not_received",
+    href: "/vorlagen-generator?problem=not_received",
   },
   {
     icon: RefreshCcw,
@@ -92,7 +92,7 @@ const SCENARIOS = [
     detail: "Der Händler hat dir schriftlich eine Rückerstattung zugesagt — aber das Geld ist nie auf deinem Konto angekommen. Dein stärkstes Argument für einen Chargeback.",
     brands: ["Alle Händler", "Online-Shops", "Dienstleister"],
     recovery: "Stärkste Chargeback-Position",
-    href: "/fall-pruefen?problem=refund_promised",
+    href: "/vorlagen-generator?problem=refund_promised",
   },
   {
     icon: Repeat2,
@@ -105,7 +105,7 @@ const SCENARIOS = [
     detail: "Du hast ein Abo gekündigt — aber es wird weiter abgebucht. Oder du bist in eine Abofalle getappt, die du nie bewusst abgeschlossen hast.",
     brands: ["Netflix", "Spotify", "Amazon Prime", "Klarna"],
     recovery: "Rückbuchung mehrerer Monate möglich",
-    href: "/fall-pruefen?problem=subscription",
+    href: "/vorlagen-generator?problem=subscription",
   },
 ];
 
@@ -227,7 +227,7 @@ export default function Home() {
             Lieferung fehlt, Flug gestrichen oder falsches Essen? Wir leiten dich als Privatperson perfekt durch den Käuferschutz-Prozess. Erhalte strukturierte Anleitungen und exakte Textvorlagen für PayPal, Kreditkarte und Händler, damit du genau weißt, was du schreiben musst.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Link href="/fall-pruefen">
+            <Link href="/vorlagen-generator">
               <Button size="lg" className="w-full sm:w-auto text-base px-8 gap-2 h-12" data-testid="hero-cta-primary">
                 Kostenlose Hilfe starten
                 <ArrowRight className="w-5 h-5" />
@@ -349,7 +349,7 @@ export default function Home() {
 
         <div className="text-center mt-12">
           <p className="text-muted-foreground text-sm mb-4">Dein Fall ist nicht dabei?</p>
-          <Link href="/fall-pruefen">
+          <Link href="/vorlagen-generator">
             <Button variant="outline" className="gap-2">
               Trotzdem kostenlos Hilfe starten
               <ArrowRight className="w-4 h-4" />
@@ -397,7 +397,7 @@ export default function Home() {
           </div>
           <PaymentHelpGrid />
           <p className="text-center text-xs text-muted-foreground mt-6 max-w-xl mx-auto">
-            Kein Häkchen, keine Anmeldung — die Text-Generierung startet kostenlos. Du zahlst erst, wenn du die fertigen Brief-Vorlagen brauchst (0,99 € pro Fall).
+            Kein Häkchen, keine Anmeldung — die Text-Generierung startet kostenlos. Du zahlst erst, wenn du die fertigen Brief-Vorlagen brauchst (0,99 € (inkl. MwSt.) pro Fall).
           </p>
         </div>
       </section>
@@ -428,7 +428,7 @@ export default function Home() {
                     </li>
                   ))}
                 </ul>
-                <Link href="/fall-pruefen">
+                <Link href="/vorlagen-generator">
                   <Button className="w-full mt-2" variant="outline">Jetzt kostenlos starten</Button>
                 </Link>
               </CardContent>
@@ -454,8 +454,8 @@ export default function Home() {
                   ))}
                 </ul>
                 <div className="!mt-5">
-                  <Link href="/fall-pruefen">
-                    <Button className="w-full">Paket für 0,99 € freischalten</Button>
+                  <Link href="/vorlagen-generator">
+                    <Button className="w-full">Paket für 0,99 € (inkl. MwSt.) freischalten</Button>
                   </Link>
                 </div>
               </CardContent>
@@ -489,7 +489,7 @@ export default function Home() {
                     disabled={flatrateLoading}
                     data-testid="flatrate-checkout"
                   >
-                    {flatrateLoading ? "Wird vorbereitet…" : "Flatrate für 9,99 € kaufen"}
+                    {flatrateLoading ? "Wird vorbereitet…" : "Flatrate für 9,99 € (inkl. MwSt.) kaufen"}
                   </Button>
                 )}
               </CardContent>
@@ -513,7 +513,7 @@ export default function Home() {
 
           <div className="mt-12 text-center">
             <p className="text-muted-foreground mb-4 text-sm">Bereit, Brief-Vorlagen zu generieren?</p>
-            <Link href="/fall-pruefen">
+            <Link href="/vorlagen-generator">
               <Button size="lg" className="gap-2">
                 Jetzt kostenlos starten
                 <ArrowRight className="w-4 h-4" />

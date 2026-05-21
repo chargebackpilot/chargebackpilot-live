@@ -26,7 +26,7 @@ export default function MerchantIndexPage() {
           <div className="container mx-auto max-w-3xl">
             <h1 className="text-3xl md:text-5xl font-bold mb-4">{merchant.name}: Reklamation & Chargeback</h1>
             <p className="text-lg text-muted-foreground mb-6">{merchant.description}</p>
-            <Link href="/fall-pruefen">
+            <Link href="/vorlagen-generator">
               <Button size="lg" className="gap-2">
                 Generator starten <ArrowRight className="w-4 h-4" />
               </Button>

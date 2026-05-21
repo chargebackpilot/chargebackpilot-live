@@ -110,7 +110,7 @@ export function PaymentHelpGrid({ className = "" }: PLProps) {
   return (
     <div className={`grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 ${className}`}>
       {PAYMENT_HELP_CARDS.map((card) => (
-        <Link key={card.id} href={`/fall-pruefen?payment=${card.id}`}>
+        <Link key={card.id} href={`/vorlagen-generator?payment=${card.id}`}>
           <div
             className="group bg-white border-2 border-border hover:border-primary rounded-xl p-4 cursor-pointer transition-all hover:shadow-md hover:-translate-y-0.5 h-full flex items-center gap-4"
             data-testid={`payment-help-card-${card.id}`}

@@ -41,7 +41,7 @@ function Router() {
   return (
     <Switch>
       <Route path="/" component={Home} />
-      <Route path="/fall-pruefen" component={Wizard} />
+      <Route path="/vorlagen-generator" component={Wizard} />
       <Route path="/ratgeber" component={RatgeberIndex} />
       <Route path="/admin" component={Admin} />
       <Route path="/admin/demo" component={AdminDemo} />
