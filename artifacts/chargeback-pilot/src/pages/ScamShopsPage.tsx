@@ -88,7 +88,7 @@ export default function ScamShopsPage() {
               Die 8 wichtigsten Warnsignale 2026 plus die exakte Schritt-für-Schritt-Anleitung
               für PayPal-Käuferschutz, Kreditkarten-Chargeback und SEPA-Lastschriftrückgabe.
             </p>
-            <Link href="/fall-pruefen?problem=fraud">
+            <Link href="/vorlagen-generator?problem=fraud">
               <Button size="lg" className="gap-2">
                 Verdachtsfall jetzt prüfen
                 <ArrowRight className="w-4 h-4" />
@@ -153,7 +153,7 @@ export default function ScamShopsPage() {
                 className="flex-1 px-3 py-2 rounded-md border bg-background text-sm"
                 aria-label="Shop-Name oder URL"
               />
-              <Link href={`/fall-pruefen?problem=fraud${query ? `&merchant=${encodeURIComponent(query)}` : ""}`}>
+              <Link href={`/vorlagen-generator?problem=fraud${query ? `&merchant=${encodeURIComponent(query)}` : ""}`}>
                 <Button>Fall starten</Button>
               </Link>
             </div>
@@ -169,7 +169,7 @@ export default function ScamShopsPage() {
             <p className="opacity-90 mb-5 text-sm md:text-base">
               SEPA: 8 Wochen Frist · Kreditkarte: 60–120 Tage · PayPal: 180 Tage. Wir generieren deinen Antrag in 60 Sek.
             </p>
-            <Link href="/fall-pruefen?problem=fraud">
+            <Link href="/vorlagen-generator?problem=fraud">
               <Button size="lg" variant="secondary" className="gap-2">
                 Geld zurückholen
                 <ArrowRight className="w-4 h-4" />

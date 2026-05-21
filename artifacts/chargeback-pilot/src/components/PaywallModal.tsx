@@ -17,6 +17,7 @@ import {
 } from "lucide-react";
 import { generatePdf } from "@/lib/pdf-generator";
 import { PaymentLogoStrip } from "@/components/PaymentLogos";
+import { Dialog, DialogContent, DialogDescription, DialogTitle } from "@/components/ui/dialog";
 
 interface PaywallProps {
   onUnlock: () => void;
@@ -226,26 +227,12 @@ export function PaywallModal({
           </div>
         </div>
 
-        {/* Money-back guarantee — conditional, with proof requirement */}
-        <div className="bg-emerald-50 border border-emerald-200 rounded-xl p-4 flex items-start gap-3">
-          <div className="w-8 h-8 rounded-lg bg-emerald-100 flex items-center justify-center flex-shrink-0">
-            <ShieldCheck className="w-4 h-4 text-emerald-700" />
-          </div>
-          <div>
-            <p className="text-sm font-bold text-emerald-900">Geld-zurück- auf die 0,99 € (inkl. MwSt.)</p>
-            <p className="text-xs text-emerald-800 leading-snug mt-0.5">
-              Falls dein Chargeback trotz unserer Strategie endgültig abgelehnt wird, schickst
-              du uns einfach die schriftliche Ablehnung deiner Bank/PayPal — und wir erstatten
-              dir die 0,99&nbsp;€ zurück.
-            </p>
-          </div>
-        </div>
 
         {/* Value reminder */}
         <div className="flex items-center gap-2.5 bg-amber-50 border border-amber-200 rounded-xl px-3 py-2.5">
           <Sparkles className="w-4 h-4 text-amber-600 flex-shrink-0" />
           <span className="text-xs text-amber-900 leading-snug">
-            <strong>Weniger als ein Kaffee</strong> — aber {amount > 10 ? `${amount.toFixed(0)} € potentielle Rückerstattung` : "deine vollständige Reklamations-Strategie"} auf einen Klick.
+            <strong>Tipp:</strong> Ohne rechtssicheres Anschreiben und korrekten Grund (Reason Code) sinkt die Chance auf eine Rückerstattung signifikant.
           </span>
         </div>
 

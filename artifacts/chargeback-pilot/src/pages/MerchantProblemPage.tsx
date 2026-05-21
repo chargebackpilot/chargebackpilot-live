@@ -312,7 +312,7 @@ export default function MerchantProblemPage() {
           <section className="bg-primary text-primary-foreground p-6 md:p-8 rounded-2xl text-center">
             <h2 className="text-xl md:text-2xl font-bold mb-2">Lass die KI deinen {merchant.name}-Fall prüfen</h2>
             <p className="opacity-90 mb-5 text-sm md:text-base">
-              60 Sekunden, kostenlose Einschätzung — Vorlagen für 0,99 € (inkl. MwSt.) freischalten. Geld-zurück bei Ablehnung.
+              60 Sekunden, kostenlose Einschätzung — Vorlagen für 0,99 € (inkl. MwSt.) freischalten. 
             </p>
             <Link href={wizardHref}>
               <Button size="lg" variant="secondary" className="gap-2">

@@ -79,9 +79,9 @@ export function SEOArticleLayout({ title, category, whenApplies, evidence, steps
             <p className="text-xl text-muted-foreground mb-8">
               Erfahre alles, was du über {category} wissen musst – Fristen, Beweise und der genaue Ablauf.
             </p>
-            <Link href="/fall-pruefen">
+            <Link href="/vorlagen-generator">
               <Button size="lg" className="gap-2">
-                Fall für {category} kostenlos prüfen
+                Vorlagen für {category} generieren
                 <ArrowRight className="w-5 h-5" />
               </Button>
             </Link>
@@ -169,9 +169,9 @@ export function SEOArticleLayout({ title, category, whenApplies, evidence, steps
           {/* Bottom CTA */}
           <section className="bg-muted p-8 rounded-2xl text-center">
             <h2 className="text-2xl font-bold mb-4">Unsicher bei deinem Fall?</h2>
-            <p className="text-muted-foreground mb-6">Lass unsere KI deinen Fall analysieren und erhalte sofort eine erste Einschätzung und die passenden Textvorlagen.</p>
-            <Link href="/fall-pruefen">
-              <Button size="lg">Jetzt kostenlos analysieren</Button>
+            <p className="text-muted-foreground mb-6">Nutze unseren Generator und erhalte sofort die passenden Textvorlagen.</p>
+            <Link href="/vorlagen-generator">
+              <Button size="lg">Vorlagen generieren</Button>
             </Link>
           </section>
 

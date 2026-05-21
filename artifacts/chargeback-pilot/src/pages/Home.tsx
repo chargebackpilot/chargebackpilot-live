@@ -243,6 +243,19 @@ export default function Home() {
           {/* STATS */}
           <div className="mt-14 pt-8 border-t flex flex-wrap justify-center gap-10 text-sm">
             <div className="flex items-center gap-2.5">
+              <div className="flex -space-x-2 mr-2">
+                <div className="w-8 h-8 rounded-full border-2 border-background bg-slate-200"></div>
+                <div className="w-8 h-8 rounded-full border-2 border-background bg-slate-300"></div>
+                <div className="w-8 h-8 rounded-full border-2 border-background bg-slate-400"></div>
+              </div>
+              <div className="text-left">
+                <div className="flex items-center gap-1 text-amber-500">
+                  {"★★★★★".split("").map((star, i) => <span key={i}>{star}</span>)}
+                </div>
+                <div className="text-muted-foreground text-xs">Über 1.000+ generierte Anschreiben</div>
+              </div>
+            </div>
+            <div className="flex items-center gap-2.5">
               <div className="w-9 h-9 rounded-full bg-primary/10 flex items-center justify-center">
                 <TrendingUp className="w-4 h-4 text-primary" />
               </div>
@@ -442,7 +455,7 @@ export default function Home() {
               <CardHeader className="pb-4">
                 <CardTitle className="text-lg">Einzelfall Freischaltung</CardTitle>
                 <CardDescription>Einmalig pro Vorlagen-Paket</CardDescription>
-                <div className="text-4xl font-black mt-3">0,99 <span className="text-lg font-normal text-muted-foreground">€</span></div>
+                <div className="text-4xl font-black mt-3">0,99 <span className="text-lg font-normal text-muted-foreground">€ <span className="text-xs">(inkl. MwSt.)</span></span></div>
               </CardHeader>
               <CardContent className="space-y-4">
                 <ul className="space-y-2.5 text-sm">
@@ -466,7 +479,7 @@ export default function Home() {
               <CardHeader className="pb-4">
                 <CardTitle className="text-lg">Chargeback Flatrate</CardTitle>
                 <CardDescription>Für 12 Monate · kein Abo</CardDescription>
-                <div className="text-4xl font-black mt-3">9,99 <span className="text-lg font-normal text-muted-foreground">€ einmalig</span></div>
+                <div className="text-4xl font-black mt-3">9,99 <span className="text-lg font-normal text-muted-foreground">€ <span className="text-xs">(inkl. MwSt.)</span></span></div>
               </CardHeader>
               <CardContent className="space-y-4">
                 <ul className="space-y-2.5 text-sm">

@@ -26,7 +26,7 @@ export function Navbar() {
           <MyCasesWidget />
           <Link href="/vorlagen-generator" className="ml-1">
             <Button size="sm" className="gap-2">
-              Fall kostenlos prüfen
+              Vorlagen generieren
               <ArrowRight className="w-4 h-4" />
             </Button>
           </Link>
@@ -50,7 +50,7 @@ export function Navbar() {
             </Link>
             <Link href="/vorlagen-generator" onClick={() => setIsOpen(false)}>
               <Button className="w-full gap-2">
-                Fall kostenlos prüfen
+                Vorlagen generieren
                 <ArrowRight className="w-4 h-4" />
               </Button>
             </Link>

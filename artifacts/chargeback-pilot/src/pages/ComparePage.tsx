@@ -60,7 +60,7 @@ export default function ComparePage() {
             <p className="text-lg text-muted-foreground mb-6">
               Welcher Käuferschutz ist im Streitfall am stärksten? Direktvergleich mit Fristen, Erfolgsquoten und unserer Empfehlung pro Use-Case.
             </p>
-            <Link href="/fall-pruefen">
+            <Link href="/vorlagen-generator">
               <Button size="lg" className="gap-2">
                 Fall in 60 Sek. analysieren <ArrowRight className="w-4 h-4" />
               </Button>
@@ -129,7 +129,7 @@ export default function ComparePage() {
             <p className="opacity-90 mb-5 text-sm md:text-base">
               Unsere KI bewertet deinen Fall in 60 Sekunden und empfiehlt den Kanal mit der höchsten Erfolgsquote.
             </p>
-            <Link href="/fall-pruefen">
+            <Link href="/vorlagen-generator">
               <Button size="lg" variant="secondary" className="gap-2">
                 Jetzt kostenlos analysieren
                 <ArrowRight className="w-4 h-4" />

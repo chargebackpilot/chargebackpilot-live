@@ -47,6 +47,7 @@ import {
   BadgeAlert,
   Download,
   FileSignature,
+  Sparkles,
 } from "lucide-react";
 
 // ---------------------------------------------------------------------------
@@ -512,9 +513,17 @@ function getDisputedPercent(purchase: string, disputed: string): number | null {
 // Sub-components (unchanged)
 // ---------------------------------------------------------------------------
 
-function AnalysisLoader({ merchantName }: { merchantName: string }) {
+function GeneratorLoader({ merchantName }: { merchantName: string }) {
   const [completedSteps, setCompletedSteps] = useState<number[]>([]);
   const [allDone, setAllDone] = useState(false);
+  const [factIndex, setFactIndex] = useState(0);
+
+  const facts = [
+    "Wusstest du? Bei Visa lautet der Chargeback-Grund für nicht gelieferte Ware oft 'Reason Code 13.1'.",
+    "Viele Händler lenken bei einem professionellen Chargeback-Antrag sofort ein, um Gebühren der Bank zu vermeiden.",
+    "PayPals Käuferschutz greift bis zu 180 Tage nach Zahlung. Danach ist er wirkungslos.",
+    "Chargeback-Anträge bei Kreditkarten sollten meist innerhalb von 120 Tagen ab Kaufdatum gestellt werden."
+  ];
 
   useEffect(() => {
     const t1 = setTimeout(() => setCompletedSteps([0]), 7000);
@@ -523,7 +532,12 @@ function AnalysisLoader({ merchantName }: { merchantName: string }) {
       setCompletedSteps([0, 1, 2]);
       setTimeout(() => setAllDone(true), 600);
     }, 23000);
-    return () => { clearTimeout(t1); clearTimeout(t2); clearTimeout(t3); };
+
+    const fInterval = setInterval(() => {
+      setFactIndex(prev => (prev + 1) % facts.length);
+    }, 5000);
+
+    return () => { clearTimeout(t1); clearTimeout(t2); clearTimeout(t3); clearInterval(fInterval); };
   }, []);
 
   return (
@@ -531,7 +545,7 @@ function AnalysisLoader({ merchantName }: { merchantName: string }) {
       <div className="relative">
         <div className="w-20 h-20 rounded-full border-4 border-primary/20 border-t-primary animate-spin" />
         <div className="absolute inset-0 flex items-center justify-center">
-          <Shield className="w-8 h-8 text-primary" />
+          <FileText className="w-8 h-8 text-primary" />
         </div>
       </div>
       <div>
@@ -571,6 +585,17 @@ function AnalysisLoader({ merchantName }: { merchantName: string }) {
         <div className="animate-in fade-in slide-in-from-bottom-2 duration-500 flex items-center gap-2 text-emerald-700 font-semibold">
           <CheckCircle2 className="w-5 h-5" />
           Vorlagen erstellt — Ergebnisse laden...
+        </div>
+      )}
+
+      {!allDone && (
+        <div className="mt-4 max-w-sm mx-auto bg-muted/30 border rounded-xl p-4 text-xs text-muted-foreground animate-in fade-in duration-500">
+          <div className="font-semibold text-primary mb-1 flex items-center justify-center gap-1.5">
+            <Sparkles className="w-3.5 h-3.5" /> Wusstest du schon?
+          </div>
+          <p key={factIndex} className="animate-in fade-in slide-in-from-bottom-1 duration-300 min-h-[40px] flex items-center justify-center">
+            {facts[factIndex]}
+          </p>
         </div>
       )}
     </div>
@@ -1052,7 +1077,7 @@ export default function Wizard() {
       merchantResponseType: "", merchantResponseNote: "",
       evidence: [], structuredAnswers: {},
     });
-    window.history.replaceState({}, "", "/fall-pruefen");
+    window.history.replaceState({}, "", "/vorlagen-generator");
   };
 
   const handlePayment = () => {
@@ -1166,7 +1191,7 @@ export default function Wizard() {
               )}
 
               <Card className="shadow-sm">
-                <CardContent className="p-6 sm:p-8">
+                <CardContent className="p-6 sm:p-8 pb-24 lg:pb-8">
 
                   {/* STEP 1: Payment Method */}
               {step === 1 && (
@@ -1354,7 +1379,7 @@ export default function Wizard() {
                     </div>
 
                     {formData.merchantContacted && (
-                      <div className="space-y-4 pl-1 animate-in fade-in slide-in-from-top-2 duration-200">
+                      <div className="space-y-4 pl-1 animate-in fade-in duration-200">
                         <p className="text-sm font-semibold">Was hat der Händler geantwortet?</p>
                         <div className="space-y-2">
                           {MERCHANT_RESPONSE_OPTIONS.map((opt) => (
@@ -1487,7 +1512,7 @@ export default function Wizard() {
 
                   <div className="bg-blue-50 border border-blue-200 rounded-xl p-4 text-sm text-blue-800">
                     <p className="font-semibold mb-1 flex items-center gap-2"><Shield className="w-4 h-4" /> KI-Generierung</p>
-                    <p>Deine Angaben werden von unserer KI strukturiert und in perfekte Vorlagen überführt. Dauer: ca. 15–30 Sekunden.</p>
+                    <p>Deine Angaben werden von unserer KI strukturieren und in perfekte Vorlagen überführt. Dauer: ca. 15–30 Sekunden.</p>
                   </div>
 
                   <div className="border border-border rounded-xl p-4 space-y-3">
@@ -1510,7 +1535,7 @@ export default function Wizard() {
               {step === 6 && (
                 <div className="space-y-8">
                   {!result ? (
-                    <AnalysisLoader merchantName={formData.merchantName} />
+                    <GeneratorLoader merchantName={formData.merchantName} />
                   ) : (
                     <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
 
@@ -1802,17 +1827,18 @@ export default function Wizard() {
 
               {/* NAV BUTTONS */}
               {step < 6 && (
-                <div className="flex justify-between mt-8 pt-6 border-t">
-                  <Button variant="outline" onClick={handleBack} disabled={step === 1} className="gap-2 cursor-pointer">
+                <div className="fixed bottom-0 left-0 right-0 p-4 bg-background/80 backdrop-blur-md border-t lg:static lg:bg-transparent lg:backdrop-blur-none lg:border-t lg:p-0 lg:mt-8 lg:pt-6 z-40 flex justify-between shadow-[0_-4px_10px_rgba(0,0,0,0.05)] lg:shadow-none">
+                  <Button variant="outline" onClick={handleBack} disabled={step === 1} className="gap-2 cursor-pointer shadow-sm lg:shadow-none bg-background">
                     <ArrowLeft className="w-4 h-4" />Zurück
                   </Button>
                   {step < 5 ? (
-                    <Button onClick={handleNext} disabled={!canGoNext} className="gap-2 cursor-pointer">
+                    <Button onClick={handleNext} disabled={!canGoNext} className="gap-2 cursor-pointer shadow-sm lg:shadow-none">
                       Weiter<ArrowRight className="w-4 h-4" />
                     </Button>
                   ) : (
-                    <Button onClick={handleSubmit} disabled={!step5Valid || !acceptedLegal || createCase.isPending} className="gap-2 cursor-pointer">
-                      <Shield className="w-4 h-4" />Vorlagen generieren
+                    <Button onClick={handleSubmit} disabled={!step5Valid || !acceptedLegal || createCase.isPending} className="gap-2 cursor-pointer shadow-sm lg:shadow-none bg-emerald-600 hover:bg-emerald-700 text-white font-bold">
+                      {createCase.isPending ? <Loader2 className="w-4 h-4 animate-spin" /> : <Shield className="w-4 h-4" />}
+                      {createCase.isPending ? "Generiere..." : "Vorlagen generieren"}
                     </Button>
                   )}
                 </div>

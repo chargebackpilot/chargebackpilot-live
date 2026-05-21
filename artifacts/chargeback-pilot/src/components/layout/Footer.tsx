@@ -21,7 +21,7 @@ export function Footer() {
         <div>
           <h3 className="font-bold mb-4">Produkt</h3>
           <ul className="space-y-2 text-sm text-muted-foreground">
-            <li><Link href="/fall-pruefen" className="hover:text-foreground transition-colors">Fall kostenlos prüfen</Link></li>
+            <li><Link href="/vorlagen-generator" className="hover:text-foreground transition-colors">Vorlagen generieren</Link></li>
             <li><Link href="/ratgeber" className="hover:text-foreground transition-colors">Ratgeber</Link></li>
           </ul>
         </div>

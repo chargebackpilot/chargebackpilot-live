@@ -1,24 +1,40 @@
 import { Switch, Route, Router as WouterRouter, useLocation } from "wouter";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { useEffect } from "react";
+import { useEffect, Suspense, lazy } from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
-import NotFound from "@/pages/not-found";
-import Home from "@/pages/Home";
-import Wizard from "@/pages/Wizard";
-import RatgeberIndex from "@/pages/RatgeberIndex";
-import Admin from "@/pages/Admin";
-import AdminDemo from "@/pages/AdminDemo";
-import { Impressum, Datenschutz, AGB, Widerruf } from "@/pages/LegalPages";
-import { 
-  PayPalSEO, AmexSEO, VisaMastercardSEO, 
-  KlarnaSEO, FlugSEO, LieferandoSEO, WoltSEO, UberEatsSEO, KiwiSEO,
-  WareNichtErhaltenSEO, AboFalleSEO 
-} from "@/pages/SEOPages";
-import MerchantProblemPage from "@/pages/MerchantProblemPage";
-import MerchantIndexPage from "@/pages/MerchantIndexPage";
-import ScamShopsPage from "@/pages/ScamShopsPage";
-import ComparePage from "@/pages/ComparePage";
+import { Loader2 } from "lucide-react";
+
+// Lazy-loaded routes for better performance
+const NotFound = lazy(() => import("@/pages/not-found"));
+const Home = lazy(() => import("@/pages/Home"));
+const Wizard = lazy(() => import("@/pages/Wizard"));
+const RatgeberIndex = lazy(() => import("@/pages/RatgeberIndex"));
+const Admin = lazy(() => import("@/pages/Admin"));
+const AdminDemo = lazy(() => import("@/pages/AdminDemo"));
+const MerchantProblemPage = lazy(() => import("@/pages/MerchantProblemPage"));
+const MerchantIndexPage = lazy(() => import("@/pages/MerchantIndexPage"));
+const ScamShopsPage = lazy(() => import("@/pages/ScamShopsPage"));
+const ComparePage = lazy(() => import("@/pages/ComparePage"));
+
+// Legal pages
+const Impressum = lazy(() => import("@/pages/LegalPages").then(m => ({ default: m.Impressum })));
+const Datenschutz = lazy(() => import("@/pages/LegalPages").then(m => ({ default: m.Datenschutz })));
+const AGB = lazy(() => import("@/pages/LegalPages").then(m => ({ default: m.AGB })));
+const Widerruf = lazy(() => import("@/pages/LegalPages").then(m => ({ default: m.Widerruf })));
+
+// SEO Pages
+const PayPalSEO = lazy(() => import("@/pages/SEOPages").then(m => ({ default: m.PayPalSEO })));
+const AmexSEO = lazy(() => import("@/pages/SEOPages").then(m => ({ default: m.AmexSEO })));
+const VisaMastercardSEO = lazy(() => import("@/pages/SEOPages").then(m => ({ default: m.VisaMastercardSEO })));
+const KlarnaSEO = lazy(() => import("@/pages/SEOPages").then(m => ({ default: m.KlarnaSEO })));
+const FlugSEO = lazy(() => import("@/pages/SEOPages").then(m => ({ default: m.FlugSEO })));
+const KiwiSEO = lazy(() => import("@/pages/SEOPages").then(m => ({ default: m.KiwiSEO })));
+const LieferandoSEO = lazy(() => import("@/pages/SEOPages").then(m => ({ default: m.LieferandoSEO })));
+const WoltSEO = lazy(() => import("@/pages/SEOPages").then(m => ({ default: m.WoltSEO })));
+const UberEatsSEO = lazy(() => import("@/pages/SEOPages").then(m => ({ default: m.UberEatsSEO })));
+const WareNichtErhaltenSEO = lazy(() => import("@/pages/SEOPages").then(m => ({ default: m.WareNichtErhaltenSEO })));
+const AboFalleSEO = lazy(() => import("@/pages/SEOPages").then(m => ({ default: m.AboFalleSEO })));
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -39,45 +55,50 @@ function ScrollToTop() {
 
 function Router() {
   return (
-    <Switch>
-      <Route path="/" component={Home} />
-      <Route path="/vorlagen-generator" component={Wizard} />
-      <Route path="/ratgeber" component={RatgeberIndex} />
-      <Route path="/admin" component={Admin} />
-      <Route path="/admin/demo" component={AdminDemo} />
-      
-      {/* Legal Pages */}
-      <Route path="/impressum" component={Impressum} />
-      <Route path="/datenschutz" component={Datenschutz} />
-      
-      <Route path="/agb" component={AGB} />
-      <Route path="/widerruf" component={Widerruf} />
-      
-      {/* SEO Landing Pages */}
-      <Route path="/paypal-chargeback" component={PayPalSEO} />
-      <Route path="/amex-chargeback" component={AmexSEO} />
-      <Route path="/visa-mastercard-chargeback" component={VisaMastercardSEO} />
-      <Route path="/klarna-reklamation" component={KlarnaSEO} />
-      <Route path="/flug-chargeback" component={FlugSEO} />
-      <Route path="/kiwi-rueckerstattung" component={KiwiSEO} />
-      <Route path="/lieferando-rueckerstattung" component={LieferandoSEO} />
-      <Route path="/wolt-rueckerstattung" component={WoltSEO} />
-      <Route path="/ubereats-rueckerstattung" component={UberEatsSEO} />
-      <Route path="/ware-nicht-erhalten" component={WareNichtErhaltenSEO} />
-      <Route path="/abo-falle-chargeback" component={AboFalleSEO} />
+    <Suspense fallback={
+      <div className="flex h-screen w-screen items-center justify-center bg-background">
+        <Loader2 className="w-8 h-8 animate-spin text-primary" />
+      </div>
+    }>
+      <Switch>
+        <Route path="/" component={Home} />
+        <Route path="/vorlagen-generator" component={Wizard} />
+        <Route path="/ratgeber" component={RatgeberIndex} />
+        <Route path="/admin" component={Admin} />
+        <Route path="/admin/demo" component={AdminDemo} />
+        
+        {/* Legal Pages */}
+        <Route path="/impressum" component={Impressum} />
+        <Route path="/datenschutz" component={Datenschutz} />
+        <Route path="/agb" component={AGB} />
+        <Route path="/widerruf" component={Widerruf} />
+        
+        {/* SEO Landing Pages */}
+        <Route path="/paypal-chargeback" component={PayPalSEO} />
+        <Route path="/amex-chargeback" component={AmexSEO} />
+        <Route path="/visa-mastercard-chargeback" component={VisaMastercardSEO} />
+        <Route path="/klarna-reklamation" component={KlarnaSEO} />
+        <Route path="/flug-chargeback" component={FlugSEO} />
+        <Route path="/kiwi-rueckerstattung" component={KiwiSEO} />
+        <Route path="/lieferando-rueckerstattung" component={LieferandoSEO} />
+        <Route path="/wolt-rueckerstattung" component={WoltSEO} />
+        <Route path="/ubereats-rueckerstattung" component={UberEatsSEO} />
+        <Route path="/ware-nicht-erhalten" component={WareNichtErhaltenSEO} />
+        <Route path="/abo-falle-chargeback" component={AboFalleSEO} />
 
-      {/* Programmatic merchant SEO */}
-      <Route path="/hilfe/:merchantSlug/:problemSlug" component={MerchantProblemPage} />
-      <Route path="/hilfe/:merchantSlug" component={MerchantIndexPage} />
+        {/* Programmatic merchant SEO */}
+        <Route path="/hilfe/:merchantSlug/:problemSlug" component={MerchantProblemPage} />
+        <Route path="/hilfe/:merchantSlug" component={MerchantIndexPage} />
 
-      {/* Trust / scam ratgeber */}
-      <Route path="/scam-shops-2026" component={ScamShopsPage} />
+        {/* Trust / scam ratgeber */}
+        <Route path="/scam-shops-2026" component={ScamShopsPage} />
 
-      {/* Comparison */}
-      <Route path="/vergleich/paypal-vs-kreditkarte-vs-klarna" component={ComparePage} />
+        {/* Comparison */}
+        <Route path="/vergleich/paypal-vs-kreditkarte-vs-klarna" component={ComparePage} />
 
-      <Route component={NotFound} />
-    </Switch>
+        <Route component={NotFound} />
+      </Switch>
+    </Suspense>
   );
 }
 
