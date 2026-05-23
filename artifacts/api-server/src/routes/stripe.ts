@@ -46,7 +46,7 @@ router.post("/checkout", async (req, res) => {
             currency: "eur",
             product_data: {
               name: "ChargebackPilot — Fall freischalten",
-              description: "3 professionelle Textvorlagen + PDF-Download + Schritt-für-Schritt-Anleitung. Geld-zurück-Garantie bei nachgewiesener Ablehnung.",
+              description: "3 professionelle Textvorlagen + PDF-Download + Schritt-für-Schritt-Anleitung. ",
             },
             unit_amount: 99,
           },
@@ -54,12 +54,12 @@ router.post("/checkout", async (req, res) => {
         },
       ],
       mode: "payment",
-      success_url: `${baseUrl}/fall-pruefen?payment_success=1&case_id=${caseId ?? ""}&session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `${baseUrl}/fall-pruefen?payment_cancel=1&case_id=${caseId ?? ""}`,
+      success_url: `${baseUrl}/vorlagen-generator?payment_success=1&case_id=${caseId ?? ""}&session_id={CHECKOUT_SESSION_ID}`,
+      cancel_url: `${baseUrl}/vorlagen-generator?payment_cancel=1&case_id=${caseId ?? ""}`,
       locale: "de",
       metadata: { mode: "single", ...(caseId ? { caseId } : {}) },
       custom_text: {
-        submit: { message: "Einmalige Zahlung · Keine Abos · Sofortzugang nach Zahlung · Geld-zurück bei Ablehnung" },
+        submit: { message: "Einmalige Zahlung · Keine Abos · Sofortzugang nach Zahlung" },
       },
     });
 
@@ -102,7 +102,7 @@ router.post("/flatrate-checkout", async (req, res) => {
             currency: "eur",
             product_data: {
               name: "ChargebackPilot Flatrate — 12 Monate",
-              description: "Unbegrenzte Fall-Freischaltungen für 12 Monate. Geld-zurück-Garantie pro Fall bei nachgewiesener Ablehnung.",
+              description: "Unbegrenzte Fall-Freischaltungen für 12 Monate. ",
             },
             unit_amount: 999,
           },

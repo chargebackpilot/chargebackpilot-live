@@ -33,7 +33,7 @@ export function PaypalLogo({ className = "" }: PLProps) {
   return (
     <div className={`inline-flex items-center justify-center bg-white border border-gray-200 rounded-md h-7 px-2 shadow-sm ${className}`} aria-label="PayPal">
       <span className="font-black italic text-[#003087] text-xs leading-none">Pay</span>
-      <span className="font-black italic text-[#009cde] text-xs leading-none">Pal</span>
+      <span className="font-black italic text-[#0070ba] text-xs leading-none">Pal</span>
     </div>
   );
 }

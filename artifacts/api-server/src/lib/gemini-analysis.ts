@@ -105,7 +105,7 @@ Analysiere diesen Fall und antworte AUSSCHLIESSLICH mit einem validen JSON-Objek
   "merchantTemplate": "<Professionelles Anschreiben an den Händler auf Deutsch, formell, max 150 Wörter>",
   "bankTemplate": "<Professionelles Chargeback-Anschreiben an Bank/PayPal/Klarna auf Deutsch, max 150 Wörter>",
   "escalationTemplate": "<Eskalationsschreiben für Schlichtungsstelle oder Verbraucherzentrale, max 150 Wörter>",
-  "disclaimer": "Keine Rechtsberatung. Keine Erfolgsgarantie. ChargebackPilot bietet allgemeine Informationen und KI-gestützte Formulierungshilfe. Die generierten Texte ersetzen keine anwaltliche Beratung und stellen keine Rechtsdienstleistung dar."
+  "disclaimer": "Keine Rechtsberatung. ChargebackPilot bietet allgemeine Informationen und Textvorlagen. Die generierten Texte ersetzen keine anwaltliche Beratung und stellen keine Rechtsdienstleistung dar."
 }
 
 WICHTIGE RICHTLINIEN FÜR DIE ANALYSE:
@@ -259,6 +259,6 @@ function buildFallbackAnalysis(input: CaseInput): CaseAnalysis {
     bankTemplate: `Betreff: Antrag auf Chargeback – ${input.merchantName} – ${input.amount.toFixed(2)} EUR – ${input.paymentDate}\n\nSehr geehrte Damen und Herren,\n\nIch beantrage die Einleitung eines Chargeback-Verfahrens für folgende Transaktion:\n• Händler: ${input.merchantName}\n• Betrag: ${input.amount.toFixed(2)} EUR\n• Datum: ${input.paymentDate}\n• Zahlungsmethode: ${paymentLabel}\n\n${input.description}\n\nMit freundlichen Grüßen\n\n---\nKeine Rechtsberatung. ChargebackPilot.de`,
     escalationTemplate: `Betreff: Eskalation – Ungelöster Streitfall – ${input.merchantName} – ${input.amount.toFixed(2)} EUR\n\nSehr geehrte Damen und Herren,\n\nDer bisherige Chargeback-Antrag für obigen Fall blieb erfolglos. Ich wende mich daher an die zuständige Schlichtungsstelle und bitte um Überprüfung.\n\nMit freundlichen Grüßen\n\n---\nKeine Rechtsberatung. ChargebackPilot.de`,
     disclaimer:
-      "Keine Rechtsberatung. Keine Erfolgsgarantie. ChargebackPilot bietet allgemeine Informationen und KI-gestützte Formulierungshilfe. Die generierten Texte ersetzen keine anwaltliche Beratung.",
+      "Keine Rechtsberatung. ChargebackPilot bietet allgemeine Informationen und Textvorlagen. Die generierten Texte ersetzen keine anwaltliche Beratung.",
   };
 }

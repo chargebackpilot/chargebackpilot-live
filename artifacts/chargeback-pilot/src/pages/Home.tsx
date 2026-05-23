@@ -216,7 +216,7 @@ export default function Home() {
       {/* Hero Section */}
       <section className="relative overflow-hidden bg-background pt-16 md:pt-24 pb-32">
         <div className="container mx-auto max-w-5xl text-center relative">
-          <span className="inline-block mb-6 px-4 py-1.5 rounded-full bg-primary/10 text-primary text-sm font-semibold tracking-wide">
+          <span className="inline-block mb-6 px-4 py-1.5 rounded-full bg-slate-100 text-slate-800 text-sm font-semibold tracking-wide">
             Käuferschutz für Verbraucher
           </span>
           <h1 className="text-4xl md:text-6xl font-black tracking-tight text-foreground mb-6 leading-tight">
@@ -329,7 +329,7 @@ export default function Home() {
                 {/* Brands */}
                 <div className="flex flex-wrap gap-1.5">
                   {sc.brands.map((brand, j) => (
-                    <span key={j} className="text-xs bg-muted px-2 py-0.5 rounded-full font-medium text-muted-foreground">
+                    <span key={j} className="text-xs bg-slate-100 px-2 py-0.5 rounded-full font-medium text-slate-700">
                       {brand}
                     </span>
                   ))}

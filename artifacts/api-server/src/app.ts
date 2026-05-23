@@ -3,6 +3,7 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import cors from "cors";
 import pinoHttp from "pino-http";
+import rateLimit from "express-rate-limit";
 import router from "./routes";
 import { logger } from "./lib/logger";
 
@@ -33,7 +34,17 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-app.use("/api", router);
+// Rate Limiting (DDoS & API Cost Protection)
+const apiLimiter = rateLimit({
+  windowMs: 60 * 60 * 1000, // 1 hour
+  max: 100, // limit each IP to 100 requests per windowMs
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { error: "Zu viele Anfragen. Bitte versuche es in einer Stunde erneut." },
+});
+
+// Apply rate limiter specifically to the API
+app.use("/api", apiLimiter, router);
 
 // Global Error Handler
 app.use(
@@ -44,8 +55,8 @@ app.use(
     next: express.NextFunction,
   ) => {
     logger.error(
-      err instanceof Error ? err.message : String(err),
-      err.stack,
+      err,
+      
       "Unhandled error in API",
     );
     res.status(500).json({
