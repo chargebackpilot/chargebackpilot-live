@@ -4,7 +4,7 @@ import { LogoLockup } from "../ui/Logo";
 export function Footer() {
   return (
     <footer className="bg-muted/20 border-t py-12 px-4 mt-auto">
-      <div className="container mx-auto max-w-7xl grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
+      <div className="container mx-auto max-w-7xl grid grid-cols-1 md:grid-cols-5 gap-8 mb-8">
         <div className="md:col-span-2">
           <Link href="/" className="inline-block mb-4">
             <LogoLockup size={24} />

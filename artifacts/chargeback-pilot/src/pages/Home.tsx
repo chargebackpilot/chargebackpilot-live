@@ -241,18 +241,14 @@ export default function Home() {
           </div>
 
           {/* STATS */}
-          <div className="mt-14 pt-8 border-t flex flex-wrap justify-center gap-10 text-sm">
+          <div className="mt-14 pt-8 border-t border-slate-200 flex flex-wrap justify-center gap-10 text-sm">
             <div className="flex items-center gap-2.5">
-              <div className="flex -space-x-2 mr-2">
-                <div className="w-8 h-8 rounded-full border-2 border-background bg-slate-200"></div>
-                <div className="w-8 h-8 rounded-full border-2 border-background bg-slate-300"></div>
-                <div className="w-8 h-8 rounded-full border-2 border-background bg-slate-400"></div>
+              <div className="w-9 h-9 rounded-full bg-slate-100 flex items-center justify-center text-slate-700">
+                <CheckCircle2 className="w-4 h-4" />
               </div>
               <div className="text-left">
-                <div className="flex items-center gap-1 text-amber-500">
-                  {"★★★★★".split("").map((star, i) => <span key={i}>{star}</span>)}
-                </div>
-                <div className="text-muted-foreground text-xs">Über 1.000+ generierte Anschreiben</div>
+                <div className="font-bold text-lg leading-none">Schneller Fall-Check</div>
+                <div className="text-muted-foreground text-xs">Klare nächste Schritte in 2 Minuten</div>
               </div>
             </div>
             <div className="flex items-center gap-2.5">
@@ -280,15 +276,6 @@ export default function Home() {
               <div className="text-left">
                 <div className="font-bold text-lg leading-none">3</div>
                 <div className="text-muted-foreground text-xs">Vorlagen pro Fall</div>
-              </div>
-            </div>
-            <div className="flex items-center gap-2.5">
-              <div className="w-9 h-9 rounded-full bg-violet-100 flex items-center justify-center">
-                <CreditCard className="w-4 h-4 text-violet-600" />
-              </div>
-              <div className="text-left">
-                <div className="font-bold text-lg leading-none">6</div>
-                <div className="text-muted-foreground text-xs">Zahlungsarten</div>
               </div>
             </div>
           </div>
@@ -372,7 +359,7 @@ export default function Home() {
       </section>
 
       {/* FEATURES */}
-      <section className="py-20 px-4 bg-background">
+      <section className="py-20 px-4 bg-background border-t border-slate-200">
         <div className="container mx-auto max-w-5xl">
           <div className="text-center mb-14">
             <h2 className="text-3xl font-bold mb-3">Was du bekommst</h2>
@@ -539,20 +526,20 @@ export default function Home() {
       {/* SEO Bottom Content */}
       <section className="py-16 bg-muted/10 border-t">
         <div className="container mx-auto max-w-5xl px-4">
-          <div className="grid md:grid-cols-2 gap-12">
-            <div>
+          <div className="grid gap-8 md:grid-cols-2">
+            <div className="rounded-3xl border border-slate-200 bg-white p-8 shadow-sm">
               <h2 className="text-2xl font-bold mb-4">Wann greift ein Chargeback?</h2>
               <p className="text-muted-foreground mb-4">
                 Das Chargeback-Verfahren ist dein Rettungsanker, wenn der Händler nicht kooperiert. Es ist international standardisiert durch Visa und Mastercard (sogenannte <em>Reason Codes</em>). Typische Gründe sind:
               </p>
-              <ul className="list-disc pl-5 space-y-2 text-muted-foreground">
+              <ul className="list-disc pl-5 space-y-3 text-muted-foreground">
                 <li><strong>Ware nicht geliefert:</strong> Der Shop behauptet, es sei verschickt, aber du hast nichts erhalten.</li>
                 <li><strong>Falsche oder defekte Ware:</strong> Du bestellst ein Markenprodukt und bekommst eine billige Fälschung aus Asien.</li>
                 <li><strong>Leistung nicht erbracht:</strong> Der Flug wurde gestrichen oder das Lieferessen (Lieferando, UberEats) kam komplett kalt an.</li>
                 <li><strong>Ungewollte Abonnements:</strong> Versteckte Abofallen und unautorisierte Abbuchungen auf der Kreditkarte.</li>
               </ul>
             </div>
-            <div>
+            <div className="rounded-3xl border border-slate-200 bg-white p-8 shadow-sm">
               <h2 className="text-2xl font-bold mb-4">PayPal & Klarna Käuferschutz</h2>
               <p className="text-muted-foreground mb-4">
                 Neben dem klassischen Kreditkarten-Chargeback bieten auch moderne Zahlungsanbieter starke Schutzmechanismen. Der <strong>PayPal Käuferschutz</strong> greift bis zu 180 Tage nach dem Kauf. Wichtig ist hier, niemals per "Geld an Freunde senden" zu zahlen.

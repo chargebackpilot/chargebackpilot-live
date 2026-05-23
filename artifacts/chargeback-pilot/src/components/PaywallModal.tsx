@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import {
   Lock,
   Check,
@@ -253,6 +254,16 @@ export function PaywallModal({
               </>
             )}
           </Button>
+
+          <div className="flex items-start gap-3">
+            <Checkbox
+              checked={consentWiderruf}
+              onCheckedChange={(checked) => setConsentWiderruf(Boolean(checked))}
+            />
+            <label className="text-sm leading-relaxed text-muted-foreground">
+              Ich habe gelesen, dass ich mit der Ausführung des digitalen Vertrags mein Widerrufsrecht verliere. <a href="/widerruf" target="_blank" className="underline hover:text-foreground">Mehr dazu</a>.
+            </label>
+          </div>
 
           <div className="flex flex-col items-center gap-1.5">
             <span className="text-[11px] uppercase tracking-wider font-semibold text-muted-foreground">Bezahlen mit</span>
