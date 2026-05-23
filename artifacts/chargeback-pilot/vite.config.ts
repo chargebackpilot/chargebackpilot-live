@@ -44,6 +44,15 @@ export default defineConfig({
   build: {
     outDir: path.resolve(import.meta.dirname, "dist/public"),
     emptyOutDir: true,
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          'react-vendor': ['react', 'react-dom'],
+          'ui-vendor': ['lucide-react', '@radix-ui/react-accordion', '@radix-ui/react-dialog', '@radix-ui/react-popover', 'framer-motion'],
+          'utils-vendor': ['date-fns', 'zod', 'react-hook-form', '@hookform/resolvers'],
+        }
+      }
+    }
   },
   server: {
     port,
