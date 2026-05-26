@@ -257,12 +257,12 @@ export default function Wizard() {
     const description = buildDescription(
       formData.structuredAnswers,
       formData.problemType,
-      formData.purchaseAmount,
-      formData.disputedAmount,
+      formData.purchaseAmount || "",
+      formData.disputedAmount || "",
     );
     const merchantResponse = buildMerchantResponse(
-      formData.merchantResponseType,
-      formData.merchantResponseNote,
+      formData.merchantResponseType || "",
+      formData.merchantResponseNote || "",
     );
     setStep(6);
     createCase.mutate(
@@ -664,7 +664,7 @@ export default function Wizard() {
                         </div>
 
                         {/* Optional note for certain responses */}
-                        {["abgelehnt", "teilerstattung", "sonstiges"].includes(formData.merchantResponseType) && (
+                        {["abgelehnt", "teilerstattung", "sonstiges"].includes(formData.merchantResponseType || "") && (
                           <div className="space-y-1.5 animate-in fade-in duration-150">
                             <Label htmlFor="responseNote" className="text-sm">
                               {formData.merchantResponseType === "teilerstattung"
