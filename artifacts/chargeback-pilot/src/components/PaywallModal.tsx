@@ -167,11 +167,10 @@ export function PaywallModal({
       if (json.url) {
         window.location.href = json.url;
       } else {
-        // Stripe not configured — demo unlock
-        onUnlock();
+        setError(json.error || "Zahlungssystem aktuell nicht erreichbar.");
       }
     } catch {
-      onUnlock();
+      setError("Netzwerkfehler. Bitte überprüfe deine Internetverbindung.");
     } finally {
       setLoading(false);
     }
