@@ -4,6 +4,8 @@ import { useEffect, Suspense, lazy } from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { Loader2 } from "lucide-react";
+import { Navbar } from "@/components/layout/Navbar";
+import { Footer } from "@/components/layout/Footer";
 
 // Lazy-loaded routes for better performance
 const NotFound = lazy(() => import("@/pages/not-found"));
@@ -53,13 +55,45 @@ function ScrollToTop() {
   return null;
 }
 
+function AppShellSkeleton() {
+  return (
+    <div className="min-h-screen flex flex-col font-sans">
+      <Navbar />
+      <main className="flex-1 w-full bg-background flex flex-col items-center justify-center pt-24 pb-32">
+        <div className="container mx-auto px-4 w-full max-w-5xl">
+          <div className="animate-pulse flex flex-col items-center">
+            {/* Tag Skeleton */}
+            <div className="h-7 w-48 bg-muted rounded-full mb-6"></div>
+            {/* Headline Skeleton */}
+            <div className="h-12 sm:h-16 w-3/4 max-w-2xl bg-muted rounded-lg mb-6"></div>
+            <div className="h-12 sm:h-16 w-1/2 max-w-md bg-muted rounded-lg mb-10"></div>
+            {/* Text Skeleton */}
+            <div className="h-5 w-full max-w-3xl bg-muted rounded mb-2"></div>
+            <div className="h-5 w-5/6 max-w-2xl bg-muted rounded mb-2"></div>
+            <div className="h-5 w-4/6 max-w-xl bg-muted rounded mb-10"></div>
+            {/* Buttons Skeleton */}
+            <div className="flex flex-col sm:flex-row gap-4 w-full justify-center">
+              <div className="h-12 w-full sm:w-64 bg-muted rounded-md"></div>
+              <div className="h-12 w-full sm:w-56 bg-muted rounded-md"></div>
+            </div>
+            
+            {/* Grid Skeleton */}
+            <div className="mt-20 grid sm:grid-cols-2 lg:grid-cols-3 gap-5 w-full max-w-6xl">
+              <div className="h-44 bg-muted rounded-2xl w-full"></div>
+              <div className="h-44 bg-muted rounded-2xl w-full"></div>
+              <div className="h-44 bg-muted rounded-2xl w-full"></div>
+            </div>
+          </div>
+        </div>
+      </main>
+      <Footer />
+    </div>
+  );
+}
+
 function Router() {
   return (
-    <Suspense fallback={
-      <div className="flex h-screen w-screen items-center justify-center bg-background">
-        <Loader2 className="w-8 h-8 animate-spin text-primary" />
-      </div>
-    }>
+    <Suspense fallback={<AppShellSkeleton />}>
       <Switch>
         <Route path="/" component={Home} />
         <Route path="/vorlagen-generator" component={Wizard} />
