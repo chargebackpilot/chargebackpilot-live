@@ -5,8 +5,10 @@ import { CreateCaseBody, GetCaseParams } from "@workspace/api-zod";
 import { eq, count, sql } from "drizzle-orm";
 import rateLimit from "express-rate-limit";
 import { analyzeWithGemini } from "../lib/gemini-analysis";
+import { createHash } from "node:crypto";
 
 const router = Router();
+const aiCache = new Map<string, any>();
 
 const limiter = rateLimit({
   windowMs: 60 * 60 * 1000, // 1 hour
@@ -39,7 +41,7 @@ router.post("/cases", limiter, async (req, res) => {
     description: data.description,
   };
 
-  const payloadHash = crypto.createHash("sha256").update(JSON.stringify(analysisInput)).digest("hex");
+  const payloadHash = createHash("sha256").update(JSON.stringify(analysisInput)).digest("hex");
   
   let analysis;
   if (aiCache.has(payloadHash)) {
