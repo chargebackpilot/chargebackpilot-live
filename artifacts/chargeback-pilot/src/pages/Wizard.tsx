@@ -3,6 +3,9 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useCreateCase } from "@workspace/api-client-react";
 import { useState, useEffect } from "react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { wizardSchema, type WizardFormData } from "@/components/wizard/wizard-schema";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
@@ -50,794 +53,31 @@ import {
   Sparkles,
 } from "lucide-react";
 
-// ---------------------------------------------------------------------------
-// Constants
-// ---------------------------------------------------------------------------
 
-const PAYMENT_METHODS = [
-  { id: "paypal", label: "PayPal" },
-  { id: "visa_mastercard", label: "Kreditkarte Visa/Mastercard" },
-  { id: "amex", label: "American Express" },
-  { id: "klarna", label: "Klarna" },
-  { id: "apple_google_pay", label: "Apple Pay / Google Pay" },
-  { id: "bank_transfer", label: "Banküberweisung" },
-  { id: "other", label: "Sonstiges" },
-];
-
-const PROBLEM_TYPES = [
-  { id: "not_received", label: "Ware nicht erhalten", icon: Package },
-  { id: "defective", label: "Ware defekt / anders als beschrieben", icon: X },
-  { id: "service_not_rendered", label: "Dienstleistung nicht erbracht", icon: Building2 },
-  { id: "flight_travel", label: "Flug / Reise / Hotel Problem", icon: Plane },
-  { id: "subscription", label: "Abo / ungewollte Abbuchung", icon: Repeat2 },
-  { id: "fraud", label: "Betrug / Scam Verdacht", icon: AlertTriangle },
-  { id: "food_delivery", label: "Lieferdienst / Essen unbrauchbar", icon: UtensilsCrossed },
-  { id: "refund_promised", label: "Rückerstattung zugesagt aber nicht erhalten", icon: RefreshCcw },
-  { id: "other", label: "Sonstiges", icon: ChevronRight },
-];
-
-const KNOWN_MERCHANTS: Record<string, Array<{ name: string; emoji: string }>> = {
-  food_delivery: [
-    { name: "Lieferando", emoji: "🍕" },
-    { name: "Wolt", emoji: "🍔" },
-    { name: "UberEats", emoji: "🌮" },
-    { name: "Gorillas", emoji: "🛒" },
-    { name: "Flink", emoji: "⚡" },
-    { name: "HelloFresh", emoji: "🥗" },
-  ],
-  flight_travel: [
-    { name: "Ryanair", emoji: "✈️" },
-    { name: "Easyjet", emoji: "🛫" },
-    { name: "Condor", emoji: "🌍" },
-    { name: "TUI Fly", emoji: "🏖️" },
-    { name: "Booking.com", emoji: "🏨" },
-    { name: "Airbnb", emoji: "🏠" },
-    { name: "Hotels.com", emoji: "🛎️" },
-    { name: "Expedia", emoji: "🗺️" },
-  ],
-  not_received: [
-    { name: "Amazon", emoji: "📦" },
-    { name: "Temu", emoji: "🛍️" },
-    { name: "SHEIN", emoji: "👗" },
-    { name: "Aliexpress", emoji: "🚢" },
-    { name: "Zalando", emoji: "👟" },
-    { name: "Otto", emoji: "🏡" },
-    { name: "eBay", emoji: "🔖" },
-    { name: "Wish", emoji: "⭐" },
-  ],
-  defective: [
-    { name: "Amazon", emoji: "📦" },
-    { name: "MediaMarkt", emoji: "📺" },
-    { name: "Saturn", emoji: "💻" },
-    { name: "Zalando", emoji: "👟" },
-    { name: "IKEA", emoji: "🪑" },
-    { name: "Apple Store", emoji: "🍎" },
-  ],
-  subscription: [
-    { name: "Netflix", emoji: "🎬" },
-    { name: "Spotify", emoji: "🎵" },
-    { name: "Amazon Prime", emoji: "⭐" },
-    { name: "Adobe", emoji: "🎨" },
-    { name: "LinkedIn", emoji: "💼" },
-    { name: "Apple", emoji: "🍎" },
-    { name: "Google", emoji: "🔍" },
-    { name: "Disney+", emoji: "🏰" },
-  ],
-  refund_promised: [
-    { name: "Amazon", emoji: "📦" },
-    { name: "Zalando", emoji: "👟" },
-    { name: "Booking.com", emoji: "🏨" },
-    { name: "Airbnb", emoji: "🏠" },
-    { name: "Eventim", emoji: "🎟️" },
-    { name: "Ticketmaster", emoji: "🎪" },
-  ],
-  service_not_rendered: [
-    { name: "Udemy", emoji: "📚" },
-    { name: "Fiverr", emoji: "💻" },
-    { name: "Booking.com", emoji: "🏨" },
-    { name: "Groupon", emoji: "🏷️" },
-    { name: "Eventim", emoji: "🎟️" },
-    { name: "Skillshare", emoji: "🎯" },
-  ],
-  fraud: [
-    { name: "Unbekannter Händler", emoji: "❓" },
-    { name: "Phishing-Shop", emoji: "🎣" },
-    { name: "Online-Marktplatz", emoji: "🛒" },
-    { name: "Kleinanzeigen", emoji: "📋" },
-  ],
-};
-
-// ---------------------------------------------------------------------------
-// Merchant response options
-// ---------------------------------------------------------------------------
-
-const MERCHANT_RESPONSE_OPTIONS = [
-  { id: "keine_antwort", label: "Keine Antwort erhalten", sub: "Händler reagiert nicht auf Kontaktaufnahme" },
-  { id: "abgelehnt", label: "Händler hat abgelehnt", sub: "Erstattung wurde verweigert" },
-  { id: "versprach_rueckerstattung", label: "Erstattung versprochen — aber nicht gezahlt", sub: "Händler sagte Rückzahlung zu, nichts kam" },
-  { id: "teilerstattung", label: "Nur Teilerstattung angeboten", sub: "Händler zahlt weniger als der strittige Betrag" },
-  { id: "sonstiges", label: "Sonstiges", sub: "Andere Reaktion" },
-];
-
-// ---------------------------------------------------------------------------
-// Evidence groups
-// ---------------------------------------------------------------------------
-
-const EVIDENCE_GROUPS = [
-  {
-    label: "Zahlungsnachweise",
-    icon: Receipt,
-    items: [
-      { id: "receipt", label: "Zahlungsnachweis", hint: "Kontoauszug / Screenshot" },
-      { id: "order_confirmation", label: "Bestellbestätigung", hint: "E-Mail oder PDF" },
-    ],
-  },
-  {
-    label: "Kommunikation",
-    icon: Mail,
-    items: [
-      { id: "email_thread", label: "E-Mail-Verlauf", hint: "Schriftlicher Kontakt mit Händler" },
-      { id: "chat_screenshot", label: "Chat-Screenshots", hint: "WhatsApp, Support-Chat" },
-      { id: "cancellation", label: "Stornierungsbestätigung", hint: "E-Mail vom Händler" },
-      { id: "refund_promise", label: "Schriftliche Erstattungszusage", hint: "Screenshot, E-Mail" },
-    ],
-  },
-  {
-    label: "Produktnachweise",
-    icon: Camera,
-    items: [
-      { id: "photos", label: "Fotos / Videos", hint: "Defekte Ware, Mangel" },
-      { id: "tracking", label: "Tracking-Nachweis", hint: "Sendungsverfolgung" },
-      { id: "tos", label: "AGB / Angebots-Screenshots", hint: "Was wurde versprochen" },
-    ],
-  },
-  {
-    label: "Keine Beweise",
-    icon: FileX,
-    items: [
-      { id: "none", label: "Keine Beweise vorhanden", hint: "KI analysiert trotzdem die Rechtslage" },
-    ],
-  },
-];
-
-// ---------------------------------------------------------------------------
-// Structured questions per problem type
-// ---------------------------------------------------------------------------
-
-type QuestionType = "textarea" | "radio" | "date" | "number" | "multiselect";
-
-interface QuestionOption { value: string; label: string }
-
-interface Question {
-  id: string;
-  label: string;
-  type: QuestionType;
-  placeholder?: string;
-  options?: QuestionOption[];
-  rows?: number;
-  required?: boolean;
-  suffix?: string;
-}
-
-const STRUCTURED_QUESTIONS: Record<string, Question[]> = {
-  not_received: [
-    {
-      id: "expected_delivery",
-      label: "Wann wäre die Lieferung fällig gewesen?",
-      type: "date",
-      required: true,
-    },
-    {
-      id: "tracking_status",
-      label: "Was sagt das Tracking?",
-      type: "radio",
-      required: true,
-      options: [
-        { value: "Kein Tracking vorhanden", label: "Kein Tracking vorhanden" },
-        { value: "Seit Wochen ohne Update", label: "Seit Wochen ohne Update" },
-        { value: "Als zugestellt markiert – nicht erhalten", label: "Als zugestellt markiert, aber nicht erhalten" },
-        { value: "Paket zurück an Händler gegangen", label: "Paket zurück an Händler gegangen" },
-      ],
-    },
-  ],
-  food_delivery: [
-    {
-      id: "food_problem",
-      label: "Was war das Problem mit der Lieferung?",
-      type: "multiselect",
-      required: true,
-      options: [
-        { value: "Falsche Ware geliefert", label: "Falsche Ware geliefert" },
-        { value: "Artikel fehlte", label: "Artikel fehlte" },
-        { value: "Ware ungenießbar / verdorben", label: "Ungenießbar / verdorben" },
-        { value: "Viel zu spät geliefert", label: "Viel zu spät" },
-        { value: "Bestellung komplett ausgeblieben", label: "Komplett ausgeblieben" },
-      ],
-    },
-    {
-      id: "order_details",
-      label: "Weitere Angaben (optional)",
-      type: "textarea",
-      placeholder: "z.B. Uhrzeit der Bestellung, konkretes fehlendes Gericht, Fotos vorhanden...",
-      rows: 2,
-    },
-  ],
-  flight_travel: [
-    {
-      id: "who_cancelled",
-      label: "Wer hat storniert?",
-      type: "radio",
-      required: true,
-      options: [
-        { value: "Die Airline / der Reiseanbieter hat storniert", label: "Airline / Anbieter hat storniert" },
-        { value: "Ich musste stornieren (höhere Gewalt / außerordentlich)", label: "Ich – höhere Gewalt" },
-        { value: "Ich habe freiwillig storniert", label: "Ich – freiwillig" },
-      ],
-    },
-    {
-      id: "cancellation_reason",
-      label: "Grund der Stornierung",
-      type: "textarea",
-      placeholder: "z.B. Flug wurde gestrichen, Hotel geschlossen, Streik, Krankheit...",
-      rows: 2,
-    },
-    {
-      id: "what_not_refunded",
-      label: "Was wurde nicht erstattet?",
-      type: "multiselect",
-      options: [
-        { value: "Flugticket", label: "Flugticket" },
-        { value: "Steuern & Gebühren", label: "Steuern & Gebühren" },
-        { value: "Hotelbuchung", label: "Hotelbuchung" },
-        { value: "Pauschalreise", label: "Pauschalreise" },
-        { value: "Gepäck / Extras", label: "Gepäck / Extras" },
-      ],
-    },
-  ],
-  subscription: [
-    {
-      id: "cancellation_date",
-      label: "Wann hast du das Abo gekündigt?",
-      type: "date",
-      required: true,
-    },
-    {
-      id: "cancellation_method",
-      label: "Wie hast du gekündigt?",
-      type: "radio",
-      options: [
-        { value: "In der App / Website", label: "In der App / Website" },
-        { value: "Per E-Mail", label: "Per E-Mail" },
-        { value: "Per Brief", label: "Per Brief" },
-        { value: "Telefonisch", label: "Telefonisch" },
-      ],
-    },
-    {
-      id: "confirmation_received",
-      label: "Kündigungsbestätigung erhalten?",
-      type: "radio",
-      options: [
-        { value: "Ja, Bestätigung liegt vor", label: "Ja" },
-        { value: "Nein, keine Bestätigung erhalten", label: "Nein" },
-      ],
-    },
-    {
-      id: "months_charged",
-      label: "Wie viele Monate wurden nach der Kündigung noch abgebucht?",
-      type: "number",
-      suffix: "Monat(e)",
-    },
-  ],
-  defective: [
-    {
-      id: "defect_description",
-      label: "Was genau war defekt oder anders als beschrieben?",
-      type: "textarea",
-      placeholder: "z.B. Akku lädt nicht, Farbe völlig anders, falsche Größe, Funktionen fehlen...",
-      rows: 2,
-      required: true,
-    },
-    {
-      id: "defect_timing",
-      label: "Wann hast du den Mangel bemerkt?",
-      type: "radio",
-      options: [
-        { value: "Sofort bei Lieferung / Auspacken", label: "Sofort bei Lieferung" },
-        { value: "Innerhalb der ersten Woche", label: "Innerhalb 1 Woche" },
-        { value: "Nach mehr als einer Woche", label: "Nach mehr als 1 Woche" },
-      ],
-    },
-  ],
-  refund_promised: [
-    {
-      id: "promise_date",
-      label: "Wann wurde die Erstattung zugesagt?",
-      type: "date",
-      required: true,
-    },
-    {
-      id: "promise_channel",
-      label: "Wie wurde die Zusage gemacht?",
-      type: "radio",
-      options: [
-        { value: "Per E-Mail (schriftlich)", label: "Per E-Mail (schriftlich)" },
-        { value: "Im Support-Chat", label: "Im Support-Chat" },
-        { value: "Telefonisch", label: "Telefonisch" },
-        { value: "Automatisch / System-E-Mail", label: "Automatisch / System-Bestätigung" },
-      ],
-    },
-    {
-      id: "expected_by",
-      label: "Bis wann sollte die Erstattung kommen?",
-      type: "textarea",
-      placeholder: 'z.B. "innerhalb 5–7 Werktage", "innerhalb 14 Tage", kein konkretes Datum genannt...',
-      rows: 1,
-    },
-  ],
-  fraud: [
-    {
-      id: "fraud_discovery",
-      label: "Wie hast du den Betrug entdeckt?",
-      type: "textarea",
-      placeholder: "z.B. Fake-Shop, nie geliefertes Produkt, Phishing-Mail, gefälschte Website...",
-      rows: 2,
-      required: true,
-    },
-    {
-      id: "fraud_timing",
-      label: "Wann hast du gemerkt, dass es Betrug ist?",
-      type: "radio",
-      options: [
-        { value: "Sofort / innerhalb 1 Woche", label: "Sofort / innerhalb 1 Woche" },
-        { value: "Nach 2–4 Wochen", label: "Nach 2–4 Wochen" },
-        { value: "Nach mehreren Monaten", label: "Nach mehreren Monaten" },
-      ],
-    },
-    {
-      id: "reported_to_police",
-      label: "Hast du Anzeige erstattet?",
-      type: "radio",
-      options: [
-        { value: "Ja, Anzeige wurde erstattet", label: "Ja" },
-        { value: "Nein, noch keine Anzeige", label: "Nein" },
-      ],
-    },
-  ],
-  service_not_rendered: [
-    {
-      id: "service_description",
-      label: "Welche Dienstleistung wurde nicht erbracht?",
-      type: "textarea",
-      placeholder: "z.B. Online-Kurs nie freigeschaltet, Reparatur nicht durchgeführt, Termin nicht eingehalten...",
-      rows: 2,
-      required: true,
-    },
-    {
-      id: "service_date",
-      label: "Wann sollte die Leistung erbracht werden?",
-      type: "date",
-    },
-    {
-      id: "partial_service",
-      label: "Wurde etwas davon teilweise erbracht?",
-      type: "radio",
-      options: [
-        { value: "Nein, gar nichts wurde erbracht", label: "Nein, gar nichts" },
-        { value: "Ja, teilweise erbracht", label: "Ja, teilweise" },
-      ],
-    },
-  ],
-  other: [
-    {
-      id: "what_agreed",
-      label: "Was wurde vereinbart oder gekauft?",
-      type: "textarea",
-      placeholder: "Was hast du bestellt / gebucht und was wurde dir versprochen?",
-      rows: 2,
-      required: true,
-    },
-    {
-      id: "what_happened",
-      label: "Was ist stattdessen passiert?",
-      type: "textarea",
-      placeholder: "Was fehlt, was ist falsch, was wurde nicht eingehalten?",
-      rows: 2,
-      required: true,
-    },
-    {
-      id: "additional",
-      label: "Weitere relevante Details (optional)",
-      type: "textarea",
-      placeholder: "Fristen, besondere Umstände, wichtige Kommunikation...",
-      rows: 2,
-    },
-  ],
-};
-
-const STEP_TITLES = ["Zahlungsart", "Problemtyp", "Händlerdetails", "Beweislage", "Falldetails"];
-
-const LOADING_STEPS = [
-  "Falldetails strukturieren",
-  "Begründungen & Fristen zuordnen",
-  "Professionelle Textvorlagen generieren",
-];
-
-// ---------------------------------------------------------------------------
-// Helpers
-// ---------------------------------------------------------------------------
-
-function buildDescription(
-  structuredAnswers: Record<string, string>,
-  problemType: string,
-  purchaseAmount: string,
-  disputedAmount: string,
-): string {
-  const questions = STRUCTURED_QUESTIONS[problemType] ?? STRUCTURED_QUESTIONS.other;
-  const parts: string[] = [];
-
-  for (const q of questions) {
-    const val = structuredAnswers[q.id];
-    if (!val || val.trim() === "") continue;
-    parts.push(`${q.label}\n${val.trim()}`);
-  }
-
-  if (
-    purchaseAmount &&
-    disputedAmount &&
-    parseFloat(purchaseAmount) !== parseFloat(disputedAmount)
-  ) {
-    const pct = Math.round((parseFloat(disputedAmount) / parseFloat(purchaseAmount)) * 100);
-    parts.push(
-      `Kaufbetrag gesamt: ${purchaseAmount} EUR — streitiger Betrag: ${disputedAmount} EUR (${pct}% des Kaufbetrags)`,
-    );
-  }
-
-  return parts.join("\n\n");
-}
-
-function buildMerchantResponse(responseType: string, responseNote: string): string {
-  const label =
-    MERCHANT_RESPONSE_OPTIONS.find((o) => o.id === responseType)?.label ?? "";
-  if (!label) return "";
-  return responseNote.trim() ? `${label}: ${responseNote.trim()}` : label;
-}
-
-function getDisputedPercent(purchase: string, disputed: string): number | null {
-  const p = parseFloat(purchase);
-  const d = parseFloat(disputed);
-  if (!p || !d || d > p) return null;
-  return Math.round((d / p) * 100);
-}
-
-// ---------------------------------------------------------------------------
-// Sub-components (unchanged)
-// ---------------------------------------------------------------------------
-
-function GeneratorLoader({ merchantName }: { merchantName: string }) {
-  const [completedSteps, setCompletedSteps] = useState<number[]>([]);
-  const [allDone, setAllDone] = useState(false);
-  const [factIndex, setFactIndex] = useState(0);
-
-  const facts = [
-    "Wusstest du? Bei Visa lautet der Chargeback-Grund für nicht gelieferte Ware oft 'Reason Code 13.1'.",
-    "Viele Händler lenken bei einem professionellen Chargeback-Antrag sofort ein, um Gebühren der Bank zu vermeiden.",
-    "PayPals Käuferschutz greift bis zu 180 Tage nach Zahlung. Danach ist er wirkungslos.",
-    "Chargeback-Anträge bei Kreditkarten sollten meist innerhalb von 120 Tagen ab Kaufdatum gestellt werden."
-  ];
-
-  useEffect(() => {
-    const t1 = setTimeout(() => setCompletedSteps([0]), 7000);
-    const t2 = setTimeout(() => setCompletedSteps([0, 1]), 15000);
-    const t3 = setTimeout(() => {
-      setCompletedSteps([0, 1, 2]);
-      setTimeout(() => setAllDone(true), 600);
-    }, 23000);
-
-    const fInterval = setInterval(() => {
-      setFactIndex(prev => (prev + 1) % facts.length);
-    }, 5000);
-
-    return () => { clearTimeout(t1); clearTimeout(t2); clearTimeout(t3); clearInterval(fInterval); };
-  }, []);
-
-  return (
-    <div className="py-12 text-center flex flex-col items-center gap-8">
-      <div className="relative">
-        <div className="w-20 h-20 rounded-full border-4 border-primary/20 border-t-primary animate-spin" />
-        <div className="absolute inset-0 flex items-center justify-center">
-          <FileText className="w-8 h-8 text-primary" />
-        </div>
-      </div>
-      <div>
-        <h2 className="text-2xl font-bold mb-1">KI-Generator arbeitet</h2>
-        <p className="text-muted-foreground text-sm">
-          {merchantName ? `Fall gegen ${merchantName} wird erstellt...` : "Generierung läuft..."}
-        </p>
-      </div>
-      <div className="flex flex-col gap-3 w-full max-w-xs">
-        {LOADING_STEPS.map((label, i) => {
-          const done = completedSteps.includes(i);
-          const active = !done && (i === 0 || completedSteps.includes(i - 1));
-          return (
-            <div
-              key={i}
-              className={`flex items-center gap-3 text-sm transition-all duration-500 ${done ? "text-foreground" : active ? "text-muted-foreground" : "text-muted-foreground/40"}`}
-            >
-              <div className="relative w-6 h-6 flex-shrink-0">
-                {done ? (
-                  <div className="w-6 h-6 rounded-full bg-emerald-500 flex items-center justify-center animate-in zoom-in-50 duration-400">
-                    <Check className="w-3.5 h-3.5 text-white stroke-[3]" />
-                  </div>
-                ) : active ? (
-                  <div className="w-6 h-6 rounded-full border-2 border-primary border-t-transparent animate-spin" />
-                ) : (
-                  <div className="w-6 h-6 rounded-full border-2 border-muted" />
-                )}
-              </div>
-              <span className={`font-medium transition-all duration-300 ${done ? "line-through text-muted-foreground" : ""}`}>
-                {done ? <span className="no-underline font-semibold text-emerald-700">{label}</span> : label}
-              </span>
-            </div>
-          );
-        })}
-      </div>
-      {allDone && (
-        <div className="animate-in fade-in slide-in-from-bottom-2 duration-500 flex items-center gap-2 text-emerald-700 font-semibold">
-          <CheckCircle2 className="w-5 h-5" />
-          Vorlagen erstellt — Ergebnisse laden...
-        </div>
-      )}
-
-      {!allDone && (
-        <div className="mt-4 max-w-sm mx-auto bg-muted/30 border rounded-xl p-4 text-xs text-muted-foreground animate-in fade-in duration-500">
-          <div className="font-semibold text-primary mb-1 flex items-center justify-center gap-1.5">
-            <Sparkles className="w-3.5 h-3.5" /> Wusstest du schon?
-          </div>
-          <p key={factIndex} className="animate-in fade-in slide-in-from-bottom-1 duration-300 min-h-[40px] flex items-center justify-center">
-            {facts[factIndex]}
-          </p>
-        </div>
-      )}
-    </div>
-  );
-}
-
-function StrategyIndicator({ label }: { label: string }) {
-  const l = (label ?? "").toLowerCase();
-  const band =
-    l === "hoch"
-      ? { name: "Aussichtsreich", desc: "Gute Ausgangslage. Mit den richtigen Schritten und Belegen hast du solide Chancen auf eine Rückerstattung.", tone: { bg: "bg-emerald-50", border: "border-emerald-200", text: "text-emerald-800", accent: "bg-emerald-500", dotsActive: 3 } }
-      : l === "mittel"
-        ? { name: "Solide Ausgangslage", desc: "Mittlere Position. Fehlende Belege können deine Aussichten noch deutlich verbessern.", tone: { bg: "bg-amber-50", border: "border-amber-200", text: "text-amber-800", accent: "bg-amber-500", dotsActive: 2 } }
-        : { name: "Anspruchsvoll", desc: "Schwieriger Fall. Zuerst fehlende Beweise sichern, dann gezielt vorgehen — wir geben dir die Strategie dazu.", tone: { bg: "bg-rose-50", border: "border-rose-200", text: "text-rose-800", accent: "bg-rose-500", dotsActive: 1 } };
-
-  return (
-    <div className={`rounded-2xl border-2 ${band.tone.border} ${band.tone.bg} p-5 sm:p-6`}>
-      <div className="flex flex-col sm:flex-row sm:items-center gap-5">
-        <div className="flex-1 min-w-0">
-          <p className="text-[11px] font-bold uppercase tracking-widest text-muted-foreground mb-1.5">
-            Strategie-Einschätzung
-          </p>
-          <h3 className={`text-2xl sm:text-3xl font-black ${band.tone.text} mb-2 leading-tight`}>
-            {band.name}
-          </h3>
-          {/* qualitative 3-dot scale */}
-          <div className="flex items-center gap-1.5 mb-3" aria-label={`Stärke-Indikator ${band.tone.dotsActive} von 3`}>
-            {[0, 1, 2].map((i) => (
-              <span
-                key={i}
-                className={`h-2 w-10 rounded-full ${i < band.tone.dotsActive ? band.tone.accent : "bg-black/10"}`}
-              />
-            ))}
-          </div>
-          <p className="text-sm text-muted-foreground leading-relaxed max-w-md">{band.desc}</p>
-          <p className="text-[11px] text-muted-foreground italic mt-2">
-            Indikative Einschätzung der KI · keine Garantie auf den Verfahrensausgang
-          </p>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-function LockedTeaser({ icon, title, lines = 3 }: { icon: React.ReactNode; title: string; lines?: number }) {
-  return (
-    <div className="relative border rounded-xl p-5 overflow-hidden">
-      <div className="absolute top-3 right-3 z-10 flex items-center gap-1.5 bg-primary text-primary-foreground text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full shadow-sm">
-        <LockIcon className="w-3 h-3" />
-        Gesperrt
-      </div>
-      <h3 className="font-bold text-base mb-3 flex items-center gap-2">
-        {icon}
-        {title}
-      </h3>
-      <div className="space-y-2 select-none pointer-events-none" style={{ filter: "blur(6px)" }}>
-        {Array.from({ length: lines }).map((_, i) => (
-          <div key={i} className="h-3 bg-muted rounded" style={{ width: `${70 + ((i * 7) % 25)}%` }} />
-        ))}
-        <div className="h-3 bg-muted rounded w-2/5 mt-1" />
-      </div>
-      <div className="absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-white via-white/80 to-transparent pointer-events-none" />
-    </div>
-  );
-}
-
-function CopyableTemplate({ title, icon, text, onCopy }: { title: string; icon: React.ReactNode; text: string; onCopy: () => void }) {
-  return (
-    <div className="border rounded-xl overflow-hidden shadow-sm">
-      <div className="bg-muted/60 px-4 py-3 border-b flex justify-between items-center">
-        <span className="font-semibold text-sm flex items-center gap-2">{icon}{title}</span>
-        <Button size="sm" variant="outline" className="h-8 gap-2 text-xs cursor-pointer" onClick={onCopy}>
-          <Copy className="w-3.5 h-3.5" />Kopieren
-        </Button>
-      </div>
-      <div className="p-4 sm:p-5 bg-background whitespace-pre-wrap text-sm font-mono leading-relaxed max-h-80 overflow-y-auto">
-        {text}
-      </div>
-    </div>
-  );
-}
-
-function MerchantQuickSelect({ problemType, onSelect, selected }: { problemType: string; onSelect: (name: string) => void; selected: string }) {
-  const options = KNOWN_MERCHANTS[problemType];
-  if (!options || options.length === 0) return null;
-  return (
-    <div className="space-y-3">
-      <p className="text-sm font-semibold text-foreground flex items-center gap-2">
-        <span className="w-5 h-5 rounded-full bg-primary/10 text-primary text-xs font-bold flex items-center justify-center">✓</span>
-        Bekannte Anbieter — schnell auswählen:
-      </p>
-      <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
-        {options.map((m) => (
-          <button
-            key={m.name}
-            type="button"
-            onClick={() => onSelect(m.name)}
-            className={`flex items-center gap-2.5 p-3 rounded-xl border-2 text-left transition-all cursor-pointer hover:border-primary/50 hover:bg-muted/40 active:scale-[0.98] ${selected === m.name ? "border-primary bg-primary/5 shadow-sm" : "border-border bg-card"}`}
-          >
-            <span className="text-xl leading-none flex-shrink-0">{m.emoji}</span>
-            <span className="font-semibold text-sm truncate">{m.name}</span>
-            {selected === m.name && <Check className="w-3.5 h-3.5 text-primary ml-auto flex-shrink-0" />}
-          </button>
-        ))}
-      </div>
-      <p className="text-xs text-muted-foreground">Nicht dabei? Trage den Namen manuell unten ein.</p>
-    </div>
-  );
-}
-
-function Paywall({ onUnlock, isPaying }: { onUnlock: () => void; isPaying: boolean }) {
-  return (
-    <div className="absolute inset-0 z-10 rounded-2xl flex items-center justify-center p-4">
-      <div className="text-center">
-        <Button size="lg" className="text-base h-12 shadow-lg gap-2" onClick={onUnlock} disabled={isPaying}>
-          {isPaying ? <Loader2 className="w-5 h-5 animate-spin" /> : "Für 0,99 € freischalten"}
-        </Button>
-        <div className="text-xs text-muted-foreground font-medium flex items-center justify-center gap-1.5 mt-2">
-          <ShieldCheck className="w-3.5 h-3.5 text-primary" />
-          Einmalig · kein Abo · sofort verfügbar
-        </div>
-      </div>
-    </div>
-  );
-}
-
-function ContentLocker({ hasUnlocked, onUnlock, isPaying, children }: { hasUnlocked: boolean; onUnlock: () => void; isPaying: boolean; children: React.ReactNode }) {
-  if (hasUnlocked) return <>{children}</>;
-  return (
-    <div className="relative">
-      <div className="blur-[3px]">{children}</div>
-      <Paywall onUnlock={onUnlock} isPaying={isPaying} />
-    </div>
-  );
-}
-
-
-// ---------------------------------------------------------------------------
-// Structured question renderer
-// ---------------------------------------------------------------------------
-
-function QuestionField({
-  question,
-  value,
-  onChange,
-}: {
-  question: Question;
-  value: string;
-  onChange: (val: string) => void;
-}) {
-  if (question.type === "radio") {
-    return (
-      <div className="space-y-2">
-        {question.options?.map((opt) => (
-          <div
-            key={opt.value}
-            onClick={() => onChange(opt.value)}
-            className={`flex items-center gap-3 border-2 px-4 py-3 rounded-xl cursor-pointer transition-all select-none ${value === opt.value ? "border-primary bg-primary/5" : "border-border hover:border-primary/40 hover:bg-muted/30"}`}
-          >
-            <div className={`w-4 h-4 rounded-full border-2 flex-shrink-0 flex items-center justify-center ${value === opt.value ? "border-primary" : "border-muted-foreground/40"}`}>
-              {value === opt.value && <div className="w-2 h-2 rounded-full bg-primary" />}
-            </div>
-            <span className="text-sm font-medium">{opt.label}</span>
-          </div>
-        ))}
-      </div>
-    );
-  }
-
-  if (question.type === "multiselect") {
-    const selected = value ? value.split("; ") : [];
-    const toggle = (label: string) => {
-      const next = selected.includes(label) ? selected.filter((s) => s !== label) : [...selected, label];
-      onChange(next.join("; "));
-    };
-    return (
-      <div className="flex flex-wrap gap-2">
-        {question.options?.map((opt) => {
-          const active = selected.includes(opt.value);
-          return (
-            <button
-              key={opt.value}
-              type="button"
-              onClick={() => toggle(opt.value)}
-              className={`flex items-center gap-2 px-3 py-2 rounded-xl border-2 text-sm font-medium transition-all cursor-pointer select-none ${active ? "border-primary bg-primary/5 text-primary" : "border-border hover:border-primary/40 hover:bg-muted/30"}`}
-            >
-              {active && <Check className="w-3.5 h-3.5 flex-shrink-0" />}
-              {opt.label}
-            </button>
-          );
-        })}
-      </div>
-    );
-  }
-
-  if (question.type === "textarea") {
-    return (
-      <Textarea
-        rows={question.rows ?? 2}
-        placeholder={question.placeholder}
-        value={value}
-        onChange={(e) => onChange(e.target.value)}
-        className="resize-none text-sm"
-      />
-    );
-  }
-
-  if (question.type === "date") {
-    return (
-      <Input
-        type="date"
-        value={value}
-        onChange={(e) => onChange(e.target.value)}
-        className="max-w-xs"
-      />
-    );
-  }
-
-  if (question.type === "number") {
-    return (
-      <div className="flex items-center gap-2">
-        <Input
-          type="number"
-          min="1"
-          max="99"
-          value={value}
-          onChange={(e) => onChange(e.target.value)}
-          className="w-24"
-          placeholder="0"
-        />
-        {question.suffix && <span className="text-sm text-muted-foreground">{question.suffix}</span>}
-      </div>
-    );
-  }
-
-  return null;
-}
-
-// ---------------------------------------------------------------------------
-// Main Wizard
-// ---------------------------------------------------------------------------
-
+import { 
+  PAYMENT_METHODS, 
+  PROBLEM_TYPES, 
+  MERCHANT_RESPONSE_OPTIONS, 
+  EVIDENCE_GROUPS, 
+  STEP_TITLES, 
+  STRUCTURED_QUESTIONS 
+} from "@/components/wizard/wizard-constants";
+import { 
+  buildDescription, 
+  buildMerchantResponse, 
+  getDisputedPercent, 
+  extractSubject, 
+  extractBody 
+} from "@/components/wizard/wizard-helpers";
+import { 
+  GeneratorLoader, 
+  StrategyIndicator, 
+  LockedTeaser, 
+  CopyableTemplate, 
+  MerchantQuickSelect, 
+  ContentLocker, 
+  QuestionField 
+} from "@/components/wizard/WizardComponents";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
 import { LetterGenerator } from "@/components/LetterGenerator";
 import {
@@ -850,20 +90,6 @@ import {
   clearCurrentCase,
 } from "@/lib/case-persistence";
 import { Lock as LockIcon } from "lucide-react";
-
-function extractSubject(template: string, fallback: string): string {
-  const m = template.match(/^\s*Betreff:\s*(.+)$/im);
-  return (m?.[1] ?? fallback).trim();
-}
-
-function extractBody(template: string): string {
-  // strip Betreff/Sehr geehrte/Mit freundlichen Grüßen wrapper for editable body
-  const lines = template.split("\n");
-  const start = lines.findIndex((l) => /sehr geehrte/i.test(l));
-  const end = lines.findIndex((l) => /mit freundlichen gr/i.test(l));
-  if (start === -1 || end === -1 || end <= start) return template;
-  return lines.slice(start + 1, end).join("\n").trim();
-}
 
 interface FormData {
   paymentMethod: string;
@@ -963,29 +189,67 @@ export default function Wizard() {
   }, []);
   const [isPaying, setIsPaying] = useState(false);
   const validatedPrefilledProblem = PROBLEM_TYPES.some((pt) => pt.id === prefilledProblem) ? prefilledProblem : "";
-  const [formData, setFormData] = useState<FormData>(restoredFormData ?? {
-    paymentMethod: prefilledPayment,
-    problemType: validatedPrefilledProblem,
-    merchantName: prefilledMerchant,
-    purchaseAmount: "",
-    disputedAmount: "",
-    paymentDate: "",
-    merchantCountry: "",
-    merchantContacted: false,
-    merchantResponseType: "",
-    merchantResponseNote: "",
-    evidence: [],
-    structuredAnswers: {},
+  const form = useForm<WizardFormData>({
+    resolver: zodResolver(wizardSchema),
+    defaultValues: restoredFormData ?? {
+      paymentMethod: prefilledPayment,
+      problemType: validatedPrefilledProblem,
+      merchantName: prefilledMerchant,
+      purchaseAmount: "",
+      disputedAmount: "",
+      paymentDate: "",
+      merchantCountry: "",
+      merchantContacted: false,
+      merchantResponseType: "",
+      merchantResponseNote: "",
+      evidence: [],
+      structuredAnswers: {},
+    },
+    mode: "onTouched",
   });
+
+  const formData = form.watch();
+
+  const setFormData = (updater: Partial<WizardFormData> | ((prev: WizardFormData) => WizardFormData)) => {
+    const prev = form.getValues();
+    const next = typeof updater === "function" ? updater(prev) : { ...prev, ...updater };
+    Object.keys(next).forEach((key) => {
+      form.setValue(key as keyof WizardFormData, (next as any)[key], { shouldValidate: true });
+    });
+  };
 
   const createCase = useCreateCase();
   const [result, setResult] = useState<CaseResult>(restoredResult);
   const { toast } = useToast();
 
-  const setAnswer = (id: string, val: string) =>
-    setFormData((prev) => ({ ...prev, structuredAnswers: { ...prev.structuredAnswers, [id]: val } }));
+  const setAnswer = (id: string, val: string) => {
+    const prev = form.getValues();
+    form.setValue("structuredAnswers", { ...prev.structuredAnswers, [id]: val }, { shouldValidate: true });
+  };
 
-  const handleNext = () => { if (step < 6) setStep(step + 1); };
+  const handleNext = async () => {
+    let fieldsToValidate: (keyof WizardFormData)[] = [];
+    if (step === 1) fieldsToValidate = ["paymentMethod"];
+    if (step === 2) fieldsToValidate = ["problemType"];
+    if (step === 3) fieldsToValidate = ["merchantName", "purchaseAmount", "disputedAmount", "paymentDate"];
+    
+    // Trigger validation for current step
+    if (fieldsToValidate.length > 0) {
+      const isValid = await form.trigger(fieldsToValidate);
+      if (!isValid) {
+        toast({ title: "Fehlende Angaben", description: "Bitte fülle alle Pflichtfelder korrekt aus.", variant: "destructive" });
+        return;
+      }
+    }
+    
+    // Custom validation for step 4 and 5
+    if (step === 4 && formData.evidence.length === 0) {
+      toast({ title: "Beweise", description: "Bitte wähle mindestens eine Option (oder 'Keine Beweise').", variant: "destructive" });
+      return;
+    }
+
+    if (step < 6) setStep(step + 1); 
+  };
   const handleBack = () => { if (step > 1) setStep(step - 1); };
 
   const handleSubmit = () => {
@@ -1132,7 +396,7 @@ export default function Wizard() {
     return () => clearTimeout(timer);
   }, [step]);
 
-  const disputedPct = getDisputedPercent(formData.purchaseAmount, formData.disputedAmount);
+  const disputedPct = getDisputedPercent(formData.purchaseAmount || "", formData.disputedAmount || "");
 
   return (
     <MainLayout>

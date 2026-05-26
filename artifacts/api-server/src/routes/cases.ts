@@ -26,7 +26,7 @@ router.post("/cases", limiter, async (req, res) => {
   const data = parseResult.data;
   const evidence = (data.evidence as string[]) || [];
 
-  const analysis = await analyzeWithGemini({
+  const analysisInput = {
     paymentMethod: data.paymentMethod,
     problemType: data.problemType,
     merchantName: data.merchantName,
@@ -37,7 +37,22 @@ router.post("/cases", limiter, async (req, res) => {
     merchantResponse: data.merchantResponse,
     evidence,
     description: data.description,
-  });
+  };
+
+  const payloadHash = crypto.createHash("sha256").update(JSON.stringify(analysisInput)).digest("hex");
+  
+  let analysis;
+  if (aiCache.has(payloadHash)) {
+    analysis = aiCache.get(payloadHash);
+  } else {
+    analysis = await analyzeWithGemini(analysisInput);
+    aiCache.set(payloadHash, analysis);
+    // Optional: limit cache size to prevent memory leaks over time
+    if (aiCache.size > 1000) {
+      const firstKey = aiCache.keys().next().value;
+      if (firstKey) aiCache.delete(firstKey);
+    }
+  }
 
   const [newCase] = await db
     .insert(casesTable)
