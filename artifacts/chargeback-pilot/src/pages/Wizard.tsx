@@ -118,7 +118,7 @@ export default function Wizard() {
   const paymentSuccess = params.get("payment_success") === "1";
   const paymentCancel = params.get("payment_cancel") === "1";
   const sessionIdParam = params.get("session_id");
-  const caseIdParam = params.get("caseId");
+  const caseIdParam = params.get("caseId") ?? params.get("case_id");
 
   // ---- Initial state: restore persisted case when user returns ----
   // Restore the persisted in-progress case ONLY when there's no fresh prefill from a

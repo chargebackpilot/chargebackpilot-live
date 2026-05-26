@@ -13,6 +13,10 @@ function getStripe(): Stripe {
 }
 
 function getBaseUrl(): string {
+  // Immer die saubere Hauptdomain in Produktion nutzen (verhindert .onrender.com Rückleitungen)
+  if (process.env.NODE_ENV === "production") {
+    return "https://chargebackpilot.de";
+  }
   if (process.env.RENDER_EXTERNAL_URL) {
     return process.env.RENDER_EXTERNAL_URL;
   }
@@ -61,6 +65,12 @@ router.post("/checkout", async (req, res) => {
       metadata: { mode: "single", ...(caseId ? { caseId } : {}) },
       custom_text: {
         submit: { message: "Einmalige Zahlung · Keine Abos · Sofortzugang nach Zahlung" },
+        terms_of_service_acceptance: {
+          message: "Mit dem Kauf akzeptierst du unsere [AGB](https://chargebackpilot.de/agb) und verzichtest ausdrücklich auf dein [Widerrufsrecht](https://chargebackpilot.de/widerruf), da die digitalen Inhalte sofort bereitgestellt werden.",
+        }
+      },
+      consent_collection: {
+        terms_of_service: "none", // Will show the custom text above the pay button
       },
     });
 

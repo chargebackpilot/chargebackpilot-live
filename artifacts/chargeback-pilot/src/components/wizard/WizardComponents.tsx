@@ -11,10 +11,15 @@ export function GeneratorLoader({ merchantName }: { merchantName: string }) {
   const [factIndex, setFactIndex] = useState(0);
 
   const facts = [
-    "Wusstest du? Bei Visa lautet der Chargeback-Grund für nicht gelieferte Ware oft 'Reason Code 13.1'.",
-    "Viele Händler lenken bei einem professionellen Chargeback-Antrag sofort ein, um Gebühren der Bank zu vermeiden.",
-    "PayPals Käuferschutz greift bis zu 180 Tage nach Zahlung. Danach ist er wirkungslos.",
-    "Chargeback-Anträge bei Kreditkarten sollten meist innerhalb von 120 Tagen ab Kaufdatum gestellt werden."
+    "Wusstest du? Bei Visa lautet der Chargeback-Grund für nicht gelieferte Ware 'Reason Code 13.1'.",
+    "Händler zahlen bei einem verlorenen Chargeback oft hohe Strafgebühren an die Bank — deshalb lenken sie bei professionellen Anträgen oft schnell ein.",
+    "PayPals Käuferschutz greift bis zu 180 Tage nach Zahlung. Kreditkarten bieten meist 120 Tage.",
+    "Wusstest du? Auch für nicht geliefertes Essen (z.B. Lieferando) kannst du über PayPal dein Geld zurückholen, wenn der Support sich querstellt.",
+    "Flug gecancelt? Steuern und Flughafengebühren müssen laut EU-Recht immer erstattet werden, selbst wenn du das Ticket stornierst.",
+    "Mastercard nennt den Chargeback-Grund für fehlerhafte Ware 'Reason Code 4853'. Mit dieser Nennung im Brief zeigst du direkt Fachwissen.",
+    "Abofalle? Kreditkartenunternehmen verbieten versteckte Abos. Du kannst Abbuchungen der letzten Monate oft problemlos zurückholen.",
+    "Tipp: Die bloße Androhung eines Chargebacks (Rückbuchung) wirkt beim Händler oft Wunder.",
+    "Wusstest du? Wenn ein Hotelzimmer Schimmel hat oder völlig anders aussieht als auf den Fotos, gilt das als 'nicht erbrachte Leistung'."
   ];
 
   useEffect(() => {
