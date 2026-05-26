@@ -30,7 +30,11 @@ app.use(
     },
   }),
 );
-app.use(cors());
+app.use(cors({
+  origin: process.env.NODE_ENV === "production" 
+    ? ["https://chargebackpilot.de", "https://www.chargebackpilot.de"]
+    : "*"
+}));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 

@@ -1,4 +1,4 @@
-import { pgTable, text, serial, integer, real, boolean, timestamp, jsonb } from "drizzle-orm/pg-core";
+import { pgTable, text, serial, integer, real, boolean, timestamp, jsonb, index } from "drizzle-orm/pg-core";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod/v4";
 
@@ -20,6 +20,12 @@ export const casesTable = pgTable("cases", {
   paidAmountCents: integer("paid_amount_cents").notNull().default(0),
   stripeSessionId: text("stripe_session_id"),
   createdAt: timestamp("created_at").defaultNow().notNull(),
+}, (table) => {
+  return {
+    stripeSessionIdIdx: index("stripe_session_id_idx").on(table.stripeSessionId),
+    createdAtIdx: index("created_at_idx").on(table.createdAt),
+    paymentMethodIdx: index("payment_method_idx").on(table.paymentMethod),
+  };
 });
 
 export type CaseAnalysis = {

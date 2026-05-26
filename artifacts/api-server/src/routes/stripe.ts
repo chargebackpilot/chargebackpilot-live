@@ -2,6 +2,7 @@ import { Router } from "express";
 import Stripe from "stripe";
 import { db, casesTable } from "@workspace/db";
 import { and, eq } from "drizzle-orm";
+import express from "express";
 
 const router = Router();
 
@@ -165,5 +166,60 @@ router.get("/checkout/verify/:sessionId", async (req, res) => {
     res.status(400).json({ paid: false });
   }
 });
+
+// ---------------------------------------------------------------------------
+// Stripe Webhook (Async fulfillment & security)
+// ---------------------------------------------------------------------------
+router.post(
+  "/webhook",
+  express.raw({ type: "application/json" }),
+  async (req, res) => {
+    const sig = req.headers["stripe-signature"];
+    const endpointSecret = process.env.STRIPE_WEBHOOK_SECRET;
+
+    if (!sig || !endpointSecret || !process.env.STRIPE_SECRET_KEY) {
+      res.status(400).send(`Webhook Error: Missing signature or secret`);
+      return;
+    }
+
+    try {
+      const stripe = getStripe();
+      const event = stripe.webhooks.constructEvent(req.body, sig, endpointSecret);
+
+      if (event.type === "checkout.session.completed") {
+        const session = event.data.object as Stripe.Checkout.Session;
+        
+        if (session.payment_status === "paid") {
+          const mode = (session.metadata?.mode as "single" | "flatrate" | undefined) ?? "single";
+          const caseIdMeta = session.metadata?.caseId;
+          
+          if (mode === "single" && caseIdMeta) {
+            const caseIdNum = parseInt(caseIdMeta, 10);
+            const amountCents = typeof session.amount_total === "number" ? session.amount_total : 99;
+            
+            if (!isNaN(caseIdNum)) {
+              await db
+                .update(casesTable)
+                .set({
+                  paid: true,
+                  paidAt: new Date(),
+                  paidAmountCents: amountCents,
+                  stripeSessionId: session.id,
+                })
+                .where(eq(casesTable.id, caseIdNum));
+            }
+          }
+          // Note: for flatrate mode, we just let the frontend know via session_id matching,
+          // or we could store flatrate unlocks in a separate users table if auth is added later.
+        }
+      }
+
+      res.json({ received: true });
+    } catch (err) {
+      req.log.error({ err }, "Stripe webhook signature verification failed");
+      res.status(400).send(`Webhook Error: ${err instanceof Error ? err.message : "Unknown error"}`);
+    }
+  }
+);
 
 export default router;
