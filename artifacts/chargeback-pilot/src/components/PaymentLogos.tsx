@@ -71,6 +71,26 @@ export function KlarnaLogo({ className = "" }: PLProps) {
   );
 }
 
+export function SepaLogo({ className = "" }: PLProps) {
+  return (
+    <div className={`inline-flex items-center justify-center bg-[#00519E] rounded-md h-7 px-2 shadow-sm ${className}`} aria-label="SEPA Überweisung">
+      <svg viewBox="0 0 24 24" className="w-3.5 h-3.5 mr-1 fill-white" aria-hidden="true">
+        <path d="M4 10h3v7H4zM10.5 10h3v7h-3zM2 19h20v3H2zM17 10h3v7h-3zM12 1L2 6v2h20V6z" />
+      </svg>
+      <span className="font-extrabold text-white text-[11px] tracking-tight leading-none">SEPA</span>
+    </div>
+  );
+}
+
+export function AppleGooglePayLogo({ className = "" }: PLProps) {
+  return (
+    <div className={`flex items-center gap-1.5 ${className}`}>
+      <ApplePayLogo />
+      <GooglePayLogo />
+    </div>
+  );
+}
+
 export function PaymentLogoStrip({ className = "" }: PLProps) {
   return (
     <div className={`flex items-center gap-1.5 flex-wrap justify-center ${className}`}>
@@ -102,8 +122,8 @@ const PAYMENT_HELP_CARDS: PaymentHelpCard[] = [
   { id: "visa_mastercard", label: "Mit Kreditkarte bezahlt?", sub: "Chargeback bei Visa & Mastercard einreichen", Logo: VisaLogo },
   { id: "amex", label: "Mit American Express bezahlt?", sub: "Streitfall mit dem stärksten Käuferschutz", Logo: AmexLogo },
   { id: "klarna", label: "Mit Klarna bezahlt?", sub: "Käuferschutz + Rechnung pausieren", Logo: KlarnaLogo },
-  { id: "apple_google_pay", label: "Apple Pay / Google Pay?", sub: "Wir prüfen die hinterlegte Karte für dich", Logo: ApplePayLogo },
-  { id: "bank_transfer", label: "Per Überweisung gezahlt?", sub: "Möglichkeiten bei SEPA-Zahlung & Anzeige", Logo: GooglePayLogo },
+  { id: "apple_google_pay", label: "Apple Pay / Google Pay?", sub: "Wir prüfen die hinterlegte Karte für dich", Logo: AppleGooglePayLogo },
+  { id: "bank_transfer", label: "Per Überweisung gezahlt?", sub: "Möglichkeiten bei SEPA-Zahlung & Anzeige", Logo: SepaLogo },
 ];
 
 export function PaymentHelpGrid({ className = "" }: PLProps) {
