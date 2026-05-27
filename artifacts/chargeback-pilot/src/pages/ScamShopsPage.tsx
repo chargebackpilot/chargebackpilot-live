@@ -166,7 +166,7 @@ export default function ScamShopsPage() {
           {/* CTA */}
           <section className="bg-primary text-primary-foreground p-6 md:p-8 rounded-2xl text-center">
             <h2 className="text-xl md:text-2xl font-bold mb-2">Schon abgebucht? Jetzt zählt jeder Tag.</h2>
-            <p className="opacity-90 mb-5 text-sm md:text-base">
+            <p className="text-primary-foreground/95 mb-5 text-sm md:text-base">
               SEPA: 8 Wochen Frist · Kreditkarte: 60–120 Tage · PayPal: 180 Tage. Wir generieren deinen Antrag in 60 Sek.
             </p>
             <Link href="/vorlagen-generator?problem=fraud">

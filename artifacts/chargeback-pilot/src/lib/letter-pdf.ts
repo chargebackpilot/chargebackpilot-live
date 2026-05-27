@@ -1,4 +1,4 @@
-import jsPDF from "jspdf";
+import type jsPDF from "jspdf";
 
 export interface LetterInput {
   sender: {
@@ -49,8 +49,9 @@ function fmtDate(input?: string): string {
   }
 }
 
-export function generateLetterPdf(input: LetterInput): void {
-  const doc = new jsPDF({ unit: "mm", format: "a4" });
+export async function generateLetterPdf(input: LetterInput): Promise<void> {
+  const { default: JsPdf } = await import("jspdf");
+  const doc = new JsPdf({ unit: "mm", format: "a4" });
   const pageW = doc.internal.pageSize.getWidth();
   const pageH = doc.internal.pageSize.getHeight();
   const usable = pageW - M_LEFT - M_RIGHT;

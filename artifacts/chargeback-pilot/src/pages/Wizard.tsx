@@ -354,23 +354,27 @@ export default function Wizard() {
     }, 1500);
   };
 
-  const handleDownloadPdf = () => {
+  const handleDownloadPdf = async () => {
     if (!result || !analysis) return;
-    generatePdf({
-      merchantName: result.merchantName ?? formData.merchantName,
-      amount: (result.amount ?? (Number(formData.disputedAmount) || Number(formData.purchaseAmount) || 0)),
-      paymentDate: result.paymentDate ?? formData.paymentDate,
-      paymentMethod: result.paymentMethod ?? formData.paymentMethod,
-      problemType: result.problemType ?? formData.problemType,
-      successProbability: analysis.successProbability,
-      successProbabilityLabel: analysis.successProbabilityLabel,
-      summary: analysis.summary,
-      nextSteps: analysis.nextSteps ?? [],
-      merchantTemplate: analysis.merchantTemplate,
-      bankTemplate: analysis.bankTemplate,
-      escalationTemplate: analysis.escalationTemplate,
-    });
-    toast({ title: "PDF wird heruntergeladen", description: "Datei erscheint in deinen Downloads." });
+    try {
+      await generatePdf({
+        merchantName: result.merchantName ?? formData.merchantName,
+        amount: (result.amount ?? (Number(formData.disputedAmount) || Number(formData.purchaseAmount) || 0)),
+        paymentDate: result.paymentDate ?? formData.paymentDate,
+        paymentMethod: result.paymentMethod ?? formData.paymentMethod,
+        problemType: result.problemType ?? formData.problemType,
+        successProbability: analysis.successProbability,
+        successProbabilityLabel: analysis.successProbabilityLabel,
+        summary: analysis.summary,
+        nextSteps: analysis.nextSteps ?? [],
+        merchantTemplate: analysis.merchantTemplate,
+        bankTemplate: analysis.bankTemplate,
+        escalationTemplate: analysis.escalationTemplate,
+      });
+      toast({ title: "PDF wird heruntergeladen", description: "Datei erscheint in deinen Downloads." });
+    } catch {
+      toast({ title: "PDF konnte nicht erstellt werden", description: "Bitte versuche es erneut.", variant: "destructive" });
+    }
   };
 
   const analysis = result?.analysis;
@@ -471,7 +475,7 @@ export default function Wizard() {
                         onClick={() => setFormData((p) => ({ ...p, paymentMethod: pm.id }))}
                         className={`flex items-center space-x-3 border-2 p-4 rounded-xl cursor-pointer transition-all select-none ${formData.paymentMethod === pm.id ? "border-primary bg-primary/5" : "border-border hover:border-primary/40 hover:bg-muted/40"}`}
                       >
-                        <RadioGroupItem value={pm.id} id={`pm-${pm.id}`} />
+                        <RadioGroupItem value={pm.id} id={`pm-${pm.id}`} aria-label={pm.label} />
                         <span className="flex-1 font-medium">{pm.label}</span>
                       </div>
                     ))}
@@ -499,7 +503,7 @@ export default function Wizard() {
                         onClick={() => setFormData((p) => ({ ...p, problemType: pt.id }))}
                         className={`flex items-center space-x-3 border-2 p-4 rounded-xl cursor-pointer transition-all select-none ${formData.problemType === pt.id ? "border-primary bg-primary/5" : "border-border hover:border-primary/40 hover:bg-muted/40"}`}
                       >
-                        <RadioGroupItem value={pt.id} id={`pt-${pt.id}`} />
+                        <RadioGroupItem value={pt.id} id={`pt-${pt.id}`} aria-label={pt.label} />
                         <div className={`w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 ${formData.problemType === pt.id ? "bg-primary/10" : "bg-muted"}`}>
                           <pt.icon className={`w-4 h-4 ${formData.problemType === pt.id ? "text-primary" : "text-muted-foreground"}`} />
                         </div>

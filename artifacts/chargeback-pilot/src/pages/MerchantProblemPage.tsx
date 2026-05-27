@@ -247,7 +247,7 @@ export default function MerchantProblemPage() {
             <div className="space-y-3">
               {copy.deadlines.map((d, i) => (
                 <div key={i} className="bg-card border rounded-xl p-4 flex items-start gap-4">
-                  <div className="flex-shrink-0 bg-primary/10 text-primary font-bold text-sm px-3 py-2 rounded-lg min-w-[110px] text-center">
+                  <div className="flex-shrink-0 bg-primary/15 text-primary font-bold text-sm px-3 py-2 rounded-lg min-w-[110px] text-center">
                     {d.value}
                   </div>
                   <div className="flex-1 min-w-0">
@@ -311,7 +311,7 @@ export default function MerchantProblemPage() {
           {/* Mid CTA */}
           <section className="bg-primary text-primary-foreground p-6 md:p-8 rounded-2xl text-center">
             <h2 className="text-xl md:text-2xl font-bold mb-2">Lass die KI deinen {merchant.name}-Fall prüfen</h2>
-            <p className="opacity-90 mb-5 text-sm md:text-base">
+            <p className="text-primary-foreground/95 mb-5 text-sm md:text-base">
               60 Sekunden, kostenlose Einschätzung — Vorlagen für 0,99 € (inkl. MwSt.) freischalten. 
             </p>
             <Link href={wizardHref}>

@@ -126,7 +126,7 @@ export default function ComparePage() {
           {/* CTA */}
           <section className="bg-primary text-primary-foreground p-6 md:p-8 rounded-2xl text-center">
             <h2 className="text-xl md:text-2xl font-bold mb-2">Unsicher, welcher Weg in deinem Fall der richtige ist?</h2>
-            <p className="opacity-90 mb-5 text-sm md:text-base">
+            <p className="text-primary-foreground/95 mb-5 text-sm md:text-base">
               Unsere KI bewertet deinen Fall in 60 Sekunden und empfiehlt den Kanal mit der höchsten Erfolgsquote.
             </p>
             <Link href="/vorlagen-generator">

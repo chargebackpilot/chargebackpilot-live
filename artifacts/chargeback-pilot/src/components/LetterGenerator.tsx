@@ -39,7 +39,7 @@ export function LetterGenerator({
 
   const canGenerate = senderName.trim() && senderStreet.trim() && senderZipCity.trim();
 
-  const handleGenerate = () => {
+  const handleGenerate = async () => {
     if (!canGenerate) {
       toast({
         title: "Absender unvollständig",
@@ -68,11 +68,19 @@ export function LetterGenerator({
       city: city.trim() || senderZipCity.split(" ").slice(-1)[0] || "Ort",
       filenameHint: `${variant}_${recipientCompany}`,
     };
-    generateLetterPdf(input);
-    toast({
-      title: "DIN-Brief erstellt",
-      description: "Dein druckfertiger Brief wird heruntergeladen.",
-    });
+    try {
+      await generateLetterPdf(input);
+      toast({
+        title: "DIN-Brief erstellt",
+        description: "Dein druckfertiger Brief wird heruntergeladen.",
+      });
+    } catch {
+      toast({
+        title: "PDF konnte nicht erstellt werden",
+        description: "Bitte versuche es erneut.",
+        variant: "destructive",
+      });
+    }
   };
 
   if (!expanded) {

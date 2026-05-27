@@ -1,4 +1,4 @@
-import jsPDF from "jspdf";
+import type jsPDF from "jspdf";
 
 interface PdfData {
   merchantName: string;
@@ -94,8 +94,9 @@ function addSection(
   return startY + 6;
 }
 
-export function generatePdf(data: PdfData): void {
-  const doc = new jsPDF({ unit: "mm", format: "a4" });
+export async function generatePdf(data: PdfData): Promise<void> {
+  const { default: JsPdf } = await import("jspdf");
+  const doc = new JsPdf({ unit: "mm", format: "a4" });
   const pageW = doc.internal.pageSize.getWidth();
   const margin = 18;
   const usable = pageW - margin * 2;
