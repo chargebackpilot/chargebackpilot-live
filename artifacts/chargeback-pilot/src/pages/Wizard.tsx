@@ -883,14 +883,17 @@ export default function Wizard() {
                               <span className="leading-relaxed pt-0.5">{analysis.nextSteps[0]}</span>
                             </li>
                             {!hasUnlocked && analysis.nextSteps.length > 1 && (
-                              <li className="flex gap-3 text-sm opacity-40 select-none">
-                                <span className="flex-shrink-0 w-6 h-6 rounded-full bg-muted text-muted-foreground font-bold text-xs flex items-center justify-center">2</span>
-                                <span className="blur-[4px] leading-relaxed pt-0.5">{analysis.nextSteps[1]}</span>
+                              <li className="flex gap-3 text-sm select-none" aria-label="Nächster Schritt gesperrt">
+                                <span className="flex-shrink-0 w-6 h-6 rounded-full bg-primary/10 text-primary font-bold text-xs flex items-center justify-center">2</span>
+                                <span className="leading-relaxed pt-0.5 flex-1 min-w-0">
+                                  <span className="block h-3.5 rounded bg-muted mb-1.5" style={{ filter: "blur(2.5px)", width: "92%" }} />
+                                  <span className="block h-3.5 rounded bg-muted" style={{ filter: "blur(2.5px)", width: "78%" }} />
+                                </span>
                               </li>
                             )}
                             {hasUnlocked && analysis.nextSteps.slice(1).map((s, i) => (
                               <li key={i} className="flex gap-3 text-sm">
-                                <span className="flex-shrink-0 w-6 h-6 rounded-full bg-muted text-muted-foreground font-bold text-xs flex items-center justify-center">{i + 2}</span>
+                                <span className="flex-shrink-0 w-6 h-6 rounded-full bg-primary/10 text-primary font-bold text-xs flex items-center justify-center">{i + 2}</span>
                                 <span className="leading-relaxed pt-0.5">{s}</span>
                               </li>
                             ))}

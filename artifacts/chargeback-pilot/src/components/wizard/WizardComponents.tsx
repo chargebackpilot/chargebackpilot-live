@@ -148,7 +148,7 @@ export function LockedTeaser({ icon, title, lines = 3 }: { icon: React.ReactNode
         {icon}
         {title}
       </h3>
-      <div className="space-y-2 select-none pointer-events-none" style={{ filter: "blur(6px)" }}>
+      <div className="space-y-2 select-none pointer-events-none" style={{ filter: "blur(3.2px)" }}>
         {Array.from({ length: lines }).map((_, i) => (
           <div key={i} className="h-3 bg-muted rounded" style={{ width: `${70 + ((i * 7) % 25)}%` }} />
         ))}
