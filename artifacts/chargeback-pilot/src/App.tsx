@@ -4,6 +4,7 @@ import { useEffect, useLayoutEffect, Suspense, lazy } from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
+import NotFound from "@/pages/not-found";
 import Home from "@/pages/Home";
 import RatgeberIndex from "@/pages/RatgeberIndex";
 import MerchantProblemPage from "@/pages/MerchantProblemPage";
@@ -26,7 +27,6 @@ import {
 } from "@/pages/SEOPages";
 
 // Lazy-loaded routes for better performance
-const NotFound = lazy(() => import("@/pages/not-found"));
 const Wizard = lazy(() => import("@/pages/Wizard"));
 const Admin = lazy(() => import("@/pages/Admin"));
 const AdminDemo = lazy(() => import("@/pages/AdminDemo"));
@@ -234,7 +234,6 @@ const prefetchers = {
   wizard: () => import("@/pages/Wizard"),
   admin: () => import("@/pages/Admin"),
   adminDemo: () => import("@/pages/AdminDemo"),
-  notFound: () => import("@/pages/not-found"),
 };
 
 function RoutePrefetcher() {
@@ -244,7 +243,6 @@ function RoutePrefetcher() {
         () => prefetchers.wizard(),
         () => prefetchers.admin(),
         () => prefetchers.adminDemo(),
-        () => prefetchers.notFound(),
       ];
       let i = 0;
       const next = () => {
@@ -304,7 +302,7 @@ function Router() {
       {/* Comparison */}
       <Route path="/vergleich/paypal-vs-kreditkarte-vs-klarna" component={ComparePage} />
 
-      <Route component={withSuspense(NotFound, DefaultSkeleton)} />
+      <Route component={NotFound} />
     </Switch>
   );
 }
