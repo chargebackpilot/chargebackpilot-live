@@ -21,6 +21,7 @@ const SITE = "https://chargebackpilot.de";
 export function SEOArticleLayout({ title, category, whenApplies, evidence, steps, mistakes, faq }: SEOProps) {
   const [pathname] = useLocation();
   const description = `${title}: Fristen, Beweise und der genaue Ablauf bei ${category}. Mit fertigen Textvorlagen und Schritt-für-Schritt-Anleitung.`;
+  const canonicalPath = pathname || "/ratgeber";
 
   const howToSchema = {
     "@context": "https://schema.org",
@@ -58,17 +59,35 @@ export function SEOArticleLayout({ title, category, whenApplies, evidence, steps
       name: "ChargebackPilot",
       logo: { "@type": "ImageObject", url: `${SITE}/favicon.svg` },
     },
-    mainEntityOfPage: `${SITE}${pathname}`,
+    mainEntityOfPage: `${SITE}${canonicalPath}`,
     datePublished: "2026-01-15",
     dateModified: "2026-05-20",
   };
+
+  const breadcrumbSchema = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      { "@type": "ListItem", position: 1, name: "Start", item: `${SITE}/` },
+      { "@type": "ListItem", position: 2, name: "Ratgeber", item: `${SITE}/ratgeber` },
+      { "@type": "ListItem", position: 3, name: category, item: `${SITE}${canonicalPath}` },
+    ],
+  };
+
+  const relatedGuides = [
+    { href: "/paypal-chargeback", label: "PayPal Käuferschutz" },
+    { href: "/visa-mastercard-chargeback", label: "Visa & Mastercard" },
+    { href: "/klarna-reklamation", label: "Klarna Reklamation" },
+    { href: "/vergleich/paypal-vs-kreditkarte-vs-klarna", label: "Vergleich Käuferschutz" },
+  ].filter((g) => g.href !== canonicalPath).slice(0, 3);
 
   return (
     <MainLayout>
       <SeoHead
         title={`${title} | ChargebackPilot`}
         description={description}
-        jsonLd={[howToSchema, faqSchema, articleSchema]}
+        canonical={canonicalPath}
+        jsonLd={[howToSchema, faqSchema, articleSchema, breadcrumbSchema]}
       />
       <Breadcrumbs items={[{ label: "Ratgeber", href: "/ratgeber" }, { label: category }]} />
       <article className="pb-20">
@@ -173,6 +192,19 @@ export function SEOArticleLayout({ title, category, whenApplies, evidence, steps
             <Link href="/vorlagen-generator">
               <Button size="lg">Vorlagen generieren</Button>
             </Link>
+          </section>
+
+          <section className="border rounded-2xl p-6">
+            <h2 className="text-lg font-bold mb-3">Nächster sinnvoller Schritt</h2>
+            <div className="grid sm:grid-cols-3 gap-2.5">
+              {relatedGuides.map((g) => (
+                <Link key={g.href} href={g.href}>
+                  <Button variant="outline" className="w-full justify-start text-left h-auto py-3">
+                    {g.label}
+                  </Button>
+                </Link>
+              ))}
+            </div>
           </section>
 
           {/* Trademark Disclaimer */}
