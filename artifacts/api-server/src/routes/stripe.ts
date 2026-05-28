@@ -106,19 +106,23 @@ router.post("/checkout", async (req, res) => {
     });
 
     if (session.id) {
-      await db.insert(consentsTable).values({
-        caseId: !isNaN(caseIdNum) ? caseIdNum : null,
-        stripeSessionId: session.id,
-        consentType: "widerruf_digital_content",
-        consentGiven: consentWiderruf ? "yes" : "no",
-        consentTimestamp,
-        agbVersion: req.body?.agbVersion ?? "2026-05",
-        widerrufVersion: req.body?.widerrufVersion ?? "2026-05",
-        datenschutzVersion: req.body?.datenschutzVersion ?? "2026-05",
-        ipHash,
-        userAgentHash,
-        source: "web_checkout",
-      });
+      try {
+        await db.insert(consentsTable).values({
+          caseId: !isNaN(caseIdNum) ? caseIdNum : null,
+          stripeSessionId: session.id,
+          consentType: "widerruf_digital_content",
+          consentGiven: consentWiderruf ? "yes" : "no",
+          consentTimestamp,
+          agbVersion: req.body?.agbVersion ?? "2026-05",
+          widerrufVersion: req.body?.widerrufVersion ?? "2026-05",
+          datenschutzVersion: req.body?.datenschutzVersion ?? "2026-05",
+          ipHash,
+          userAgentHash,
+          source: "web_checkout",
+        });
+      } catch (consentErr) {
+        req.log.error({ err: consentErr }, "Consent audit insert failed (non-blocking)");
+      }
     }
 
     if (caseId && session.id) {
