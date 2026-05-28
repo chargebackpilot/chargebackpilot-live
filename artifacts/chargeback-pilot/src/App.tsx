@@ -48,6 +48,105 @@ function ScrollToTop() {
   return null;
 }
 
+function RouteMetaUpdater() {
+  const [pathname] = useLocation();
+
+  useEffect(() => {
+    const origin = "https://chargebackpilot.de";
+    const metaByPath: Array<{ match: RegExp; title: string; description: string }> = [
+      {
+        match: /^\/$/,
+        title: "ChargebackPilot · KI-Hilfe für Chargeback, PayPal-Käuferschutz & Reklamation 2026",
+        description:
+          "Ware nicht erhalten, Flug ausgefallen, doppelt belastet? ChargebackPilot prüft deinen Fall mit KI in 60 Sekunden und liefert dir 3 fertige Textvorlagen.",
+      },
+      {
+        match: /^\/vorlagen-generator$/,
+        title: "Vorlagen-Generator · ChargebackPilot",
+        description:
+          "Erstelle in wenigen Schritten professionelle Reklamationsvorlagen für Händler, Bank/PayPal/Klarna und Eskalation.",
+      },
+      {
+        match: /^\/ratgeber/,
+        title: "Ratgeber & Guides zu Chargeback, Käuferschutz und Rückerstattung · ChargebackPilot",
+        description:
+          "Praxisnahe Anleitungen für PayPal, Kreditkarten-Chargeback, Klarna-Reklamation und typische Problemfälle im Onlinekauf.",
+      },
+      {
+        match: /^\/(impressum|datenschutz|agb|widerruf)$/,
+        title: "Rechtliche Informationen · ChargebackPilot",
+        description:
+          "Impressum, Datenschutz, AGB und Widerruf von ChargebackPilot. Transparent und aktuell für Nutzer in Deutschland.",
+      },
+      {
+        match: /^\/(paypal-chargeback|amex-chargeback|visa-mastercard-chargeback|klarna-reklamation|flug-chargeback|kiwi-rueckerstattung|lieferando-rueckerstattung|wolt-rueckerstattung|ubereats-rueckerstattung|ware-nicht-erhalten|abo-falle-chargeback)$/,
+        title: "Chargeback-Ratgeber 2026 · ChargebackPilot",
+        description:
+          "Konkrete Schritt-für-Schritt-Hilfen für Rückerstattung, Chargeback und Käuferschutz je nach Zahlungsart und Problemfall.",
+      },
+      {
+        match: /^\/hilfe\//,
+        title: "Händler-spezifische Hilfe bei Reklamationen · ChargebackPilot",
+        description:
+          "Konkrete Leitfäden zu typischen Problemen bei bekannten Händlern inklusive Beweis-Checkliste und Eskalationspfad.",
+      },
+      {
+        match: /^\/vergleich\//,
+        title: "Vergleich: PayPal vs Kreditkarte vs Klarna · ChargebackPilot",
+        description:
+          "Welcher Weg ist in deinem Fall am besten? Vergleich von Fristen, Erfolgschancen und Vorgehen bei Rückerstattungen.",
+      },
+    ];
+
+    const current =
+      metaByPath.find((m) => m.match.test(pathname)) ?? {
+        title: "ChargebackPilot · Chargeback & Reklamationshilfe",
+        description:
+          "ChargebackPilot unterstützt dich mit KI-gestützter Formulierungshilfe für Rückerstattungen und Reklamationen.",
+      };
+
+    document.title = current.title;
+
+    const upsertMeta = (name: string, content: string) => {
+      let el = document.head.querySelector<HTMLMetaElement>(`meta[name="${name}"]`);
+      if (!el) {
+        el = document.createElement("meta");
+        el.setAttribute("name", name);
+        document.head.appendChild(el);
+      }
+      el.setAttribute("content", content);
+    };
+
+    const upsertOg = (property: string, content: string) => {
+      let el = document.head.querySelector<HTMLMetaElement>(`meta[property="${property}"]`);
+      if (!el) {
+        el = document.createElement("meta");
+        el.setAttribute("property", property);
+        document.head.appendChild(el);
+      }
+      el.setAttribute("content", content);
+    };
+
+    const canonicalUrl = `${origin}${pathname}`;
+    upsertMeta("description", current.description);
+    upsertMeta("twitter:title", current.title);
+    upsertMeta("twitter:description", current.description);
+    upsertOg("og:title", current.title);
+    upsertOg("og:description", current.description);
+    upsertOg("og:url", canonicalUrl);
+
+    let canonical = document.head.querySelector<HTMLLinkElement>('link[rel="canonical"]');
+    if (!canonical) {
+      canonical = document.createElement("link");
+      canonical.setAttribute("rel", "canonical");
+      document.head.appendChild(canonical);
+    }
+    canonical.setAttribute("href", canonicalUrl);
+  }, [pathname]);
+
+  return null;
+}
+
 function DefaultSkeleton() {
   return (
     <div className="min-h-screen flex flex-col font-sans">
@@ -206,6 +305,7 @@ function App() {
     <QueryClientProvider client={queryClient}>
       <WouterRouter base={import.meta.env.BASE_URL.replace(/\/$/, "")}>
         <ScrollToTop />
+        <RouteMetaUpdater />
         <RoutePrefetcher />
         <Router />
       </WouterRouter>
