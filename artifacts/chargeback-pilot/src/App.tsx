@@ -54,7 +54,7 @@ function RouteMetaUpdater() {
   useLayoutEffect(() => {
     // IMPORTANT: Most public SEO routes already define precise <SeoHead> metadata.
     // We only force metadata for operational routes that don't provide page-level SEO tags.
-    const shouldForceMeta = /^\/(admin|admin\/demo|vorlagen-generator)$/.test(pathname);
+    const shouldForceMeta = /^\/(admin|admin\/demo|vorlagen-generator|impressum|datenschutz|agb|widerruf)$/.test(pathname);
     if (!shouldForceMeta) return;
 
     const origin = "https://chargebackpilot.de";
@@ -78,10 +78,28 @@ function RouteMetaUpdater() {
           "Praxisnahe Anleitungen für PayPal, Kreditkarten-Chargeback, Klarna-Reklamation und typische Problemfälle im Onlinekauf.",
       },
       {
-        match: /^\/(impressum|datenschutz|agb|widerruf)$/,
-        title: "Rechtliche Informationen · ChargebackPilot",
+        match: /^\/impressum$/,
+        title: "Impressum · ChargebackPilot",
         description:
-          "Impressum, Datenschutz, AGB und Widerruf von ChargebackPilot. Transparent und aktuell für Nutzer in Deutschland.",
+          "Impressum von ChargebackPilot gemäß den geltenden Informationspflichten für Online-Angebote in Deutschland.",
+      },
+      {
+        match: /^\/datenschutz$/,
+        title: "Datenschutzerklärung · ChargebackPilot",
+        description:
+          "Datenschutzerklärung von ChargebackPilot mit Informationen zur Datenverarbeitung, Rechtsgrundlagen und Betroffenenrechten.",
+      },
+      {
+        match: /^\/agb$/,
+        title: "Allgemeine Geschäftsbedingungen (AGB) · ChargebackPilot",
+        description:
+          "Allgemeine Geschäftsbedingungen von ChargebackPilot für Nutzung, Leistungsumfang, Vergütung und Haftung.",
+      },
+      {
+        match: /^\/widerruf$/,
+        title: "Widerrufsbelehrung · ChargebackPilot",
+        description:
+          "Widerrufsbelehrung von ChargebackPilot mit Fristen, Voraussetzungen und Musterinformationen für Verbraucher.",
       },
       {
         match: /^\/(paypal-chargeback|amex-chargeback|visa-mastercard-chargeback|klarna-reklamation|flug-chargeback|kiwi-rueckerstattung|lieferando-rueckerstattung|wolt-rueckerstattung|ubereats-rueckerstattung|ware-nicht-erhalten|abo-falle-chargeback)$/,
