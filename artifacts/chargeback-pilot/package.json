@@ -75,7 +75,6 @@
     "zod": "catalog:"
   },
   "dependencies": {
-    "@fontsource/inter": "^5.2.8",
     "jspdf": "^4.2.1"
   }
 }
