@@ -4,37 +4,32 @@ import { useEffect, Suspense, lazy } from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
+import Home from "@/pages/Home";
+import RatgeberIndex from "@/pages/RatgeberIndex";
+import MerchantProblemPage from "@/pages/MerchantProblemPage";
+import MerchantIndexPage from "@/pages/MerchantIndexPage";
+import ScamShopsPage from "@/pages/ScamShopsPage";
+import ComparePage from "@/pages/ComparePage";
+import { Impressum, Datenschutz, AGB, Widerruf } from "@/pages/LegalPages";
+import {
+  PayPalSEO,
+  AmexSEO,
+  VisaMastercardSEO,
+  KlarnaSEO,
+  FlugSEO,
+  KiwiSEO,
+  LieferandoSEO,
+  WoltSEO,
+  UberEatsSEO,
+  WareNichtErhaltenSEO,
+  AboFalleSEO,
+} from "@/pages/SEOPages";
 
 // Lazy-loaded routes for better performance
 const NotFound = lazy(() => import("@/pages/not-found"));
-const Home = lazy(() => import("@/pages/Home"));
 const Wizard = lazy(() => import("@/pages/Wizard"));
-const RatgeberIndex = lazy(() => import("@/pages/RatgeberIndex"));
 const Admin = lazy(() => import("@/pages/Admin"));
 const AdminDemo = lazy(() => import("@/pages/AdminDemo"));
-const MerchantProblemPage = lazy(() => import("@/pages/MerchantProblemPage"));
-const MerchantIndexPage = lazy(() => import("@/pages/MerchantIndexPage"));
-const ScamShopsPage = lazy(() => import("@/pages/ScamShopsPage"));
-const ComparePage = lazy(() => import("@/pages/ComparePage"));
-
-// Legal pages
-const Impressum = lazy(() => import("@/pages/LegalPages").then(m => ({ default: m.Impressum })));
-const Datenschutz = lazy(() => import("@/pages/LegalPages").then(m => ({ default: m.Datenschutz })));
-const AGB = lazy(() => import("@/pages/LegalPages").then(m => ({ default: m.AGB })));
-const Widerruf = lazy(() => import("@/pages/LegalPages").then(m => ({ default: m.Widerruf })));
-
-// SEO Pages
-const PayPalSEO = lazy(() => import("@/pages/SEOPages").then(m => ({ default: m.PayPalSEO })));
-const AmexSEO = lazy(() => import("@/pages/SEOPages").then(m => ({ default: m.AmexSEO })));
-const VisaMastercardSEO = lazy(() => import("@/pages/SEOPages").then(m => ({ default: m.VisaMastercardSEO })));
-const KlarnaSEO = lazy(() => import("@/pages/SEOPages").then(m => ({ default: m.KlarnaSEO })));
-const FlugSEO = lazy(() => import("@/pages/SEOPages").then(m => ({ default: m.FlugSEO })));
-const KiwiSEO = lazy(() => import("@/pages/SEOPages").then(m => ({ default: m.KiwiSEO })));
-const LieferandoSEO = lazy(() => import("@/pages/SEOPages").then(m => ({ default: m.LieferandoSEO })));
-const WoltSEO = lazy(() => import("@/pages/SEOPages").then(m => ({ default: m.WoltSEO })));
-const UberEatsSEO = lazy(() => import("@/pages/SEOPages").then(m => ({ default: m.UberEatsSEO })));
-const WareNichtErhaltenSEO = lazy(() => import("@/pages/SEOPages").then(m => ({ default: m.WareNichtErhaltenSEO })));
-const AboFalleSEO = lazy(() => import("@/pages/SEOPages").then(m => ({ default: m.AboFalleSEO })));
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -128,15 +123,10 @@ const withSuspense = (Component: React.ComponentType<any>, Fallback: React.Compo
 );
 
 const prefetchers = {
-  home: () => import("@/pages/Home"),
   wizard: () => import("@/pages/Wizard"),
-  ratgeber: () => import("@/pages/RatgeberIndex"),
-  merchantIndex: () => import("@/pages/MerchantIndexPage"),
-  merchantProblem: () => import("@/pages/MerchantProblemPage"),
-  compare: () => import("@/pages/ComparePage"),
-  scam: () => import("@/pages/ScamShopsPage"),
-  legal: () => import("@/pages/LegalPages"),
-  seo: () => import("@/pages/SEOPages"),
+  admin: () => import("@/pages/Admin"),
+  adminDemo: () => import("@/pages/AdminDemo"),
+  notFound: () => import("@/pages/not-found"),
 };
 
 function RoutePrefetcher() {
@@ -144,9 +134,9 @@ function RoutePrefetcher() {
     const run = () => {
       const jobs = [
         () => prefetchers.wizard(),
-        () => prefetchers.ratgeber(),
-        () => prefetchers.legal(),
-        () => prefetchers.seo(),
+        () => prefetchers.admin(),
+        () => prefetchers.adminDemo(),
+        () => prefetchers.notFound(),
       ];
       let i = 0;
       const next = () => {
@@ -171,40 +161,40 @@ function RoutePrefetcher() {
 function Router() {
   return (
     <Switch>
-      <Route path="/" component={withSuspense(Home, DefaultSkeleton)} />
+      <Route path="/" component={Home} />
       <Route path="/vorlagen-generator" component={withSuspense(Wizard, WizardSkeleton)} />
-      <Route path="/ratgeber" component={withSuspense(RatgeberIndex, ArticleSkeleton)} />
+      <Route path="/ratgeber" component={RatgeberIndex} />
       <Route path="/admin" component={withSuspense(Admin, DefaultSkeleton)} />
       <Route path="/admin/demo" component={withSuspense(AdminDemo, DefaultSkeleton)} />
       
       {/* Legal Pages */}
-      <Route path="/impressum" component={withSuspense(Impressum, ArticleSkeleton)} />
-      <Route path="/datenschutz" component={withSuspense(Datenschutz, ArticleSkeleton)} />
-      <Route path="/agb" component={withSuspense(AGB, ArticleSkeleton)} />
-      <Route path="/widerruf" component={withSuspense(Widerruf, ArticleSkeleton)} />
+      <Route path="/impressum" component={Impressum} />
+      <Route path="/datenschutz" component={Datenschutz} />
+      <Route path="/agb" component={AGB} />
+      <Route path="/widerruf" component={Widerruf} />
       
       {/* SEO Landing Pages */}
-      <Route path="/paypal-chargeback" component={withSuspense(PayPalSEO, ArticleSkeleton)} />
-      <Route path="/amex-chargeback" component={withSuspense(AmexSEO, ArticleSkeleton)} />
-      <Route path="/visa-mastercard-chargeback" component={withSuspense(VisaMastercardSEO, ArticleSkeleton)} />
-      <Route path="/klarna-reklamation" component={withSuspense(KlarnaSEO, ArticleSkeleton)} />
-      <Route path="/flug-chargeback" component={withSuspense(FlugSEO, ArticleSkeleton)} />
-      <Route path="/kiwi-rueckerstattung" component={withSuspense(KiwiSEO, ArticleSkeleton)} />
-      <Route path="/lieferando-rueckerstattung" component={withSuspense(LieferandoSEO, ArticleSkeleton)} />
-      <Route path="/wolt-rueckerstattung" component={withSuspense(WoltSEO, ArticleSkeleton)} />
-      <Route path="/ubereats-rueckerstattung" component={withSuspense(UberEatsSEO, ArticleSkeleton)} />
-      <Route path="/ware-nicht-erhalten" component={withSuspense(WareNichtErhaltenSEO, ArticleSkeleton)} />
-      <Route path="/abo-falle-chargeback" component={withSuspense(AboFalleSEO, ArticleSkeleton)} />
+      <Route path="/paypal-chargeback" component={PayPalSEO} />
+      <Route path="/amex-chargeback" component={AmexSEO} />
+      <Route path="/visa-mastercard-chargeback" component={VisaMastercardSEO} />
+      <Route path="/klarna-reklamation" component={KlarnaSEO} />
+      <Route path="/flug-chargeback" component={FlugSEO} />
+      <Route path="/kiwi-rueckerstattung" component={KiwiSEO} />
+      <Route path="/lieferando-rueckerstattung" component={LieferandoSEO} />
+      <Route path="/wolt-rueckerstattung" component={WoltSEO} />
+      <Route path="/ubereats-rueckerstattung" component={UberEatsSEO} />
+      <Route path="/ware-nicht-erhalten" component={WareNichtErhaltenSEO} />
+      <Route path="/abo-falle-chargeback" component={AboFalleSEO} />
 
       {/* Programmatic merchant SEO */}
-      <Route path="/hilfe/:merchantSlug/:problemSlug" component={withSuspense(MerchantProblemPage, ArticleSkeleton)} />
-      <Route path="/hilfe/:merchantSlug" component={withSuspense(MerchantIndexPage, ArticleSkeleton)} />
+      <Route path="/hilfe/:merchantSlug/:problemSlug" component={MerchantProblemPage} />
+      <Route path="/hilfe/:merchantSlug" component={MerchantIndexPage} />
 
       {/* Trust / scam ratgeber */}
-      <Route path="/scam-shops-2026" component={withSuspense(ScamShopsPage, ArticleSkeleton)} />
+      <Route path="/scam-shops-2026" component={ScamShopsPage} />
 
       {/* Comparison */}
-      <Route path="/vergleich/paypal-vs-kreditkarte-vs-klarna" component={withSuspense(ComparePage, ArticleSkeleton)} />
+      <Route path="/vergleich/paypal-vs-kreditkarte-vs-klarna" component={ComparePage} />
 
       <Route component={withSuspense(NotFound, DefaultSkeleton)} />
     </Switch>
