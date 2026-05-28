@@ -47,11 +47,11 @@ export default function MerchantIndexPage() {
                       <div>
                         <div className="font-semibold">{merchant.name}: {p.label}</div>
                         <div className="text-sm text-muted-foreground leading-relaxed mt-2">
-                          <p><strong>3 wichtige Schritte bei {merchant.name}:</strong></p>
+                          <p><strong>3 sinnvolle Schritte bei {merchant.name}:</strong></p>
                           <ol className="list-decimal pl-4 mt-2 space-y-1">
                             <li>Kontaktiere den Support von {merchant.name} schriftlich.</li>
                             <li>Sichere Beweise (Bestellbestätigung, Chat-Verläufe, Fotos).</li>
-                            <li>Generiere mit ChargebackPilot die perfekten Anschreiben für Händler und Bank.</li>
+                            <li>Erstelle mit ChargebackPilot strukturierte Formulierungsvorschläge für Händler und Bank.</li>
                           </ol>
                         </div>
                       </div>

@@ -27,7 +27,7 @@ export function Impressum() {
 
           <p>
             <strong>Umsatzsteuer-ID:</strong><br />
-            Umsatzsteuer-Identifikationsnummer gemäß § 27 a Umsatzsteuergesetz: <em>(wird nachgereicht / beantragt)</em>
+            Derzeit liegt keine Umsatzsteuer-Identifikationsnummer vor.
           </p>
 
           <p>

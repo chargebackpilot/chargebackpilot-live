@@ -209,7 +209,7 @@ export default function Home() {
     <MainLayout>
       <SeoHead 
         title="ChargebackPilot | Käuferschutz & Rückerstattung online"
-        description="Geld zurück bei Betrug, Scam-Shops, Lieferando, Flugausfall oder Abo-Fallen. Einfache Chargeback-Generierung für PayPal und Kreditkarten."
+        description="Hilfe bei Betrug, Scam-Shops, Lieferando, Flugausfall oder Abo-Fallen. Strukturierte Chargeback-Formulierungshilfe für PayPal und Kreditkarten."
         canonical="/"
       />
       
@@ -224,7 +224,7 @@ export default function Home() {
             <span className="text-primary">Dein Assistent für jede Reklamation.</span>
           </h1>
           <p className="text-xl text-muted-foreground mb-10 max-w-3xl mx-auto leading-relaxed">
-            Lieferung fehlt, Flug gestrichen oder falsches Essen? Wir leiten dich als Privatperson perfekt durch den Käuferschutz-Prozess. Erhalte strukturierte Anleitungen und exakte Textvorlagen für PayPal, Kreditkarte und Händler, damit du genau weißt, was du schreiben musst.
+            Lieferung fehlt, Flug gestrichen oder falsches Essen? Wir begleiten dich als Privatperson strukturiert durch den Käuferschutz-Prozess. Erhalte verständliche Anleitungen und Textvorlagen für PayPal, Kreditkarte und Händler, damit du klarer weißt, was du schreiben kannst.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link href="/vorlagen-generator">
@@ -285,12 +285,12 @@ export default function Home() {
       {/* SEO-Text / Intro */}
       <section className="py-16 bg-muted/30 border-y">
         <div className="container mx-auto max-w-4xl px-4 text-center">
-          <h2 className="text-2xl md:text-3xl font-bold mb-6">Chargeback & Käuferschutz: Hole dir dein Geld zurück</h2>
+          <h2 className="text-2xl md:text-3xl font-bold mb-6">Chargeback & Käuferschutz: strukturiert vorgehen</h2>
           <p className="text-muted-foreground leading-relaxed mb-4">
-            Egal ob <strong>kaltes Essen von Lieferando oder Wolt</strong>, <strong>nicht gelieferte Pakete</strong> von Fake-Shops oder <strong>einbehaltene Steuern und Gebühren bei Flugstornierungen</strong> (z.B. Kiwi.com) – in den meisten Fällen musst du das nicht hinnehmen. Mit dem sogenannten <strong>Chargeback-Verfahren</strong> bei Kreditkarten (Visa, Mastercard, Amex) oder dem Käuferschutz von PayPal und Klarna kannst du dir dein Geld direkt über deinen Zahlungsdienstleister zurückholen.
+            Egal ob <strong>kaltes Essen von Lieferando oder Wolt</strong>, <strong>nicht gelieferte Pakete</strong> von Fake-Shops oder <strong>einbehaltene Steuern und Gebühren bei Flugstornierungen</strong> (z.B. Kiwi.com) – in vielen Fällen kannst du den Vorgang prüfen lassen. Mit dem sogenannten <strong>Chargeback-Verfahren</strong> bei Kreditkarten (Visa, Mastercard, Amex) oder dem Käuferschutz von PayPal und Klarna kannst du eine Rückerstattung über deinen Zahlungsdienstleister beantragen.
           </p>
           <p className="text-muted-foreground leading-relaxed">
-            ChargebackPilot analysiert deinen individuellen Fall per KI, zeigt dir genau auf, welche Beweise du brauchst und generiert das perfekte Anschreiben für Händler und Bank. Erhöhe deine Erfolgschancen und spare Zeit, Nerven und teure Anwaltskosten.
+            ChargebackPilot strukturiert deinen Fall per KI, zeigt dir, welche Beweise häufig relevant sind, und erstellt Formulierungsvorschläge für Händler und Bank. Das kann dir helfen, Zeit zu sparen und dein Anliegen nachvollziehbar aufzubereiten.
           </p>
         </div>
       </section>
@@ -298,7 +298,7 @@ export default function Home() {
       {/* Typical Scenarios (SEO rich) */}
       <section className="py-16 md:py-24 container mx-auto px-4 max-w-6xl">
         <div className="text-center mb-16">
-          <h2 className="text-3xl font-bold mb-4">Typische Fälle für einen erfolgreichen Chargeback</h2>
+          <h2 className="text-3xl font-bold mb-4">Typische Fälle für einen Chargeback</h2>
           <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
             ChargebackPilot ist auf diese konkreten Alltagssituationen ausgelegt — mit spezifischen Vorlagen für jeden Fall.
           </p>
@@ -392,12 +392,12 @@ export default function Home() {
             </span>
             <h2 className="text-3xl font-bold mb-3">Wie hast du bezahlt? So generieren wir deine Briefe.</h2>
             <p className="text-muted-foreground max-w-2xl mx-auto">
-              Jede Zahlungsart hat eigene Schutzregeln, eigene Fristen und eigene Rückforderungswege. Klicke deine Zahlungsmethode an — wir starten sofort den Text-Generator für das passende Verfahren.
+              Jede Zahlungsart hat eigene Schutzregeln, eigene Fristen und eigene Rückforderungswege. Klicke deine Zahlungsmethode an — wir öffnen den Text-Generator für das passende Verfahren.
             </p>
           </div>
           <PaymentHelpGrid />
           <p className="text-center text-xs text-muted-foreground mt-6 max-w-xl mx-auto">
-            Kein Häkchen, keine Anmeldung — die Text-Generierung startet kostenlos. Du zahlst erst, wenn du die fertigen Brief-Vorlagen brauchst (0,99 € (inkl. MwSt.) pro Fall).
+              Kein Häkchen, keine Anmeldung — die Text-Generierung startet ohne Bezahlpflicht. Du zahlst erst, wenn du die fertigen Brief-Vorlagen freischalten möchtest (0,99 € (inkl. MwSt.) pro Fall).
           </p>
         </div>
       </section>
@@ -429,7 +429,7 @@ export default function Home() {
                   ))}
                 </ul>
                 <Link href="/vorlagen-generator">
-                  <Button className="w-full mt-2" variant="outline">Jetzt kostenlos starten</Button>
+                  <Button className="w-full mt-2" variant="outline">Unverbindlich starten</Button>
                 </Link>
               </CardContent>
             </Card>
@@ -515,7 +515,7 @@ export default function Home() {
             <p className="text-muted-foreground mb-4 text-sm">Bereit, Brief-Vorlagen zu generieren?</p>
             <Link href="/vorlagen-generator">
               <Button size="lg" className="gap-2">
-                Jetzt kostenlos starten
+                Unverbindlich starten
                 <ArrowRight className="w-4 h-4" />
               </Button>
             </Link>

@@ -49,7 +49,7 @@ function getBenefits(paymentMethod: string): Benefit[] {
         return {
           icon: ListChecks,
           title: "Klick-für-Klick PayPal-Anleitung",
-          desc: "Welches Menü, welche Kategorie, welcher Wortlaut — für maximale Erfolgsquote im Käuferschutz.",
+          desc: "Welches Menü, welche Kategorie, welcher Wortlaut — als strukturierte Orientierung für deinen Käuferschutz-Fall.",
         };
       case "credit_card":
       case "visa":
@@ -114,7 +114,7 @@ function getBenefits(paymentMethod: string): Benefit[] {
 const TRUST_SIGNALS = [
   "Einmalig 0,99 € (inkl. MwSt.) — kein Abo",
   "Sicherer Checkout via Stripe",
-  "Sofortzugang nach Zahlung",
+  "Zugang nach bestätigter Zahlung",
 ];
 
 /** Map raw analysis label to a softer, qualitative band shown to the user. */
@@ -161,7 +161,11 @@ export function PaywallModal({
       const res = await fetch("/api/stripe/checkout", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ caseId }),
+        body: JSON.stringify({
+          caseId,
+          consentWiderruf: true,
+          consentTimestamp: new Date().toISOString(),
+        }),
       });
       const json = await res.json();
       if (json.url) {
@@ -200,7 +204,7 @@ export function PaywallModal({
           <div className="text-right flex-shrink-0 pl-3">
             <p className="text-[10px] font-semibold uppercase tracking-wide opacity-70">Strategie-Einschätzung</p>
             <p className="text-lg font-black leading-tight">{band.name}</p>
-            <p className="text-[10px] opacity-70 italic">indikativ, keine </p>
+            <p className="text-[10px] opacity-70 italic">indikativ, keine Rechtsberatung</p>
           </div>
         </div>
 
@@ -232,12 +236,35 @@ export function PaywallModal({
         <div className="flex items-center gap-2.5 bg-amber-50 border border-amber-200 rounded-xl px-3 py-2.5">
           <Sparkles className="w-4 h-4 text-amber-600 flex-shrink-0" />
           <span className="text-xs text-amber-900 leading-snug">
-            <strong>Tipp:</strong> Ohne rechtssicheres Anschreiben und korrekten Grund (Reason Code) sinkt die Chance auf eine Rückerstattung signifikant.
+            <strong>Hinweis:</strong> Ein klar formuliertes Anschreiben und ein passender Grund (Reason Code) können die Nachvollziehbarkeit deines Antrags verbessern.
           </span>
         </div>
 
-        {/* CTA */}
+        {/* Checkout consent + CTA */}
         <div className="space-y-3 pt-1">
+          <div className="rounded-xl border border-border bg-background/70 p-3.5">
+            <div className="flex items-start gap-3">
+              <Checkbox
+                checked={consentWiderruf}
+                onCheckedChange={(checked) => {
+                  setConsentWiderruf(Boolean(checked));
+                  if (checked) setError("");
+                }}
+                className="mt-0.5"
+              />
+              <label className="text-sm leading-relaxed text-muted-foreground">
+                Ich verlange ausdrücklich, dass vor Ablauf der Widerrufsfrist mit der Ausführung des Vertrags begonnen wird, und bestätige, dass ich bei vollständiger Vertragserfüllung mein Widerrufsrecht verliere. <a href="/widerruf" target="_blank" className="underline hover:text-foreground">Mehr dazu</a>.
+              </label>
+            </div>
+          </div>
+
+          {error && (
+            <div className="flex items-center gap-2 text-sm text-red-700 bg-red-50 border border-red-200 rounded-lg px-3 py-2">
+              <AlertCircle className="w-4 h-4 flex-shrink-0" />
+              {error}
+            </div>
+          )}
+
           <Button
             size="lg"
             className="w-full h-13 text-base font-bold gap-2 shadow-lg shadow-primary/20"
@@ -254,16 +281,6 @@ export function PaywallModal({
             )}
           </Button>
 
-          <div className="flex items-start gap-3">
-            <Checkbox
-              checked={consentWiderruf}
-              onCheckedChange={(checked) => setConsentWiderruf(Boolean(checked))}
-            />
-            <label className="text-sm leading-relaxed text-muted-foreground">
-              Ich habe gelesen, dass ich mit der Ausführung des digitalen Vertrags mein Widerrufsrecht verliere. <a href="/widerruf" target="_blank" className="underline hover:text-foreground">Mehr dazu</a>.
-            </label>
-          </div>
-
           <div className="flex flex-col items-center gap-1.5">
             <span className="text-[11px] uppercase tracking-wider font-semibold text-muted-foreground">Bezahlen mit</span>
             <PaymentLogoStrip />
@@ -278,13 +295,6 @@ export function PaywallModal({
             ))}
           </div>
         </div>
-
-        {error && (
-          <div className="flex items-center gap-2 text-sm text-red-700 bg-red-50 border border-red-200 rounded-lg px-3 py-2">
-            <AlertCircle className="w-4 h-4 flex-shrink-0" />
-            {error}
-          </div>
-        )}
       </div>
     </div>
   );

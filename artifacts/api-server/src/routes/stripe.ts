@@ -1,10 +1,16 @@
 import { Router } from "express";
 import Stripe from "stripe";
-import { db, casesTable } from "@workspace/db";
+import { db, casesTable, consentsTable } from "@workspace/db";
 import { and, eq } from "drizzle-orm";
 import express from "express";
+import { createHash } from "crypto";
 
 const router = Router();
+
+function hashValue(input?: string): string | null {
+  if (!input) return null;
+  return createHash("sha256").update(input).digest("hex");
+}
 
 function getStripe(): Stripe {
   const key = process.env.STRIPE_SECRET_KEY;
@@ -32,7 +38,19 @@ function getBaseUrl(): string {
 // Single-case checkout (0,99 €)
 // ---------------------------------------------------------------------------
 router.post("/checkout", async (req, res) => {
-  const { caseId } = req.body as { caseId?: string };
+  const { caseId, consentWiderruf, consentTimestamp } = req.body as {
+    caseId?: string;
+    consentWiderruf?: boolean;
+    consentTimestamp?: string;
+    agbVersion?: string;
+    widerrufVersion?: string;
+    datenschutzVersion?: string;
+  };
+
+  if (!consentWiderruf || !consentTimestamp) {
+    res.status(400).json({ error: "Widerrufs-Zustimmung erforderlich." });
+    return;
+  }
 
   if (!process.env.STRIPE_SECRET_KEY) {
     res.status(503).json({ error: "Zahlung noch nicht konfiguriert. Bitte STRIPE_SECRET_KEY setzen." });
@@ -42,6 +60,11 @@ router.post("/checkout", async (req, res) => {
   try {
     const stripe = getStripe();
     const baseUrl = getBaseUrl();
+    const ipRaw = (req.headers["x-forwarded-for"] as string | undefined)?.split(",")[0]?.trim() || req.ip;
+    const uaRaw = req.headers["user-agent"];
+    const ipHash = hashValue(ipRaw ?? undefined);
+    const userAgentHash = hashValue(typeof uaRaw === "string" ? uaRaw : undefined);
+    const caseIdNum = caseId ? parseInt(caseId, 10) : NaN;
 
     const session = await stripe.checkout.sessions.create({
       automatic_tax: { enabled: false },
@@ -62,25 +85,48 @@ router.post("/checkout", async (req, res) => {
       success_url: `${baseUrl}/vorlagen-generator?payment_success=1&case_id=${caseId ?? ""}&session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${baseUrl}/vorlagen-generator?payment_cancel=1&case_id=${caseId ?? ""}`,
       locale: "de",
-      metadata: { mode: "single", ...(caseId ? { caseId } : {}) },
+      metadata: {
+        mode: "single",
+        ...(caseId ? { caseId } : {}),
+        consentWiderruf: "yes",
+        consentTimestamp,
+        agbVersion: req.body?.agbVersion ?? "2026-05",
+        widerrufVersion: req.body?.widerrufVersion ?? "2026-05",
+        datenschutzVersion: req.body?.datenschutzVersion ?? "2026-05",
+      },
       custom_text: {
-        submit: { message: "Einmalige Zahlung · Keine Abos · Sofortzugang nach Zahlung" },
+        submit: { message: "Einmalige Zahlung · Kein Abo · Zugang nach bestätigter Zahlung" },
         terms_of_service_acceptance: {
-          message: "Mit dem Kauf akzeptierst du unsere [AGB](https://chargebackpilot.de/agb) und verzichtest ausdrücklich auf dein [Widerrufsrecht](https://chargebackpilot.de/widerruf), da die digitalen Inhalte sofort bereitgestellt werden.",
+          message: "Mit dem Kauf akzeptierst du unsere [AGB](https://chargebackpilot.de/agb). Du verlangst ausdrücklich die sofortige Ausführung des Vertrags und bestätigst, dass dein [Widerrufsrecht](https://chargebackpilot.de/widerruf) bei vollständiger Vertragserfüllung erlischt.",
         }
       },
       consent_collection: {
-        terms_of_service: "none", // Will show the custom text above the pay button
+        terms_of_service: "required",
       },
     });
 
+    if (session.id) {
+      await db.insert(consentsTable).values({
+        caseId: !isNaN(caseIdNum) ? caseIdNum : null,
+        stripeSessionId: session.id,
+        consentType: "widerruf_digital_content",
+        consentGiven: consentWiderruf ? "yes" : "no",
+        consentTimestamp,
+        agbVersion: req.body?.agbVersion ?? "2026-05",
+        widerrufVersion: req.body?.widerrufVersion ?? "2026-05",
+        datenschutzVersion: req.body?.datenschutzVersion ?? "2026-05",
+        ipHash,
+        userAgentHash,
+        source: "web_checkout",
+      });
+    }
+
     if (caseId && session.id) {
-      const idNum = parseInt(caseId, 10);
-      if (!isNaN(idNum)) {
+      if (!isNaN(caseIdNum)) {
         await db
           .update(casesTable)
           .set({ stripeSessionId: session.id })
-          .where(eq(casesTable.id, idNum));
+          .where(eq(casesTable.id, caseIdNum));
       }
     }
 

@@ -68,7 +68,7 @@ export default function MerchantProblemPage() {
   const howToSchema = {
     "@context": "https://schema.org",
     "@type": "HowTo",
-    name: `${merchant.name} ${problem.label}: Geld zurückholen`,
+    name: `${merchant.name} ${problem.label}: strukturiert vorgehen`,
     description: copy.metaDescription,
     totalTime: "PT15M",
     estimatedCost: { "@type": "MonetaryAmount", currency: "EUR", value: "0.99" },
@@ -145,12 +145,12 @@ export default function MerchantProblemPage() {
               {merchant.name}: {problem.label}
             </h1>
             <p className="text-lg md:text-xl text-muted-foreground mb-6 leading-relaxed">
-              {merchant.description} Hier liest du, wie du bei <strong>{problem.searchPhrase}</strong> dein Geld zurückholst — mit Fristen, Beweisen und fertigen Textvorlagen.
+              {merchant.description} Hier liest du, wie du bei <strong>{problem.searchPhrase}</strong> strukturiert vorgehst — mit Fristen, Beweisen und fertigen Textvorlagen.
             </p>
             <div className="flex flex-wrap gap-3">
               <Link href={wizardHref}>
                 <Button size="lg" className="gap-2">
-                  Fall jetzt kostenlos analysieren
+                  Fall jetzt unverbindlich einordnen
                   <ArrowRight className="w-4 h-4" />
                 </Button>
               </Link>
@@ -221,7 +221,7 @@ export default function MerchantProblemPage() {
 
           {/* Steps */}
           <section>
-            <h2 className="text-2xl font-bold mb-5 border-b pb-2">In 5 Schritten zum Geld zurück</h2>
+            <h2 className="text-2xl font-bold mb-5 border-b pb-2">In 5 Schritten zum strukturierten Vorgehen</h2>
             <ol className="space-y-5">
               {copy.steps.map((step, i) => (
                 <li key={i} className="flex gap-4">
@@ -310,13 +310,13 @@ export default function MerchantProblemPage() {
 
           {/* Mid CTA */}
           <section className="bg-primary text-primary-foreground p-6 md:p-8 rounded-2xl text-center">
-            <h2 className="text-xl md:text-2xl font-bold mb-2">Lass die KI deinen {merchant.name}-Fall prüfen</h2>
+              <h2 className="text-xl md:text-2xl font-bold mb-2">Lass die KI deinen {merchant.name}-Fall einordnen</h2>
             <p className="text-primary-foreground/95 mb-5 text-sm md:text-base">
-              60 Sekunden, kostenlose Einschätzung — Vorlagen für 0,99 € (inkl. MwSt.) freischalten. 
+                Kostenlose, indikative Einschätzung — Vorlagen für 0,99 € (inkl. MwSt.) freischalten. 
             </p>
             <Link href={wizardHref}>
               <Button size="lg" variant="secondary" className="gap-2">
-                Jetzt Fall analysieren
+                Jetzt Fall einordnen
                 <ArrowRight className="w-4 h-4" />
               </Button>
             </Link>

@@ -49,8 +49,8 @@ const SCAM_CATEGORIES = [
 export default function ScamShopsPage() {
   const [query, setQuery] = useState("");
 
-  const title = "Bekannte Scam-Muster & Fake-Shops 2026 — wie du dein Geld zurückholst | ChargebackPilot";
-  const description = "Verdacht auf Fake-Shop oder Internet-Betrug? Die wichtigsten Warnsignale 2026 plus die genaue Anleitung, wie du dein Geld via Chargeback, PayPal-Käuferschutz oder Lastschriftrückruf zurückholst.";
+  const title = "Bekannte Scam-Muster & Fake-Shops 2026 — was du jetzt tun kannst | ChargebackPilot";
+  const description = "Verdacht auf Fake-Shop oder Internet-Betrug? Die wichtigsten Warnsignale 2026 plus eine strukturierte Anleitung zu Chargeback, PayPal-Käuferschutz und Lastschriftrückruf.";
 
   const articleSchema = {
     "@context": "https://schema.org",
@@ -82,7 +82,7 @@ export default function ScamShopsPage() {
               Betrugsschutz 2026
             </div>
             <h1 className="text-3xl md:text-5xl font-bold mb-4 leading-tight">
-              Fake-Shop erkannt? So holst du dein Geld zurück.
+              Fake-Shop erkannt? So gehst du strukturiert vor.
             </h1>
             <p className="text-lg text-muted-foreground mb-6">
               Die 8 wichtigsten Warnsignale 2026 plus die exakte Schritt-für-Schritt-Anleitung
@@ -90,7 +90,7 @@ export default function ScamShopsPage() {
             </p>
             <Link href="/vorlagen-generator?problem=fraud">
               <Button size="lg" className="gap-2">
-                Verdachtsfall jetzt prüfen
+              Verdachtsfall jetzt einordnen
                 <ArrowRight className="w-4 h-4" />
               </Button>
             </Link>
@@ -118,7 +118,7 @@ export default function ScamShopsPage() {
 
           {/* Categories */}
           <section>
-            <h2 className="text-2xl font-bold mb-5 border-b pb-2">4 Scam-Kategorien — und der jeweils schnellste Weg zum Geld</h2>
+            <h2 className="text-2xl font-bold mb-5 border-b pb-2">4 Scam-Kategorien — und ein sinnvoller nächster Schritt</h2>
             <div className="grid gap-4">
               {SCAM_CATEGORIES.map((c, i) => (
                 <Card key={i}>
@@ -165,13 +165,13 @@ export default function ScamShopsPage() {
 
           {/* CTA */}
           <section className="bg-primary text-primary-foreground p-6 md:p-8 rounded-2xl text-center">
-            <h2 className="text-xl md:text-2xl font-bold mb-2">Schon abgebucht? Jetzt zählt jeder Tag.</h2>
+            <h2 className="text-xl md:text-2xl font-bold mb-2">Schon abgebucht? Handle möglichst zeitnah.</h2>
             <p className="text-primary-foreground/95 mb-5 text-sm md:text-base">
-              SEPA: 8 Wochen Frist · Kreditkarte: 60–120 Tage · PayPal: 180 Tage. Wir generieren deinen Antrag in 60 Sek.
+              SEPA: 8 Wochen Frist · Kreditkarte: 60–120 Tage · PayPal: 180 Tage. Wir helfen dir, deinen Antrag strukturiert vorzubereiten.
             </p>
             <Link href="/vorlagen-generator?problem=fraud">
               <Button size="lg" variant="secondary" className="gap-2">
-                Geld zurückholen
+                Nächste Schritte starten
                 <ArrowRight className="w-4 h-4" />
               </Button>
             </Link>

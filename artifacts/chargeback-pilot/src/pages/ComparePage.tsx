@@ -58,11 +58,11 @@ export default function ComparePage() {
               PayPal vs. Kreditkarte vs. Klarna 2026
             </h1>
             <p className="text-lg text-muted-foreground mb-6">
-              Welcher Käuferschutz ist im Streitfall am stärksten? Direktvergleich mit Fristen, Erfolgsquoten und unserer Empfehlung pro Use-Case.
+              Welcher Käuferschutz ist im Streitfall oft passend? Direktvergleich mit Fristen, typischen Abläufen und unserer Einordnung pro Use-Case.
             </p>
             <Link href="/vorlagen-generator">
               <Button size="lg" className="gap-2">
-                Fall in 60 Sek. analysieren <ArrowRight className="w-4 h-4" />
+                Fall strukturiert analysieren <ArrowRight className="w-4 h-4" />
               </Button>
             </Link>
           </div>
@@ -127,11 +127,11 @@ export default function ComparePage() {
           <section className="bg-primary text-primary-foreground p-6 md:p-8 rounded-2xl text-center">
             <h2 className="text-xl md:text-2xl font-bold mb-2">Unsicher, welcher Weg in deinem Fall der richtige ist?</h2>
             <p className="text-primary-foreground/95 mb-5 text-sm md:text-base">
-              Unsere KI bewertet deinen Fall in 60 Sekunden und empfiehlt den Kanal mit der höchsten Erfolgsquote.
+              Unsere KI bewertet deinen Fall indikativ und zeigt dir einen passenden nächsten Kanal auf.
             </p>
             <Link href="/vorlagen-generator">
               <Button size="lg" variant="secondary" className="gap-2">
-                Jetzt kostenlos analysieren
+                Jetzt unverbindlich einordnen
                 <ArrowRight className="w-4 h-4" />
               </Button>
             </Link>
