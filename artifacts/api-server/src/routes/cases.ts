@@ -9,6 +9,37 @@ import { createHash } from "node:crypto";
 
 const router = Router();
 const aiCache = new Map<string, any>();
+const ipRecentSubmissions = new Map<string, number[]>();
+const TURNSTILE_VERIFY_URL = "https://challenges.cloudflare.com/turnstile/v0/siteverify";
+
+function isSuspiciousSubmission(ip: string) {
+  const now = Date.now();
+  const windowMs = 10 * 60 * 1000;
+  const attempts = ipRecentSubmissions.get(ip) ?? [];
+  const recent = attempts.filter((ts) => now - ts <= windowMs);
+  recent.push(now);
+  ipRecentSubmissions.set(ip, recent.slice(-20));
+  return recent.length >= 2;
+}
+
+async function verifyTurnstileToken(token: string, ip?: string) {
+  const secret = process.env.TURNSTILE_SECRET_KEY;
+  if (!secret) return { ok: false, reason: "missing-secret" };
+  if (!token) return { ok: false, reason: "missing-token" };
+
+  const body = new URLSearchParams({ secret, response: token });
+  if (ip) body.set("remoteip", ip);
+
+  const response = await fetch(TURNSTILE_VERIFY_URL, {
+    method: "POST",
+    headers: { "Content-Type": "application/x-www-form-urlencoded" },
+    body: body.toString(),
+  });
+
+  if (!response.ok) return { ok: false, reason: `http-${response.status}` };
+  const json = (await response.json()) as { success?: boolean };
+  return { ok: Boolean(json.success), reason: json.success ? "ok" : "verification-failed" };
+}
 
 const limiter = rateLimit({
   windowMs: 60 * 60 * 1000, // 1 hour
@@ -19,6 +50,22 @@ const limiter = rateLimit({
 });
 
 router.post("/cases", limiter, async (req, res) => {
+  const ip = req.ip || req.socket.remoteAddress || "unknown";
+  const suspicious = isSuspiciousSubmission(ip);
+  const turnstileToken = typeof req.body?.turnstileToken === "string" ? req.body.turnstileToken : "";
+
+  if (suspicious || turnstileToken) {
+    const verification = await verifyTurnstileToken(turnstileToken, ip);
+    if (suspicious && !verification.ok) {
+      res.status(403).json({ error: "Sicherheitsprüfung fehlgeschlagen. Bitte versuche es erneut." });
+      return;
+    }
+    if (turnstileToken && !verification.ok) {
+      res.status(400).json({ error: "Ungültige Sicherheitsprüfung. Bitte Seite neu laden und erneut versuchen." });
+      return;
+    }
+  }
+
   const parseResult = CreateCaseBody.safeParse(req.body);
   if (!parseResult.success) {
     res.status(400).json({ error: "Ungültige Eingabedaten", details: parseResult.error.issues });

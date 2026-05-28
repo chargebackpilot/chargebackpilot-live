@@ -2,7 +2,7 @@ import { MainLayout } from "@/components/layout/MainLayout";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useCreateCase } from "@workspace/api-client-react";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { wizardSchema, type WizardFormData } from "@/components/wizard/wizard-schema";
@@ -108,7 +108,20 @@ interface FormData {
 
 type CaseResult = ReturnType<typeof useCreateCase>["data"];
 
+declare global {
+  interface Window {
+    turnstile?: {
+      render: (container: string | HTMLElement, options: Record<string, unknown>) => string;
+      execute: (widgetId: string) => void;
+      remove: (widgetId: string) => void;
+    };
+  }
+}
+
 export default function Wizard() {
+  const turnstileSiteKey = import.meta.env.VITE_TURNSTILE_SITE_KEY as string | undefined;
+  const turnstileWidgetIdRef = useRef<string | null>(null);
+  const turnstileContainerRef = useRef<HTMLDivElement | null>(null);
   const params = new URLSearchParams(window.location.search);
   const prefilledProblem = params.get("problem") ?? "";
   const prefilledPaymentRaw = params.get("payment") ?? params.get("paymentMethod") ?? "";
@@ -252,8 +265,50 @@ export default function Wizard() {
   };
   const handleBack = () => { if (step > 1) setStep(step - 1); };
 
-  const handleSubmit = () => {
+  const getTurnstileToken = async (): Promise<string> => {
+    if (!turnstileSiteKey) return "";
+    if (!window.turnstile) return "";
+
+    if (!turnstileWidgetIdRef.current && turnstileContainerRef.current) {
+      turnstileWidgetIdRef.current = window.turnstile.render(turnstileContainerRef.current, {
+        sitekey: turnstileSiteKey,
+        size: "invisible",
+        appearance: "interaction-only",
+        execution: "execute",
+      });
+    }
+
+    const widgetId = turnstileWidgetIdRef.current;
+    if (!widgetId || !window.turnstile) return "";
+
+    return await new Promise<string>((resolve) => {
+      const timeout = window.setTimeout(() => resolve(""), 3500);
+      window.turnstile!.remove(widgetId);
+      turnstileWidgetIdRef.current = window.turnstile!.render(turnstileContainerRef.current!, {
+        sitekey: turnstileSiteKey,
+        size: "invisible",
+        appearance: "interaction-only",
+        execution: "execute",
+        callback: (token: string) => {
+          window.clearTimeout(timeout);
+          resolve(token || "");
+        },
+        "error-callback": () => {
+          window.clearTimeout(timeout);
+          resolve("");
+        },
+        "expired-callback": () => {
+          window.clearTimeout(timeout);
+          resolve("");
+        },
+      });
+      window.turnstile!.execute(turnstileWidgetIdRef.current!);
+    });
+  };
+
+  const handleSubmit = async () => {
     if (createCase.isPending) return;
+    const turnstileToken = await getTurnstileToken();
     const description = buildDescription(
       formData.structuredAnswers,
       formData.problemType,
@@ -278,8 +333,9 @@ export default function Wizard() {
           merchantResponse: merchantResponse || undefined,
           evidence: formData.evidence || [],
           description: description || "Keine Beschreibung",
+          ...(turnstileToken ? { turnstileToken } : {}),
         },
-      },
+      } as any,
       {
         onSuccess: (data) => {
           setResult(data);
@@ -399,6 +455,17 @@ export default function Wizard() {
     const timer = setTimeout(() => window.scrollTo({ top: 0, behavior: "smooth" }), 50);
     return () => clearTimeout(timer);
   }, [step]);
+
+  useEffect(() => {
+    if (!turnstileSiteKey) return;
+    const existing = document.querySelector('script[src="https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit"]');
+    if (existing) return;
+    const script = document.createElement("script");
+    script.src = "https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit";
+    script.async = true;
+    script.defer = true;
+    document.head.appendChild(script);
+  }, [turnstileSiteKey]);
 
   const disputedPct = getDisputedPercent(formData.purchaseAmount || "", formData.disputedAmount || "");
 
@@ -784,6 +851,7 @@ export default function Wizard() {
                   </div>
 
                   <div className="border border-border rounded-xl p-4 space-y-3">
+                    <div ref={turnstileContainerRef} className="sr-only" aria-hidden="true" />
                     <label htmlFor="legal-accept" className="flex items-start gap-3 cursor-pointer">
                       <Checkbox
                         id="legal-accept"
