@@ -14,12 +14,13 @@ const TURNSTILE_VERIFY_URL = "https://challenges.cloudflare.com/turnstile/v0/sit
 
 function isSuspiciousSubmission(ip: string) {
   const now = Date.now();
-  const windowMs = 10 * 60 * 1000;
+  const windowMs = 60 * 1000;
   const attempts = ipRecentSubmissions.get(ip) ?? [];
   const recent = attempts.filter((ts) => now - ts <= windowMs);
   recent.push(now);
   ipRecentSubmissions.set(ip, recent.slice(-20));
-  return recent.length >= 2;
+  // only challenge clear burst behavior (e.g. rapid-fire clicks/bots)
+  return recent.length >= 4;
 }
 
 async function verifyTurnstileToken(token: string, ip?: string) {

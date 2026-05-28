@@ -233,6 +233,7 @@ export default function Wizard() {
 
   const createCase = useCreateCase();
   const [result, setResult] = useState<CaseResult>(restoredResult);
+  const [isSubmittingCase, setIsSubmittingCase] = useState(false);
   const { toast } = useToast();
 
   const setAnswer = (id: string, val: string) => {
@@ -307,7 +308,8 @@ export default function Wizard() {
   };
 
   const handleSubmit = async () => {
-    if (createCase.isPending) return;
+    if (createCase.isPending || isSubmittingCase) return;
+    setIsSubmittingCase(true);
     const turnstileToken = await getTurnstileToken();
     const description = buildDescription(
       formData.structuredAnswers,
@@ -338,6 +340,7 @@ export default function Wizard() {
       } as any,
       {
         onSuccess: (data) => {
+          setIsSubmittingCase(false);
           setResult(data);
           if (data) {
             const newCaseId = String(data.id ?? "");
@@ -361,6 +364,7 @@ export default function Wizard() {
           }
         },
         onError: () => {
+          setIsSubmittingCase(false);
           toast({ title: "Analyse fehlgeschlagen", description: "Bitte versuche es erneut.", variant: "destructive" });
           setStep(5);
         },
@@ -1175,9 +1179,9 @@ export default function Wizard() {
                       Weiter<ArrowRight className="w-4 h-4" />
                     </Button>
                   ) : (
-                    <Button onClick={handleSubmit} disabled={!step5Valid || !acceptedLegal || createCase.isPending} className="gap-2 cursor-pointer shadow-sm lg:shadow-none bg-emerald-600 hover:bg-emerald-700 text-white font-bold">
-                      {createCase.isPending ? <Loader2 className="w-4 h-4 animate-spin" /> : <Shield className="w-4 h-4" />}
-                      {createCase.isPending ? "Generiere..." : "Vorlagen generieren"}
+                    <Button onClick={handleSubmit} disabled={!step5Valid || !acceptedLegal || createCase.isPending || isSubmittingCase} className="gap-2 cursor-pointer shadow-sm lg:shadow-none bg-emerald-600 hover:bg-emerald-700 text-white font-bold">
+                      {(createCase.isPending || isSubmittingCase) ? <Loader2 className="w-4 h-4 animate-spin" /> : <Shield className="w-4 h-4" />}
+                      {(createCase.isPending || isSubmittingCase) ? "Generiere..." : "Vorlagen kostenlos generieren"}
                     </Button>
                   )}
                 </div>
