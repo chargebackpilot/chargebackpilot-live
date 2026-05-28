@@ -57,24 +57,15 @@ function DefaultSkeleton() {
   return (
     <div className="min-h-screen flex flex-col font-sans">
       <Navbar />
-      <main className="flex-1 w-full bg-background flex flex-col items-center justify-center pt-24 pb-32">
-        <div className="container mx-auto px-4 w-full max-w-5xl">
-          <div className="animate-pulse flex flex-col items-center">
-            <div className="h-7 w-48 bg-muted rounded-full mb-6"></div>
-            <div className="h-12 sm:h-16 w-3/4 max-w-2xl bg-muted rounded-lg mb-6"></div>
-            <div className="h-12 sm:h-16 w-1/2 max-w-md bg-muted rounded-lg mb-10"></div>
-            <div className="h-5 w-full max-w-3xl bg-muted rounded mb-2"></div>
-            <div className="h-5 w-5/6 max-w-2xl bg-muted rounded mb-2"></div>
-            <div className="h-5 w-4/6 max-w-xl bg-muted rounded mb-10"></div>
-            <div className="flex flex-col sm:flex-row gap-4 w-full justify-center">
-              <div className="h-12 w-full sm:w-64 bg-muted rounded-md"></div>
-              <div className="h-12 w-full sm:w-56 bg-muted rounded-md"></div>
-            </div>
-            <div className="mt-20 grid sm:grid-cols-2 lg:grid-cols-3 gap-5 w-full max-w-6xl">
-              <div className="h-44 bg-muted rounded-2xl w-full"></div>
-              <div className="h-44 bg-muted rounded-2xl w-full"></div>
-              <div className="h-44 bg-muted rounded-2xl w-full"></div>
-            </div>
+      <main className="flex-1 w-full bg-background pt-20 pb-20">
+        <div className="container mx-auto px-4 w-full max-w-5xl animate-pulse">
+          <div className="h-10 w-64 bg-muted rounded-lg mb-4" />
+          <div className="h-5 w-full max-w-2xl bg-muted rounded mb-2" />
+          <div className="h-5 w-4/5 max-w-xl bg-muted rounded mb-8" />
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            <div className="h-32 bg-muted rounded-xl" />
+            <div className="h-32 bg-muted rounded-xl" />
+            <div className="h-32 bg-muted rounded-xl" />
           </div>
         </div>
       </main>
@@ -88,29 +79,18 @@ function ArticleSkeleton() {
     <div className="min-h-screen flex flex-col font-sans">
       <Navbar />
       <main className="flex-1 w-full bg-background">
-        <div className="bg-muted py-16 px-4 border-b">
+        <div className="bg-muted/50 py-12 px-4 border-b">
           <div className="container mx-auto max-w-3xl animate-pulse">
-            <div className="h-10 w-3/4 bg-slate-200 rounded-lg mb-6"></div>
-            <div className="h-6 w-full bg-slate-200 rounded mb-2"></div>
-            <div className="h-6 w-5/6 bg-slate-200 rounded mb-8"></div>
-            <div className="h-12 w-48 bg-slate-200 rounded-lg"></div>
+            <div className="h-9 w-3/4 bg-muted rounded-lg mb-5" />
+            <div className="h-5 w-full bg-muted rounded mb-2" />
+            <div className="h-5 w-2/3 bg-muted rounded" />
           </div>
         </div>
-        <div className="container mx-auto max-w-3xl px-4 mt-12 animate-pulse space-y-12 pb-20">
-          <div>
-            <div className="h-8 w-1/2 bg-muted rounded mb-6"></div>
-            <div className="space-y-3">
-              <div className="h-6 w-full bg-muted rounded"></div>
-              <div className="h-6 w-5/6 bg-muted rounded"></div>
-            </div>
-          </div>
-          <div className="bg-primary/5 p-8 rounded-2xl border border-primary/10">
-            <div className="h-8 w-1/3 bg-muted rounded mb-6"></div>
-            <div className="grid sm:grid-cols-2 gap-4">
-              <div className="h-12 bg-background rounded-lg"></div>
-              <div className="h-12 bg-background rounded-lg"></div>
-            </div>
-          </div>
+        <div className="container mx-auto max-w-3xl px-4 mt-10 animate-pulse space-y-6 pb-16">
+          <div className="h-5 w-full bg-muted rounded" />
+          <div className="h-5 w-11/12 bg-muted rounded" />
+          <div className="h-5 w-10/12 bg-muted rounded" />
+          <div className="h-5 w-9/12 bg-muted rounded" />
         </div>
       </main>
       <Footer />
@@ -124,13 +104,13 @@ function WizardSkeleton() {
       <Navbar />
       <main className="flex-1 w-full flex items-center justify-center p-4">
         <div className="w-full max-w-3xl animate-pulse">
-          <div className="bg-card rounded-2xl border shadow-sm p-6 sm:p-8 min-h-[500px]">
-             <div className="h-8 w-1/3 bg-muted rounded mb-2"></div>
-             <div className="h-4 w-1/2 bg-muted rounded mb-8"></div>
-             <div className="space-y-4">
-                <div className="h-16 bg-muted rounded-xl"></div>
-                <div className="h-16 bg-muted rounded-xl"></div>
-                <div className="h-16 bg-muted rounded-xl"></div>
+          <div className="bg-card rounded-2xl border shadow-sm p-6 sm:p-8 min-h-[380px]">
+             <div className="h-7 w-1/3 bg-muted rounded mb-2" />
+             <div className="h-4 w-1/2 bg-muted rounded mb-6" />
+             <div className="space-y-3">
+                <div className="h-14 bg-muted rounded-xl" />
+                <div className="h-14 bg-muted rounded-xl" />
+                <div className="h-14 bg-muted rounded-xl" />
              </div>
           </div>
         </div>
@@ -146,6 +126,47 @@ const withSuspense = (Component: React.ComponentType<any>, Fallback: React.Compo
     <Component {...props} />
   </Suspense>
 );
+
+const prefetchers = {
+  home: () => import("@/pages/Home"),
+  wizard: () => import("@/pages/Wizard"),
+  ratgeber: () => import("@/pages/RatgeberIndex"),
+  merchantIndex: () => import("@/pages/MerchantIndexPage"),
+  merchantProblem: () => import("@/pages/MerchantProblemPage"),
+  compare: () => import("@/pages/ComparePage"),
+  scam: () => import("@/pages/ScamShopsPage"),
+  legal: () => import("@/pages/LegalPages"),
+  seo: () => import("@/pages/SEOPages"),
+};
+
+function RoutePrefetcher() {
+  useEffect(() => {
+    const run = () => {
+      const jobs = [
+        () => prefetchers.wizard(),
+        () => prefetchers.ratgeber(),
+        () => prefetchers.legal(),
+        () => prefetchers.seo(),
+      ];
+      let i = 0;
+      const next = () => {
+        if (i >= jobs.length) return;
+        const job = jobs[i++];
+        job().catch(() => void 0).finally(() => setTimeout(next, 120));
+      };
+      next();
+    };
+
+    if ("requestIdleCallback" in window) {
+      const id = (window as any).requestIdleCallback(run, { timeout: 1500 });
+      return () => (window as any).cancelIdleCallback?.(id);
+    }
+    const t = globalThis.setTimeout(run, 900);
+    return () => globalThis.clearTimeout(t);
+  }, []);
+
+  return null;
+}
 
 function Router() {
   return (
@@ -195,6 +216,7 @@ function App() {
     <QueryClientProvider client={queryClient}>
       <WouterRouter base={import.meta.env.BASE_URL.replace(/\/$/, "")}>
         <ScrollToTop />
+        <RoutePrefetcher />
         <Router />
       </WouterRouter>
       <Toaster />
