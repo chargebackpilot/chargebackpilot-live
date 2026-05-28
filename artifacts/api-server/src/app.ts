@@ -86,7 +86,7 @@ const escapeHtml = (value: string) =>
     .replace(/"/g, "&quot;")
     .replace(/'/g, "&#39;");
 
-const metaByPath: Array<{ match: RegExp; title: string; description: string }> = [
+const metaByPath: Array<{ match: RegExp; title: string; description: string; noindex?: boolean }> = [
   {
     match: /^\/$/,
     title: "ChargebackPilot · KI-Hilfe für Chargeback, PayPal-Käuferschutz & Reklamation 2026",
@@ -98,6 +98,7 @@ const metaByPath: Array<{ match: RegExp; title: string; description: string }> =
     title: "Vorlagen-Generator · ChargebackPilot",
     description:
       "Erstelle in wenigen Schritten professionelle Reklamationsvorlagen für Händler, Bank/PayPal/Klarna und Eskalation.",
+    noindex: true,
   },
   {
     match: /^\/ratgeber/,
@@ -116,6 +117,12 @@ const metaByPath: Array<{ match: RegExp; title: string; description: string }> =
     title: "Chargeback-Ratgeber 2026 · ChargebackPilot",
     description:
       "Konkrete Schritt-für-Schritt-Hilfen für Rückerstattung, Chargeback und Käuferschutz je nach Zahlungsart und Problemfall.",
+  },
+  {
+    match: /^\/scam-shops-2026$/,
+    title: "Bekannte Scam-Muster & Fake-Shops 2026 — was du jetzt tun kannst | ChargebackPilot",
+    description:
+      "Verdacht auf Fake-Shop oder Internet-Betrug? Die wichtigsten Warnsignale 2026 plus strukturierte Anleitung zu Chargeback, PayPal-Käuferschutz und Lastschriftrückruf.",
   },
   {
     match: /^\/hilfe\//,
@@ -141,27 +148,40 @@ const origin = "https://chargebackpilot.de";
 
 function renderSeoHtml(pathname: string) {
   const raw = fs.readFileSync(indexPath, "utf-8");
-  const current = metaByPath.find((m) => m.match.test(pathname)) ?? defaultMeta;
-  const title = escapeHtml(current.title);
-  const description = escapeHtml(current.description);
+  const current = metaByPath.find((m) => m.match.test(pathname));
+  const effective = current ?? defaultMeta;
+  const isKnownRoute = Boolean(current);
+  const isNoindex = current?.noindex === true || !isKnownRoute;
+  const title = escapeHtml(effective.title);
+  const description = escapeHtml(effective.description);
   const canonical = `${origin}${pathname}`;
+  const robots = isNoindex
+    ? "noindex, nofollow"
+    : "index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1";
+  const googlebot = isNoindex
+    ? "noindex, nofollow"
+    : "index, follow, max-image-preview:large, max-snippet:-1";
 
-  return raw
+  const html = raw
     .replace(/<title>.*?<\/title>/i, `<title>${title}</title>`)
     .replace(/<meta name="description" content=".*?"\s*\/>/i, `<meta name="description" content="${description}" />`)
+    .replace(/<meta name="robots" content=".*?"\s*\/>/i, `<meta name="robots" content="${robots}" />`)
+    .replace(/<meta name="googlebot" content=".*?"\s*\/>/i, `<meta name="googlebot" content="${googlebot}" />`)
     .replace(/<meta property="og:title" content=".*?"\s*\/>/i, `<meta property="og:title" content="${title}" />`)
     .replace(/<meta property="og:description" content=".*?"\s*\/>/i, `<meta property="og:description" content="${description}" />`)
     .replace(/<meta property="og:url" content=".*?"\s*\/>/i, `<meta property="og:url" content="${canonical}" />`)
     .replace(/<meta name="twitter:title" content=".*?"\s*\/>/i, `<meta name="twitter:title" content="${title}" />`)
     .replace(/<meta name="twitter:description" content=".*?"\s*\/>/i, `<meta name="twitter:description" content="${description}" />`)
     .replace(/<link rel="canonical" href=".*?"\s*\/>/i, `<link rel="canonical" href="${canonical}" />`);
+
+  return { html, isKnownRoute };
 }
 
 app.use(express.static(staticDir));
 app.get(/(.*)/, (req, res) => {
-  const seoHtml = renderSeoHtml(req.path || "/");
+  const { html, isKnownRoute } = renderSeoHtml(req.path || "/");
   res.setHeader("Content-Type", "text/html; charset=utf-8");
-  res.send(seoHtml);
+  res.status(isKnownRoute ? 200 : 404).send(html);
 });
 
 export default app;
