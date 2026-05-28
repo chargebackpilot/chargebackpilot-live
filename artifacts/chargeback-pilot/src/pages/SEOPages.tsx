@@ -91,11 +91,11 @@ export function VisaMastercardSEO() {
       "Formular fristgerecht (meist innerhalb von 120 Tagen) bei der Bank einreichen."
     ]}
     mistakes={[
-      "Die Bank abwimmeln lassen: Banken behaupten oft fälschlicherweise, sie seien nicht zuständig. Bleib hartnäckig.",
+      "Die Bank vorschnell abwimmeln lassen: Banken verweisen teils auf interne Prozesse. Bitte um schriftliche Begründung und bleibe sachlich dran.",
       "Nur telefonisch kontaktieren: Ohne schriftliche Beweise hast du beim Chargeback schlechte Karten."
     ]}
     faq={[
-      { q: "Muss meine Bank den Chargeback durchführen?", a: "Ja. Wenn die Voraussetzungen (Reason Codes) des Kreditkartennetzwerks erfüllt sind, ist die Bank verpflichtet, den Prozess einzuleiten." }
+      { q: "Muss meine Bank den Chargeback durchführen?", a: "Wenn die Voraussetzungen (Reason Codes) des Kreditkartennetzwerks erfüllt sind, wird der Prozess in der Regel über die kartenausgebende Bank eingeleitet." }
     ]}
   />;
 }
@@ -187,8 +187,8 @@ export function LieferandoSEO() {
       "Sich mit einem 3€ Gutschein abspeisen lassen, wenn das 30€ Essen kalt und ungenießbar war."
     ]}
     faq={[
-      { q: "Muss das Restaurant oder Lieferando erstatten?", a: "Dein Vertragspartner für die Zahlung ist meist Lieferando, daher erfolgt die Erstattung über sie." },
-      { q: "Essen war kalt, weil der Fahrer einen Umweg gemacht hat - Geld zurück?", a: "Ja, wenn das Essen dadurch ungenießbar ist (z.B. kalte Pommes), ist das ein klarer Mangel. Lieferando wehrt sich oft, aber über PayPal oder Kreditkarte (Chargeback) hast du gute Chancen auf eine Voll- oder Teilerstattung." }
+      { q: "Muss das Restaurant oder Lieferando erstatten?", a: "Bei Plattformbestellungen läuft die Erstattung häufig über den Plattform-Support. Maßgeblich sind die konkreten Vertragsbedingungen und der Einzelfall." },
+      { q: "Essen war kalt, weil der Fahrer einen Umweg gemacht hat - Geld zurück?", a: "Wenn das Essen dadurch nicht mehr vertragsgemäß nutzbar ist, kann eine (Teil-)Erstattung möglich sein. Dokumentation (Fotos, Zeitstempel, Supportverlauf) verbessert die Erfolgschancen deutlich." }
     ]}
   />;
 }
@@ -218,7 +218,7 @@ export function WoltSEO() {
       "Die Frist für eine Reklamation (meist 24h) verstreichen lassen."
     ]}
     faq={[
-      { q: "Kann ich Chargeback machen, wenn Wolt mein Konto danach sperrt?", a: "Ja. Ein Chargeback ist dein gutes Recht bei Nichterfüllung. Wolt könnte theoretisch dein Konto sperren, was aber eher selten passiert, wenn es sich um einen berechtigten Einzelfall handelt." }
+      { q: "Kann ich Chargeback machen, wenn Wolt mein Konto danach sperrt?", a: "Ein Chargeback kann bei Nichterfüllung ein zulässiger Weg sein. Mögliche Folgen auf Kontenebene hängen vom Einzelfall und den Plattformbedingungen ab." }
     ]}
   />;
 }
@@ -276,8 +276,8 @@ export function KiwiSEO() {
       "Glauben, dass man bei nicht-erstattbaren Tickets kein Geld zurückbekommt."
     ]}
     faq={[
-      { q: "Warum verlangt Kiwi.com 59€?", a: "Es ist ein Geschäftsmodell, um Kunden von der Rückforderung der Steuern abzuhalten oder daran zu verdienen. Du musst das nicht akzeptieren." },
-      { q: "Wie hole ich mir die vollen Steuern zurück?", a: "Durch Hartnäckigkeit oder einen Chargeback über dein Zahlungsmittel, da dir die Gebühren gesetzlich zustehen." }
+      { q: "Warum verlangt Kiwi.com 59€?", a: "Plattformen arbeiten teils mit Bearbeitungsgebühren. Ob und in welcher Höhe das im Einzelfall wirksam ist, hängt von den jeweiligen Vertragsbedingungen und der anwendbaren Rechtslage ab." },
+      { q: "Wie hole ich mir die vollen Steuern zurück?", a: "Fordere die Positionen nachvollziehbar und schriftlich an. Falls keine Einigung erfolgt, kann je nach Zahlungsart eine Reklamation über den Zahlungsdienstleister geprüft werden." }
     ]}
   />;
 }

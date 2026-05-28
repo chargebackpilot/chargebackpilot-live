@@ -780,7 +780,7 @@ export default function Wizard() {
 
                   <div className="bg-blue-50 border border-blue-200 rounded-xl p-4 text-sm text-blue-800">
                     <p className="font-semibold mb-1 flex items-center gap-2"><Shield className="w-4 h-4" /> KI-Generierung</p>
-                    <p>Deine Angaben werden von unserer KI strukturieren und in perfekte Vorlagen überführt. Dauer: ca. 15–30 Sekunden.</p>
+                    <p>Deine Angaben werden von unserer KI strukturiert und in passende Vorlagen überführt. Dauer: ca. 15–30 Sekunden.</p>
                   </div>
 
                   <div className="border border-border rounded-xl p-4 space-y-3">

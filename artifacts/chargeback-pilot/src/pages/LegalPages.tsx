@@ -19,7 +19,7 @@ export function Impressum() {
           </p>
 
           <p>
-            <strong>Verantwortlich für den Inhalt nach § 55 Abs. 2 RStV:</strong><br />
+            <strong>Verantwortlich für journalistisch-redaktionelle Inhalte gemäß § 18 Abs. 2 MStV:</strong><br />
             Till Pfeiffer<br />
             Am Dammgraben 100<br />
             60486 Frankfurt am Main
@@ -67,14 +67,15 @@ export function Datenschutz() {
           <p>Wir verarbeiten alle Daten, die Sie uns freiwillig im Formular übermitteln, z. B. Fallbeschreibung, Händlername, Betrag, Zahlungsart, Versandstatus und Hinweise aus dem Kommunikationsverlauf.</p>
 
           <h2>6. Nutzung der Gemini API von Google LLC</h2>
-          <p>Zur Strukturierung Ihrer Angaben und zur Generierung von Textvorlagen nutzen wir die Gemini API von Google LLC. Die übermittelten Daten (Fallbeschreibungen ohne unmittelbaren Personenbezug) werden an Server von Google LLC übertragen und dort als Auftragsverarbeiter verarbeitet.</p>
-          <p>Google LLC hat seinen Sitz in den USA. Die Übermittlung in ein Drittland erfolgt auf Basis der von Google bereitgestellten Standardvertragsklauseln. Vor der Nutzung dieses Dienstes holen wir im Formular Ihre ausdrückliche Einwilligung (Art. 6 Abs. 1 lit. a DSGVO) ein.</p>
+          <p>Zur Strukturierung Ihrer Angaben und zur Generierung von Textvorlagen nutzen wir die Gemini API von Google LLC als externen technischen Dienst. Dabei werden die von Ihnen eingegebenen Falldaten an Systeme von Google LLC übermittelt und dort verarbeitet.</p>
+          <p>Google LLC hat seinen Sitz in den USA. Eine etwaige Drittlandübermittlung erfolgt auf Grundlage der mit dem Dienst verbundenen geeigneten Garantien (insbesondere EU-Standardvertragsklauseln, soweit anwendbar). Vor der Nutzung dieser Funktion holen wir im Formular Ihre ausdrückliche Einwilligung (Art. 6 Abs. 1 lit. a DSGVO) ein.</p>
 
           <h2>7. Rechtsgrundlagen</h2>
           <p>Die Verarbeitung Ihrer Eingaben zur KI-Textgenerierung erfolgt auf Grundlage Ihrer freiwilligen Einwilligung (Art. 6 Abs. 1 lit. a DSGVO). Die Verarbeitung technischer Verbindungsdaten erfolgt auf Grundlage unseres berechtigten Interesses an einem sicheren Betrieb (Art. 6 Abs. 1 lit. f DSGVO).</p>
 
           <h2>8. Speicherdauer</h2>
-          <p>Personenbezogene Daten werden nur so lange gespeichert, wie es für den jeweiligen Zweck erforderlich ist oder gesetzliche Aufbewahrungsfristen bestehen. Sie können die Löschung Ihrer Daten verlangen, soweit keine gesetzlichen Aufbewahrungsfristen entgegenstehen.</p>
+          <p>Personenbezogene Daten werden nur so lange gespeichert, wie es für den jeweiligen Zweck erforderlich ist oder gesetzliche Aufbewahrungsfristen bestehen. Falldaten werden in der Regel nach spätestens 12 Monaten gelöscht oder anonymisiert, sofern keine gesetzlichen Aufbewahrungspflichten entgegenstehen. Technische Protokolldaten können aus Sicherheitsgründen für bis zu 30 Tage gespeichert werden.</p>
+          <p>Sie können die Löschung Ihrer Daten verlangen, soweit keine gesetzlichen Aufbewahrungsfristen entgegenstehen.</p>
 
           <h2>9. Weitergabe von Daten</h2>
           <p>Eine Weitergabe an Dritte erfolgt nur, soweit dies zur Bereitstellung des Dienstes notwendig ist, z. B. an Render Inc., Neon und Google LLC. Zur Abwicklung von Zahlungen nutzen wir den Zahlungsdienstleister Stripe. Eine darüber hinausgehende Weitergabe, insbesondere für Werbezwecke, findet nicht statt.</p>
@@ -109,11 +110,11 @@ export function Widerruf() {
           <p>Um Ihr Widerrufsrecht auszuüben, müssen Sie uns (Till Pfeiffer, Am Dammgraben 100, 60486 Frankfurt am Main, E-Mail: kontakt@chargebackpilot.de) mittels einer eindeutigen Erklärung (z.B. ein mit der Post versandter Brief oder E-Mail) über Ihren Entschluss, diesen Vertrag zu widerrufen, informieren.</p>
 
           <h2>Folgen des Widerrufs</h2>
-          <p>Wenn Sie diesen Vertrag widerrufen, haben wir Ihnen alle Zahlungen, die wir von Ihnen erhalten haben, einschließlich der Lieferkosten (mit Ausnahme der zusätzlichen Kosten, die sich daraus ergeben, dass Sie eine andere Art der Lieferung als die von uns angebotene, günstigste Standardlieferung gewählt haben), unverzüglich und spätestens binnen vierzehn Tagen ab dem Tag zurückzuzahlen, an dem die Mitteilung über Ihren Widerruf dieses Vertrags bei uns eingegangen ist. Für diese Rückzahlung verwenden wir dasselbe Zahlungsmittel, das Sie bei der ursprünglichen Transaktion eingesetzt haben, es sei denn, mit Ihnen wurde ausdrücklich etwas anderes vereinbart; in keinem Fall werden Ihnen wegen dieser Rückzahlung Entgelte berechnet.</p>
+          <p>Wenn Sie diesen Vertrag widerrufen, haben wir Ihnen alle Zahlungen, die wir von Ihnen erhalten haben, unverzüglich und spätestens binnen vierzehn Tagen ab dem Tag zurückzuzahlen, an dem die Mitteilung über Ihren Widerruf bei uns eingegangen ist. Für diese Rückzahlung verwenden wir dasselbe Zahlungsmittel, das Sie bei der ursprünglichen Transaktion eingesetzt haben, es sei denn, mit Ihnen wurde ausdrücklich etwas anderes vereinbart; in keinem Fall werden Ihnen wegen dieser Rückzahlung Entgelte berechnet.</p>
 
           <div className="bg-muted/50 p-4 rounded-lg mt-6 border">
             <h3 className="font-bold mb-2">Vorzeitiges Erlöschen des Widerrufsrechts</h3>
-            <p>Ihr Widerrufsrecht erlischt bei einem Vertrag über die Lieferung von nicht auf einem körperlichen Datenträger befindlichen digitalen Inhalten (z. B. den sofort generierten Textvorlagen und PDFs) vorzeitig, wenn Sie ausdrücklich zugestimmt haben, dass wir mit der Ausführung des Vertrags vor Ablauf der Widerrufsfrist beginnen und Sie Ihre Kenntnis davon bestätigt haben, dass Sie durch Ihre Zustimmung mit Beginn der Ausführung des Vertrags Ihr Widerrufsrecht verlieren. Diese Zustimmung erfragen wir vor dem Kaufabschluss.</p>
+            <p>Ihr Widerrufsrecht kann bei einem Vertrag über die Lieferung von nicht auf einem körperlichen Datenträger befindlichen digitalen Inhalten (z. B. generierte Textvorlagen und PDFs) vorzeitig erlöschen, wenn Sie ausdrücklich zugestimmt haben, dass wir mit der Ausführung des Vertrags vor Ablauf der Widerrufsfrist beginnen, und Sie Ihre Kenntnis davon bestätigt haben, dass Sie dadurch Ihr Widerrufsrecht verlieren. Die hierfür erforderlichen Erklärungen werden vor Abschluss des kostenpflichtigen Vorgangs abgefragt.</p>
           </div>
         </div>
       </div>
@@ -141,10 +142,10 @@ export function AGB() {
           <p>Der Nutzer ist verpflichtet, die generierten Inhalte vor der Weiterverwendung auf Richtigkeit, Vollständigkeit und Angemessenheit zu prüfen. ChargebackPilot darf nicht als Ersatz für eine anwaltliche Beratung genutzt werden.</p>
 
           <h2>5. Haftung</h2>
-          <p>Die Nutzung der Anwendung erfolgt auf eigene Verantwortung. Wir haften nicht für Schäden, die aus der Verwendung der bereitgestellten Informationen oder Vorlagen entstehen, insbesondere nicht für entgangene Gewinne, Rechtsnachteile oder verpasste Fristen.</p>
+          <p>Die bereitgestellten Inhalte sind unverbindliche Formulierungshilfen und keine Rechtsberatung. Eine Haftung für Vorsatz und grobe Fahrlässigkeit bleibt unberührt. Bei leicht fahrlässiger Verletzung wesentlicher Vertragspflichten haften wir nur auf den vertragstypischen, vorhersehbaren Schaden. Im Übrigen ist die Haftung, soweit gesetzlich zulässig, ausgeschlossen.</p>
           
           <h2>6. Widerrufsrecht bei digitalen Inhalten</h2>
-          <p>Dem Nutzer steht grundsätzlich ein gesetzliches Widerrufsrecht zu. Bei Verträgen über die Lieferung von nicht auf einem körperlichen Datenträger befindlichen digitalen Inhalten (wie generierte PDFs und Textvorlagen) erlischt dieses Widerrufsrecht jedoch vorzeitig, wenn der Nutzer ausdrücklich zustimmt, dass mit der Ausführung des Vertrags vor Ablauf der Widerrufsfrist begonnen wird, und seine Kenntnis davon bestätigt, dass er durch diese Zustimmung mit Beginn der Vertragsausführung sein Widerrufsrecht verliert. Diese Zustimmung wird im Bezahlvorgang eingeholt.</p>
+          <p>Dem Nutzer steht grundsätzlich ein gesetzliches Widerrufsrecht zu. Bei Verträgen über die Lieferung von nicht auf einem körperlichen Datenträger befindlichen digitalen Inhalten (wie generierte PDFs und Textvorlagen) kann dieses Widerrufsrecht vorzeitig erlöschen, wenn der Nutzer ausdrücklich zustimmt, dass mit der Ausführung des Vertrags vor Ablauf der Widerrufsfrist begonnen wird, und seine Kenntnis davon bestätigt, dass er dadurch sein Widerrufsrecht verliert. Die erforderlichen Erklärungen werden im Bezahlvorgang abgefragt.</p>
 
           <h2>7. Fristen</h2>
           <p>ChargebackPilot überwacht keine gesetzlichen oder vertraglichen Fristen. Der Nutzer ist selbst verantwortlich für die Einhaltung aller Fristen, insbesondere bei Zahlungsdienstleistern und Banken.</p>

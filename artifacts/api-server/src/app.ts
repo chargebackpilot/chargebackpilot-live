@@ -107,6 +107,13 @@ const metaByPath: Array<{ match: RegExp; title: string; description: string; noi
       "Praxisnahe Anleitungen für PayPal, Kreditkarten-Chargeback, Klarna-Reklamation und typische Problemfälle im Onlinekauf.",
   },
   {
+    match: /^\/404$/,
+    title: "Seite nicht gefunden (404) · ChargebackPilot",
+    description:
+      "Die angeforderte Seite existiert nicht oder wurde verschoben. Nutze unsere Startseite oder den Ratgeber, um schnell weiterzumachen.",
+    noindex: true,
+  },
+  {
     match: /^\/(impressum|datenschutz|agb|widerruf)$/,
     title: "Rechtliche Informationen · ChargebackPilot",
     description:

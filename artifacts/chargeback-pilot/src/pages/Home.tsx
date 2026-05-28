@@ -91,7 +91,7 @@ const SCENARIOS = [
     headline: "Rückerstattung versprochen — nie erhalten",
     detail: "Der Händler hat dir schriftlich eine Rückerstattung zugesagt — aber das Geld ist nie auf deinem Konto angekommen. Dein stärkstes Argument für einen Chargeback.",
     brands: ["Alle Händler", "Online-Shops", "Dienstleister"],
-    recovery: "Stärkste Chargeback-Position",
+    recovery: "Oft gute Chargeback-Ausgangslage",
     href: "/vorlagen-generator?problem=refund_promised",
   },
   {
