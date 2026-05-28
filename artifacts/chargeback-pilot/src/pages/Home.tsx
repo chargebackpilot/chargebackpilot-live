@@ -208,8 +208,8 @@ export default function Home() {
   return (
     <MainLayout>
       <SeoHead 
-        title="ChargebackPilot | Käuferschutz & Rückerstattung online"
-        description="Hilfe bei Betrug, Scam-Shops, Lieferando, Flugausfall oder Abo-Fallen. Strukturierte Chargeback-Formulierungshilfe für PayPal und Kreditkarten."
+        title="ChargebackPilot · KI-Hilfe für Chargeback, PayPal-Käuferschutz & Reklamation 2026"
+        description="Ware nicht erhalten, Flug ausgefallen, doppelt belastet? ChargebackPilot prüft deinen Fall mit KI in 60 Sekunden und liefert dir 3 fertige Textvorlagen."
         canonical="/"
       />
       
@@ -283,7 +283,7 @@ export default function Home() {
       </section>
 
       {/* SEO-Text / Intro */}
-      <section className="py-16 bg-muted/30 border-y">
+      <section className="py-16 bg-muted/30 border-y [content-visibility:auto] [contain-intrinsic-size:1px_1000px]">
         <div className="container mx-auto max-w-4xl px-4 text-center">
           <h2 className="text-2xl md:text-3xl font-bold mb-6">Chargeback & Käuferschutz: strukturiert vorgehen</h2>
           <p className="text-muted-foreground leading-relaxed mb-4">
@@ -296,7 +296,7 @@ export default function Home() {
       </section>
 
       {/* Typical Scenarios (SEO rich) */}
-      <section className="py-16 md:py-24 container mx-auto px-4 max-w-6xl">
+      <section className="py-16 md:py-24 container mx-auto px-4 max-w-6xl [content-visibility:auto] [contain-intrinsic-size:1px_1200px]">
         <div className="text-center mb-16">
           <h2 className="text-3xl font-bold mb-4">Typische Fälle für einen Chargeback</h2>
           <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
@@ -359,7 +359,7 @@ export default function Home() {
       </section>
 
       {/* FEATURES */}
-      <section className="py-20 px-4 bg-background border-t border-slate-200">
+      <section className="py-20 px-4 bg-background border-t border-slate-200 [content-visibility:auto] [contain-intrinsic-size:1px_1000px]">
         <div className="container mx-auto max-w-5xl">
           <div className="text-center mb-14">
             <h2 className="text-3xl font-bold mb-3">Was du bekommst</h2>
@@ -384,7 +384,7 @@ export default function Home() {
       </section>
 
       {/* PAYMENT METHODS — clickable help grid */}
-      <section className="py-20 px-4 bg-muted/30 border-y">
+      <section className="py-20 px-4 bg-muted/30 border-y [content-visibility:auto] [contain-intrinsic-size:1px_900px]">
         <div className="container mx-auto max-w-6xl">
           <div className="text-center mb-10">
             <span className="inline-block mb-3 px-3 py-1 rounded-full bg-emerald-50 text-emerald-700 text-xs font-semibold border border-emerald-100">
@@ -403,7 +403,7 @@ export default function Home() {
       </section>
 
       {/* PRICING */}
-      <section className="py-20 px-4 bg-background" id="pricing">
+      <section className="py-20 px-4 bg-background [content-visibility:auto] [contain-intrinsic-size:1px_1100px]" id="pricing">
         <div className="container mx-auto max-w-6xl">
           <div className="text-center mb-14">
             <h2 className="text-3xl font-bold mb-3">Flexible Preisgestaltung</h2>
@@ -499,7 +499,7 @@ export default function Home() {
       </section>
 
       {/* FAQ */}
-      <section className="py-20 px-4 bg-muted/40 border-t">
+      <section className="py-20 px-4 bg-muted/40 border-t [content-visibility:auto] [contain-intrinsic-size:1px_900px]">
         <div className="container mx-auto max-w-3xl">
           <h2 className="text-3xl font-bold mb-10 text-center">Häufige Fragen</h2>
           <Accordion type="single" collapsible className="w-full space-y-2">
@@ -524,7 +524,7 @@ export default function Home() {
       </section>
 
       {/* SEO Bottom Content */}
-      <section className="py-16 bg-muted/10 border-t">
+      <section className="py-16 bg-muted/10 border-t [content-visibility:auto] [contain-intrinsic-size:1px_900px]">
         <div className="container mx-auto max-w-5xl px-4">
           <div className="grid gap-8 md:grid-cols-2">
             <div className="rounded-3xl border border-slate-200 bg-white p-8 shadow-sm">
