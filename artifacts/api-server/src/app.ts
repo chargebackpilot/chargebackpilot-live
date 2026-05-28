@@ -1,5 +1,6 @@
 import express, { type Express } from "express";
 import path from "node:path";
+import fs from "node:fs";
 import { fileURLToPath } from "node:url";
 import cors from "cors";
 import pinoHttp from "pino-http";
@@ -75,10 +76,92 @@ app.use(
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const staticDir = path.resolve(__dirname, "../..", "chargeback-pilot", "dist", "public");
+const indexPath = path.join(staticDir, "index.html");
+
+const escapeHtml = (value: string) =>
+  value
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
+
+const metaByPath: Array<{ match: RegExp; title: string; description: string }> = [
+  {
+    match: /^\/$/,
+    title: "ChargebackPilot · KI-Hilfe für Chargeback, PayPal-Käuferschutz & Reklamation 2026",
+    description:
+      "Ware nicht erhalten, Flug ausgefallen, doppelt belastet? ChargebackPilot prüft deinen Fall mit KI in 60 Sekunden und liefert dir 3 fertige Textvorlagen.",
+  },
+  {
+    match: /^\/vorlagen-generator$/,
+    title: "Vorlagen-Generator · ChargebackPilot",
+    description:
+      "Erstelle in wenigen Schritten professionelle Reklamationsvorlagen für Händler, Bank/PayPal/Klarna und Eskalation.",
+  },
+  {
+    match: /^\/ratgeber/,
+    title: "Ratgeber & Guides zu Chargeback, Käuferschutz und Rückerstattung · ChargebackPilot",
+    description:
+      "Praxisnahe Anleitungen für PayPal, Kreditkarten-Chargeback, Klarna-Reklamation und typische Problemfälle im Onlinekauf.",
+  },
+  {
+    match: /^\/(impressum|datenschutz|agb|widerruf)$/,
+    title: "Rechtliche Informationen · ChargebackPilot",
+    description:
+      "Impressum, Datenschutz, AGB und Widerruf von ChargebackPilot. Transparent und aktuell für Nutzer in Deutschland.",
+  },
+  {
+    match: /^\/(paypal-chargeback|amex-chargeback|visa-mastercard-chargeback|klarna-reklamation|flug-chargeback|kiwi-rueckerstattung|lieferando-rueckerstattung|wolt-rueckerstattung|ubereats-rueckerstattung|ware-nicht-erhalten|abo-falle-chargeback)$/,
+    title: "Chargeback-Ratgeber 2026 · ChargebackPilot",
+    description:
+      "Konkrete Schritt-für-Schritt-Hilfen für Rückerstattung, Chargeback und Käuferschutz je nach Zahlungsart und Problemfall.",
+  },
+  {
+    match: /^\/hilfe\//,
+    title: "Händler-spezifische Hilfe bei Reklamationen · ChargebackPilot",
+    description:
+      "Konkrete Leitfäden zu typischen Problemen bei bekannten Händlern inklusive Beweis-Checkliste und Eskalationspfad.",
+  },
+  {
+    match: /^\/vergleich\//,
+    title: "Vergleich: PayPal vs Kreditkarte vs Klarna · ChargebackPilot",
+    description:
+      "Welcher Weg ist in deinem Fall am besten? Vergleich von Fristen, Erfolgschancen und Vorgehen bei Rückerstattungen.",
+  },
+];
+
+const defaultMeta = {
+  title: "ChargebackPilot · Chargeback & Reklamationshilfe",
+  description:
+    "ChargebackPilot unterstützt dich mit KI-gestützter Formulierungshilfe für Rückerstattungen und Reklamationen.",
+};
+
+const origin = "https://chargebackpilot.de";
+
+function renderSeoHtml(pathname: string) {
+  const raw = fs.readFileSync(indexPath, "utf-8");
+  const current = metaByPath.find((m) => m.match.test(pathname)) ?? defaultMeta;
+  const title = escapeHtml(current.title);
+  const description = escapeHtml(current.description);
+  const canonical = `${origin}${pathname}`;
+
+  return raw
+    .replace(/<title>.*?<\/title>/i, `<title>${title}</title>`)
+    .replace(/<meta name="description" content=".*?"\s*\/>/i, `<meta name="description" content="${description}" />`)
+    .replace(/<meta property="og:title" content=".*?"\s*\/>/i, `<meta property="og:title" content="${title}" />`)
+    .replace(/<meta property="og:description" content=".*?"\s*\/>/i, `<meta property="og:description" content="${description}" />`)
+    .replace(/<meta property="og:url" content=".*?"\s*\/>/i, `<meta property="og:url" content="${canonical}" />`)
+    .replace(/<meta name="twitter:title" content=".*?"\s*\/>/i, `<meta name="twitter:title" content="${title}" />`)
+    .replace(/<meta name="twitter:description" content=".*?"\s*\/>/i, `<meta name="twitter:description" content="${description}" />`)
+    .replace(/<link rel="canonical" href=".*?"\s*\/>/i, `<link rel="canonical" href="${canonical}" />`);
+}
 
 app.use(express.static(staticDir));
-app.get(/(.*)/, (_req, res) => {
-  res.sendFile(path.join(staticDir, "index.html"));
+app.get(/(.*)/, (req, res) => {
+  const seoHtml = renderSeoHtml(req.path || "/");
+  res.setHeader("Content-Type", "text/html; charset=utf-8");
+  res.send(seoHtml);
 });
 
 export default app;
