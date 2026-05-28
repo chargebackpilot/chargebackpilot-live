@@ -2,34 +2,35 @@ import { Switch, Route, Router as WouterRouter, useLocation } from "wouter";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { useEffect, useLayoutEffect, Suspense, lazy } from "react";
 import { Toaster } from "@/components/ui/toaster";
-import { Navbar } from "@/components/layout/Navbar";
-import { Footer } from "@/components/layout/Footer";
 import NotFound from "@/pages/not-found";
 import Home from "@/pages/Home";
-import RatgeberIndex from "@/pages/RatgeberIndex";
-import MerchantProblemPage from "@/pages/MerchantProblemPage";
-import MerchantIndexPage from "@/pages/MerchantIndexPage";
-import ScamShopsPage from "@/pages/ScamShopsPage";
-import ComparePage from "@/pages/ComparePage";
-import { Impressum, Datenschutz, AGB, Widerruf } from "@/pages/LegalPages";
-import {
-  PayPalSEO,
-  AmexSEO,
-  VisaMastercardSEO,
-  KlarnaSEO,
-  FlugSEO,
-  KiwiSEO,
-  LieferandoSEO,
-  WoltSEO,
-  UberEatsSEO,
-  WareNichtErhaltenSEO,
-  AboFalleSEO,
-} from "@/pages/SEOPages";
+import { Navbar } from "@/components/layout/Navbar";
+import { Footer } from "@/components/layout/Footer";
 
 // Lazy-loaded routes for better performance
 const Wizard = lazy(() => import("@/pages/Wizard"));
 const Admin = lazy(() => import("@/pages/Admin"));
 const AdminDemo = lazy(() => import("@/pages/AdminDemo"));
+const RatgeberIndex = lazy(() => import("@/pages/RatgeberIndex"));
+const MerchantProblemPage = lazy(() => import("@/pages/MerchantProblemPage"));
+const MerchantIndexPage = lazy(() => import("@/pages/MerchantIndexPage"));
+const ScamShopsPage = lazy(() => import("@/pages/ScamShopsPage"));
+const ComparePage = lazy(() => import("@/pages/ComparePage"));
+const Impressum = lazy(() => import("@/pages/LegalPages").then((m) => ({ default: m.Impressum })));
+const Datenschutz = lazy(() => import("@/pages/LegalPages").then((m) => ({ default: m.Datenschutz })));
+const AGB = lazy(() => import("@/pages/LegalPages").then((m) => ({ default: m.AGB })));
+const Widerruf = lazy(() => import("@/pages/LegalPages").then((m) => ({ default: m.Widerruf })));
+const PayPalSEO = lazy(() => import("@/pages/SEOPages").then((m) => ({ default: m.PayPalSEO })));
+const AmexSEO = lazy(() => import("@/pages/SEOPages").then((m) => ({ default: m.AmexSEO })));
+const VisaMastercardSEO = lazy(() => import("@/pages/SEOPages").then((m) => ({ default: m.VisaMastercardSEO })));
+const KlarnaSEO = lazy(() => import("@/pages/SEOPages").then((m) => ({ default: m.KlarnaSEO })));
+const FlugSEO = lazy(() => import("@/pages/SEOPages").then((m) => ({ default: m.FlugSEO })));
+const KiwiSEO = lazy(() => import("@/pages/SEOPages").then((m) => ({ default: m.KiwiSEO })));
+const LieferandoSEO = lazy(() => import("@/pages/SEOPages").then((m) => ({ default: m.LieferandoSEO })));
+const WoltSEO = lazy(() => import("@/pages/SEOPages").then((m) => ({ default: m.WoltSEO })));
+const UberEatsSEO = lazy(() => import("@/pages/SEOPages").then((m) => ({ default: m.UberEatsSEO })));
+const WareNichtErhaltenSEO = lazy(() => import("@/pages/SEOPages").then((m) => ({ default: m.WareNichtErhaltenSEO })));
+const AboFalleSEO = lazy(() => import("@/pages/SEOPages").then((m) => ({ default: m.AboFalleSEO })));
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -230,77 +231,43 @@ const withSuspense = (Component: React.ComponentType<any>, Fallback: React.Compo
   </Suspense>
 );
 
-const prefetchers = {
-  wizard: () => import("@/pages/Wizard"),
-  admin: () => import("@/pages/Admin"),
-  adminDemo: () => import("@/pages/AdminDemo"),
-};
-
-function RoutePrefetcher() {
-  useEffect(() => {
-    const run = () => {
-      const jobs = [
-        () => prefetchers.wizard(),
-        () => prefetchers.admin(),
-        () => prefetchers.adminDemo(),
-      ];
-      let i = 0;
-      const next = () => {
-        if (i >= jobs.length) return;
-        const job = jobs[i++];
-        job().catch(() => void 0).finally(() => setTimeout(next, 120));
-      };
-      next();
-    };
-
-    if ("requestIdleCallback" in window) {
-      const id = (window as any).requestIdleCallback(run, { timeout: 1500 });
-      return () => (window as any).cancelIdleCallback?.(id);
-    }
-    const t = globalThis.setTimeout(run, 900);
-    return () => globalThis.clearTimeout(t);
-  }, []);
-
-  return null;
-}
-
 function Router() {
   return (
     <Switch>
       <Route path="/" component={Home} />
       <Route path="/vorlagen-generator" component={withSuspense(Wizard, WizardSkeleton)} />
-      <Route path="/ratgeber" component={RatgeberIndex} />
+      <Route path="/ratgeber" component={withSuspense(RatgeberIndex, ArticleSkeleton)} />
       <Route path="/admin" component={withSuspense(Admin, DefaultSkeleton)} />
       <Route path="/admin/demo" component={withSuspense(AdminDemo, DefaultSkeleton)} />
       
       {/* Legal Pages */}
-      <Route path="/impressum" component={Impressum} />
-      <Route path="/datenschutz" component={Datenschutz} />
-      <Route path="/agb" component={AGB} />
-      <Route path="/widerruf" component={Widerruf} />
+      <Route path="/impressum" component={withSuspense(Impressum, ArticleSkeleton)} />
+      <Route path="/datenschutz" component={withSuspense(Datenschutz, ArticleSkeleton)} />
+      <Route path="/agb" component={withSuspense(AGB, ArticleSkeleton)} />
+      <Route path="/widerruf" component={withSuspense(Widerruf, ArticleSkeleton)} />
       
       {/* SEO Landing Pages */}
-      <Route path="/paypal-chargeback" component={PayPalSEO} />
-      <Route path="/amex-chargeback" component={AmexSEO} />
-      <Route path="/visa-mastercard-chargeback" component={VisaMastercardSEO} />
-      <Route path="/klarna-reklamation" component={KlarnaSEO} />
-      <Route path="/flug-chargeback" component={FlugSEO} />
-      <Route path="/kiwi-rueckerstattung" component={KiwiSEO} />
-      <Route path="/lieferando-rueckerstattung" component={LieferandoSEO} />
-      <Route path="/wolt-rueckerstattung" component={WoltSEO} />
-      <Route path="/ubereats-rueckerstattung" component={UberEatsSEO} />
-      <Route path="/ware-nicht-erhalten" component={WareNichtErhaltenSEO} />
-      <Route path="/abo-falle-chargeback" component={AboFalleSEO} />
+      <Route path="/paypal-chargeback" component={withSuspense(PayPalSEO, ArticleSkeleton)} />
+      <Route path="/amex-chargeback" component={withSuspense(AmexSEO, ArticleSkeleton)} />
+      <Route path="/visa-mastercard-chargeback" component={withSuspense(VisaMastercardSEO, ArticleSkeleton)} />
+      <Route path="/klarna-reklamation" component={withSuspense(KlarnaSEO, ArticleSkeleton)} />
+      <Route path="/flug-chargeback" component={withSuspense(FlugSEO, ArticleSkeleton)} />
+      <Route path="/kiwi-rueckerstattung" component={withSuspense(KiwiSEO, ArticleSkeleton)} />
+      <Route path="/lieferando-rueckerstattung" component={withSuspense(LieferandoSEO, ArticleSkeleton)} />
+      <Route path="/wolt-rueckerstattung" component={withSuspense(WoltSEO, ArticleSkeleton)} />
+      <Route path="/ubereats-rueckerstattung" component={withSuspense(UberEatsSEO, ArticleSkeleton)} />
+      <Route path="/ware-nicht-erhalten" component={withSuspense(WareNichtErhaltenSEO, ArticleSkeleton)} />
+      <Route path="/abo-falle-chargeback" component={withSuspense(AboFalleSEO, ArticleSkeleton)} />
 
       {/* Programmatic merchant SEO */}
-      <Route path="/hilfe/:merchantSlug/:problemSlug" component={MerchantProblemPage} />
-      <Route path="/hilfe/:merchantSlug" component={MerchantIndexPage} />
+      <Route path="/hilfe/:merchantSlug/:problemSlug" component={withSuspense(MerchantProblemPage, ArticleSkeleton)} />
+      <Route path="/hilfe/:merchantSlug" component={withSuspense(MerchantIndexPage, ArticleSkeleton)} />
 
       {/* Trust / scam ratgeber */}
-      <Route path="/scam-shops-2026" component={ScamShopsPage} />
+      <Route path="/scam-shops-2026" component={withSuspense(ScamShopsPage, ArticleSkeleton)} />
 
       {/* Comparison */}
-      <Route path="/vergleich/paypal-vs-kreditkarte-vs-klarna" component={ComparePage} />
+      <Route path="/vergleich/paypal-vs-kreditkarte-vs-klarna" component={withSuspense(ComparePage, ArticleSkeleton)} />
 
       <Route component={NotFound} />
     </Switch>
@@ -313,7 +280,6 @@ function App() {
       <WouterRouter base={import.meta.env.BASE_URL.replace(/\/$/, "")}>
         <ScrollToTop />
         <RouteMetaUpdater />
-        <RoutePrefetcher />
         <Router />
       </WouterRouter>
       <Toaster />
