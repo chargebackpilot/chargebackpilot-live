@@ -4,6 +4,7 @@ interface SeoHeadProps {
   title: string;
   description: string;
   canonical?: string;
+  noindex?: boolean;
   /** Optional JSON-LD structured data objects. */
   jsonLd?: object[];
 }
@@ -34,9 +35,8 @@ function upsertLink(rel: string, href: string) {
  * Sets per-route page <title>, meta description, canonical, OG + Twitter tags,
  * and injects optional JSON-LD <script> tags. Cleans up its own JSON-LD on unmount.
  */
-export function SeoHead({ title, description, canonical, jsonLd }: SeoHeadProps) {
+export function SeoHead({ title, description, canonical, noindex = false, jsonLd }: SeoHeadProps) {
   useEffect(() => {
-    const prevTitle = document.title;
     document.title = title;
 
     const canonicalUrl = canonical
@@ -45,6 +45,20 @@ export function SeoHead({ title, description, canonical, jsonLd }: SeoHeadProps)
 
     // Standard Meta
     upsertMeta('meta[name="description"]', "name", "description", description);
+    upsertMeta(
+      'meta[name="robots"]',
+      "name",
+      "robots",
+      noindex
+        ? "noindex, nofollow"
+        : "index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1",
+    );
+    upsertMeta(
+      'meta[name="googlebot"]',
+      "name",
+      "googlebot",
+      noindex ? "noindex, nofollow" : "index, follow, max-image-preview:large, max-snippet:-1",
+    );
     
     // Open Graph (Facebook, LinkedIn, WhatsApp)
     upsertMeta('meta[property="og:title"]', "property", "og:title", title);
@@ -83,10 +97,9 @@ export function SeoHead({ title, description, canonical, jsonLd }: SeoHeadProps)
     }
 
     return () => {
-      document.title = prevTitle;
       injected.forEach((s) => s.remove());
     };
-  }, [title, description, canonical, jsonLd]);
+  }, [title, description, canonical, noindex, jsonLd]);
 
   return null;
 }

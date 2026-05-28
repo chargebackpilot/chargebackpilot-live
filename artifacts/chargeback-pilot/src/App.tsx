@@ -1,6 +1,6 @@
 import { Switch, Route, Router as WouterRouter, useLocation } from "wouter";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { useEffect, Suspense, lazy } from "react";
+import { useEffect, useLayoutEffect, Suspense, lazy } from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
@@ -51,7 +51,12 @@ function ScrollToTop() {
 function RouteMetaUpdater() {
   const [pathname] = useLocation();
 
-  useEffect(() => {
+  useLayoutEffect(() => {
+    // IMPORTANT: Most public SEO routes already define precise <SeoHead> metadata.
+    // We only force metadata for operational routes that don't provide page-level SEO tags.
+    const shouldForceMeta = /^\/(admin|admin\/demo|vorlagen-generator)$/.test(pathname);
+    if (!shouldForceMeta) return;
+
     const origin = "https://chargebackpilot.de";
     const metaByPath: Array<{ match: RegExp; title: string; description: string }> = [
       {
@@ -105,6 +110,8 @@ function RouteMetaUpdater() {
           "ChargebackPilot unterstützt dich mit KI-gestützter Formulierungshilfe für Rückerstattungen und Reklamationen.",
       };
 
+    const noindex = true;
+
     document.title = current.title;
 
     const upsertMeta = (name: string, content: string) => {
@@ -129,6 +136,8 @@ function RouteMetaUpdater() {
 
     const canonicalUrl = `${origin}${pathname}`;
     upsertMeta("description", current.description);
+    upsertMeta("robots", noindex ? "noindex, nofollow" : "index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1");
+    upsertMeta("googlebot", noindex ? "noindex, nofollow" : "index, follow, max-image-preview:large, max-snippet:-1");
     upsertMeta("twitter:title", current.title);
     upsertMeta("twitter:description", current.description);
     upsertOg("og:title", current.title);
