@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Checkbox } from "@/components/ui/checkbox";
 import {
   Lock,
   Check,
@@ -148,13 +147,8 @@ export function PaywallModal({
   const benefits = getBenefits(paymentMethod);
   const band = toStrategyBand(strategyLabel);
   const bandClass = TONE_CLASSES[band.tone] ?? TONE_CLASSES.slate;
-  const [consentWiderruf, setConsentWiderruf] = useState(false);
 
   const handleCheckout = async () => {
-    if (!consentWiderruf) {
-      setError("Bitte bestätige den Verzicht auf das Widerrufsrecht, um fortzufahren.");
-      return;
-    }
     setLoading(true);
     setError("");
     try {
@@ -240,23 +234,11 @@ export function PaywallModal({
           </span>
         </div>
 
-        {/* Checkout consent + CTA */}
+        {/* Checkout CTA */}
         <div className="space-y-3 pt-1">
-          <div className="rounded-xl border border-border bg-background/70 p-3.5">
-            <div className="flex items-start gap-3">
-              <Checkbox
-                checked={consentWiderruf}
-                onCheckedChange={(checked) => {
-                  setConsentWiderruf(Boolean(checked));
-                  if (checked) setError("");
-                }}
-                className="mt-0.5"
-              />
-              <label className="text-sm leading-relaxed text-muted-foreground">
-                Ich verlange ausdrücklich, dass vor Ablauf der Widerrufsfrist mit der Ausführung des Vertrags begonnen wird, und bestätige, dass ich bei vollständiger Vertragserfüllung mein Widerrufsrecht verliere. <a href="/widerruf" target="_blank" className="underline hover:text-foreground">Mehr dazu</a>.
-              </label>
-            </div>
-          </div>
+          <p className="text-xs text-muted-foreground leading-relaxed">
+            Im nächsten Schritt im sicheren Stripe-Checkout bestätigst du AGB und Widerrufshinweise.
+          </p>
 
           {error && (
             <div className="flex items-center gap-2 text-sm text-red-700 bg-red-50 border border-red-200 rounded-lg px-3 py-2">
@@ -276,7 +258,7 @@ export function PaywallModal({
             ) : (
               <>
                 <CreditCard className="w-5 h-5" />
-                Zahlungspflichtig bestellen (0,99 € inkl. MwSt.)
+                Weiter zum sicheren Checkout (0,99 € inkl. MwSt.)
               </>
             )}
           </Button>
