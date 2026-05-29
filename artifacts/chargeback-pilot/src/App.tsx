@@ -128,7 +128,7 @@ function RouteMetaUpdater() {
           "ChargebackPilot unterstützt dich mit KI-gestützter Formulierungshilfe für Rückerstattungen und Reklamationen.",
       };
 
-    const noindex = true;
+    const noindex = /^\/(admin|admin\/demo)$/.test(pathname);
 
     document.title = current.title;
 

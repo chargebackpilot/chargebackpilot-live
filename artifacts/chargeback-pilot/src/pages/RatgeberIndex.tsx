@@ -72,7 +72,7 @@ export default function RatgeberIndex() {
                         <div className="w-10 h-10 rounded-lg bg-primary/10 text-primary flex items-center justify-center">
                           <Icon className="w-5 h-5" />
                         </div>
-                        <span className="text-[10px] font-bold uppercase tracking-wider bg-primary/10 text-primary px-2 py-0.5 rounded">{h.tag}</span>
+                        <span className="text-[10px] font-bold uppercase tracking-wider bg-primary text-primary-foreground px-2 py-0.5 rounded">{h.tag}</span>
                       </div>
                       <CardTitle className="flex items-start justify-between gap-3">
                         <span>{h.title}</span>

@@ -98,7 +98,6 @@ const metaByPath: Array<{ match: RegExp; title: string; description: string; noi
     title: "Vorlagen-Generator · ChargebackPilot",
     description:
       "Erstelle in wenigen Schritten professionelle Reklamationsvorlagen für Händler, Bank/PayPal/Klarna und Eskalation.",
-    noindex: true,
   },
   {
     match: /^\/ratgeber/,
