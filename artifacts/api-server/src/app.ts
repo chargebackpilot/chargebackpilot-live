@@ -202,7 +202,13 @@ function renderSeoHtml(pathname: string) {
   return { html, isKnownRoute };
 }
 
-app.use(express.static(staticDir));
+app.use(express.static(staticDir, {
+  setHeaders: (res, filePath) => {
+    if (filePath.includes(`${path.sep}fonts${path.sep}inter${path.sep}`)) {
+      res.setHeader("Cache-Control", "public, max-age=31536000, immutable");
+    }
+  },
+}));
 app.get(/(.*)/, (req, res) => {
   const { html, isKnownRoute } = renderSeoHtml(req.path || "/");
   res.setHeader("Content-Type", "text/html; charset=utf-8");
