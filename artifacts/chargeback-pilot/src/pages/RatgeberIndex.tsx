@@ -53,7 +53,7 @@ export default function RatgeberIndex() {
             <BookOpen className="w-8 h-8" />
           </div>
           <h1 className="text-4xl font-bold mb-4">Ratgeber & Chargeback-Guides</h1>
-          <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
+          <p className="text-xl text-muted-foreground max-w-2xl mx-auto min-h-[3.5rem] [font-family:Inter,system-ui,-apple-system,Segoe_UI,Roboto,Helvetica,Arial,sans-serif]">
             Umfassende Informationen, Tipps und Schritt-für-Schritt-Anleitungen für jede Art von Zahlungsproblem.
           </p>
         </div>

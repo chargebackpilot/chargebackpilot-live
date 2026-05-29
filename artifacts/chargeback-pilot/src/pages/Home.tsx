@@ -226,7 +226,7 @@ export default function Home() {
             Probleme beim Online-Kauf? <br className="hidden md:block" />
             <span className="text-primary">Dein Assistent für jede Reklamation.</span>
           </h1>
-          <p className="text-xl text-muted-foreground mb-10 max-w-3xl mx-auto leading-relaxed">
+          <p className="text-xl text-muted-foreground mb-10 max-w-3xl mx-auto leading-relaxed min-h-[6rem] [font-family:Inter,system-ui,-apple-system,Segoe_UI,Roboto,Helvetica,Arial,sans-serif]">
             Lieferung fehlt, Flug gestrichen oder falsches Essen? Wir begleiten dich als Privatperson strukturiert durch den Käuferschutz-Prozess. Erhalte verständliche Anleitungen und Textvorlagen für PayPal, Kreditkarte und Händler, damit du klarer weißt, was du schreiben kannst.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
