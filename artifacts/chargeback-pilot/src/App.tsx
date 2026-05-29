@@ -3,11 +3,11 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { useEffect, useLayoutEffect, Suspense, lazy } from "react";
 import { Toaster } from "@/components/ui/toaster";
 import NotFound from "@/pages/not-found";
-import Home from "@/pages/Home";
 import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
 
 // Lazy-loaded routes for better performance
+const Home = lazy(() => import("@/pages/Home"));
 const Wizard = lazy(() => import("@/pages/Wizard"));
 const Admin = lazy(() => import("@/pages/Admin"));
 const AdminDemo = lazy(() => import("@/pages/AdminDemo"));
@@ -252,7 +252,7 @@ const withSuspense = (Component: React.ComponentType<any>, Fallback: React.Compo
 function Router() {
   return (
     <Switch>
-      <Route path="/" component={Home} />
+      <Route path="/" component={withSuspense(Home, DefaultSkeleton)} />
       <Route path="/vorlagen-generator" component={withSuspense(Wizard, WizardSkeleton)} />
       <Route path="/ratgeber" component={withSuspense(RatgeberIndex, DefaultSkeleton)} />
       <Route path="/admin" component={withSuspense(Admin, DefaultSkeleton)} />
