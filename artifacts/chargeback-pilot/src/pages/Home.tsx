@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, lazy, Suspense } from "react";
 import { MainLayout } from "@/components/layout/MainLayout";
 import { SeoHead } from "@/components/SeoHead";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
@@ -25,8 +25,11 @@ import {
   TrendingUp,
 } from "lucide-react";
 import { useGetCaseStats } from "@workspace/api-client-react";
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
-import { PaymentLogoStrip, PaymentHelpGrid } from "@/components/PaymentLogos";
+const PaymentHelpGrid = lazy(() => import("@/components/PaymentLogos").then((m) => ({ default: m.PaymentHelpGrid })));
+const Accordion = lazy(() => import("@/components/ui/accordion").then((m) => ({ default: m.Accordion })));
+const AccordionContent = lazy(() => import("@/components/ui/accordion").then((m) => ({ default: m.AccordionContent })));
+const AccordionItem = lazy(() => import("@/components/ui/accordion").then((m) => ({ default: m.AccordionItem })));
+const AccordionTrigger = lazy(() => import("@/components/ui/accordion").then((m) => ({ default: m.AccordionTrigger })));
 
 const SCENARIOS = [
   {
@@ -395,7 +398,9 @@ export default function Home() {
               Jede Zahlungsart hat eigene Schutzregeln, eigene Fristen und eigene Rückforderungswege. Klicke deine Zahlungsmethode an — wir öffnen den Text-Generator für das passende Verfahren.
             </p>
           </div>
-          <PaymentHelpGrid />
+          <Suspense fallback={<div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3"><div className="h-16 bg-muted rounded" /><div className="h-16 bg-muted rounded" /><div className="h-16 bg-muted rounded" /><div className="h-16 bg-muted rounded" /><div className="h-16 bg-muted rounded" /><div className="h-16 bg-muted rounded" /></div>}>
+            <PaymentHelpGrid />
+          </Suspense>
           <p className="text-center text-xs text-muted-foreground mt-6 max-w-xl mx-auto">
               Kein Häkchen, keine Anmeldung — die Text-Generierung startet ohne Bezahlpflicht. Du zahlst erst, wenn du die fertigen Brief-Vorlagen freischalten möchtest (0,99 € (inkl. MwSt.) pro Fall).
           </p>
@@ -502,14 +507,16 @@ export default function Home() {
       <section className="py-20 px-4 bg-muted/40 border-t [content-visibility:auto] [contain-intrinsic-size:1px_900px]">
         <div className="container mx-auto max-w-3xl">
           <h2 className="text-3xl font-bold mb-10 text-center">Häufige Fragen</h2>
-          <Accordion type="single" collapsible className="w-full space-y-2">
-            {FAQS.map((faq, i) => (
-              <AccordionItem key={i} value={`item-${i}`} className="bg-white border rounded-xl px-4">
-                <AccordionTrigger className="font-semibold text-left">{faq.q}</AccordionTrigger>
-                <AccordionContent className="text-muted-foreground leading-relaxed">{faq.a}</AccordionContent>
-              </AccordionItem>
-            ))}
-          </Accordion>
+          <Suspense fallback={<div className="space-y-2"><div className="h-12 bg-white border rounded-xl" /><div className="h-12 bg-white border rounded-xl" /><div className="h-12 bg-white border rounded-xl" /></div>}>
+            <Accordion type="single" collapsible className="w-full space-y-2">
+              {FAQS.map((faq, i) => (
+                <AccordionItem key={i} value={`item-${i}`} className="bg-white border rounded-xl px-4">
+                  <AccordionTrigger className="font-semibold text-left">{faq.q}</AccordionTrigger>
+                  <AccordionContent className="text-muted-foreground leading-relaxed">{faq.a}</AccordionContent>
+                </AccordionItem>
+              ))}
+            </Accordion>
+          </Suspense>
 
           <div className="mt-12 text-center">
             <p className="text-muted-foreground mb-4 text-sm">Bereit, Brief-Vorlagen zu generieren?</p>
