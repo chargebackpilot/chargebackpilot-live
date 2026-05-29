@@ -1,7 +1,11 @@
 import { Link } from "wouter";
+import { useLocation } from "wouter";
 import { LogoLockup } from "../ui/Logo";
 
 export function Footer() {
+  const [pathname] = useLocation();
+  const isWizardRoute = pathname === "/vorlagen-generator";
+
   return (
     <footer className="bg-muted/20 border-t py-12 px-4 mt-auto">
       <div className="container mx-auto max-w-7xl grid grid-cols-1 md:grid-cols-5 gap-8 mb-8">
@@ -13,9 +17,15 @@ export function Footer() {
             KI-gestützte Text-Generierung für Chargebacks und Käuferschutz. 
             Strukturierte Briefvorlagen für PayPal, Visa, Mastercard und Klarna.
           </p>
-          <p className="text-xs text-muted-foreground border-l-2 border-primary/30 pl-3">
-            <strong>Wichtiger Hinweis:</strong> ChargebackPilot bietet keine Rechtsberatung, keine Rechtsdienstleistung und keine Vertretung gegenüber Banken, Zahlungsdienstleistern oder Händlern. Die KI-Textgenerierung erfolgt über die Gemini API von Google LLC und dient ausschließlich der allgemeinen Formulierungshilfe.
-          </p>
+          {isWizardRoute ? (
+            <p className="text-xs text-muted-foreground" style={{ minHeight: "1rem" }}>
+              <strong>Hinweis:</strong> Keine Rechtsberatung. Allgemeine Formulierungshilfe.
+            </p>
+          ) : (
+            <p className="text-xs text-muted-foreground border-l-2 border-primary/30 pl-3">
+              <strong>Wichtiger Hinweis:</strong> ChargebackPilot bietet keine Rechtsberatung, keine Rechtsdienstleistung und keine Vertretung gegenüber Banken, Zahlungsdienstleistern oder Händlern. Die KI-Textgenerierung erfolgt über die Gemini API von Google LLC und dient ausschließlich der allgemeinen Formulierungshilfe.
+            </p>
+          )}
         </div>
 
         <div>
