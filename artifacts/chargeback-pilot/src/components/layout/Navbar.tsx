@@ -12,8 +12,8 @@ export function Navbar() {
   const showDisclaimerBanner = pathname !== "/vorlagen-generator";
 
   return (
-    <header className="sticky top-0 z-50 w-full bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-b border-border">
-      {showDisclaimerBanner && <DisclaimerBanner />}
+    <header className="sticky top-0 z-50 w-full bg-background border-b border-border md:bg-background/95 md:backdrop-blur md:supports-[backdrop-filter]:bg-background/60">
+      {showDisclaimerBanner && <div className="hidden md:block"><DisclaimerBanner /></div>}
       <div className="container mx-auto max-w-7xl px-4 h-16 flex items-center justify-between">
         <Link href="/" className="flex items-center">
           <LogoLockup size={30} />
