@@ -119,6 +119,8 @@ declare global {
 }
 
 export default function Wizard() {
+  const amountInputRef = useRef<HTMLInputElement | null>(null);
+  const disputedInputRef = useRef<HTMLInputElement | null>(null);
   const turnstileSiteKey = import.meta.env.VITE_TURNSTILE_SITE_KEY as string | undefined;
   const turnstileWidgetIdRef = useRef<string | null>(null);
   const turnstileContainerRef = useRef<HTMLDivElement | null>(null);
@@ -456,6 +458,9 @@ export default function Wizard() {
     step === 4;
 
   useEffect(() => {
+    const active = document.activeElement as HTMLElement | null;
+    const isTextEntry = !!active && ["INPUT", "TEXTAREA", "SELECT"].includes(active.tagName);
+    if (isTextEntry) return;
     const timer = setTimeout(() => window.scrollTo({ top: 0, behavior: "smooth" }), 50);
     return () => clearTimeout(timer);
   }, [step]);
@@ -637,12 +642,24 @@ export default function Wizard() {
                         </Label>
                         <Input
                           id="purchaseAmount"
-                          type="number"
-                          step="0.01"
-                          min="0"
+                          ref={amountInputRef}
+                          type="text"
+                          inputMode="decimal"
+                          enterKeyHint="next"
+                          pattern="[0-9]*[.,]?[0-9]*"
+                          autoComplete="off"
+                          autoCorrect="off"
+                          autoCapitalize="off"
+                          spellCheck={false}
                           placeholder="0.00"
                           value={formData.purchaseAmount}
-                          onChange={(e) => setFormData((p) => ({ ...p, purchaseAmount: e.target.value }))}
+                          onChange={(e) => setFormData((p) => ({ ...p, purchaseAmount: e.target.value.replace(/[^0-9.,]/g, "") }))}
+                          onKeyDown={(e) => {
+                            if (e.key === "Enter") {
+                              e.preventDefault();
+                              disputedInputRef.current?.focus();
+                            }
+                          }}
                         />
                       </div>
                       <div className="space-y-1.5">
@@ -652,12 +669,18 @@ export default function Wizard() {
                         </Label>
                         <Input
                           id="disputedAmount"
-                          type="number"
-                          step="0.01"
-                          min="0"
+                          ref={disputedInputRef}
+                          type="text"
+                          inputMode="decimal"
+                          enterKeyHint="done"
+                          pattern="[0-9]*[.,]?[0-9]*"
+                          autoComplete="off"
+                          autoCorrect="off"
+                          autoCapitalize="off"
+                          spellCheck={false}
                           placeholder="0.00"
                           value={formData.disputedAmount}
-                          onChange={(e) => setFormData((p) => ({ ...p, disputedAmount: e.target.value }))}
+                          onChange={(e) => setFormData((p) => ({ ...p, disputedAmount: e.target.value.replace(/[^0-9.,]/g, "") }))}
                         />
                       </div>
                     </div>
