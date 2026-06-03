@@ -3,7 +3,6 @@ import { MainLayout } from "@/components/layout/MainLayout";
 import { SeoHead } from "@/components/SeoHead";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Checkbox } from "@/components/ui/checkbox";
 import { Link } from "wouter";
 import { useToast } from "@/hooks/use-toast";
 import { activateFlatrate, isFlatrateActive } from "@/lib/case-persistence";
@@ -31,7 +30,6 @@ const Accordion = lazy(() => import("@/components/ui/accordion").then((m) => ({ 
 const AccordionContent = lazy(() => import("@/components/ui/accordion").then((m) => ({ default: m.AccordionContent })));
 const AccordionItem = lazy(() => import("@/components/ui/accordion").then((m) => ({ default: m.AccordionItem })));
 const AccordionTrigger = lazy(() => import("@/components/ui/accordion").then((m) => ({ default: m.AccordionTrigger })));
-const LEGAL_VERSION = "2026-06";
 
 const SCENARIOS = [
   {
@@ -151,9 +149,6 @@ export default function Home() {
   const { toast } = useToast();
   const [flatrateLoading, setFlatrateLoading] = useState(false);
   const [flatrateActive, setFlatrateActive] = useState(false);
-  const [flatrateTerms, setFlatrateTerms] = useState(false);
-  const [flatrateImmediate, setFlatrateImmediate] = useState(false);
-  const [flatrateWiderrufLoss, setFlatrateWiderrufLoss] = useState(false);
 
   // On mount: detect flatrate_success from Stripe return + reflect current flatrate status
   useEffect(() => {
@@ -189,29 +184,12 @@ export default function Home() {
   }, [toast]);
 
   const handleFlatrateCheckout = async () => {
-    if (!flatrateTerms || !flatrateImmediate || !flatrateWiderrufLoss) {
-      toast({
-        title: "Bitte Hinweise bestätigen",
-        description: "Für digitale Inhalte benötigen wir AGB-, Widerrufs- und Sofortbereitstellungs-Bestätigung.",
-        variant: "destructive",
-      });
-      return;
-    }
-
     setFlatrateLoading(true);
     try {
       const res = await fetch("/api/stripe/flatrate-checkout", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          acceptedTerms: flatrateTerms,
-          acceptedImmediateExecution: flatrateImmediate,
-          acceptedWiderrufLoss: flatrateWiderrufLoss,
-          consentTimestamp: new Date().toISOString(),
-          agbVersion: LEGAL_VERSION,
-          widerrufVersion: LEGAL_VERSION,
-          datenschutzVersion: LEGAL_VERSION,
-        }),
+        body: JSON.stringify({}),
       });
       const json = await res.json();
       if (json?.url) {
@@ -516,31 +494,15 @@ export default function Home() {
                     <CheckCircle2 className="w-4 h-4 mr-2" />Flatrate aktiv
                   </Button>
                 ) : (
-                  <>
-                  <div className="space-y-2 rounded-xl border bg-muted/30 p-3 text-[11px] text-muted-foreground">
-                    <label htmlFor="flatrate-terms" className="flex items-start gap-2 cursor-pointer">
-                      <Checkbox id="flatrate-terms" checked={flatrateTerms} onCheckedChange={(c) => setFlatrateTerms(Boolean(c))} className="mt-0.5" />
-                      <span>Ich akzeptiere AGB, Widerrufsbelehrung und Datenschutzerklärung.</span>
-                    </label>
-                    <label htmlFor="flatrate-immediate" className="flex items-start gap-2 cursor-pointer">
-                      <Checkbox id="flatrate-immediate" checked={flatrateImmediate} onCheckedChange={(c) => setFlatrateImmediate(Boolean(c))} className="mt-0.5" />
-                      <span>Ich verlange die sofortige Bereitstellung der digitalen Inhalte.</span>
-                    </label>
-                    <label htmlFor="flatrate-widerruf" className="flex items-start gap-2 cursor-pointer">
-                      <Checkbox id="flatrate-widerruf" checked={flatrateWiderrufLoss} onCheckedChange={(c) => setFlatrateWiderrufLoss(Boolean(c))} className="mt-0.5" />
-                      <span>Mir ist bekannt, dass mein Widerrufsrecht bei vollständiger Vertragserfüllung vorzeitig erlöschen kann.</span>
-                    </label>
-                  </div>
                   <Button
                     className="w-full mt-2"
                     variant="outline"
                     onClick={handleFlatrateCheckout}
-                    disabled={flatrateLoading || !flatrateTerms || !flatrateImmediate || !flatrateWiderrufLoss}
+                    disabled={flatrateLoading}
                     data-testid="flatrate-checkout"
                   >
                     {flatrateLoading ? "Wird vorbereitet…" : "Flatrate für 9,99 € kaufen"}
                   </Button>
-                  </>
                 )}
               </CardContent>
             </Card>

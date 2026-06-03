@@ -18,9 +18,6 @@ import {
 import { generatePdf } from "@/lib/pdf-generator";
 import { PaymentLogoStrip } from "@/components/PaymentLogos";
 import { Dialog, DialogContent, DialogDescription, DialogTitle } from "@/components/ui/dialog";
-import { Checkbox } from "@/components/ui/checkbox";
-
-const LEGAL_VERSION = "2026-06";
 
 interface PaywallProps {
   onUnlock: () => void;
@@ -146,36 +143,20 @@ export function PaywallModal({
 }: PaywallProps) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-  const [acceptedTerms, setAcceptedTerms] = useState(false);
-  const [acceptedImmediateExecution, setAcceptedImmediateExecution] = useState(false);
-  const [acceptedWiderrufLoss, setAcceptedWiderrufLoss] = useState(false);
 
   const benefits = getBenefits(paymentMethod);
   const band = toStrategyBand(strategyLabel);
   const bandClass = TONE_CLASSES[band.tone] ?? TONE_CLASSES.slate;
 
   const handleCheckout = async () => {
-    if (!acceptedTerms || !acceptedImmediateExecution || !acceptedWiderrufLoss) {
-      setError("Bitte bestätige AGB, Widerrufshinweise und die sofortige Bereitstellung der digitalen Inhalte.");
-      return;
-    }
-
     setLoading(true);
     setError("");
-    const consentTimestamp = new Date().toISOString();
     try {
       const res = await fetch("/api/stripe/checkout", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           caseId,
-          acceptedTerms,
-          acceptedImmediateExecution,
-          acceptedWiderrufLoss,
-          consentTimestamp,
-          agbVersion: LEGAL_VERSION,
-          widerrufVersion: LEGAL_VERSION,
-          datenschutzVersion: LEGAL_VERSION,
         }),
       });
       const json = await res.json();
@@ -254,25 +235,8 @@ export function PaywallModal({
         {/* Checkout CTA */}
         <div className="space-y-3 pt-1">
           <p className="text-xs text-muted-foreground leading-relaxed">
-            Bitte bestätige vor dem Checkout transparent die rechtlichen Hinweise. Der Kauf ist eine einmalige Bereitstellung digitaler Inhalte; es entsteht kein Abo.
+            Im nächsten Schritt im sicheren Stripe-Checkout bestätigst du AGB und Widerrufshinweise. Der Kauf ist eine einmalige Bereitstellung digitaler Inhalte; es entsteht kein Abo.
           </p>
-
-          <div className="space-y-2 rounded-xl border bg-muted/30 p-3 text-xs text-muted-foreground">
-            <label htmlFor="accept-terms" className="flex items-start gap-2 cursor-pointer">
-              <Checkbox id="accept-terms" checked={acceptedTerms} onCheckedChange={(c) => setAcceptedTerms(Boolean(c))} className="mt-0.5" />
-              <span>
-                Ich akzeptiere die <a href="/agb" target="_blank" rel="noreferrer" className="underline hover:text-foreground">AGB</a>, die <a href="/widerruf" target="_blank" rel="noreferrer" className="underline hover:text-foreground">Widerrufsbelehrung</a> und die <a href="/datenschutz" target="_blank" rel="noreferrer" className="underline hover:text-foreground">Datenschutzerklärung</a>.
-              </span>
-            </label>
-            <label htmlFor="accept-immediate" className="flex items-start gap-2 cursor-pointer">
-              <Checkbox id="accept-immediate" checked={acceptedImmediateExecution} onCheckedChange={(c) => setAcceptedImmediateExecution(Boolean(c))} className="mt-0.5" />
-              <span>Ich verlange ausdrücklich, dass ChargebackPilot vor Ablauf der Widerrufsfrist mit der Bereitstellung der digitalen Inhalte beginnt.</span>
-            </label>
-            <label htmlFor="accept-widerruf-loss" className="flex items-start gap-2 cursor-pointer">
-              <Checkbox id="accept-widerruf-loss" checked={acceptedWiderrufLoss} onCheckedChange={(c) => setAcceptedWiderrufLoss(Boolean(c))} className="mt-0.5" />
-              <span>Mir ist bekannt, dass mein Widerrufsrecht bei vollständiger Vertragserfüllung vorzeitig erlöschen kann.</span>
-            </label>
-          </div>
 
           {error && (
             <div className="flex items-center gap-2 text-sm text-red-700 bg-red-50 border border-red-200 rounded-lg px-3 py-2">
@@ -285,7 +249,7 @@ export function PaywallModal({
             size="lg"
             className="w-full h-13 text-base font-bold gap-2 shadow-lg shadow-primary/20"
             onClick={handleCheckout}
-            disabled={loading || isPaying || !acceptedTerms || !acceptedImmediateExecution || !acceptedWiderrufLoss}
+            disabled={loading || isPaying}
           >
             {loading || isPaying ? (
               <Loader2 className="w-5 h-5 animate-spin" />

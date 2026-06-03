@@ -4,44 +4,82 @@ import { LifeBuoy, ArrowRight } from "lucide-react";
 
 interface PLProps { className?: string }
 
-function TextBadge({ label, className = "" }: { label: string; className?: string }) {
+export function VisaLogo({ className = "" }: PLProps) {
   return (
-    <span className={`inline-flex items-center justify-center rounded-md border border-gray-200 bg-white h-7 px-2.5 text-[11px] font-semibold text-slate-700 shadow-sm ${className}`}>
-      {label}
-    </span>
+    <div className={`inline-flex items-center justify-center bg-white border border-gray-200 rounded-md h-7 px-2 shadow-sm ${className}`} aria-label="Visa">
+      <span className="font-black italic text-[#1a1f71] text-sm tracking-tight">VISA</span>
+    </div>
   );
 }
 
-export function VisaLogo({ className = "" }: PLProps) {
-  return <TextBadge label="Visa" className={className} />;
-}
-
 export function MastercardLogo({ className = "" }: PLProps) {
-  return <TextBadge label="Mastercard" className={className} />;
+  return (
+    <div className={`inline-flex items-center justify-center bg-white border border-gray-200 rounded-md h-7 px-1.5 shadow-sm ${className}`} aria-label="Mastercard">
+      <span className="block w-3.5 h-3.5 rounded-full bg-[#eb001b]" />
+      <span className="block w-3.5 h-3.5 rounded-full bg-[#f79e1b] -ml-1.5 mix-blend-multiply" />
+    </div>
+  );
 }
 
 export function AmexLogo({ className = "" }: PLProps) {
-  return <TextBadge label="American Express" className={className} />;
+  return (
+    <div className={`inline-flex items-center justify-center bg-[#2e77bb] border border-gray-200 rounded-md h-7 px-2 shadow-sm ${className}`} aria-label="American Express">
+      <span className="font-extrabold text-white text-[10px] tracking-tight leading-none">AMEX</span>
+    </div>
+  );
 }
 
 export function PaypalLogo({ className = "" }: PLProps) {
-  return <TextBadge label="PayPal" className={className} />;
+  return (
+    <div className={`inline-flex items-center justify-center bg-white border border-gray-200 rounded-md h-7 px-2 shadow-sm ${className}`} aria-label="PayPal">
+      <span className="font-black italic text-[#003087] text-xs leading-none">Pay</span>
+      <span className="font-black italic text-[#0070ba] text-xs leading-none">Pal</span>
+    </div>
+  );
 }
 
 export function ApplePayLogo({ className = "" }: PLProps) {
-  return <TextBadge label="Apple Pay" className={className} />;
+  return (
+    <div className={`inline-flex items-center justify-center bg-black rounded-md h-7 px-2.5 shadow-sm ${className}`} aria-label="Apple Pay">
+      <svg viewBox="0 0 24 24" className="w-3 h-3 mr-0.5 fill-white" aria-hidden="true">
+        <path d="M17.05 12.04c-.03-2.93 2.39-4.33 2.5-4.4-1.36-2-3.49-2.27-4.24-2.3-1.81-.18-3.53 1.07-4.45 1.07-.93 0-2.34-1.05-3.85-1.02-1.98.03-3.81 1.15-4.83 2.92-2.06 3.57-.53 8.85 1.48 11.75.98 1.42 2.16 3.02 3.71 2.96 1.49-.06 2.05-.96 3.85-.96 1.79 0 2.31.96 3.88.93 1.6-.03 2.61-1.45 3.59-2.88 1.13-1.65 1.6-3.26 1.63-3.35-.03-.01-3.13-1.2-3.16-4.76M14.13 3.83c.82-1 1.37-2.38 1.22-3.76-1.18.05-2.61.79-3.46 1.78-.76.88-1.43 2.29-1.25 3.64 1.32.1 2.66-.67 3.49-1.66" />
+      </svg>
+      <span className="font-semibold text-white text-[11px] leading-none">Pay</span>
+    </div>
+  );
 }
 
 export function GooglePayLogo({ className = "" }: PLProps) {
-  return <TextBadge label="Google Pay" className={className} />;
+  return (
+    <div className={`inline-flex items-center justify-center bg-white border border-gray-200 rounded-md h-7 px-2 shadow-sm ${className}`} aria-label="Google Pay">
+      <span className="text-[#4285f4] font-bold text-[11px] leading-none">G</span>
+      <span className="text-[#ea4335] font-bold text-[11px] leading-none">o</span>
+      <span className="text-[#fbbc04] font-bold text-[11px] leading-none">o</span>
+      <span className="text-[#4285f4] font-bold text-[11px] leading-none">g</span>
+      <span className="text-[#34a853] font-bold text-[11px] leading-none">l</span>
+      <span className="text-[#ea4335] font-bold text-[11px] leading-none">e</span>
+      <span className="text-gray-600 font-semibold text-[11px] leading-none ml-1">Pay</span>
+    </div>
+  );
 }
 
 export function KlarnaLogo({ className = "" }: PLProps) {
-  return <TextBadge label="Klarna" className={className} />;
+  return (
+    <div className={`inline-flex items-center justify-center bg-[#ffa8cd] rounded-md h-7 px-2.5 shadow-sm ${className}`} aria-label="Klarna">
+      <span className="font-black text-black text-[11px] tracking-tight leading-none">Klarna.</span>
+    </div>
+  );
 }
 
 export function SepaLogo({ className = "" }: PLProps) {
-  return <TextBadge label="SEPA" className={className} />;
+  return (
+    <div className={`inline-flex items-center justify-center bg-[#00519E] rounded-md h-7 px-2 shadow-sm ${className}`} aria-label="SEPA Überweisung">
+      <svg viewBox="0 0 24 24" className="w-3.5 h-3.5 mr-1 fill-white" aria-hidden="true">
+        <path d="M4 10h3v7H4zM10.5 10h3v7h-3zM2 19h20v3H2zM17 10h3v7h-3zM12 1L2 6v2h20V6z" />
+      </svg>
+      <span className="font-extrabold text-white text-[11px] tracking-tight leading-none">SEPA</span>
+    </div>
+  );
 }
 
 export function AppleGooglePayLogo({ className = "" }: PLProps) {
@@ -81,7 +119,7 @@ interface PaymentHelpCard {
 
 const PAYMENT_HELP_CARDS: PaymentHelpCard[] = [
   { id: "paypal", label: "Mit PayPal bezahlt?", sub: "Käuferschutz und typische Fristen prüfen", Logo: PaypalLogo },
-  { id: "visa_mastercard", label: "Mit Kreditkarte bezahlt?", sub: "Reklamation über kartenausgebende Bank prüfen", Logo: VisaLogo },
+  { id: "visa_mastercard", label: "Mit Kreditkarte bezahlt?", sub: "Reklamation über kartenausgebende Bank prüfen", Logo: ({ className = "" }: PLProps) => <div className={`flex items-center gap-1.5 ${className}`}><VisaLogo /><MastercardLogo /></div> },
   { id: "amex", label: "Mit American Express bezahlt?", sub: "Streitfall strukturiert vorbereiten", Logo: AmexLogo },
   { id: "klarna", label: "Mit Klarna bezahlt?", sub: "Problem melden und Zahlungspause prüfen", Logo: KlarnaLogo },
   { id: "apple_google_pay", label: "Apple Pay / Google Pay?", sub: "Hinterlegte Zahlungsart identifizieren", Logo: AppleGooglePayLogo },

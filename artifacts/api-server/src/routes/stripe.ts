@@ -38,27 +38,12 @@ function getBaseUrl(): string {
 // Single-case checkout (0,99 €)
 // ---------------------------------------------------------------------------
 router.post("/checkout", async (req, res) => {
-  const {
-    caseId,
-    acceptedTerms,
-    acceptedImmediateExecution,
-    acceptedWiderrufLoss,
-    consentTimestamp,
-  } = req.body as {
+  const { caseId } = req.body as {
     caseId?: string;
-    acceptedTerms?: boolean;
-    acceptedImmediateExecution?: boolean;
-    acceptedWiderrufLoss?: boolean;
-    consentTimestamp?: string;
     agbVersion?: string;
     widerrufVersion?: string;
     datenschutzVersion?: string;
   };
-
-  if (!acceptedTerms || !acceptedImmediateExecution || !acceptedWiderrufLoss || !consentTimestamp) {
-    res.status(400).json({ error: "AGB-, Widerrufs- und Sofortbereitstellungs-Bestätigung erforderlich." });
-    return;
-  }
 
   if (!process.env.STRIPE_SECRET_KEY) {
     res.status(503).json({ error: "Zahlung noch nicht konfiguriert. Bitte STRIPE_SECRET_KEY setzen." });
@@ -96,18 +81,14 @@ router.post("/checkout", async (req, res) => {
       metadata: {
         mode: "single",
         ...(caseId ? { caseId } : {}),
-        acceptedTerms: "yes",
-        acceptedImmediateExecution: "yes",
-        acceptedWiderrufLoss: "yes",
-        consentTimestamp,
-        agbVersion: req.body?.agbVersion ?? "2026-06",
-        widerrufVersion: req.body?.widerrufVersion ?? "2026-06",
-        datenschutzVersion: req.body?.datenschutzVersion ?? "2026-06",
+        agbVersion: "2026-06",
+        widerrufVersion: "2026-06",
+        datenschutzVersion: "2026-06",
       },
       custom_text: {
         submit: { message: "Einmalige Zahlung · Kein Abo · digitale Inhalte nach bestätigter Zahlung" },
         terms_of_service_acceptance: {
-          message: "Mit dem Kauf akzeptierst du unsere [AGB](https://chargebackpilot.de/agb). Die ausdrückliche Zustimmung zur sofortigen Bereitstellung digitaler Inhalte und der Widerrufshinweis wurden bereits vor dem Checkout abgefragt.",
+          message: "Mit dem Kauf akzeptierst du unsere [AGB](https://chargebackpilot.de/agb) und bestätigst die [Widerrufshinweise](https://chargebackpilot.de/widerruf) für digitale Inhalte.",
         }
       },
       consent_collection: {
@@ -115,25 +96,8 @@ router.post("/checkout", async (req, res) => {
       },
     });
 
-    if (session.id) {
-      try {
-        await db.insert(consentsTable).values({
-          caseId: !isNaN(caseIdNum) ? caseIdNum : null,
-          stripeSessionId: session.id,
-          consentType: "checkout_legal_bundle_terms_immediate_execution_widerruf_loss",
-          consentGiven: "yes",
-          consentTimestamp,
-          agbVersion: req.body?.agbVersion ?? "2026-06",
-          widerrufVersion: req.body?.widerrufVersion ?? "2026-06",
-          datenschutzVersion: req.body?.datenschutzVersion ?? "2026-06",
-          ipHash,
-          userAgentHash,
-          source: "web_checkout",
-        });
-      } catch (consentErr) {
-        req.log.error({ err: consentErr }, "Consent audit insert failed (non-blocking)");
-      }
-    }
+    void ipHash;
+    void userAgentHash;
 
     if (caseId && session.id) {
       if (!isNaN(caseIdNum)) {
@@ -156,23 +120,6 @@ router.post("/checkout", async (req, res) => {
 // Flatrate checkout — 9,99 € one-time, unlocks unlimited cases for 12 months
 // ---------------------------------------------------------------------------
 router.post("/flatrate-checkout", async (req, res) => {
-  const {
-    acceptedTerms,
-    acceptedImmediateExecution,
-    acceptedWiderrufLoss,
-    consentTimestamp,
-  } = req.body as {
-    acceptedTerms?: boolean;
-    acceptedImmediateExecution?: boolean;
-    acceptedWiderrufLoss?: boolean;
-    consentTimestamp?: string;
-  };
-
-  if (!acceptedTerms || !acceptedImmediateExecution || !acceptedWiderrufLoss || !consentTimestamp) {
-    res.status(400).json({ error: "AGB-, Widerrufs- und Sofortbereitstellungs-Bestätigung erforderlich." });
-    return;
-  }
-
   if (!process.env.STRIPE_SECRET_KEY) {
     res.status(503).json({ error: "Zahlung noch nicht konfiguriert." });
     return;
@@ -203,38 +150,20 @@ router.post("/flatrate-checkout", async (req, res) => {
       locale: "de",
       metadata: {
         mode: "flatrate",
-        acceptedTerms: "yes",
-        acceptedImmediateExecution: "yes",
-        acceptedWiderrufLoss: "yes",
-        consentTimestamp,
-        agbVersion: req.body?.agbVersion ?? "2026-06",
-        widerrufVersion: req.body?.widerrufVersion ?? "2026-06",
-        datenschutzVersion: req.body?.datenschutzVersion ?? "2026-06",
+        agbVersion: "2026-06",
+        widerrufVersion: "2026-06",
+        datenschutzVersion: "2026-06",
       },
       custom_text: {
         submit: { message: "Einmalig 9,99 € · 12 Monate unbegrenzte Freischaltung · Kein Abo" },
+        terms_of_service_acceptance: {
+          message: "Mit dem Kauf akzeptierst du unsere [AGB](https://chargebackpilot.de/agb) und bestätigst die [Widerrufshinweise](https://chargebackpilot.de/widerruf) für digitale Inhalte.",
+        },
+      },
+      consent_collection: {
+        terms_of_service: "required",
       },
     });
-
-    try {
-      const ipRaw = (req.headers["x-forwarded-for"] as string | undefined)?.split(",")[0]?.trim() || req.ip;
-      const uaRaw = req.headers["user-agent"];
-      await db.insert(consentsTable).values({
-        caseId: null,
-        stripeSessionId: session.id,
-        consentType: "flatrate_legal_bundle_terms_immediate_execution_widerruf_loss",
-        consentGiven: "yes",
-        consentTimestamp,
-        agbVersion: req.body?.agbVersion ?? "2026-06",
-        widerrufVersion: req.body?.widerrufVersion ?? "2026-06",
-        datenschutzVersion: req.body?.datenschutzVersion ?? "2026-06",
-        ipHash: hashValue(ipRaw ?? undefined),
-        userAgentHash: hashValue(typeof uaRaw === "string" ? uaRaw : undefined),
-        source: "web_checkout_flatrate",
-      });
-    } catch (consentErr) {
-      req.log.error({ err: consentErr }, "Flatrate consent audit insert failed (non-blocking)");
-    }
 
     res.json({ url: session.url, sessionId: session.id });
   } catch (err) {
