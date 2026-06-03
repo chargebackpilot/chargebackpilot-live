@@ -27,7 +27,7 @@ function Cell({ v }: { v: string | true | false }) {
 
 export default function ComparePage() {
   const title = "PayPal vs. Kreditkarte vs. Klarna — welcher Käuferschutz ist 2026 besser? | ChargebackPilot";
-  const description = "Vergleich 2026: PayPal-Käuferschutz, Kreditkarten-Chargeback und Klarna-Käuferschutz im direkten Duell. Fristen, Reaktionszeiten, Vor- und Nachteile — plus klare Empfehlung pro Anwendungsfall.";
+  const description = "Vergleich 2026: PayPal-Käuferschutz, Kreditkarten-Reklamation und Klarna-Käuferschutz im Überblick. Typische Fristen, Abläufe und Vor- und Nachteile — als unverbindliche Orientierung.";
 
   const articleSchema = {
     "@context": "https://schema.org",
@@ -101,16 +101,14 @@ export default function ComparePage() {
               <div className="text-xs font-bold uppercase text-primary mb-2">Empfehlung</div>
               <div className="font-bold text-lg mb-2">Physische Ware</div>
               <p className="text-sm text-muted-foreground mb-3">
-                Wenn möglich mit <strong>Kreditkarte</strong> zahlen — längere Frist und stärkere Rechte
-                bei Insolvenz. <strong>PayPal</strong> ist die solide zweite Wahl.
+                Häufig ist eine <strong>Kreditkarte</strong> gut dokumentierbar; <strong>PayPal</strong> kann je nach Anbieterregeln ebenfalls passend sein.
               </p>
             </div>
             <div className="bg-card border rounded-xl p-5">
               <div className="text-xs font-bold uppercase text-primary mb-2">Empfehlung</div>
               <div className="font-bold text-lg mb-2">Reise & Flug</div>
               <p className="text-sm text-muted-foreground mb-3">
-                Eindeutig <strong>Kreditkarte</strong>. Lange Frist ab Reisedatum + Standard-Reason-Code
-                Service-not-rendered-Reason bei abgesagten Leistungen.
+                Oft lohnt sich die Prüfung über die <strong>Kreditkarte</strong>, insbesondere wenn eine Leistung nicht erbracht wurde. Die konkrete Kategorie hängt vom Einzelfall ab.
               </p>
             </div>
             <div className="bg-card border rounded-xl p-5">
@@ -118,7 +116,7 @@ export default function ComparePage() {
               <div className="font-bold text-lg mb-2">Digitale & Abo</div>
               <p className="text-sm text-muted-foreground mb-3">
                 <strong>Kreditkarte</strong> oder <strong>SEPA-Lastschrift</strong> (8-Wochen-Rückruf).
-                PayPal-Käuferschutz greift bei digitalen Gütern oft nicht.
+                PayPal-Käuferschutz kann bei digitalen Gütern von den jeweiligen Richtlinien abhängen.
               </p>
             </div>
           </section>

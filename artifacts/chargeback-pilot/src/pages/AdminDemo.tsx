@@ -34,14 +34,14 @@ export default function AdminDemo() {
               Stripe Paywall freischalten
             </CardTitle>
             <CardDescription>
-              Klicke hier, um sofort eine aktive "12-Monats-Flatrate" im LocalStorage zu hinterlegen.
+              Klicke hier, um eine aktive "12-Monats-Flatrate" zu Testzwecken im LocalStorage zu hinterlegen.
               Danach wird keine Bezahlschranke mehr angezeigt, wenn du den Wizard durchspielst.
             </CardDescription>
           </CardHeader>
           <CardContent>
             <Button onClick={handleUnlockStripe} size="lg" className="gap-2">
               <CheckCircle2 className="w-5 h-5" />
-              Sofort freischalten (Kostenlos testen)
+              Test-Freischaltung aktivieren
             </Button>
           </CardContent>
         </Card>

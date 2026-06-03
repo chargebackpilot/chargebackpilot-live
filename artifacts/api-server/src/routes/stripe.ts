@@ -38,17 +38,25 @@ function getBaseUrl(): string {
 // Single-case checkout (0,99 €)
 // ---------------------------------------------------------------------------
 router.post("/checkout", async (req, res) => {
-  const { caseId, consentWiderruf, consentTimestamp } = req.body as {
+  const {
+    caseId,
+    acceptedTerms,
+    acceptedImmediateExecution,
+    acceptedWiderrufLoss,
+    consentTimestamp,
+  } = req.body as {
     caseId?: string;
-    consentWiderruf?: boolean;
+    acceptedTerms?: boolean;
+    acceptedImmediateExecution?: boolean;
+    acceptedWiderrufLoss?: boolean;
     consentTimestamp?: string;
     agbVersion?: string;
     widerrufVersion?: string;
     datenschutzVersion?: string;
   };
 
-  if (!consentWiderruf || !consentTimestamp) {
-    res.status(400).json({ error: "Widerrufs-Zustimmung erforderlich." });
+  if (!acceptedTerms || !acceptedImmediateExecution || !acceptedWiderrufLoss || !consentTimestamp) {
+    res.status(400).json({ error: "AGB-, Widerrufs- und Sofortbereitstellungs-Bestätigung erforderlich." });
     return;
   }
 
@@ -74,7 +82,7 @@ router.post("/checkout", async (req, res) => {
             currency: "eur",
             product_data: {
               name: "ChargebackPilot — Fall freischalten",
-              description: "3 professionelle Textvorlagen + PDF-Download + Schritt-für-Schritt-Anleitung. ",
+              description: "Digitale Formulierungshilfe: Textentwürfe, PDF-Download und strukturierte Orientierung. Keine Rechtsberatung.",
             },
             unit_amount: 99,
           },
@@ -88,16 +96,18 @@ router.post("/checkout", async (req, res) => {
       metadata: {
         mode: "single",
         ...(caseId ? { caseId } : {}),
-        consentWiderruf: "yes",
+        acceptedTerms: "yes",
+        acceptedImmediateExecution: "yes",
+        acceptedWiderrufLoss: "yes",
         consentTimestamp,
-        agbVersion: req.body?.agbVersion ?? "2026-05",
-        widerrufVersion: req.body?.widerrufVersion ?? "2026-05",
-        datenschutzVersion: req.body?.datenschutzVersion ?? "2026-05",
+        agbVersion: req.body?.agbVersion ?? "2026-06",
+        widerrufVersion: req.body?.widerrufVersion ?? "2026-06",
+        datenschutzVersion: req.body?.datenschutzVersion ?? "2026-06",
       },
       custom_text: {
-        submit: { message: "Einmalige Zahlung · Kein Abo · Zugang nach bestätigter Zahlung" },
+        submit: { message: "Einmalige Zahlung · Kein Abo · digitale Inhalte nach bestätigter Zahlung" },
         terms_of_service_acceptance: {
-          message: "Mit dem Kauf akzeptierst du unsere [AGB](https://chargebackpilot.de/agb). Du verlangst ausdrücklich die sofortige Ausführung des Vertrags und bestätigst, dass dein [Widerrufsrecht](https://chargebackpilot.de/widerruf) bei vollständiger Vertragserfüllung erlischt.",
+          message: "Mit dem Kauf akzeptierst du unsere [AGB](https://chargebackpilot.de/agb). Die ausdrückliche Zustimmung zur sofortigen Bereitstellung digitaler Inhalte und der Widerrufshinweis wurden bereits vor dem Checkout abgefragt.",
         }
       },
       consent_collection: {
@@ -110,12 +120,12 @@ router.post("/checkout", async (req, res) => {
         await db.insert(consentsTable).values({
           caseId: !isNaN(caseIdNum) ? caseIdNum : null,
           stripeSessionId: session.id,
-          consentType: "widerruf_digital_content",
-          consentGiven: consentWiderruf ? "yes" : "no",
+          consentType: "checkout_legal_bundle_terms_immediate_execution_widerruf_loss",
+          consentGiven: "yes",
           consentTimestamp,
-          agbVersion: req.body?.agbVersion ?? "2026-05",
-          widerrufVersion: req.body?.widerrufVersion ?? "2026-05",
-          datenschutzVersion: req.body?.datenschutzVersion ?? "2026-05",
+          agbVersion: req.body?.agbVersion ?? "2026-06",
+          widerrufVersion: req.body?.widerrufVersion ?? "2026-06",
+          datenschutzVersion: req.body?.datenschutzVersion ?? "2026-06",
           ipHash,
           userAgentHash,
           source: "web_checkout",
@@ -146,6 +156,23 @@ router.post("/checkout", async (req, res) => {
 // Flatrate checkout — 9,99 € one-time, unlocks unlimited cases for 12 months
 // ---------------------------------------------------------------------------
 router.post("/flatrate-checkout", async (req, res) => {
+  const {
+    acceptedTerms,
+    acceptedImmediateExecution,
+    acceptedWiderrufLoss,
+    consentTimestamp,
+  } = req.body as {
+    acceptedTerms?: boolean;
+    acceptedImmediateExecution?: boolean;
+    acceptedWiderrufLoss?: boolean;
+    consentTimestamp?: string;
+  };
+
+  if (!acceptedTerms || !acceptedImmediateExecution || !acceptedWiderrufLoss || !consentTimestamp) {
+    res.status(400).json({ error: "AGB-, Widerrufs- und Sofortbereitstellungs-Bestätigung erforderlich." });
+    return;
+  }
+
   if (!process.env.STRIPE_SECRET_KEY) {
     res.status(503).json({ error: "Zahlung noch nicht konfiguriert." });
     return;
@@ -163,7 +190,7 @@ router.post("/flatrate-checkout", async (req, res) => {
             currency: "eur",
             product_data: {
               name: "ChargebackPilot Flatrate — 12 Monate",
-              description: "Unbegrenzte Fall-Freischaltungen für 12 Monate. ",
+              description: "Digitale Formulierungshilfe für 12 Monate. Einmalzahlung, kein Abo, keine Rechtsberatung.",
             },
             unit_amount: 999,
           },
@@ -174,11 +201,40 @@ router.post("/flatrate-checkout", async (req, res) => {
       success_url: `${baseUrl}/?flatrate_success=1&session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${baseUrl}/?flatrate_cancel=1`,
       locale: "de",
-      metadata: { mode: "flatrate" },
+      metadata: {
+        mode: "flatrate",
+        acceptedTerms: "yes",
+        acceptedImmediateExecution: "yes",
+        acceptedWiderrufLoss: "yes",
+        consentTimestamp,
+        agbVersion: req.body?.agbVersion ?? "2026-06",
+        widerrufVersion: req.body?.widerrufVersion ?? "2026-06",
+        datenschutzVersion: req.body?.datenschutzVersion ?? "2026-06",
+      },
       custom_text: {
         submit: { message: "Einmalig 9,99 € · 12 Monate unbegrenzte Freischaltung · Kein Abo" },
       },
     });
+
+    try {
+      const ipRaw = (req.headers["x-forwarded-for"] as string | undefined)?.split(",")[0]?.trim() || req.ip;
+      const uaRaw = req.headers["user-agent"];
+      await db.insert(consentsTable).values({
+        caseId: null,
+        stripeSessionId: session.id,
+        consentType: "flatrate_legal_bundle_terms_immediate_execution_widerruf_loss",
+        consentGiven: "yes",
+        consentTimestamp,
+        agbVersion: req.body?.agbVersion ?? "2026-06",
+        widerrufVersion: req.body?.widerrufVersion ?? "2026-06",
+        datenschutzVersion: req.body?.datenschutzVersion ?? "2026-06",
+        ipHash: hashValue(ipRaw ?? undefined),
+        userAgentHash: hashValue(typeof uaRaw === "string" ? uaRaw : undefined),
+        source: "web_checkout_flatrate",
+      });
+    } catch (consentErr) {
+      req.log.error({ err: consentErr }, "Flatrate consent audit insert failed (non-blocking)");
+    }
 
     res.json({ url: session.url, sessionId: session.id });
   } catch (err) {

@@ -174,7 +174,7 @@ export default function MerchantProblemPage() {
               <div className="bg-background border rounded-lg p-3">
                 <ShieldCheck className="w-4 h-4 mx-auto text-primary mb-1" />
                 <div className="text-xs text-muted-foreground">Preis</div>
-                <div className="font-semibold text-sm">0,99 € (inkl. MwSt.)</div>
+                <div className="font-semibold text-sm">0,99 € Endpreis</div>
               </div>
             </div>
           </div>
@@ -241,8 +241,8 @@ export default function MerchantProblemPage() {
             </h2>
             <p className="text-sm text-muted-foreground mb-5">
               Je nach Zahlungsart hast du unterschiedlich lange Zeit. Diese Tabelle zeigt, welche Frist
-              bei {merchant.name}-Fällen für dich relevant ist — handle immer auf die kürzeste Frist, sonst
-              läuft dir die stärkste Option weg.
+              bei {merchant.name}-Fällen für dich relevant sein kann — prüfe möglichst früh, welche Frist
+              für deine Zahlungsart und deinen Fall tatsächlich gilt.
             </p>
             <div className="space-y-3">
               {copy.deadlines.map((d, i) => (
@@ -312,7 +312,7 @@ export default function MerchantProblemPage() {
           <section className="bg-primary text-primary-foreground p-6 md:p-8 rounded-2xl text-center">
               <h2 className="text-xl md:text-2xl font-bold mb-2">Lass die KI deinen {merchant.name}-Fall einordnen</h2>
             <p className="text-primary-foreground/95 mb-5 text-sm md:text-base">
-                Kostenlose, indikative Einschätzung — Vorlagen für 0,99 € (inkl. MwSt.) freischalten. 
+                Kostenlose, indikative Einschätzung — Vorlagen für 0,99 € Endpreis freischalten.
             </p>
             <Link href={wizardHref}>
               <Button size="lg" variant="secondary" className="gap-2">

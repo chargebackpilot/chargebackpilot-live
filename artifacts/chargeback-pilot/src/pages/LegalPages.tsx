@@ -6,7 +6,7 @@ export function Impressum() {
       <div className="container mx-auto max-w-3xl py-16 px-4">
         <h1 className="text-3xl font-bold mb-8">Impressum</h1>
         <div className="prose prose-slate max-w-none">
-          <p>Angaben gemäß § 5 TMG</p>
+          <p>Angaben gemäß § 5 Digitale-Dienste-Gesetz (DDG)</p>
           <p>
             <strong>Till Pfeiffer</strong><br />
             Am Dammgraben 100<br />
@@ -27,11 +27,16 @@ export function Impressum() {
 
           <p>
             <strong>Umsatzsteuer-ID:</strong><br />
-            Derzeit liegt keine Umsatzsteuer-Identifikationsnummer vor.
+            Es wird derzeit die Kleinunternehmerregelung gemäß § 19 UStG angewendet. Es wird keine Umsatzsteuer ausgewiesen. Eine Umsatzsteuer-Identifikationsnummer liegt derzeit nicht vor.
           </p>
 
           <p>
-            <strong>Hinweis:</strong> ChargebackPilot ist ein unabhängiges Projekt und steht in keiner Partnerschaft oder Verbindung mit den genannten Zahlungsdienstleistern, Plattformen oder Marken.</p>
+            <strong>Verbraucherstreitbeilegung:</strong><br />
+            Ich bin nicht verpflichtet und nicht bereit, an Streitbeilegungsverfahren vor einer Verbraucherschlichtungsstelle teilzunehmen.
+          </p>
+
+          <p>
+            <strong>Hinweis:</strong> ChargebackPilot ist ein unabhängiges Software-Angebot und steht in keiner Partnerschaft oder Verbindung mit den genannten Zahlungsdienstleistern, Plattformen oder Marken. Genannte Marken dienen ausschließlich der beschreibenden Einordnung.</p>
         </div>
       </div>
     </MainLayout>
@@ -61,24 +66,25 @@ export function Datenschutz() {
           <p>Die Übertragung von Daten im Internet ist nie vollständig risikofrei. Wir nutzen branchenübliche Sicherheitsmaßnahmen, um Ihre Informationen zu schützen.</p>
 
           <h2>4. Hosting und Infrastruktur</h2>
-          <p>ChargebackPilot wird bei <strong>Render Inc.</strong> (Serverstandort: Frankfurt am Main, EU) gehostet. Zur Speicherung notwendiger Falldaten verwenden wir <strong>Neon DB</strong> (Serverstandort: EU). Diese Dienste verarbeiten technische Verbindungsdaten (wie IP-Adresse, Browsertyp) sowie die eingegebenen Daten in unserem Auftrag und auf Grundlage unseres berechtigten Interesses an einem sicheren und stabilen Betrieb (Art. 6 Abs. 1 lit. f DSGVO) sowie zur Vertragserfüllung (Art. 6 Abs. 1 lit. b DSGVO).</p>
+          <p>ChargebackPilot wird bei <strong>Render Inc.</strong> gehostet. Zur Speicherung notwendiger Falldaten verwenden wir <strong>Neon DB</strong>. Diese Anbieter verarbeiten technische Verbindungsdaten (z. B. IP-Adresse, Browsertyp, Zeitstempel) sowie die eingegebenen Falldaten in unserem Auftrag bzw. als technische Infrastruktur. Rechtsgrundlagen sind unser berechtigtes Interesse an einem sicheren und stabilen Betrieb (Art. 6 Abs. 1 lit. f DSGVO) sowie, bei Nutzung kostenpflichtiger Funktionen, die Vertragserfüllung (Art. 6 Abs. 1 lit. b DSGVO).</p>
+          <p>Soweit Anbieter außerhalb der EU/des EWR eingebunden sind oder ein Zugriff aus Drittländern nicht ausgeschlossen werden kann, erfolgt dies auf Grundlage geeigneter Garantien, insbesondere EU-Standardvertragsklauseln, soweit erforderlich. Wir schließen mit eingesetzten Auftragsverarbeitern die jeweils erforderlichen Datenschutzvereinbarungen, soweit der Anbieter als Auftragsverarbeiter tätig wird.</p>
 
           <h2>5. Erhobene Daten</h2>
-          <p>Wir verarbeiten alle Daten, die Sie uns freiwillig im Formular übermitteln, z. B. Fallbeschreibung, Händlername, Betrag, Zahlungsart, Versandstatus und Hinweise aus dem Kommunikationsverlauf.</p>
+          <p>Wir verarbeiten alle Daten, die Sie uns freiwillig im Formular übermitteln, z. B. Fallbeschreibung, Händlername, Betrag, Zahlungsart, Zahlungsdatum, Versandstatus, Belege-Auswahl und Hinweise aus dem Kommunikationsverlauf. Bitte geben Sie keine sensiblen Daten ein, die für die Erstellung der Formulierungshilfe nicht erforderlich sind.</p>
 
           <h2>6. Nutzung der Gemini API von Google LLC</h2>
-          <p>Zur Strukturierung Ihrer Angaben und zur Generierung von Textvorlagen nutzen wir die Gemini API von Google LLC als externen technischen Dienst. Dabei werden die von Ihnen eingegebenen Falldaten an Systeme von Google LLC übermittelt und dort verarbeitet.</p>
-          <p>Google LLC hat seinen Sitz in den USA. Eine etwaige Drittlandübermittlung erfolgt auf Grundlage der mit dem Dienst verbundenen geeigneten Garantien (insbesondere EU-Standardvertragsklauseln, soweit anwendbar). Vor der Nutzung dieser Funktion holen wir im Formular Ihre ausdrückliche Einwilligung (Art. 6 Abs. 1 lit. a DSGVO) ein.</p>
+          <p>Zur Strukturierung Ihrer Angaben und zur Generierung unverbindlicher Textentwürfe nutzen wir die Gemini API von Google LLC bzw. verbundene Google-Dienste als externen technischen Dienst. Dabei werden die von Ihnen eingegebenen Falldaten an Google übermittelt und dort zur Bearbeitung der Anfrage verarbeitet.</p>
+          <p>Google LLC hat seinen Sitz in den USA. Eine Drittlandübermittlung kann daher nicht ausgeschlossen werden. Sie erfolgt, soweit erforderlich, auf Grundlage geeigneter Garantien, insbesondere EU-Standardvertragsklauseln. Vor der Nutzung der KI-Funktion holen wir im Formular Ihre ausdrückliche Einwilligung zur Übermittlung und Verarbeitung Ihrer Eingaben durch Google ein (Art. 6 Abs. 1 lit. a DSGVO). Sie können diese Einwilligung jederzeit mit Wirkung für die Zukunft widerrufen.</p>
 
           <h2>7. Rechtsgrundlagen</h2>
-          <p>Die Verarbeitung Ihrer Eingaben zur KI-Textgenerierung erfolgt auf Grundlage Ihrer freiwilligen Einwilligung (Art. 6 Abs. 1 lit. a DSGVO). Die Verarbeitung technischer Verbindungsdaten erfolgt auf Grundlage unseres berechtigten Interesses an einem sicheren Betrieb (Art. 6 Abs. 1 lit. f DSGVO).</p>
+          <p>Die Verarbeitung Ihrer Eingaben zur KI-Textgenerierung erfolgt auf Grundlage Ihrer freiwilligen Einwilligung (Art. 6 Abs. 1 lit. a DSGVO). Die Verarbeitung zur Bereitstellung kostenpflichtiger digitaler Inhalte und zur Zahlungsabwicklung erfolgt zur Vertragserfüllung (Art. 6 Abs. 1 lit. b DSGVO). Technische Verbindungsdaten und Sicherheitsprotokolle verarbeiten wir auf Grundlage unseres berechtigten Interesses an einem sicheren Betrieb (Art. 6 Abs. 1 lit. f DSGVO). Gesetzliche Aufbewahrungspflichten, insbesondere steuerliche Nachweise, beruhen auf Art. 6 Abs. 1 lit. c DSGVO.</p>
 
           <h2>8. Speicherdauer</h2>
-          <p>Personenbezogene Daten werden nur so lange gespeichert, wie es für den jeweiligen Zweck erforderlich ist oder gesetzliche Aufbewahrungsfristen bestehen. Falldaten werden in der Regel nach spätestens 12 Monaten gelöscht oder anonymisiert, sofern keine gesetzlichen Aufbewahrungspflichten entgegenstehen. Technische Protokolldaten können aus Sicherheitsgründen für bis zu 30 Tage gespeichert werden.</p>
+          <p>Personenbezogene Daten werden nur so lange gespeichert, wie es für den jeweiligen Zweck erforderlich ist oder gesetzliche Aufbewahrungsfristen bestehen. Falldaten werden in der Regel nach spätestens 12 Monaten gelöscht oder anonymisiert, sofern keine gesetzlichen Aufbewahrungspflichten entgegenstehen. Zahlungs- und Einwilligungsnachweise können im Rahmen gesetzlicher Nachweis- und Aufbewahrungspflichten länger gespeichert werden. Technische Protokolldaten können aus Sicherheitsgründen für bis zu 30 Tage gespeichert werden.</p>
           <p>Sie können die Löschung Ihrer Daten verlangen, soweit keine gesetzlichen Aufbewahrungsfristen entgegenstehen.</p>
 
           <h2>9. Weitergabe von Daten</h2>
-          <p>Eine Weitergabe an Dritte erfolgt nur, soweit dies zur Bereitstellung des Dienstes notwendig ist, z. B. an Render Inc., Neon und Google LLC. Zur Abwicklung von Zahlungen nutzen wir den Zahlungsdienstleister Stripe. Eine darüber hinausgehende Weitergabe, insbesondere für Werbezwecke, findet nicht statt.</p>
+          <p>Eine Weitergabe an Dritte erfolgt nur, soweit dies zur Bereitstellung des Dienstes notwendig ist, z. B. an Render Inc. (Hosting), Neon (Datenbank), Google LLC/Gemini (KI-Verarbeitung) und Stripe Payments Europe bzw. Stripe-Unternehmen (Zahlungsabwicklung). Stripe verarbeitet Zahlungsdaten grundsätzlich eigenverantwortlich nach den Stripe-Datenschutzbedingungen. Eine darüber hinausgehende Weitergabe, insbesondere für eigene Werbezwecke von ChargebackPilot, findet nicht statt.</p>
 
           <h2>10. Rechte der betroffenen Person</h2>
           <p>Sie haben das Recht auf Auskunft, Berichtigung, Löschung, Einschränkung der Verarbeitung, Datenübertragbarkeit und Widerspruch. Sie können Ihre Einwilligung jederzeit widerrufen.</p>
@@ -91,7 +97,7 @@ export function Datenschutz() {
           <p>Wir behalten uns vor, diese Datenschutzerklärung bei Bedarf anzupassen. Die jeweils aktuelle Fassung ist auf dieser Website verfügbar.</p>
 
           <h2>13. Cookies und lokale Speicherung</h2>
-          <p>Es werden keine Analyse- oder Tracking-Dienste eingesetzt. Es werden ausschließlich funktionale Daten lokal gespeichert, z. B. zur Vorhaltung von Anzeige- oder Navigationszuständen. Diese Speicherung dient der Bedienbarkeit der Anwendung und nicht der Erstellung von Nutzerprofilen.</p>
+          <p>Es werden keine Analyse- oder Tracking-Dienste eingesetzt. Es werden ausschließlich funktionale Daten lokal gespeichert, z. B. zur Vorhaltung von Anzeige-, Navigations-, Zahlungsrückkehr- oder Fallzuständen. Diese Speicherung dient der Bedienbarkeit der Anwendung und nicht der Erstellung von Nutzerprofilen.</p>
         </div>
       </div>
     </MainLayout>
@@ -114,8 +120,11 @@ export function Widerruf() {
 
           <div className="bg-muted/50 p-4 rounded-lg mt-6 border">
             <h3 className="font-bold mb-2">Vorzeitiges Erlöschen des Widerrufsrechts</h3>
-            <p>Ihr Widerrufsrecht kann bei einem Vertrag über die Lieferung von nicht auf einem körperlichen Datenträger befindlichen digitalen Inhalten (z. B. generierte Textvorlagen und PDFs) vorzeitig erlöschen, wenn Sie ausdrücklich zugestimmt haben, dass wir mit der Ausführung des Vertrags vor Ablauf der Widerrufsfrist beginnen, und Sie Ihre Kenntnis davon bestätigt haben, dass Sie dadurch Ihr Widerrufsrecht verlieren. Die hierfür erforderlichen Erklärungen werden vor Abschluss des kostenpflichtigen Vorgangs abgefragt.</p>
+            <p>Ihr Widerrufsrecht kann bei einem Vertrag über die Lieferung von nicht auf einem körperlichen Datenträger befindlichen digitalen Inhalten (z. B. generierte Textentwürfe und PDFs) vorzeitig erlöschen, wenn Sie ausdrücklich zugestimmt haben, dass wir mit der Ausführung des Vertrags vor Ablauf der Widerrufsfrist beginnen, und Sie Ihre Kenntnis davon bestätigt haben, dass Sie dadurch bei vollständiger Vertragserfüllung Ihr Widerrufsrecht verlieren. Die hierfür erforderlichen Erklärungen werden vor Abschluss des kostenpflichtigen Vorgangs über gesonderte Pflicht-Checkboxen abgefragt und protokolliert.</p>
           </div>
+
+          <h2>Muster-Widerrufstext</h2>
+          <p>Wenn Sie den Vertrag widerrufen wollen, können Sie folgende Formulierung verwenden: „Hiermit widerrufe ich den von mir abgeschlossenen Vertrag über die Nutzung von ChargebackPilot. Name, E-Mail-Adresse, Datum.“</p>
         </div>
       </div>
     </MainLayout>
@@ -132,37 +141,41 @@ export function AGB() {
           <p>Diese Allgemeinen Geschäftsbedingungen gelten für die Nutzung der von ChargebackPilot bereitgestellten Anwendung und die damit verbundenen Services.</p>
 
           <h2>2. Leistungsbeschreibung</h2>
-          <p>ChargebackPilot stellt einen KI-basierten Assistenten zur Verfügung, der Nutzern beim Erstellen von Textvorlagen unterstützt. Die Inhalte werden automatisch erzeugt und dienen als unverbindliche Formulierungshilfe.</p>
-          <p>Die KI-Generierung erfolgt über die Gemini API von Google LLC. Wir sind kein Partner oder Vertreter von Google LLC und bieten keinen anwaltlichen Service.</p>
+          <p>ChargebackPilot stellt einen KI-basierten Assistenten zur Verfügung, der Nutzer beim Strukturieren ihres Sachverhalts und beim Erstellen unverbindlicher Textentwürfe unterstützt. Die Inhalte werden automatisch erzeugt und dienen ausschließlich als allgemeine Formulierungshilfe.</p>
+          <p>Die KI-Generierung erfolgt über die Gemini API von Google LLC. Wir sind kein Partner oder Vertreter von Google LLC und bieten keinen anwaltlichen Service, keine Rechtsberatung, keine Rechtsprüfung und keine Vertretung gegenüber Händlern, Banken oder Zahlungsdienstleistern.</p>
 
-          <h2>3. Vertragsabschluss</h2>
+          <h2>3. Anbieterstatus und Preise</h2>
+          <p>Anbieter ist Till Pfeiffer als Privatperson/Einzelanbieter. Die Preise sind Endpreise. Es wird die Kleinunternehmerregelung gemäß § 19 UStG angewendet; Umsatzsteuer wird nicht ausgewiesen.</p>
+
+          <h2>4. Vertragsabschluss</h2>
           <p>Mit der Nutzung des Dienstes erklären Sie sich mit diesen Bedingungen einverstanden. Ein separater schriftlicher Vertrag ist nicht erforderlich.</p>
+          <p>Bei kostenpflichtigen digitalen Inhalten kommt der Vertrag zustande, wenn Sie die erforderlichen rechtlichen Hinweise bestätigen, den Stripe-Checkout abschließen und die Zahlung bestätigt wird. Der Zugang zu den digitalen Inhalten wird danach technisch freigeschaltet.</p>
 
-          <h2>4. Nutzung</h2>
+          <h2>5. Nutzung</h2>
           <p>Der Nutzer ist verpflichtet, die generierten Inhalte vor der Weiterverwendung auf Richtigkeit, Vollständigkeit und Angemessenheit zu prüfen. ChargebackPilot darf nicht als Ersatz für eine anwaltliche Beratung genutzt werden.</p>
 
-          <h2>5. Haftung</h2>
+          <h2>6. Leistungsumfang und Verfügbarkeit</h2>
+          <p>Die Einzelfall-Freischaltung umfasst den Zugriff auf die für den konkreten Fall erzeugten digitalen Textentwürfe und Exportfunktionen. Die 12-Monats-Flatrate ermöglicht Freischaltungen für mehrere Fälle innerhalb des angegebenen Zeitraums, ohne dass ein Abonnement oder eine automatische Verlängerung entsteht. Wir bemühen uns um eine stabile Verfügbarkeit, übernehmen aber keine Garantie für eine jederzeit unterbrechungsfreie Erreichbarkeit.</p>
+
+          <h2>7. Haftung</h2>
           <p>Die bereitgestellten Inhalte sind unverbindliche Formulierungshilfen und keine Rechtsberatung. Eine Haftung für Vorsatz und grobe Fahrlässigkeit bleibt unberührt. Bei leicht fahrlässiger Verletzung wesentlicher Vertragspflichten haften wir nur auf den vertragstypischen, vorhersehbaren Schaden. Im Übrigen ist die Haftung, soweit gesetzlich zulässig, ausgeschlossen.</p>
           
-          <h2>6. Widerrufsrecht bei digitalen Inhalten</h2>
-          <p>Dem Nutzer steht grundsätzlich ein gesetzliches Widerrufsrecht zu. Bei Verträgen über die Lieferung von nicht auf einem körperlichen Datenträger befindlichen digitalen Inhalten (wie generierte PDFs und Textvorlagen) kann dieses Widerrufsrecht vorzeitig erlöschen, wenn der Nutzer ausdrücklich zustimmt, dass mit der Ausführung des Vertrags vor Ablauf der Widerrufsfrist begonnen wird, und seine Kenntnis davon bestätigt, dass er dadurch sein Widerrufsrecht verliert. Die erforderlichen Erklärungen werden im Bezahlvorgang abgefragt.</p>
+          <h2>8. Widerrufsrecht bei digitalen Inhalten</h2>
+          <p>Dem Nutzer steht grundsätzlich ein gesetzliches Widerrufsrecht zu. Bei Verträgen über die Lieferung von nicht auf einem körperlichen Datenträger befindlichen digitalen Inhalten (wie generierte PDFs und Textentwürfe) kann dieses Widerrufsrecht vorzeitig erlöschen, wenn der Nutzer ausdrücklich zustimmt, dass mit der Ausführung des Vertrags vor Ablauf der Widerrufsfrist begonnen wird, und seine Kenntnis davon bestätigt, dass er dadurch bei vollständiger Vertragserfüllung sein Widerrufsrecht verliert. Die erforderlichen Erklärungen werden vor dem Bezahlvorgang über Pflicht-Checkboxen abgefragt und protokolliert.</p>
 
-          <h2>7. Fristen</h2>
-          <p>ChargebackPilot überwacht keine gesetzlichen oder vertraglichen Fristen. Der Nutzer ist selbst verantwortlich für die Einhaltung aller Fristen, insbesondere bei Zahlungsdienstleistern und Banken.</p>
+          <h2>9. Fristen und Eigenverantwortung</h2>
+          <p>ChargebackPilot überwacht keine gesetzlichen, vertraglichen oder anbieterspezifischen Fristen. Hinweise zu Fristen sind allgemeine Orientierung und können je nach Anbieter, Land, Zahlungsart und Einzelfall abweichen. Der Nutzer bleibt selbst verantwortlich, Fristen direkt bei Händler, Bank oder Zahlungsdienstleister zu prüfen und einzuhalten.</p>
 
-          <h2>8. Datenschutz</h2>
+          <h2>10. Datenschutz</h2>
           <p>Informationen zur Verarbeitung personenbezogener Daten finden Sie in unserer <a href="/datenschutz" className="underline hover:text-foreground">Datenschutzerklärung</a>.</p>
 
-          <h2>9. Markenrechte</h2>
+          <h2>11. Markenrechte</h2>
           <p>Alle genannten Markennamen, wie z. B. PayPal, Klarna, Visa, Mastercard, American Express oder Lieferando, sind geschützte Marken der jeweiligen Eigentümer. ChargebackPilot ist nicht mit diesen Unternehmen verbunden.</p>
 
-          <h2>10. Verfügbarkeit</h2>
-          <p>Wir bemühen uns um die bestmögliche Verfügbarkeit des Dienstes, übernehmen jedoch keine Garantie für eine ununterbrochene Verfügbarkeit.</p>
+          <h2>12. Änderungen der AGB</h2>
+          <p>Wir können diese AGB anpassen, wenn dies aufgrund technischer, rechtlicher oder organisatorischer Änderungen erforderlich ist. Für bereits abgeschlossene Einmalkäufe gelten die zum Zeitpunkt des Kaufs einbezogenen Bedingungen, soweit gesetzlich nichts anderes gilt.</p>
 
-          <h2>11. Änderungsvorbehalt</h2>
-          <p>Wir behalten uns das Recht vor, diese AGB jederzeit anzupassen. Für wiederkehrende Nutzer gelten die jeweils aktuellen Bedingungen.</p>
-
-          <h2>12. Schlussbestimmungen</h2>
+          <h2>13. Schlussbestimmungen</h2>
           <p>Sofern gesetzlich zulässig, gilt deutsches Recht. Sollten einzelne Bestimmungen dieser AGB unwirksam sein, bleibt die Wirksamkeit der übrigen Bestimmungen unberührt.</p>
         </div>
       </div>

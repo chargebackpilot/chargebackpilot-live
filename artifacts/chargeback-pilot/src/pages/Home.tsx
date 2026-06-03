@@ -3,6 +3,7 @@ import { MainLayout } from "@/components/layout/MainLayout";
 import { SeoHead } from "@/components/SeoHead";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Link } from "wouter";
 import { useToast } from "@/hooks/use-toast";
 import { activateFlatrate, isFlatrateActive } from "@/lib/case-persistence";
@@ -30,6 +31,7 @@ const Accordion = lazy(() => import("@/components/ui/accordion").then((m) => ({ 
 const AccordionContent = lazy(() => import("@/components/ui/accordion").then((m) => ({ default: m.AccordionContent })));
 const AccordionItem = lazy(() => import("@/components/ui/accordion").then((m) => ({ default: m.AccordionItem })));
 const AccordionTrigger = lazy(() => import("@/components/ui/accordion").then((m) => ({ default: m.AccordionTrigger })));
+const LEGAL_VERSION = "2026-06";
 
 const SCENARIOS = [
   {
@@ -42,7 +44,7 @@ const SCENARIOS = [
     headline: "Bestellung kalt, fehlt oder ungenießbar",
     detail: "Du hast bei Lieferando, Wolt oder UberEats bestellt — und erhalten, was du nicht bestellt hast, oder die Bestellung kam komplett ungenießbar an.",
     brands: ["Lieferando", "Wolt", "UberEats", "Gorillas"],
-    recovery: "Bis zu 100% Rückerstattung möglich",
+    recovery: "Erstattung kann möglich sein",
     href: "/vorlagen-generator?problem=food_delivery",
   },
   {
@@ -68,7 +70,7 @@ const SCENARIOS = [
     headline: "Hotelzimmer mit Mängeln oder falsch beschrieben",
     detail: "Das gebuchte Zimmer entsprach nicht der Beschreibung — Schimmel, fehlendes Meerblick-Zimmer, kaputte Klimaanlage, oder die Unterkunft war bei Ankunft gar nicht verfügbar.",
     brands: ["Booking.com", "Airbnb", "Hotels.com", "HRS"],
-    recovery: "Chargeback über Kreditkarte möglich",
+    recovery: "Reklamation über Kreditkarte prüfen",
     href: "/vorlagen-generator?problem=flight_travel",
   },
   {
@@ -92,9 +94,9 @@ const SCENARIOS = [
     tag: "Rückerstattung",
     tagBg: "bg-rose-50 text-rose-700",
     headline: "Rückerstattung versprochen — nie erhalten",
-    detail: "Der Händler hat dir schriftlich eine Rückerstattung zugesagt — aber das Geld ist nie auf deinem Konto angekommen. Dein stärkstes Argument für einen Chargeback.",
+    detail: "Der Händler hat dir schriftlich eine Rückerstattung zugesagt — aber das Geld ist nie auf deinem Konto angekommen. Das kann eine gute Dokumentationsgrundlage sein.",
     brands: ["Alle Händler", "Online-Shops", "Dienstleister"],
-    recovery: "Oft gute Chargeback-Ausgangslage",
+    recovery: "Häufig gute Dokumentationslage",
     href: "/vorlagen-generator?problem=refund_promised",
   },
   {
@@ -107,18 +109,18 @@ const SCENARIOS = [
     headline: "Ungewollte Abbuchung trotz Kündigung",
     detail: "Du hast ein Abo gekündigt — aber es wird weiter abgebucht. Oder du bist in eine Abofalle getappt, die du nie bewusst abgeschlossen hast.",
     brands: ["Netflix", "Spotify", "Amazon Prime", "Klarna"],
-    recovery: "Rückbuchung mehrerer Monate möglich",
+    recovery: "Rückbuchung prüfen",
     href: "/vorlagen-generator?problem=subscription",
   },
 ];
 
 const FEATURES = [
-  { icon: ShieldCheck, title: "Chargeback-Strategie", desc: "Passende Vorgehensweise je nach Zahlungsart und Problemtyp — PayPal, Kreditkarte, Klarna und mehr." },
+  { icon: ShieldCheck, title: "Strukturierte Orientierung", desc: "Mögliche nächste Schritte je nach Zahlungsart und Problemtyp — PayPal, Kreditkarte, Klarna und mehr." },
   { icon: CheckCircle2, title: "Beweis-Checkliste", desc: "Welche Dokumente für deinen spezifischen Fall entscheidend sind — und was du noch beschaffen solltest." },
     { icon: FileSignature, title: "KI-Textassistent", desc: "KI-gestützte Textvorlagen, die deinen Fall klar strukturieren." },
-    { icon: Clock, title: "Fristen-Überblick", desc: "PayPal 180 Tage, Kreditkarte 60–120 Tage — wir zeigen dir, worauf du jetzt achten musst." },
-  { icon: AlertTriangle, title: "Gegenargumente entschärfen", desc: "Bereite dich auf typische Ausreden der Händler vor — mit konkreten Antworten." },
-  { icon: FileText, title: "3 Textvorlagen pro Fall", desc: "Händler-Anschreiben, Bank-Chargeback-Antrag und Eskalationsschreiben — sofort kopierbereit." },
+    { icon: Clock, title: "Fristen-Überblick", desc: "Allgemeine Hinweise zu typischen Fristen — bitte immer bei deinem Zahlungsdienstleister prüfen." },
+  { icon: AlertTriangle, title: "Mögliche Einwände vorbereiten", desc: "Ordne typische Rückfragen von Händlern oder Zahlungsdienstleistern sachlich ein." },
+  { icon: FileText, title: "3 Textentwürfe pro Fall", desc: "Händler-Anschreiben, Antrag an Zahlungsdienstleister und Eskalationsentwurf — vor Versand selbst prüfen." },
 ];
 
 const FAQS = [
@@ -128,15 +130,15 @@ const FAQS = [
   },
   {
     q: "Für welche Zahlungsarten funktioniert ein Chargeback?",
-    a: "Chargeback ist vor allem bei Kreditkarten (Visa, Mastercard, Amex) und PayPal möglich. Klarna bietet ebenfalls einen Käuferschutz. Bei Banküberweisungen ist es deutlich schwieriger — hier empfehlen wir den direkten Weg zum Händler.",
+    a: "Chargeback- oder Käuferschutzverfahren kommen vor allem bei Kreditkarten, PayPal und teils Klarna in Betracht. Ob es in deinem Fall passt, hängt von Zahlungsart, Fristen, Belegen und Anbieterregeln ab. Bei Banküberweisungen ist der direkte Weg zum Händler häufig wichtiger.",
   },
   {
     q: "Wie lange habe ich Zeit für einen Chargeback?",
-    a: "Die Fristen variieren: PayPal Käuferschutz gilt 180 Tage ab Zahlung. Kreditkarten-Chargeback ist meist 60–120 Tage ab Kontoauszugsdatum möglich. Nach Ablauf der Frist verfällt der Anspruch gegenüber der Bank — daher solltest du schnell handeln.",
+    a: "Die Fristen variieren je nach Anbieter und Fallkonstellation. PayPal nennt häufig 180 Tage ab Zahlung; bei Kreditkarten werden oft 60–120 Tage genannt. Bitte prüfe die konkrete Frist immer direkt bei deinem Zahlungsdienstleister und handle frühzeitig.",
   },
   {
     q: "Gibt es eine Erfolgsgarantie?",
-    a: "Nein, und jeder der das verspricht, lügt. Ob ein Chargeback oder eine Händler-Rückzahlung erfolgreich ist, entscheiden die Bank und der Zahlungsdienstleister nach ihren eigenen Richtlinien. ChargebackPilot hilft dir lediglich bei der professionellen Formulierung — garantieren können wir nichts.",
+    a: "Nein. Ob eine Rückzahlung, ein Käuferschutzverfahren oder eine Händlerlösung erfolgreich ist, entscheiden Händler, Bank oder Zahlungsdienstleister nach den jeweiligen Regeln und dem Einzelfall. ChargebackPilot liefert nur unverbindliche Formulierungshilfen.",
   },
   {
     q: "Wie sicher sind meine Daten?",
@@ -149,6 +151,9 @@ export default function Home() {
   const { toast } = useToast();
   const [flatrateLoading, setFlatrateLoading] = useState(false);
   const [flatrateActive, setFlatrateActive] = useState(false);
+  const [flatrateTerms, setFlatrateTerms] = useState(false);
+  const [flatrateImmediate, setFlatrateImmediate] = useState(false);
+  const [flatrateWiderrufLoss, setFlatrateWiderrufLoss] = useState(false);
 
   // On mount: detect flatrate_success from Stripe return + reflect current flatrate status
   useEffect(() => {
@@ -184,9 +189,30 @@ export default function Home() {
   }, [toast]);
 
   const handleFlatrateCheckout = async () => {
+    if (!flatrateTerms || !flatrateImmediate || !flatrateWiderrufLoss) {
+      toast({
+        title: "Bitte Hinweise bestätigen",
+        description: "Für digitale Inhalte benötigen wir AGB-, Widerrufs- und Sofortbereitstellungs-Bestätigung.",
+        variant: "destructive",
+      });
+      return;
+    }
+
     setFlatrateLoading(true);
     try {
-      const res = await fetch("/api/stripe/flatrate-checkout", { method: "POST" });
+      const res = await fetch("/api/stripe/flatrate-checkout", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          acceptedTerms: flatrateTerms,
+          acceptedImmediateExecution: flatrateImmediate,
+          acceptedWiderrufLoss: flatrateWiderrufLoss,
+          consentTimestamp: new Date().toISOString(),
+          agbVersion: LEGAL_VERSION,
+          widerrufVersion: LEGAL_VERSION,
+          datenschutzVersion: LEGAL_VERSION,
+        }),
+      });
       const json = await res.json();
       if (json?.url) {
         window.location.href = json.url;
@@ -212,7 +238,7 @@ export default function Home() {
     <MainLayout>
       <SeoHead 
         title="ChargebackPilot · KI-Hilfe für Chargeback, PayPal-Käuferschutz & Reklamation 2026"
-        description="Ware nicht erhalten, Flug ausgefallen, doppelt belastet? ChargebackPilot prüft deinen Fall mit KI in 60 Sekunden und liefert dir 3 fertige Textvorlagen."
+        description="Ware nicht erhalten, Flug ausgefallen, doppelt belastet? ChargebackPilot strukturiert deinen Fall mit KI und liefert unverbindliche Textentwürfe für deine Reklamation."
         canonical="/"
       />
       
@@ -396,14 +422,14 @@ export default function Home() {
             </span>
             <h2 className="text-3xl font-bold mb-3">Wie hast du bezahlt? So generieren wir deine Briefe.</h2>
             <p className="text-muted-foreground max-w-2xl mx-auto">
-              Jede Zahlungsart hat eigene Schutzregeln, eigene Fristen und eigene Rückforderungswege. Klicke deine Zahlungsmethode an — wir öffnen den Text-Generator für das passende Verfahren.
+              Jede Zahlungsart hat eigene Regeln, Fristen und Reklamationswege. Klicke deine Zahlungsmethode an — wir öffnen den Text-Generator mit passenden Orientierungshinweisen.
             </p>
           </div>
           <Suspense fallback={<div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3"><div className="h-16 bg-muted rounded" /><div className="h-16 bg-muted rounded" /><div className="h-16 bg-muted rounded" /><div className="h-16 bg-muted rounded" /><div className="h-16 bg-muted rounded" /><div className="h-16 bg-muted rounded" /></div>}>
             <PaymentHelpGrid />
           </Suspense>
           <p className="text-center text-xs text-muted-foreground mt-6 max-w-xl mx-auto">
-              Kein Häkchen, keine Anmeldung — die Text-Generierung startet ohne Bezahlpflicht. Du zahlst erst, wenn du die fertigen Brief-Vorlagen freischalten möchtest (0,99 € (inkl. MwSt.) pro Fall).
+              Kein Häkchen, keine Anmeldung — die Text-Generierung startet ohne Bezahlpflicht. Du zahlst erst, wenn du die vollständigen Brief-Entwürfe freischalten möchtest (0,99 € Endpreis pro Fall; Kleinunternehmerregelung, keine Umsatzsteuer-Ausweisung).
           </p>
         </div>
       </section>
@@ -414,7 +440,7 @@ export default function Home() {
           <div className="text-center mb-14">
             <h2 className="text-3xl font-bold mb-3">Flexible Preisgestaltung</h2>
             <p className="text-muted-foreground max-w-lg mx-auto">
-              Beginne kostenlos. Lade für einen kleinen Betrag die Brief-Vorlagen für deinen Fall herunter oder nutze im Abo alle Funktionen unbegrenzt.
+              Beginne kostenlos. Lade für einen kleinen Betrag die Brief-Entwürfe für deinen Fall herunter oder nutze die 12-Monats-Flatrate. Beides ist kein Abo.
             </p>
           </div>
           <div className="grid md:grid-cols-3 gap-6 max-w-6xl mx-auto">
@@ -427,7 +453,7 @@ export default function Home() {
               </CardHeader>
               <CardContent className="space-y-4">
                 <ul className="space-y-2.5 text-sm">
-                  {["Text-Strukturierung (indikativ)", "Beweis-Checkliste", "Fallzusammenfassung", "Mögliche rechtliche Hinweise", "Erster Schritt der Anleitung"].map((f) => (
+                  {["Text-Strukturierung (indikativ)", "Beweis-Checkliste", "Fallzusammenfassung", "Allgemeine Orientierungshinweise", "Erster möglicher Schritt"].map((f) => (
                     <li key={f} className="flex gap-2.5 items-center">
                       <CheckCircle2 className="w-4 h-4 text-emerald-500 flex-shrink-0" />
                       {f}
@@ -448,11 +474,12 @@ export default function Home() {
               <CardHeader className="pb-4">
                 <CardTitle className="text-lg">Einzelfall Freischaltung</CardTitle>
                 <CardDescription>Einmalig pro Vorlagen-Paket</CardDescription>
-                <div className="text-4xl font-black mt-3">0,99 <span className="text-lg font-normal text-muted-foreground">€ <span className="text-xs">(inkl. MwSt.)</span></span></div>
+                <div className="text-4xl font-black mt-3">0,99 <span className="text-lg font-normal text-muted-foreground">€</span></div>
+                <p className="text-[11px] text-muted-foreground mt-1">Endpreis · gemäß § 19 UStG keine Umsatzsteuer-Ausweisung</p>
               </CardHeader>
               <CardContent className="space-y-4">
                 <ul className="space-y-2.5 text-sm">
-                    {["Alles aus Basis-Variante", "Alle Textvorlagen", "Vollständige Anleitung", "PDF & E-Mail Export", "Entkräftung von Gegenargumenten"].map((f) => (
+                    {["Alles aus Basis-Variante", "Alle Textentwürfe", "Vollständige Orientierung", "PDF & E-Mail Export", "Hinweise zu möglichen Einwänden"].map((f) => (
                     <li key={f} className="flex gap-2.5 items-center">
                       <CheckCircle2 className="w-4 h-4 text-primary flex-shrink-0" />
                       {f}
@@ -461,7 +488,7 @@ export default function Home() {
                 </ul>
                 <div className="!mt-5">
                   <Link href="/vorlagen-generator">
-                    <Button className="w-full">Paket für 0,99 € (inkl. MwSt.) freischalten</Button>
+                    <Button className="w-full">Paket für 0,99 € freischalten</Button>
                   </Link>
                 </div>
               </CardContent>
@@ -472,7 +499,8 @@ export default function Home() {
               <CardHeader className="pb-4">
                 <CardTitle className="text-lg">Chargeback Flatrate</CardTitle>
                 <CardDescription>Für 12 Monate · kein Abo</CardDescription>
-                <div className="text-4xl font-black mt-3">9,99 <span className="text-lg font-normal text-muted-foreground">€ <span className="text-xs">(inkl. MwSt.)</span></span></div>
+                <div className="text-4xl font-black mt-3">9,99 <span className="text-lg font-normal text-muted-foreground">€</span></div>
+                <p className="text-[11px] text-muted-foreground mt-1">Endpreis · gemäß § 19 UStG keine Umsatzsteuer-Ausweisung</p>
               </CardHeader>
               <CardContent className="space-y-4">
                 <ul className="space-y-2.5 text-sm">
@@ -488,15 +516,31 @@ export default function Home() {
                     <CheckCircle2 className="w-4 h-4 mr-2" />Flatrate aktiv
                   </Button>
                 ) : (
+                  <>
+                  <div className="space-y-2 rounded-xl border bg-muted/30 p-3 text-[11px] text-muted-foreground">
+                    <label htmlFor="flatrate-terms" className="flex items-start gap-2 cursor-pointer">
+                      <Checkbox id="flatrate-terms" checked={flatrateTerms} onCheckedChange={(c) => setFlatrateTerms(Boolean(c))} className="mt-0.5" />
+                      <span>Ich akzeptiere AGB, Widerrufsbelehrung und Datenschutzerklärung.</span>
+                    </label>
+                    <label htmlFor="flatrate-immediate" className="flex items-start gap-2 cursor-pointer">
+                      <Checkbox id="flatrate-immediate" checked={flatrateImmediate} onCheckedChange={(c) => setFlatrateImmediate(Boolean(c))} className="mt-0.5" />
+                      <span>Ich verlange die sofortige Bereitstellung der digitalen Inhalte.</span>
+                    </label>
+                    <label htmlFor="flatrate-widerruf" className="flex items-start gap-2 cursor-pointer">
+                      <Checkbox id="flatrate-widerruf" checked={flatrateWiderrufLoss} onCheckedChange={(c) => setFlatrateWiderrufLoss(Boolean(c))} className="mt-0.5" />
+                      <span>Mir ist bekannt, dass mein Widerrufsrecht bei vollständiger Vertragserfüllung vorzeitig erlöschen kann.</span>
+                    </label>
+                  </div>
                   <Button
                     className="w-full mt-2"
                     variant="outline"
                     onClick={handleFlatrateCheckout}
-                    disabled={flatrateLoading}
+                    disabled={flatrateLoading || !flatrateTerms || !flatrateImmediate || !flatrateWiderrufLoss}
                     data-testid="flatrate-checkout"
                   >
-                    {flatrateLoading ? "Wird vorbereitet…" : "Flatrate für 9,99 € (inkl. MwSt.) kaufen"}
+                    {flatrateLoading ? "Wird vorbereitet…" : "Flatrate für 9,99 € kaufen"}
                   </Button>
+                  </>
                 )}
               </CardContent>
             </Card>
@@ -538,7 +582,7 @@ export default function Home() {
             <div className="rounded-3xl border border-slate-200 bg-white p-8 shadow-sm">
               <h2 className="text-2xl font-bold mb-4">Wann greift ein Chargeback?</h2>
               <p className="text-muted-foreground mb-4">
-                Das Chargeback-Verfahren ist dein Rettungsanker, wenn der Händler nicht kooperiert. Es ist international standardisiert durch Visa und Mastercard (sogenannte <em>Reason Codes</em>). Typische Gründe sind:
+                Ein Chargeback- oder Käuferschutzverfahren kann je nach Zahlungsart eine Option sein, wenn der Händler nicht kooperiert. Kreditkartennetzwerke arbeiten mit internen Kategorien bzw. <em>Reason Codes</em>. Typische Fallgruppen sind:
               </p>
               <ul className="list-disc pl-5 space-y-3 text-muted-foreground">
                 <li><strong>Ware nicht geliefert:</strong> Der Shop behauptet, es sei verschickt, aber du hast nichts erhalten.</li>
@@ -550,10 +594,10 @@ export default function Home() {
             <div className="rounded-3xl border border-slate-200 bg-white p-8 shadow-sm">
               <h2 className="text-2xl font-bold mb-4">PayPal & Klarna Käuferschutz</h2>
               <p className="text-muted-foreground mb-4">
-                Neben dem klassischen Kreditkarten-Chargeback bieten auch moderne Zahlungsanbieter starke Schutzmechanismen. Der <strong>PayPal Käuferschutz</strong> greift bis zu 180 Tage nach dem Kauf. Wichtig ist hier, niemals per "Geld an Freunde senden" zu zahlen.
+                Neben dem Kreditkarten-Chargeback bieten einige Zahlungsanbieter eigene Schutzmechanismen. Beim <strong>PayPal Käuferschutz</strong> werden häufig 180 Tage ab Zahlung genannt. Wichtig ist, die jeweils aktuellen Anbieterregeln zu prüfen.
               </p>
               <p className="text-muted-foreground">
-                Bei Zahlungen über <strong>Klarna</strong> solltest du umgehend eine <em>Zahlungspause</em> in der App einlegen, wenn ein Problem auftritt. So verhinderst du Mahngebühren, während der Fall geklärt wird. Unser Tool generiert dir für all diese Plattformen die exakt passenden Begründungstexte.
+                Bei Zahlungen über <strong>Klarna</strong> kann eine frühzeitige Meldung des Problems helfen, offene Forderungen zu klären. Unser Tool erstellt dafür unverbindliche, sachliche Formulierungsvorschläge.
               </p>
             </div>
           </div>

@@ -25,14 +25,14 @@ const HIGHLIGHTS = [
     path: "/vergleich/paypal-vs-kreditkarte-vs-klarna",
     icon: GitCompare,
     title: "PayPal vs. Kreditkarte vs. Klarna",
-    desc: "Großer Vergleich 2026 — welcher Käuferschutz ist im Streitfall wirklich am stärksten?",
+    desc: "Vergleich 2026 — welche Reklamationswege im Streitfall je nach Zahlungsart häufig in Betracht kommen.",
     tag: "Vergleich",
   },
   {
     path: "/scam-shops-2026",
     icon: AlertTriangle,
     title: "Scam-Shops & Fake-Anbieter 2026",
-    desc: "8 Warnsignale, 4 Scam-Kategorien und die exakte Anleitung, wie du dein Geld zurückholst.",
+    desc: "8 Warnsignale, 4 Scam-Kategorien und die strukturierte Orientierung, wie du dein Geld zurückholst.",
     tag: "Betrugsschutz",
   },
 ];

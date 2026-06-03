@@ -24,13 +24,13 @@ export function PayPalSEO() {
       "Beweise einreichen: Lade alle relevanten Dokumente im Center hoch."
     ]}
     mistakes={[
-      "Frist verpasst: Der Käuferschutz greift nur bis 180 Tage nach der Zahlung. Ein Konflikt muss innerhalb von 20 Tagen eskaliert werden.",
-      "Sofort eskalieren ohne vorherigen Kontakt: PayPal verlangt oft einen vorherigen Lösungsversuch.",
+      "Frist zu spät geprüft: PayPal nennt häufig 180 Tage ab Zahlung. Prüfe außerdem die Eskalationsfrist direkt bei PayPal.",
+      "Ohne vorherigen Kontakt vorschnell eskalieren: Ein dokumentierter Lösungsversuch kann hilfreich sein.",
       "Zahlung per 'Geld an Freunde senden': Hier greift der Käuferschutz nicht!"
     ]}
     faq={[
-      { q: "Wie lange dauert ein PayPal Fall?", a: "Meistens entscheidet PayPal innerhalb von 14 bis 30 Tagen, sofern alle Beweise vorliegen." },
-      { q: "Greift der Schutz bei digitalen Gütern?", a: "Teilweise. Seit einer Richtlinienänderung sind viele immaterielle Güter abgedeckt, aber es gelten strenge Vorgaben bezüglich des Nachweises der Nicht-Lieferung." }
+      { q: "Wie lange dauert ein PayPal Fall?", a: "Die Bearbeitungszeit hängt vom Einzelfall und den eingereichten Belegen ab. Die konkrete Dauer bestimmt PayPal." },
+      { q: "Greift der Schutz bei digitalen Gütern?", a: "Das hängt von den jeweils aktuellen PayPal-Richtlinien und dem Einzelfall ab. Prüfe die geltenden Bedingungen direkt bei PayPal." }
     ]}
   />;
 }
@@ -59,11 +59,11 @@ export function AmexSEO() {
       "Lade die geforderten Beweisdokumente hoch."
     ]}
     mistakes={[
-      "Warten auf Rückbuchung ohne zu reklamieren: Fristen (meist 120 Tage) müssen zwingend eingehalten werden.",
+      "Warten auf Rückbuchung ohne zu reklamieren: Fristen sind oft knapp und sollten direkt bei Amex geprüft werden.",
       "Zu wenig Beweise geliefert: Amex prüft streng. Ohne vorherigen Kontakt zum Händler wird oft direkt abgelehnt."
     ]}
     faq={[
-      { q: "Ist Amex kundenfreundlich bei Chargebacks?", a: "Ja, Amex gilt im Vergleich als sehr kundenorientiert, fordert aber präzise Dokumentation." }
+      { q: "Ist Amex bei Reklamationen oft kulant?", a: "Das hängt vom Einzelfall und der Dokumentation ab. Eine präzise und vollständige Schilderung ist regelmäßig hilfreich." }
     ]}
   />;
 }
@@ -88,14 +88,14 @@ export function VisaMastercardSEO() {
       "Händler kontaktieren (schriftlich).",
       "Umsatzreklamations-Formular deiner Hausbank ausfüllen (Visa/Mastercard verweisen an die kartenausgebende Bank).",
       "Beweise anhängen (E-Mails, Screenshots).",
-      "Formular fristgerecht (meist innerhalb von 120 Tagen) bei der Bank einreichen."
+      "Formular innerhalb der von deiner Bank genannten Frist einreichen."
     ]}
     mistakes={[
       "Die Bank vorschnell abwimmeln lassen: Banken verweisen teils auf interne Prozesse. Bitte um schriftliche Begründung und bleibe sachlich dran.",
       "Nur telefonisch kontaktieren: Ohne schriftliche Beweise hast du beim Chargeback schlechte Karten."
     ]}
     faq={[
-      { q: "Muss meine Bank den Chargeback durchführen?", a: "Wenn die Voraussetzungen (Reason Codes) des Kreditkartennetzwerks erfüllt sind, wird der Prozess in der Regel über die kartenausgebende Bank eingeleitet." }
+      { q: "Kann meine Bank ein Chargeback-Verfahren prüfen?", a: "Ob ein Chargeback-Verfahren eingeleitet wird, hängt von den Regeln des Kartennetzwerks, der Bank und dem Einzelfall ab." }
     ]}
   />;
 }
@@ -126,7 +126,7 @@ export function KlarnaSEO() {
       "Retourenbeleg weggeworfen: Ohne Nachweis der Rücksendung bist du zahlungspflichtig."
     ]}
     faq={[
-      { q: "Was passiert, wenn der Händler sich nicht meldet?", a: "Klarna entscheidet nach Ablauf einer Frist meist zugunsten des Käufers, wenn du Beweise geliefert hast." }
+      { q: "Was passiert, wenn der Händler sich nicht meldet?", a: "Dann prüft Klarna den Fall nach den eigenen Regeln und anhand der eingereichten Belege." }
     ]}
   />;
 }
@@ -146,17 +146,17 @@ export function FlugSEO() {
       "Schriftliche Aufforderung zur Erstattung mit Fristsetzung (meist 7-14 Tage)"
     ]}
     steps={[
-      "Fordere die Airline schriftlich zur Rückzahlung auf und setze eine Frist.",
+      "Fordere die Airline schriftlich zur Rückmeldung bzw. Rückzahlung auf und setze eine angemessene Frist.",
       "Nach Fristablauf: Kontaktiere deine Bank oder deinen Kreditkartenherausgeber.",
       "Fülle das Reklamationsformular aus (Grund: 'Leistung nicht erbracht').",
       "Hänge die Flugtickets und den E-Mail-Verlauf an."
     ]}
     mistakes={[
-      "Gutschein akzeptieren: Wenn du einen Voucher akzeptierst, verlierst du das Recht auf einen Chargeback.",
+      "Gutschein akzeptieren: Wenn du einen Voucher akzeptierst, kann ein Chargeback schwieriger werden.",
       "Selbst stornieren: Wenn DU stornierst (nicht die Airline), greift das Chargeback-Recht in der Regel nicht."
     ]}
     faq={[
-      { q: "Kann ich Chargeback nutzen, wenn der Flug verspätet war?", a: "Nein. Ein Chargeback gilt für NICHT erbrachte Leistungen (Annullierung). Bei Verspätungen musst du eine Entschädigung nach EU-Fluggastrechteverordnung fordern." }
+      { q: "Kann ich Chargeback nutzen, wenn der Flug verspätet war?", a: "Bei reinen Verspätungen kommen häufig andere Ansprüche als bei einer Annullierung in Betracht. Prüfe die passende Grundlage je nach Einzelfall." }
     ]}
   />;
 }
@@ -172,23 +172,23 @@ export function LieferandoSEO() {
       "Essen ungenießbar/verdorbene Zutaten"
     ]}
     evidence={[
-      "Fotos des falschen oder ungenießbaren Essens (sofort machen!)",
+      "Fotos des falschen oder ungenießbaren Essens möglichst zeitnah erstellen",
       "Screenshot des Bestellstatus in der App (insb. wenn der Fahrer einen Umweg macht)",
       "Bestellbestätigung"
     ]}
     steps={[
-      "Mache umgehend Fotos von Fehlern oder dem kalten Essen.",
+      "Mache möglichst zeitnah Fotos von Fehlern oder dem kalten Essen.",
       "Kontaktiere den Lieferando-Support über die App oder Website.",
       "Falls keine Einigung erfolgt oder man dir nur einen 5€ Gutschein anbietet: Kontaktiere PayPal oder dein Kreditkartenunternehmen für einen Chargeback."
     ]}
     mistakes={[
       "Keine Beweisfotos gemacht: Essen direkt weggeworfen oder aufgegessen – ohne Foto keine Erstattung.",
-      "Zu lange gewartet: Reklamationen bei Lebensmitteln müssen sofort erfolgen.",
+      "Zu lange gewartet: Reklamationen bei Lebensmitteln sollten möglichst zeitnah erfolgen.",
       "Sich mit einem 3€ Gutschein abspeisen lassen, wenn das 30€ Essen kalt und ungenießbar war."
     ]}
     faq={[
       { q: "Muss das Restaurant oder Lieferando erstatten?", a: "Bei Plattformbestellungen läuft die Erstattung häufig über den Plattform-Support. Maßgeblich sind die konkreten Vertragsbedingungen und der Einzelfall." },
-      { q: "Essen war kalt, weil der Fahrer einen Umweg gemacht hat - Geld zurück?", a: "Wenn das Essen dadurch nicht mehr vertragsgemäß nutzbar ist, kann eine (Teil-)Erstattung möglich sein. Dokumentation (Fotos, Zeitstempel, Supportverlauf) verbessert die Erfolgschancen deutlich." }
+      { q: "Essen war kalt, weil der Fahrer einen Umweg gemacht hat - Geld zurück?", a: "Wenn das Essen dadurch nicht mehr vertragsgemäß nutzbar ist, kann eine (Teil-)Erstattung in Betracht kommen. Fotos, Zeitstempel und Supportverlauf helfen bei der Prüfung." }
     ]}
   />;
 }
@@ -210,8 +210,8 @@ export function WoltSEO() {
     steps={[
       "Schreibe dem Wolt In-App-Support.",
       "Mache deutlich, dass das Essen aufgrund der Lieferzeit / des Zustands mangelhaft ist.",
-      "Bietet Wolt nur Wolt-Credits, bestehe auf einer Rückerstattung auf dein Zahlungsmittel.",
-      "Verweigert Wolt die Rückerstattung, nutze den Chargeback-Prozess bei deiner Bank/PayPal."
+      "Wenn Wolt nur Guthaben anbietet, prüfe, ob du stattdessen eine Auszahlung auf das Zahlungsmittel anfragen möchtest.",
+      "Wenn keine Einigung erreicht wird, prüfe zusätzlich die Reklamationsmöglichkeiten bei Bank oder PayPal."
     ]}
     mistakes={[
       "Wolt-Credits akzeptieren, wenn man eigentlich das Geld zurück will.",
@@ -240,7 +240,7 @@ export function UberEatsSEO() {
     steps={[
       "Problem direkt in der Uber Eats App unter 'Hilfe' melden.",
       "Problem genau beschreiben (z.B. 'Bestellung nicht erhalten' oder 'Lebensmittelsicherheitsproblem').",
-      "Uber Eats Support entscheidet oft automatisiert. Wenn abgelehnt: Chargeback über PayPal/Apple Pay/Kreditkarte einleiten."
+      "Uber Eats Support entscheidet oft automatisiert. Wenn abgelehnt, prüfe zusätzlich die Reklamationsmöglichkeiten über den Zahlungsdienstleister."
     ]}
     mistakes={[
       "Sich vom Bot-Support abspeisen lassen.",
@@ -267,9 +267,9 @@ export function KiwiSEO() {
       "Kiwi.com AGB (die eine Bearbeitungsgebühr von 59€ fordern)"
     ]}
     steps={[
-      "Fordere Kiwi.com formlos auf, dir die personenbezogenen Steuern und Gebühren zu erstatten.",
-      "Wenn Kiwi.com antwortet, dass sie eine Bearbeitungsgebühr (oft 59€) einbehalten: Widerspreche! Solche Gebühren sind nach gängiger Rechtsprechung (z.B. in Deutschland) für Steuerrückerstattungen unzulässig.",
-      "Reagiert Kiwi.com nicht oder verweigert die volle Auszahlung: Reiche einen Chargeback bei deiner Kreditkarte ein (Grund: Guthaben nicht erstattet / Credit not processed)."
+      "Fordere Kiwi.com formlos auf, dir die personenbezogenen Steuern und Gebühren nachvollziehbar zu erstatten.",
+      "Wenn Kiwi.com antwortet, dass sie eine Bearbeitungsgebühr (oft 59€) einbehalten: Widerspreche! Solche Gebühren können je nach anwendbarem Recht und Vertragslage angreifbar sein.",
+      "Reagiert Kiwi.com nicht oder verweigert die volle Auszahlung, prüfe eine Reklamation bei der Kreditkarte (z. B. wegen nicht verarbeiteter Gutschrift)."
     ]}
     mistakes={[
       "Den geringen Restbetrag (nach Abzug der 59€) akzeptieren.",
@@ -303,11 +303,11 @@ export function WareNichtErhaltenSEO() {
       "Kommunikationsverlauf beifügen."
     ]}
     mistakes={[
-      "Nachforschungsauftrag selbst stellen: Der Händler ist der Auftraggeber des Paketdienstes und muss sich kümmern.",
+      "Nur selbst einen Nachforschungsauftrag stellen: Häufig sollte zusätzlich der Händler als Vertragspartner eingebunden werden.",
       "Die Frist des Zahlungsdienstleisters (z.B. 180 Tage bei PayPal, 120 bei Kreditkarte) verpassen."
     ]}
     faq={[
-      { q: "Was, wenn laut Tracking geliefert wurde, ich aber nichts habe?", a: "Das ist schwer. Du musst oft nachweisen, dass die Unterschrift gefälscht ist oder eine Anzeige bei der Polizei wegen Diebstahl erstatten, bevor die Bank / PayPal hilft." }
+      { q: "Was, wenn laut Tracking geliefert wurde, ich aber nichts habe?", a: "Dann ist der Fall häufig schwieriger. Zusätzliche Belege wie Nachbarschaftsnachfragen, Händlerkommunikation oder ggf. eine Anzeige können je nach Fall hilfreich sein." }
     ]}
   />;
 }
@@ -327,7 +327,7 @@ export function AboFalleSEO() {
       "AGB des Anbieters"
     ]}
     steps={[
-      "Kündige das Abo sofort schriftlich (E-Mail aufbewahren).",
+      "Kündige das Abo möglichst zeitnah schriftlich (E-Mail aufbewahren).",
       "Kontaktiere deine Bank oder PayPal und melde unautorisierte / ungewollte wiederkehrende Zahlungen.",
       "Lasse die Karte für diesen speziellen Händler sperren oder entziehe das SEPA-Mandat / die PayPal-Einzugsermächtigung.",
       "Beantrage Chargeback für die bereits abgebuchten Beiträge."
@@ -337,7 +337,7 @@ export function AboFalleSEO() {
       "Kündigung nicht beweisen können: Nutze immer schriftliche Wege, niemals nur telefonisch."
     ]}
     faq={[
-      { q: "Kann ich rückwirkend für Monate Geld zurückholen?", a: "Oft nur für die letzten 8 Wochen bei SEPA oder bis zu 120 Tage bei Kreditkarten. Je früher du handelst, desto besser." }
+      { q: "Kann ich rückwirkend für Monate Geld zurückholen?", a: "Das hängt von Zahlungsart, Frist und Einzelfall ab. Prüfe die konkreten Möglichkeiten möglichst früh direkt bei Bank, PayPal oder Kartenausgeber." }
     ]}
   />;
 }

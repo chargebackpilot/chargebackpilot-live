@@ -61,9 +61,9 @@ function buildPrompt(input: CaseInput): string {
   const paymentLabel = PAYMENT_METHOD_LABELS[input.paymentMethod] || input.paymentMethod;
   const problemLabel = PROBLEM_TYPE_LABELS[input.problemType] || input.problemType;
 
-  return `Du bist ein neutraler KI-Sprachassistent. Deine Aufgabe ist es, Verbraucher-Sachverhalte logisch zu strukturieren und sachliche, formelle Textentwürfe für Reklamationen zu generieren. 
-WICHTIG: Du bist KEIN Anwalt, erteilst keine Rechtsberatung und fällst keine rechtlich bindenden Urteile. 
-Formuliere Einschätzungen zu Erfolgschancen immer vorsichtig und im Konjunktiv (z. B. 'könnte', 'möglicherweise', 'es besteht die Aussicht'). Formuliere die Textvorlagen so, dass der Nutzer als Absender auftritt.
+  return `Du bist ein neutraler KI-Sprachassistent. Deine Aufgabe ist es, Verbraucher-Sachverhalte logisch zu strukturieren und sachliche, formelle Textentwürfe für Reklamationen zu generieren.
+WICHTIG: Du bist KEIN Anwalt, erteilst keine Rechtsberatung, prüfst keine Ansprüche verbindlich und fällst keine rechtlich bindenden Urteile.
+Formuliere alle Einschätzungen vorsichtig, unverbindlich und im Konjunktiv (z. B. 'könnte', 'möglicherweise', 'kommt in Betracht'). Formuliere die Textentwürfe so, dass der Nutzer als Absender auftritt und sie vor Versand selbst prüfen muss.
 
 FALLDATEN:
 - Zahlungsmethode: ${paymentLabel}
@@ -82,40 +82,40 @@ Analysiere diesen Fall und antworte AUSSCHLIESSLICH mit einem validen JSON-Objek
 {
   "strength": "stark" | "mittel" | "schwach",
   "strengthLabel": "Starke Ausgangslage" | "Mittlere Ausgangslage" | "Schwache Ausgangslage",
-  "successProbability": <Ganzzahl 0-100, realistische Schätzung der Erfolgswahrscheinlichkeit eines Chargeback-Verfahrens>,
+  "successProbability": <Ganzzahl 0-100, nur interne grobe Orientierung zur Sortierung; keine verbindliche Erfolgsprognose>,
   "successProbabilityLabel": "Hoch" | "Mittel" | "Niedrig",
   "summary": "<2-3 Sätze prägnante Fallzusammenfassung aus Sicht des Verbrauchers>",
-  "reasoning": "<4-6 Sätze detaillierte Begründung der Einschätzung: Zahlungsmethode, Beweislage, Problemtyp, rechtliche Situation>",
+  "reasoning": "<4-6 Sätze vorsichtige, unverbindliche Einordnung: Zahlungsmethode, Beweislage, Problemtyp, praktische Anbieterregeln>",
   "missingEvidence": ["<Fehlender Beweis 1 mit konkreter Erklärung warum er wichtig ist>", ...],
   "nextSteps": [
-    "<Konkreter Schritt 1 mit genauen Anweisungen, Fristen und ggf. direkten Links>",
+    "<Möglicher Schritt 1 mit sachlicher Orientierung, typischen Fristenhinweisen und ggf. offiziellen Anlaufstellen>",
     ...mindestens 4 Schritte...
   ],
-  "recommendedCategory": "<Exakter Chargeback-Reason-Code bzw. Kategorie für die spezifische Zahlungsmethode>",
+  "recommendedCategory": "<Möglicherweise passende Chargeback-/Käuferschutz-Kategorie; falls unsicher, deutlich als Orientierung kennzeichnen>",
   "legalBasis": [
-    "<Relevante Rechtsgrundlage 1, z.B. § 437 BGB – Käuferrechte bei Sachmängeln>",
+    "<Allgemeiner rechtlicher Orientierungshinweis, z.B. mögliche Käuferrechte bei Sachmängeln; keine Anspruchsprüfung>",
     ...mindestens 2 Rechtsgrundlagen...
   ],
   "counterarguments": [
-    "<Mögliches Gegenargument des Händlers/der Bank und wie man es entkräftet>",
+    "<Mögliche Rückfrage oder Einwendung des Händlers/der Bank und sachlicher Antwortvorschlag>",
     ...mindestens 2 Gegenargumente...
   ],
   "urgencyLevel": "hoch" | "mittel" | "niedrig",
-  "deadline": "<Konkrete Fristinformation: z.B. 'PayPal Käuferschutz: 180 Tage ab Zahldatum – Frist läuft am [berechnet] ab. Jetzt handeln!'>",
-  "merchantTemplate": "<Professionelles Anschreiben an den Händler auf Deutsch, formell, max 150 Wörter>",
-  "bankTemplate": "<Professionelles Chargeback-Anschreiben an Bank/PayPal/Klarna auf Deutsch, max 150 Wörter>",
-  "escalationTemplate": "<Eskalationsschreiben für Schlichtungsstelle oder Verbraucherzentrale, max 150 Wörter>",
-  "disclaimer": "Keine Rechtsberatung. ChargebackPilot bietet allgemeine Informationen und Textvorlagen. Die generierten Texte ersetzen keine anwaltliche Beratung und stellen keine Rechtsdienstleistung dar."
+  "deadline": "<Vorsichtiger Fristenhinweis: z.B. 'PayPal nennt häufig 180 Tage ab Zahlung. Bitte konkrete Frist im Konto/bei PayPal prüfen.'>",
+  "merchantTemplate": "<Sachlicher Textentwurf an den Händler auf Deutsch, formell, max 150 Wörter>",
+  "bankTemplate": "<Sachlicher Textentwurf an Bank/PayPal/Klarna auf Deutsch, max 150 Wörter>",
+  "escalationTemplate": "<Sachlicher Eskalationsentwurf für Schlichtungsstelle oder Verbraucherzentrale, max 150 Wörter>",
+  "disclaimer": "Keine Rechtsberatung. ChargebackPilot bietet allgemeine Informationen und unverbindliche Textentwürfe. Die generierten Inhalte ersetzen keine anwaltliche Beratung und stellen keine Rechtsdienstleistung dar. Bitte vor Versand selbst prüfen."
 }
 
 WICHTIGE RICHTLINIEN FÜR DIE ANALYSE:
-- Sei realistisch und ehrlich bei der successProbability. Keine falschen Hoffnungen wecken.
-- Die successProbability soll folgende Faktoren berücksichtigen: Beweislage (40%), Zahlungsmethode/Chargeback-Möglichkeit (30%), Problemtyp/Rechtslage (20%), ob Händler bereits kontaktiert wurde (10%)
-- Für PayPal/Kreditkarten: Chargeback ist oft möglich, also eher höhere Wahrscheinlichkeit wenn Beweise gut sind
-- Für Banküberweisung: deutlich schwieriger, niedrigere Wahrscheinlichkeit
-- Die Textvorlagen müssen vollständig, professionell und sofort verwendbar sein
-- Nutze konkrete Gesetzesangaben (BGB, EU-Zahlungsdiensterichtlinie, etc.)
-- Erwähne spezifische Fristen für die jeweilige Zahlungsmethode
+- Sei realistisch und vorsichtig. Keine falschen Hoffnungen, keine Garantien, keine verbindlichen Rechtsaussagen.
+- Die successProbability ist nur eine interne grobe Orientierung und soll nicht wie eine verbindliche Erfolgsprognose klingen.
+- Für PayPal/Kreditkarten: Ein Käuferschutz-/Chargeback-Verfahren kann in Betracht kommen, wenn Belege und Anbieterregeln passen.
+- Für Banküberweisung: weise vorsichtig darauf hin, dass direkte Händlerkommunikation oft wichtiger ist.
+- Die Textentwürfe müssen sachlich, vollständig und vom Nutzer vor Versand prüfbar sein.
+- Nutze keine verbindliche Anspruchsprüfung. Allgemeine Normen oder Anbieterregeln nur vorsichtig als Orientierung nennen.
+- Erwähne typische Fristen nur als allgemeine Hinweise und fordere immer zur Prüfung beim Anbieter/Zahlungsdienstleister auf.
 - Die Vorlagen sollen den spezifischen Sachverhalt (${input.merchantName}, ${input.amount.toFixed(2)} EUR, ${input.paymentDate}) konkret aufgreifen
 - Antworte IMMER auf Deutsch
 - KEIN Markdown in den Template-Feldern, nur plain text mit Zeilenumbrüchen`;
@@ -239,10 +239,10 @@ function buildFallbackAnalysis(input: CaseInput): CaseAnalysis {
       ? ["Zahlungsnachweis (Kontoauszug oder Screenshot der Abbuchung)", "Kommunikationsverlauf mit dem Händler"]
       : [],
     nextSteps: [
-      `${input.merchantContacted ? "Händler erneut schriftlich kontaktieren und Frist setzen" : "Händler schriftlich kontaktieren – nutze die generierte Händler-Vorlage"}`,
-      `Chargeback bei ${paymentLabel} einleiten – nutze die generierte Bank-Vorlage`,
+      `${input.merchantContacted ? "Händler erneut schriftlich kontaktieren und eine angemessene Antwortfrist vorschlagen" : "Händler schriftlich kontaktieren – nutze den generierten Textentwurf als Ausgangspunkt"}`,
+      `Prüfe bei ${paymentLabel}, ob ein Käuferschutz- oder Reklamationsverfahren in Betracht kommt – nutze den Textentwurf nur nach eigener Prüfung`,
       "Alle Belege sicher aufbewahren (Screenshots, E-Mails, Quittungen)",
-      "Fristen beachten und zeitnah handeln",
+      "Typische Fristen direkt beim Zahlungsdienstleister prüfen und zeitnah handeln",
     ],
     recommendedCategory: "Chargeback – Streitfall einleiten",
     legalBasis: ["§ 437 BGB – Rechte des Käufers bei Sachmängeln", "EU-Zahlungsdiensterichtlinie (PSD2)"],
@@ -252,10 +252,10 @@ function buildFallbackAnalysis(input: CaseInput): CaseAnalysis {
     ],
     urgencyLevel: "mittel",
     deadline:
-      paymentLabel === "PayPal"
-        ? "PayPal Käuferschutz: 180 Tage ab Zahldatum. Handeln Sie zeitnah!"
-        : "Chargeback-Fristen variieren: meist 60–120 Tage ab Kontoauszugsdatum. Bitte sofort handeln!",
-    merchantTemplate: `Betreff: Formelle Reklamation – Transaktion vom ${input.paymentDate} über ${input.amount.toFixed(2)} EUR\n\nSehr geehrte Damen und Herren,\n\nich wende mich an Sie bezüglich einer Transaktion vom ${input.paymentDate} in Höhe von ${input.amount.toFixed(2)} EUR bei Ihrem Unternehmen (${input.merchantName}).\n\n${input.description}\n\nIch fordere Sie auf, mir den Betrag von ${input.amount.toFixed(2)} EUR bis spätestens 14 Tage nach Eingang dieses Schreibens zurückzuerstatten.\n\nMit freundlichen Grüßen\n\n---\nKeine Rechtsberatung. ChargebackPilot.de`,
+      input.paymentMethod === "paypal"
+        ? "PayPal nennt häufig 180 Tage ab Zahlung. Bitte die konkrete Frist direkt im PayPal-Konto prüfen."
+        : "Fristen für Reklamationen/Chargeback variieren je nach Bank und Zahlungsart. Bitte die konkrete Frist direkt beim Zahlungsdienstleister prüfen.",
+    merchantTemplate: `Betreff: Reklamation – Transaktion vom ${input.paymentDate} über ${input.amount.toFixed(2)} EUR\n\nSehr geehrte Damen und Herren,\n\nich wende mich an Sie bezüglich einer Transaktion vom ${input.paymentDate} in Höhe von ${input.amount.toFixed(2)} EUR bei Ihrem Unternehmen (${input.merchantName}).\n\n${input.description}\n\nBitte prüfen Sie den Vorgang und teilen Sie mir schriftlich mit, wie Sie die Angelegenheit lösen möchten. Ich bitte um Rückmeldung innerhalb einer angemessenen Frist.\n\nMit freundlichen Grüßen\n\n---\nFormulierungshilfe, keine Rechtsberatung. Vor Versand prüfen.`,
     bankTemplate: `Betreff: Antrag auf Chargeback – ${input.merchantName} – ${input.amount.toFixed(2)} EUR – ${input.paymentDate}\n\nSehr geehrte Damen und Herren,\n\nIch beantrage die Einleitung eines Chargeback-Verfahrens für folgende Transaktion:\n• Händler: ${input.merchantName}\n• Betrag: ${input.amount.toFixed(2)} EUR\n• Datum: ${input.paymentDate}\n• Zahlungsmethode: ${paymentLabel}\n\n${input.description}\n\nMit freundlichen Grüßen\n\n---\nKeine Rechtsberatung. ChargebackPilot.de`,
     escalationTemplate: `Betreff: Eskalation – Ungelöster Streitfall – ${input.merchantName} – ${input.amount.toFixed(2)} EUR\n\nSehr geehrte Damen und Herren,\n\nDer bisherige Chargeback-Antrag für obigen Fall blieb erfolglos. Ich wende mich daher an die zuständige Schlichtungsstelle und bitte um Überprüfung.\n\nMit freundlichen Grüßen\n\n---\nKeine Rechtsberatung. ChargebackPilot.de`,
     disclaimer:

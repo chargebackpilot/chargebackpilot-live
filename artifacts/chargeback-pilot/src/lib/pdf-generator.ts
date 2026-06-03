@@ -120,7 +120,7 @@ export async function generatePdf(data: PdfData): Promise<void> {
   doc.setFontSize(8);
   doc.setTextColor(180, 200, 255);
   doc.text(
-    "Keine Rechtsberatung. Vorlagen vor Verwendung prüfen.",
+    "Keine Rechtsberatung. Textentwürfe vor Verwendung eigenständig prüfen.",
     margin,
     25,
   );

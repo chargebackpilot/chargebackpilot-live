@@ -44,14 +44,14 @@ const PAYPAL_STEPS: Step[] = [
     title: "Beweise hochladen",
     detail:
       'Lade alle vorhandenen Belege hoch:\n• Bestellbestätigung (E-Mail / Screenshot)\n• Kommunikation mit dem Händler\n• Fotos defekter Ware\n• Tracking-Nachweis falls vorhanden\n\nDateiformate: JPG, PNG, PDF. Maximal 10 MB pro Datei.',
-    tip: "Mehrere Beweise = deutlich höhere Genehmigungsquote.",
+    tip: "Mehrere nachvollziehbare Belege erleichtern PayPal die Prüfung des Falls.",
   },
   {
     n: 6,
-    title: "Streitfall absenden — 20-Tage-Frist beginnt",
+    title: "Streitfall absenden — Eskalationsfrist beachten",
     detail:
-      'Klicke auf "Weiter" / "Absenden". PayPal benachrichtigt den Händler, der 10 Tage Zeit hat zu antworten. Danach hast du 10 weitere Tage, um den Fall in einen Antrag auf Rückbuchung umzuwandeln falls nötig.',
-    tip: "Antworte auf jede PayPal-Nachricht innerhalb von 3 Tagen — sonst wird der Fall automatisch geschlossen.",
+      'Klicke auf "Weiter" / "Absenden". PayPal benachrichtigt anschließend den Händler. Prüfe danach regelmäßig den offenen Fall und beachte die von PayPal angezeigten Fristen für eine mögliche Eskalation.',
+    tip: "Prüfe Nachrichten und Fristen direkt im PayPal-Fall, damit keine Rückfragen offen bleiben.",
   },
   {
     n: 7,
@@ -59,7 +59,7 @@ const PAYPAL_STEPS: Step[] = [
     detail:
       'Wenn der Händler nicht reagiert oder ablehnt: Gehe in den offenen Streitfall und klicke auf "In Antrag auf Rückbuchung umwandeln". PayPal entscheidet dann endgültig — meist innerhalb 30 Tage.',
     value: "In Antrag auf Rückbuchung umwandeln",
-    tip: "Diese Eskalation muss innerhalb von 20 Tagen nach Eröffnung des Streitfalls erfolgen — verpass die Frist nicht!",
+    tip: "Prüfe die von PayPal angezeigte Eskalationsfrist direkt im Fall und reagiere möglichst rechtzeitig.",
   },
 ];
 
@@ -172,10 +172,9 @@ export function PaypalGuide({ problemType, merchantName, amount }: PaypalGuidePr
           <div className="bg-amber-50 border border-amber-200 rounded-xl px-4 py-3 text-xs text-amber-800 flex items-start gap-2">
             <span className="font-bold flex-shrink-0">Wichtig:</span>
             <span>
-              Der Käuferschutz-Antrag muss innerhalb von{" "}
-              <strong>180 Tagen</strong> nach der Zahlung eingereicht werden.
-              Streitfälle müssen innerhalb von <strong>20 Tagen</strong> in
-              einen Rückbuchungsantrag umgewandelt werden.
+              PayPal nennt häufig <strong>180 Tage</strong> ab Zahlung für die Eröffnung eines
+              Käuferschutzfalls. Prüfe zusätzlich direkt im offenen Fall, welche Frist
+              PayPal für eine mögliche Eskalation anzeigt.
             </span>
           </div>
 
@@ -211,7 +210,7 @@ export function PaypalGuide({ problemType, merchantName, amount }: PaypalGuidePr
                     {!checked && step.value && (
                       <div className="mt-2 bg-[#003087]/5 border border-[#003087]/20 rounded-lg px-3 py-2">
                         <p className="text-[10px] font-semibold uppercase tracking-wide text-[#003087] mb-0.5">
-                          Genau eingeben:
+                          Orientierung für das Eingabefeld:
                         </p>
                         <p className="text-xs font-mono text-[#003087] font-medium">
                           "{step.value}"

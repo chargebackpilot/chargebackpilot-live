@@ -20,7 +20,7 @@ const SITE = "https://chargebackpilot.de";
 
 export function SEOArticleLayout({ title, category, whenApplies, evidence, steps, mistakes, faq }: SEOProps) {
   const [pathname] = useLocation();
-  const description = `${title}: Fristen, Beweise und der genaue Ablauf bei ${category}. Mit fertigen Textvorlagen und Schritt-für-Schritt-Anleitung.`;
+  const description = `${title}: typische Fristenhinweise, Belege und strukturierte Orientierung bei ${category}. Mit unverbindlichen Textentwürfen.`;
   const canonicalPath = pathname || "/ratgeber";
 
   const howToSchema = {
@@ -96,7 +96,7 @@ export function SEOArticleLayout({ title, category, whenApplies, evidence, steps
           <div className="container mx-auto max-w-3xl">
             <h1 className="text-3xl md:text-5xl font-bold mb-6">{title}</h1>
             <p className="text-xl text-muted-foreground mb-8">
-              Erfahre alles, was du über {category} wissen musst – Fristen, Beweise und der genaue Ablauf.
+              Erhalte eine strukturierte Orientierung zu {category}: typische Fristenhinweise, Belege und mögliche nächste Schritte.
             </p>
             <Link href="/vorlagen-generator">
               <Button size="lg" className="gap-2">
@@ -140,7 +140,7 @@ export function SEOArticleLayout({ title, category, whenApplies, evidence, steps
 
           {/* Ablauf */}
           <section>
-            <h2 className="text-2xl font-bold mb-6 border-b pb-2">Schritt-für-Schritt Anleitung</h2>
+            <h2 className="text-2xl font-bold mb-6 border-b pb-2">Schritt-für-Schritt Orientierung</h2>
             <div className="space-y-6">
               {steps.map((step, i) => (
                 <div key={i} className="flex gap-4">
@@ -188,7 +188,7 @@ export function SEOArticleLayout({ title, category, whenApplies, evidence, steps
           {/* Bottom CTA */}
           <section className="bg-muted p-8 rounded-2xl text-center">
             <h2 className="text-2xl font-bold mb-4">Unsicher bei deinem Fall?</h2>
-            <p className="text-muted-foreground mb-6">Nutze unseren Generator und erhalte sofort die passenden Textvorlagen.</p>
+            <p className="text-muted-foreground mb-6">Nutze unseren Generator und erhalte unverbindliche Textentwürfe zur eigenen Prüfung.</p>
             <Link href="/vorlagen-generator">
               <Button size="lg">Vorlagen generieren</Button>
             </Link>

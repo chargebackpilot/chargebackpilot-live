@@ -12,14 +12,14 @@ export function GeneratorLoader({ merchantName }: { merchantName: string }) {
 
   const facts = [
     "Wusstest du? Bei Visa lautet der Chargeback-Grund für nicht gelieferte Ware 'Reason Code 13.1'.",
-    "Händler zahlen bei einem verlorenen Chargeback oft hohe Strafgebühren an die Bank — deshalb lenken sie bei professionellen Anträgen oft schnell ein.",
-    "PayPals Käuferschutz greift bis zu 180 Tage nach Zahlung. Kreditkarten bieten meist 120 Tage.",
-    "Wusstest du? Auch für nicht geliefertes Essen (z.B. Lieferando) kannst du über PayPal dein Geld zurückholen, wenn der Support sich querstellt.",
-    "Flug gecancelt? Steuern und Flughafengebühren müssen laut EU-Recht immer erstattet werden, selbst wenn du das Ticket stornierst.",
-    "Mastercard nennt den Chargeback-Grund für fehlerhafte Ware 'Reason Code 4853'. Mit dieser Nennung im Brief zeigst du direkt Fachwissen.",
-    "Abofalle? Kreditkartenunternehmen verbieten versteckte Abos. Du kannst Abbuchungen der letzten Monate oft problemlos zurückholen.",
-    "Tipp: Die bloße Androhung eines Chargebacks (Rückbuchung) wirkt beim Händler oft Wunder.",
-    "Wusstest du? Wenn ein Hotelzimmer Schimmel hat oder völlig anders aussieht als auf den Fotos, gilt das als 'nicht erbrachte Leistung'."
+    "Ein gut dokumentierter Fall ist für Händler, Bank oder Zahlungsdienstleister leichter nachvollziehbar.",
+    "PayPal nennt häufig 180 Tage ab Zahlung; bei Kreditkarten variieren Fristen je Bank und Kartennetzwerk.",
+    "Wusstest du? Auch bei Lieferproblemen mit Essensbestellungen kann eine strukturierte Reklamation hilfreich sein.",
+    "Flug gecancelt? Steuern und Flughafengebühren können je nach Konstellation erstattungsfähig sein, selbst wenn du das Ticket stornierst.",
+    "Mastercard und Visa nutzen interne Kategorien für Reklamationen. Die passende Kategorie hängt vom Einzelfall ab.",
+    "Bei unklaren Abo-Abbuchungen helfen Kündigungsnachweis, Kontoauszug und eine klare Chronologie.",
+    "Tipp: Eine sachliche, belegbare Reklamation wirkt meist besser als Druck oder Drohungen.",
+    "Wusstest du? Bei Unterkunftsmängeln sind Fotos, Zeitstempel und eine Meldung vor Ort besonders wichtig."
   ];
 
   useEffect(() => {
@@ -103,10 +103,10 @@ export function StrategyIndicator({ label }: { label: string }) {
   const l = (label ?? "").toLowerCase();
   const band =
     l === "hoch"
-      ? { name: "Aussichtsreich", desc: "Gute Ausgangslage. Mit den richtigen Schritten und Belegen hast du solide Chancen auf eine Rückerstattung.", tone: { bg: "bg-emerald-50", border: "border-emerald-200", text: "text-emerald-800", accent: "bg-emerald-500", dotsActive: 3 } }
+      ? { name: "Aussichtsreich", desc: "Gute Dokumentationslage. Mit klaren Belegen ist dein Anliegen für Händler oder Zahlungsdienstleister besser nachvollziehbar.", tone: { bg: "bg-emerald-50", border: "border-emerald-200", text: "text-emerald-800", accent: "bg-emerald-500", dotsActive: 3 } }
       : l === "mittel"
         ? { name: "Solide Ausgangslage", desc: "Mittlere Position. Fehlende Belege können deine Aussichten noch deutlich verbessern.", tone: { bg: "bg-amber-50", border: "border-amber-200", text: "text-amber-800", accent: "bg-amber-500", dotsActive: 2 } }
-        : { name: "Anspruchsvoll", desc: "Schwieriger Fall. Zuerst fehlende Beweise sichern, dann gezielt vorgehen — wir geben dir die Strategie dazu.", tone: { bg: "bg-rose-50", border: "border-rose-200", text: "text-rose-800", accent: "bg-rose-500", dotsActive: 1 } };
+        : { name: "Anspruchsvoll", desc: "Schwieriger Fall. Sichere zuerst fehlende Belege und prüfe die Anbieterregeln sorgfältig.", tone: { bg: "bg-rose-50", border: "border-rose-200", text: "text-rose-800", accent: "bg-rose-500", dotsActive: 1 } };
 
   return (
     <div className={`rounded-2xl border-2 ${band.tone.border} ${band.tone.bg} p-5 sm:p-6`}>
@@ -148,7 +148,7 @@ export function LockedTeaser({ icon, title, lines = 3 }: { icon: React.ReactNode
         {icon}
         {title}
       </h3>
-      <div className="space-y-2 select-none pointer-events-none" style={{ filter: "blur(3.2px)" }}>
+      <div className="space-y-2 select-none pointer-events-none" style={{ filter: "blur(2.1px)" }}>
         {Array.from({ length: lines }).map((_, i) => (
           <div key={i} className="h-3 bg-muted rounded" style={{ width: `${70 + ((i * 7) % 25)}%` }} />
         ))}

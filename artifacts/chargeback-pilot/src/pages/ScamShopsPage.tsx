@@ -18,7 +18,7 @@ const RED_FLAGS: ScamSignal[] = [
   { title: "Kein Impressum oder Fantasie-Anschrift", description: "Pflicht in Deutschland: vollständiger Firmenname, Anschrift, Handelsregisternummer, USt-ID. Fehlt das, fehlt der Vertragspartner." },
   { title: "Brandneue Domain ohne Reviews", description: "Eine WHOIS-Abfrage zeigt, wie alt die Domain wirklich ist. Unter 6 Monate + keine Trustpilot/Google-Bewertungen = hohes Risiko." },
   { title: "Schlechtes Deutsch & Auto-Übersetzungen", description: "Wörtlich übersetzte Produktbeschreibungen sind ein klassisches Indiz für Dropshipping aus Drittländern." },
-  { title: "Kein Widerrufsrecht oder unklare AGB", description: "In Deutschland gilt 14 Tage Widerruf gesetzlich. Wer das ausschließt oder verschleiert, agiert illegal." },
+  { title: "Kein Widerrufsrecht oder unklare AGB", description: "Unklare oder fehlende Verbraucherinformationen sind ein deutliches Warnsignal und können rechtlich problematisch sein." },
   { title: "Drohende Mahnungen statt sauberer Rechnung", description: "Inkasso-Anschreiben für Bestellungen, die du nie getätigt hast — klassisches Abo-Falle/Inkasso-Scam-Muster." },
   { title: "Social-Ads mit Promi-Fakes", description: "Künstlich erzeugte Influencer- oder Promi-Testimonials in TikTok-/Instagram-Ads sind ein wachsendes Scam-Muster 2026." },
 ];
@@ -27,22 +27,22 @@ const SCAM_CATEGORIES = [
   {
     name: "Fake-Marken-Shops",
     examples: "Sneaker, Designer-Mode, Sonnenbrillen",
-    action: "Sofort Kreditkarten-Chargeback einleiten — Reason: \"Counterfeit / Not as described\".",
+    action: "Zahlungsdienstleister zeitnah kontaktieren und prüfen, ob eine Reklamation wegen Fälschung oder abweichender Ware in Betracht kommt.",
   },
   {
     name: "Influencer-Dropshipping",
     examples: "Beauty-Tools, Fitness-Gadgets, AI-Devices",
-    action: "PayPal-Käuferschutz binnen 180 Tagen — \"Ware erheblich nicht wie beschrieben\".",
+    action: "PayPal-Käuferschutz bzw. Kartenreklamation anhand deiner Belege prüfen; Fristen direkt beim Anbieter kontrollieren.",
   },
   {
     name: "Abo-Fallen über Bauernfänger-Anzeigen",
     examples: "Gewinnspiele, kostenlose Proben, Promi-Diäten",
-    action: "SEPA-Lastschrift binnen 8 Wochen pauschal rückrufen + sofort kündigen.",
+    action: "SEPA-Rückgabemöglichkeit bei der Bank prüfen und den Anbieter schriftlich kontaktieren bzw. kündigen.",
   },
   {
     name: "Fake-Inkasso & Phishing",
     examples: "Vermeintliche Mahnungen, Paket-SMS",
-    action: "Niemals klicken / nichts zahlen — Verbraucherzentrale + ggf. Polizei (Cybercrime).",
+    action: "Links nicht ungeprüft anklicken, Forderung prüfen lassen und bei Verdacht Verbraucherzentrale oder Polizei kontaktieren.",
   },
 ];
 
@@ -85,7 +85,7 @@ export default function ScamShopsPage() {
               Fake-Shop erkannt? So gehst du strukturiert vor.
             </h1>
             <p className="text-lg text-muted-foreground mb-6">
-              Die 8 wichtigsten Warnsignale 2026 plus die exakte Schritt-für-Schritt-Anleitung
+              Die 8 wichtigsten Warnsignale 2026 plus die strukturierte Schritt-für-Schritt-Orientierung
               für PayPal-Käuferschutz, Kreditkarten-Chargeback und SEPA-Lastschriftrückgabe.
             </p>
             <Link href="/vorlagen-generator?problem=fraud">
@@ -167,7 +167,7 @@ export default function ScamShopsPage() {
           <section className="bg-primary text-primary-foreground p-6 md:p-8 rounded-2xl text-center">
             <h2 className="text-xl md:text-2xl font-bold mb-2">Schon abgebucht? Handle möglichst zeitnah.</h2>
             <p className="text-primary-foreground/95 mb-5 text-sm md:text-base">
-              SEPA: 8 Wochen Frist · Kreditkarte: 60–120 Tage · PayPal: 180 Tage. Wir helfen dir, deinen Antrag strukturiert vorzubereiten.
+              Typische Fristen unterscheiden sich je nach Zahlungsart. Wir helfen dir, deine Unterlagen strukturiert vorzubereiten und die passenden Anbieterregeln zu prüfen.
             </p>
             <Link href="/vorlagen-generator?problem=fraud">
               <Button size="lg" variant="secondary" className="gap-2">

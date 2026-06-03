@@ -312,8 +312,8 @@ export function generateMerchantProblemCopy(
   const phrase = problem.searchPhrase;
   const sectorWord = sectorLabel(merchant.sector);
 
-  const title = `${m} ${problem.label} — Geld zurück 2026`;
-  const metaDescription = `Du hast bei ${m} Probleme mit ${phrase.toLowerCase()}? Schritt-für-Schritt-Anleitung 2026: Beweise, Fristen, fertige Textvorlagen für PayPal, Kreditkarten-Chargeback und Verbraucherbrief.`;
+  const title = `${m} ${problem.label} — Reklamation strukturiert vorbereiten 2026`;
+  const metaDescription = `Du hast bei ${m} Probleme mit ${phrase.toLowerCase()}? Strukturierte Orientierung 2026: Belege, typische Fristenhinweise und unverbindliche Textentwürfe für Händler, Bank oder Zahlungsdienstleister.`;
 
   const whenApplies = applicableScenarios(merchant, problem);
   const evidence = evidenceForProblem(problem);
@@ -344,27 +344,27 @@ export function generateMerchantProblemCopy(
 // ── Long-form intro paragraphs (primary SEO body) ─────────────────
 function introParagraphs(m: MerchantDef, p: ProblemDef, sector: string): string[] {
   const para1 =
-    `Wenn du bei ${m.name} mit ${p.searchPhrase.toLowerCase()} konfrontiert bist, gibt es 2026 mehrere konkrete Wege, dein Geld zurückzuholen. ${m.name} (${sector}, Sitz in ${m.country}) ist für deutsche Verbraucher grundsätzlich erreichbar — entscheidend ist, dass du den richtigen Reklamationsweg wählst und die Fristen einhältst, die je nach Zahlungsart unterschiedlich sind. Wer wahllos Mails schreibt, verliert oft wertvolle Zeit; wer strukturiert vorgeht, hat deutlich höhere Chancen auf eine Erstattung.`;
+    `Wenn du bei ${m.name} mit ${p.searchPhrase.toLowerCase()} konfrontiert bist, kommen 2026 je nach Zahlungsart und Einzelfall verschiedene Reklamationswege in Betracht. ${m.name} (${sector}, Sitz in ${m.country}) ist für deutsche Verbraucher grundsätzlich erreichbar — wichtig ist vor allem, den Sachverhalt nachvollziehbar zu dokumentieren und typische Fristen direkt beim jeweiligen Anbieter zu prüfen.`;
   const para2 =
-    `Die größten Hebel sind 2026: der Käuferschutz bei PayPal (bis 180 Tage), das Chargeback-Verfahren der Banken bei Kreditkartenzahlung (60–120 Tage Frist je Bank), die SEPA-Lastschriftrückgabe (8 Wochen ohne Begründung) sowie der Klarna-Käuferschutz. Welcher Hebel bei dir greift, hängt davon ab, womit du bei ${m.name} bezahlt hast — die Anleitung weiter unten zeigt für jede Zahlungsart den exakten Klick-Pfad und die richtige Reason-Code-Begründung.`;
+    `Typische Anlaufstellen sind PayPal-Käuferschutz, Kreditkarten-Reklamation/Chargeback über die kartenausgebende Bank, SEPA-Lastschriftrückgabe oder Klarna-Käuferschutz. Welcher Weg bei dir sinnvoll ist, hängt davon ab, womit du bei ${m.name} bezahlt hast und welche Anbieterregeln gelten — die Hinweise weiter unten dienen als allgemeine Orientierung.`;
   const para3 =
-    `Wichtig: Vor jedem Chargeback oder Käuferschutz-Antrag musst du nachweisbar versucht haben, ${m.name} direkt zu erreichen. Eine schriftliche Frist von 14 Tagen reicht in der Regel aus und ist juristisch sauber. ChargebackPilot übernimmt dabei die Formulierung — von der ersten Reklamation bis zum Eskalations-Anschreiben an deine Bank. Die KI-gestützte Strukturierung ist kostenlos; nur die fertigen Vorlagen als PDF kosten einmalig 0,99 € (inkl. MwSt.).`;
+    `Praktisch ist meist hilfreich, ${m.name} zunächst nachweisbar direkt zu kontaktieren und eine angemessene Rückmeldefrist zu setzen. ChargebackPilot unterstützt dich dabei mit unverbindlichen Textentwürfen — von der ersten Reklamation bis zu einer möglichen Nachricht an Bank oder Zahlungsdienstleister. Die KI-gestützte Strukturierung ist kostenlos; vollständige Entwürfe als PDF kosten einmalig 0,99 € Endpreis.`;
   return [para1, para2, para3];
 }
 
 // ── Deadlines / timing matrix per problem ─────────────────────────
 function deadlinesForCombo(p: ProblemDef): { label: string; value: string; note: string }[] {
   const out: { label: string; value: string; note: string }[] = [
-    { label: "PayPal Käuferschutz", value: "180 Tage", note: "ab Zahlungsdatum — Fall im Konfliktcenter eröffnen, innerhalb 20 Tagen zum Antrag eskalieren" },
-    { label: "Kreditkarten-Chargeback", value: "60–120 Tage", note: "ab Datum des Kontoauszugs — Frist variiert je Bank (oft 60 Tage Visa/Mastercard, bis 120 Tage Amex)" },
-    { label: "Klarna-Käuferschutz", value: "Sofort melden", note: "offene Rechnung im Klarna-Konto pausieren, um Mahnkosten zu vermeiden" },
-    { label: "SEPA-Lastschrift zurückgeben", value: "8 Wochen", note: "ab Belastung — formlos bei deiner Bank ohne Begründung möglich" },
+    { label: "PayPal Käuferschutz", value: "häufig 180 Tage", note: "ab Zahlungsdatum — bitte konkrete Frist und Eskalationsregeln direkt bei PayPal prüfen" },
+    { label: "Kreditkarten-Reklamation", value: "oft 60–120 Tage", note: "Frist und Verfahren variieren je Bank und Kartennetzwerk; bitte direkt bei der kartenausgebenden Bank prüfen" },
+    { label: "Klarna-Käuferschutz", value: "zeitnah melden", note: "Problem im Klarna-Konto melden und mögliche Zahlungspause nach Anbieterregeln prüfen" },
+    { label: "SEPA-Lastschrift", value: "typisch 8 Wochen", note: "Rückgabemöglichkeiten hängen von Autorisierung und Einzelfall ab; bitte bei deiner Bank prüfen" },
   ];
   if (p.slug === "flug-storniert") {
-    out.push({ label: "EU-Fluggastrechte (VO 261/2004)", value: "3 Jahre", note: "Ausgleichszahlungen verjähren erst nach 3 Jahren — also nicht in Panik" });
+    out.push({ label: "EU-Fluggastrechte", value: "oft mehrere Jahre", note: "mögliche Ansprüche und Verjährung hängen vom Einzelfall ab; Belege trotzdem früh sichern" });
   }
   if (p.slug === "abbuchung-ohne-zustimmung") {
-    out.push({ label: "Nicht autorisierte SEPA-Lastschrift", value: "13 Monate", note: "wenn du der Abbuchung nie zugestimmt hast, kannst du sie 13 Monate lang zurückgeben (§ 675x BGB)" });
+    out.push({ label: "Nicht autorisierte SEPA-Lastschrift", value: "bis zu 13 Monate möglich", note: "bei fehlender Autorisierung können längere Fristen gelten; bitte direkt bei der Bank prüfen" });
   }
   return out;
 }
@@ -373,28 +373,28 @@ function deadlinesForCombo(p: ProblemDef): { label: string; value: string; note:
 function legalBasisForProblem(p: ProblemDef): { title: string; text: string }[] {
   const base: { title: string; text: string }[] = [
     {
-      title: "Vertragsrecht: § 280 BGB Schadensersatz wegen Pflichtverletzung",
-      text: "Wenn ein Händler seine vertraglichen Pflichten verletzt (Nichtlieferung, Schlechtleistung), hast du nach § 280 BGB grundsätzlich Anspruch auf Schadensersatz. Vorausgesetzt ist eine schriftliche Fristsetzung — daher dokumentiert ChargebackPilot jeden Reklamationsschritt mit Datum.",
+      title: "Allgemeine Orientierung: Vertragsrecht und Pflichtverletzungen",
+      text: "Bei Nichtlieferung oder Schlechtleistung können je nach Einzelfall vertragliche Rechte in Betracht kommen. Eine nachvollziehbare schriftliche Dokumentation hilft, den Sachverhalt gegenüber Händler oder Zahlungsdienstleister verständlich darzustellen.",
     },
     {
-      title: "Kaufrecht: §§ 437 ff. BGB Mängelrechte",
-      text: "Bei Sachmängeln hast du als Verbraucher zunächst Anspruch auf Nacherfüllung (Reparatur oder Ersatzlieferung), danach auf Rücktritt oder Minderung. Wichtig: Die Beweislast liegt in den ersten 12 Monaten beim Händler (§ 477 BGB), das spielt dem Verbraucher in die Karten.",
+      title: "Allgemeine Orientierung: Kaufrechtliche Mängelrechte",
+      text: "Bei mangelhafter Ware können je nach Fall Nacherfüllung, Minderung oder Rückabwicklung eine Rolle spielen. Welche Rechte konkret bestehen, hängt vom Vertrag, Zeitpunkt und den Belegen ab.",
     },
     {
-      title: "Zahlungsdiensterecht: § 675x BGB nicht autorisierte Zahlungen",
-      text: "Wurde eine Lastschrift ohne dein Einverständnis ausgeführt, hast du gegenüber deiner Bank einen Erstattungsanspruch — auch noch nach 8 Wochen, wenn der Vorgang gar nicht autorisiert war. Im Streit gilt: die Bank trägt die Beweislast für die Autorisierung (§ 675w BGB).",
+      title: "Allgemeine Orientierung: nicht autorisierte Zahlungen",
+      text: "Bei nicht autorisierten Zahlungen können besondere Regeln gegenüber der Bank gelten. Ob eine Zahlung autorisiert war und welche Frist gilt, sollte direkt mit der Bank geklärt werden.",
     },
   ];
   if (p.slug === "flug-storniert") {
     base.push({
-      title: "EU-Fluggastrechte (VO (EG) Nr. 261/2004)",
-      text: "Bei Annullierung, Nichtbeförderung oder erheblicher Verspätung (> 3 Stunden) stehen dir je nach Distanz pauschal 250 €, 400 € oder 600 € zu — zusätzlich zur Rückerstattung des Ticketpreises. Anspruch besteht in 6 Jahren (BGH-Rechtsprechung), praktisch laufen aber Belege schneller weg.",
+      title: "Allgemeine Orientierung: EU-Fluggastrechte",
+      text: "Bei Annullierung, Nichtbeförderung oder erheblicher Verspätung können je nach Strecke, Ursache und Einzelfall Erstattungs- oder Ausgleichsansprüche in Betracht kommen. Belege und Kommunikation sollten früh gesichert werden.",
     });
   }
   if (p.slug === "abbuchung-ohne-zustimmung") {
     base.push({
       title: "Fernabsatzrecht: § 312g BGB Widerrufsrecht 14 Tage",
-      text: "Bei online abgeschlossenen Verbraucherverträgen hast du 14 Tage Widerrufsrecht. Wurde die Belehrung fehlerhaft erteilt, verlängert sich diese Frist auf bis zu 12 Monate plus 14 Tage. Sehr häufig bei Abo-Fallen anwendbar.",
+      text: "Bei online abgeschlossenen Verbraucherverträgen kann ein Widerrufsrecht bestehen. Fristbeginn, Belehrung und Ausnahmen hängen vom konkreten Vertrag ab und sollten im Einzelfall geprüft werden.",
     });
   }
   return base;
@@ -406,7 +406,7 @@ function disputeCategoryForCombo(p: ProblemDef): { method: string; code: string;
     "ware-nicht-erhalten": {
       method: "Visa / Mastercard",
       code: "13.1 Merchandise/Services Not Received",
-      explainer: "Diese Reason-Code wird verwendet, wenn die bezahlte Ware oder Dienstleistung den Käufer nie erreicht hat. Erforderlich: Bestellbestätigung, fehlender Liefernachweis, dokumentierter Kontaktversuch beim Händler.",
+      explainer: "Diese Kategorie kann in Betracht kommen, wenn bezahlte Ware oder Dienstleistungen nicht angekommen sind. Hilfreich sind Bestellbestätigung, Lieferstatus und dokumentierte Kontaktversuche.",
     },
     "ware-defekt": {
       method: "Visa / Mastercard",
@@ -416,17 +416,17 @@ function disputeCategoryForCombo(p: ProblemDef): { method: string; code: string;
     "flug-storniert": {
       method: "Visa / Mastercard",
       code: "13.1 Services Not Received (Annullierung)",
-      explainer: "Bei gestrichenen Flügen reichst du den Chargeback parallel zum EU-261-Antrag ein. Wichtig: gleicher Sachverhalt darf nicht doppelt erstattet werden — daher ehrlich angeben, was bereits gezahlt wurde.",
+      explainer: "Bei gestrichenen Flügen kann je nach Zahlungsart eine Reklamation beim Zahlungsdienstleister zusätzlich zur direkten Erstattungsklärung geprüft werden. Bereits erhaltene Zahlungen sollten transparent angegeben werden.",
     },
     "hotel-anders-als-beschrieben": {
       method: "Visa / Mastercard",
       code: "13.3 Not as Described",
-      explainer: "Wenn das Hotelzimmer erheblich abweicht, kannst du anteilig per Chargeback zurückbuchen lassen. Mängel müssen am Anreisetag dokumentiert und der Rezeption gemeldet sein.",
+      explainer: "Wenn eine Unterkunft erheblich von der Beschreibung abweicht, kann eine Reklamation beim Anbieter oder Zahlungsdienstleister in Betracht kommen. Fotos und eine zeitnahe Meldung vor Ort sind praktisch hilfreich.",
     },
     "abbuchung-ohne-zustimmung": {
       method: "SEPA / Visa",
       code: "10.4 Other Fraud — Card Absent Environment",
-      explainer: "Bei klar unautorisierten Abbuchungen ist der Fraud-Reason-Code der stärkste Hebel. Vorher prüfen, ob es sich nicht doch um ein vergessenes Abo handelt (das wäre kein Fraud, sondern eine zivilrechtliche Streitigkeit).",
+      explainer: "Bei möglicherweise unautorisierten Abbuchungen sollte zuerst geprüft werden, ob eine Autorisierung, ein vergessenes Abo oder ein Missbrauchsfall vorliegt. Die passende Kategorie hängt vom Ergebnis dieser Prüfung ab.",
     },
     "lieferung-falsch": {
       method: "PayPal / Visa",
@@ -436,13 +436,13 @@ function disputeCategoryForCombo(p: ProblemDef): { method: string; code: string;
     "betrugsverdacht": {
       method: "Visa / Mastercard / Amex",
       code: "10.4 Fraud — Card Absent",
-      explainer: "Klassischer Fake-Shop-Fall: keine Lieferung, kein Support, oft Shop bereits offline. Polizei-Anzeige als Beweis hinzufügen erhöht Chargeback-Quote auf bis zu 90 %.",
+      explainer: "Bei Verdacht auf Fake-Shop sind Screenshots, Zahlungsnachweis, Kontaktversuche und ggf. eine Anzeige wichtige Dokumente. Ob eine Rückbuchung gelingt, entscheidet der Zahlungsdienstleister im Einzelfall.",
     },
   };
   return map[p.slug] ?? {
     method: "Visa / Mastercard",
     code: "13.1 Services Not Received",
-    explainer: "Standard-Reason-Code für nicht erbrachte Leistungen. ChargebackPilot wählt den exakt passenden Code basierend auf deinen Antworten.",
+    explainer: "Mögliche Kategorie für nicht erbrachte Leistungen. ChargebackPilot gibt hierzu nur eine unverbindliche Orientierung auf Basis deiner Angaben.",
   };
 }
 
@@ -473,7 +473,7 @@ function applicableScenarios(m: MerchantDef, p: ProblemDef): string[] {
     "flug-storniert": [
       `${m.name} hat deinen Flug gestrichen oder erheblich verschoben.`,
       "Es liegt eine Verspätung von mehr als 3 Stunden bei Ankunft am Zielort vor.",
-      `${m.name} bietet nur einen Gutschein an, obwohl gesetzlich Geldrückerstattung verlangt werden kann.`,
+      `${m.name} bietet nur einen Gutschein an, obwohl je nach Fall eine Auszahlung geprüft werden kann.`,
     ],
     "hotel-anders-als-beschrieben": [
       `Die über ${m.name} gebuchte Unterkunft entspricht nicht der Beschreibung (Lage, Sauberkeit, Ausstattung).`,
@@ -517,8 +517,8 @@ function stepsForCombo(m: MerchantDef, p: ProblemDef): string[] {
   const direct = `Kontaktiere ${m.name} zuerst über den offiziellen Support-Kanal (App, E-Mail, Hilfecenter) und setze eine schriftliche Frist von 14 Tagen.`;
   const document = "Dokumentiere lückenlos: Datum, Uhrzeit, Gesprächspartner, Inhalt — am besten per E-Mail, weil schriftlich beweisbar.";
   const pay = paymentSpecificStep(p, m);
-  const escalate = `Bei ausbleibender Reaktion: eskaliere mit unserer KI-generierten Mahnung an ${m.name} und kündige Chargeback / Käuferschutz konkret an.`;
-  const final = "Beantragen den Chargeback / Käuferschutz mit der passenden Begründung — ChargebackPilot erstellt dir den exakten Wortlaut samt Reason-Code.";
+  const escalate = `Bei ausbleibender Reaktion: sende eine sachliche Erinnerung an ${m.name} und prüfe parallel die Reklamationswege deines Zahlungsdienstleisters.`;
+  const final = "Prüfe, ob ein Käuferschutz- oder Chargeback-Verfahren in Betracht kommt — ChargebackPilot erstellt dafür unverbindliche Formulierungsvorschläge.";
   return [direct, document, pay, escalate, final];
 }
 
@@ -530,22 +530,22 @@ function paymentSpecificStep(p: ProblemDef, m: MerchantDef): string {
     return `Wenn du per Kreditkarte gezahlt hast, fordere bei deiner Bank den Chargeback mit Reason-Code "Goods/Services not received" bzw. "Not as described" an — meist innerhalb von 60–120 Tagen ab Kontoauszug.`;
   }
   if (p.paymentMethods.includes("klarna")) {
-    return `Bei Klarna-Zahlung nutze den Käuferschutz im Klarna-Konto und stoppe die offene Rechnung sofort, um Mahnkosten zu vermeiden.`;
+    return `Bei Klarna-Zahlung melde das Problem zeitnah im Klarna-Konto und prüfe, ob eine Zahlungspause nach den Klarna-Regeln möglich ist.`;
   }
   return `Prüfe je nach Zahlungsart (${p.paymentMethods.join(", ")}), welche Rückforderungsoption die kürzeste Frist hat.`;
 }
 
 function commonMistakes(p: ProblemDef): string[] {
   const generic = [
-    "Frist verpasst — bei PayPal sind es 180 Tage, bei Kreditkarte oft nur 60–120 Tage ab Kontoauszug.",
+    "Typische Fristen zu spät geprüft — bei PayPal, Bank oder Kartenausgeber gelten unterschiedliche Regeln.",
     "Keine schriftliche Dokumentation — nur telefonische Beschwerden sind im Streitfall praktisch wertlos.",
-    "Gutschein statt Geld akzeptiert — damit verfallen viele gesetzliche Rückforderungsrechte.",
+    "Gutschein oder Teilangebot ungeprüft akzeptiert — dadurch kann die spätere Durchsetzung schwieriger werden.",
   ];
   const specific: Record<string, string[]> = {
-    "ware-nicht-erhalten": ["Den Versanddienstleister verklagen statt den Verkäufer — falsch: Vertragspartner ist der Händler."],
+    "ware-nicht-erhalten": ["Nur den Versanddienstleister kontaktieren — häufig ist zusätzlich der Händler als Vertragspartner einzubeziehen."],
     "ware-defekt": ["Die Ware ohne Rücksprache zurücksenden — ohne RMA-Nummer geht die Rückerstattung oft verloren."],
     "flug-storniert": ["Eine Umbuchung akzeptieren und damit auf die Geldrückerstattung verzichten."],
-    "abbuchung-ohne-zustimmung": ["Mit Kündigung warten bis nach der nächsten Abbuchung — pauschal jede SEPA-Lastschrift kann 8 Wochen lang ohne Begründung zurückgegeben werden."],
+    "abbuchung-ohne-zustimmung": ["Mit der Klärung bis zur nächsten Abbuchung warten — Bank und Anbieter sollten zeitnah kontaktiert werden."],
   };
   return [...generic, ...(specific[p.slug] ?? [])];
 }
@@ -553,20 +553,20 @@ function commonMistakes(p: ProblemDef): string[] {
 function faqForCombo(m: MerchantDef, p: ProblemDef, sector: string): { q: string; a: string }[] {
   return [
     {
-      q: `Wie schnell muss ich bei ${m.name} reklamieren?`,
-      a: `So früh wie möglich. Setze ${m.name} eine schriftliche Frist von 14 Tagen. Die externen Fristen (PayPal 180 Tage, Kreditkarte 60–120 Tage, SEPA-Lastschrift 8 Wochen) laufen unabhängig davon weiter — handle nicht erst kurz vor Ablauf, sonst bist du auf den guten Willen deiner Bank angewiesen.`,
+      q: `Wie schnell sollte ich bei ${m.name} reklamieren?`,
+      a: `Möglichst zeitnah. Setze ${m.name} eine angemessene schriftliche Rückmeldefrist und prüfe parallel die konkreten Fristen bei PayPal, Bank, Klarna oder Kartenausgeber. Anbieterregeln können je nach Fall abweichen.`,
     },
     {
-      q: `Wie hoch sind meine Erfolgschancen mit einem Chargeback gegen ${m.name}?`,
-      a: `${m.name} ist als ${sector} grundsätzlich erreichbar für Chargebacks. Entscheidend sind drei Faktoren: (1) die Qualität deiner Beweise, (2) der richtige Reason-Code und (3) ein dokumentierter vorheriger Kontaktversuch. Erfahrungsgemäß sind sauber begründete Chargebacks bei Visa/Mastercard zu 60–80 % erfolgreich — bei dokumentierten Fake-Shop-Fällen sogar deutlich höher.`,
+      q: `Welche Faktoren verbessern die Nachvollziehbarkeit meines Falls bei ${m.name}?`,
+      a: `Wichtig sind vor allem klare Belege, eine verständliche Chronologie, Zahlungsnachweise und ein dokumentierter Kontaktversuch. Ob ein Zahlungsdienstleister ein Verfahren annimmt oder entscheidet, hängt vom Einzelfall und den jeweiligen Regeln ab.`,
     },
     {
       q: `Was passiert, wenn ${m.name} den Chargeback bestreitet?`,
-      a: `Dann startet die sogenannte Pre-Arbitration-Phase: deine Bank fordert weitere Beweise an, ${m.name} darf widersprechen. Wer die besseren strukturierten Belege liefert, gewinnt. ChargebackPilot bereitet dich von Anfang an auf typische Händler-Gegenargumente vor, sodass deine Position bereits in Runde 1 stark formuliert ist.`,
+      a: `Dann kann deine Bank oder dein Zahlungsdienstleister weitere Belege anfordern. Eine klare, sachliche Dokumentation hilft, Rückfragen nachvollziehbar zu beantworten. ChargebackPilot unterstützt dich mit Formulierungsvorschlägen für typische Einwände.`,
     },
     {
-      q: `Muss ich ${m.name} vorher kontaktieren, bevor ich einen Chargeback einreiche?`,
-      a: `Ja, das ist juristisch und praktisch fast immer Voraussetzung. PayPal verlangt eine vorherige Konfliktphase, Banken erwarten eine dokumentierte Reklamation beim Händler. Eine einfache E-Mail mit 14-Tage-Frist reicht — den exakten Wortlaut liefert dir ChargebackPilot.`,
+      q: `Sollte ich ${m.name} vorher kontaktieren, bevor ich Zahlungsdienstleister einschalte?`,
+      a: `In vielen Verfahren ist ein dokumentierter Lösungsversuch praktisch hilfreich oder wird vom Anbieter erwartet. Eine sachliche E-Mail mit angemessener Rückmeldefrist ist deshalb meist sinnvoll. ChargebackPilot liefert dafür unverbindliche Textentwürfe.`,
     },
     {
       q: `Welche Beweise sind im Chargeback-Verfahren am wichtigsten?`,
@@ -574,11 +574,11 @@ function faqForCombo(m: MerchantDef, p: ProblemDef, sector: string): { q: string
     },
     {
       q: `Was kostet die Hilfe von ChargebackPilot?`,
-      a: `Die KI-Ersteinschätzung deines Falls ist komplett kostenlos. Wenn du die fertigen Textvorlagen (Händler-Anschreiben, Bank-Chargeback-Antrag, Eskalationsschreiben) freischalten willst, zahlst du einmalig 0,99 € (inkl. MwSt.) pro Fall. Eine Flatrate für unbegrenzte Fälle gibt es für 9,99 € (inkl. MwSt.) (12 Monate).`,
+      a: `Die KI-Ersteinschätzung deines Falls ist komplett kostenlos. Wenn du die fertigen Textvorlagen (Händler-Anschreiben, Bank-Chargeback-Antrag, Eskalationsschreiben) freischalten willst, zahlst du einmalig 0,99 € Endpreis pro Fall. Eine Flatrate für unbegrenzte Fälle gibt es für 9,99 € Endpreis (12 Monate).`,
     },
     {
       q: `Kann ich gegen ${m.name} auch klagen, wenn der Chargeback scheitert?`,
-      a: `Ja. Der Chargeback ist nur der schnellste Weg — er ersetzt nicht deinen zivilrechtlichen Anspruch. Bei höheren Streitwerten lohnt sich oft die Verbraucherzentrale, ein Schlichtungsverfahren oder eine Klage vor dem Amts-/Landgericht. ChargebackPilot bietet hierfür keine Vertretung, hilft aber bei der Aufbereitung deiner Belege.`,
+      a: `Weitere Schritte außerhalb des Zahlungsdienstleisters können je nach Streitwert und Sachverhalt möglich sein, etwa Verbraucherzentrale, Schlichtung oder anwaltliche Prüfung. ChargebackPilot bietet hierfür keine Vertretung und keine Rechtsberatung, kann aber bei der strukturierten Belegaufbereitung helfen.`,
     },
     {
       q: `Ist ChargebackPilot eine Rechtsberatung?`,
