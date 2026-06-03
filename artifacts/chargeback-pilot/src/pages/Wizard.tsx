@@ -134,12 +134,16 @@ export default function Wizard() {
   const paymentCancel = params.get("payment_cancel") === "1";
   const sessionIdParam = params.get("session_id");
   const caseIdParam = params.get("caseId") ?? params.get("case_id");
+  const forceNew = params.get("new") === "1";
+  const scrollTarget = params.get("scroll");
 
   // ---- Initial state: restore persisted case when user returns ----
   // Restore the persisted in-progress case ONLY when there's no fresh prefill from a
   // landing-page CTA (problem/payment/merchant). A fresh CTA click means "start a new
   // case with these values" — we shouldn't silently resurrect an old half-filled form.
-  const persisted = caseIdParam
+  const persisted = forceNew
+    ? null
+    : caseIdParam
     ? (setCurrentCaseById(caseIdParam) ?? loadCurrentCase())
     : (paymentSuccess || paymentCancel || !hasAnyPrefill)
       ? loadCurrentCase()
@@ -198,6 +202,12 @@ export default function Wizard() {
       // Strip caseId param after restoring so refresh doesn't re-trigger restore loops.
       const url = new URL(window.location.href);
       url.searchParams.delete("caseId");
+      url.searchParams.delete("scroll");
+      url.searchParams.delete("new");
+      window.history.replaceState({}, "", url.pathname + (url.search ? url.search : ""));
+    } else if (forceNew) {
+      const url = new URL(window.location.href);
+      url.searchParams.delete("new");
       window.history.replaceState({}, "", url.pathname + (url.search ? url.search : ""));
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -465,6 +475,18 @@ export default function Wizard() {
     const timer = setTimeout(() => window.scrollTo({ top: 0, behavior: "smooth" }), 50);
     return () => clearTimeout(timer);
   }, [step]);
+
+  useEffect(() => {
+    if (scrollTarget !== "paywall") return;
+    if (step !== 6 || !result || hasUnlocked) return;
+    const timer = window.setTimeout(() => {
+      const el = document.querySelector('[data-testid="paywall-anchor"], .rounded-2xl.border-2.border-primary\/30');
+      if (el instanceof HTMLElement) {
+        el.scrollIntoView({ behavior: "smooth", block: "start" });
+      }
+    }, 150);
+    return () => window.clearTimeout(timer);
+  }, [scrollTarget, step, result, hasUnlocked]);
 
   useEffect(() => {
     if (!turnstileSiteKey) return;
@@ -1009,6 +1031,7 @@ export default function Wizard() {
                             <LockedTeaser icon={<Siren className="w-4 h-4 text-primary" />} title="Eskalationsschreiben" lines={5} />
                             <LockedTeaser icon={<FileSignature className="w-4 h-4 text-primary" />} title="Druckfertige DIN-5008-Briefe als PDF" lines={3} />
                           </div>
+                          <div data-testid="paywall-anchor">
                           <PaywallModal
                             onUnlock={handlePayment}
                             isPaying={isPaying}
@@ -1018,6 +1041,7 @@ export default function Wizard() {
                             strategyLabel={analysis?.successProbabilityLabel ?? ""}
                             paymentMethod={result.paymentMethod ?? formData.paymentMethod}
                           />
+                          </div>
                         </>
                       ) : (
                         <div className="space-y-6 animate-in fade-in duration-500">

@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Link } from "wouter";
 import { useToast } from "@/hooks/use-toast";
 import { activateFlatrate, isFlatrateActive } from "@/lib/case-persistence";
+import { loadCurrentCase, clearCurrentCaseSelection } from "@/lib/case-persistence";
 import {
   ArrowRight,
   CheckCircle2,
@@ -150,6 +151,16 @@ export default function Home() {
   const [flatrateLoading, setFlatrateLoading] = useState(false);
   const [flatrateActive, setFlatrateActive] = useState(false);
 
+  const existingCaseHref = (() => {
+    const current = loadCurrentCase();
+    if (!current?.caseId) return "/vorlagen-generator?new=1";
+    return `/vorlagen-generator?caseId=${encodeURIComponent(current.caseId)}&scroll=paywall`;
+  })();
+
+  const handleFreshWizardStart = () => {
+    clearCurrentCaseSelection();
+  };
+
   // On mount: detect flatrate_success from Stripe return + reflect current flatrate status
   useEffect(() => {
     setFlatrateActive(isFlatrateActive());
@@ -235,7 +246,7 @@ export default function Home() {
             <span className="hidden md:inline">Lieferung fehlt, Flug gestrichen oder falsches Essen? Wir begleiten dich als Privatperson strukturiert durch den Käuferschutz-Prozess. Erhalte verständliche Anleitungen und Textvorlagen für PayPal, Kreditkarte und Händler, damit du klarer weißt, was du schreiben kannst.</span>
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Link href="/vorlagen-generator">
+            <Link href="/vorlagen-generator?new=1" onClick={handleFreshWizardStart}>
               <Button size="lg" className="w-full sm:w-auto text-base px-8 gap-2 h-12" data-testid="hero-cta-primary">
                 Kostenlose Hilfe starten
                 <ArrowRight className="w-5 h-5" />
@@ -357,7 +368,7 @@ export default function Home() {
 
         <div className="text-center mt-12">
           <p className="text-muted-foreground text-sm mb-4">Dein Fall ist nicht dabei?</p>
-          <Link href="/vorlagen-generator">
+          <Link href="/vorlagen-generator?new=1" onClick={handleFreshWizardStart}>
             <Button variant="outline" className="gap-2">
               Trotzdem kostenlos Hilfe starten
               <ArrowRight className="w-4 h-4" />
@@ -438,7 +449,7 @@ export default function Home() {
                     </li>
                   ))}
                 </ul>
-                <Link href="/vorlagen-generator">
+                <Link href="/vorlagen-generator?new=1" onClick={handleFreshWizardStart}>
                   <Button className="w-full mt-2" variant="outline">Unverbindlich starten</Button>
                 </Link>
               </CardContent>
@@ -465,7 +476,7 @@ export default function Home() {
                   ))}
                 </ul>
                 <div className="!mt-5">
-                  <Link href="/vorlagen-generator">
+                  <Link href={existingCaseHref}>
                     <Button className="w-full">Paket für 0,99 € freischalten</Button>
                   </Link>
                 </div>
@@ -527,7 +538,7 @@ export default function Home() {
 
           <div className="mt-12 text-center">
             <p className="text-muted-foreground mb-4 text-sm">Bereit, Brief-Vorlagen zu generieren?</p>
-            <Link href="/vorlagen-generator">
+            <Link href="/vorlagen-generator?new=1" onClick={handleFreshWizardStart}>
               <Button size="lg" className="gap-2">
                 Unverbindlich starten
                 <ArrowRight className="w-4 h-4" />

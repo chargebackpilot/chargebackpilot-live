@@ -143,6 +143,10 @@ export function clearCurrentCase(): void {
   }
 }
 
+export function clearCurrentCaseSelection(): void {
+  clearCurrentCase();
+}
+
 /** Lists all saved cases, newest first, filtered to the last 90 days. */
 export function listSavedCases(): PersistedCase[] {
   return loadCaseList();

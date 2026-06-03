@@ -5,6 +5,7 @@ import { ArrowRight, CheckCircle2, AlertTriangle, ShieldCheck } from "lucide-rea
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Breadcrumbs } from "@/components/Breadcrumbs";
 import { SeoHead } from "@/components/SeoHead";
+import { clearCurrentCaseSelection } from "@/lib/case-persistence";
 
 interface SEOProps {
   title: string;
@@ -22,6 +23,10 @@ export function SEOArticleLayout({ title, category, whenApplies, evidence, steps
   const [pathname] = useLocation();
   const description = `${title}: typische Fristenhinweise, Belege und strukturierte Orientierung bei ${category}. Mit unverbindlichen Textentwürfen.`;
   const canonicalPath = pathname || "/ratgeber";
+
+  const handleNewCaseClick = () => {
+    clearCurrentCaseSelection();
+  };
 
   const howToSchema = {
     "@context": "https://schema.org",
@@ -98,7 +103,7 @@ export function SEOArticleLayout({ title, category, whenApplies, evidence, steps
             <p className="text-xl text-muted-foreground mb-8">
               Erhalte eine strukturierte Orientierung zu {category}: typische Fristenhinweise, Belege und mögliche nächste Schritte.
             </p>
-            <Link href="/vorlagen-generator">
+            <Link href="/vorlagen-generator?new=1" onClick={handleNewCaseClick}>
               <Button size="lg" className="gap-2">
                 Vorlagen für {category} generieren
                 <ArrowRight className="w-5 h-5" />
@@ -189,7 +194,7 @@ export function SEOArticleLayout({ title, category, whenApplies, evidence, steps
           <section className="bg-muted p-8 rounded-2xl text-center">
             <h2 className="text-2xl font-bold mb-4">Unsicher bei deinem Fall?</h2>
             <p className="text-muted-foreground mb-6">Nutze unseren Generator und erhalte unverbindliche Textentwürfe zur eigenen Prüfung.</p>
-            <Link href="/vorlagen-generator">
+            <Link href="/vorlagen-generator?new=1" onClick={handleNewCaseClick}>
               <Button size="lg">Vorlagen generieren</Button>
             </Link>
           </section>

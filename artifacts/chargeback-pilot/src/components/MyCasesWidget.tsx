@@ -6,6 +6,7 @@ import {
   removeSavedCase,
   isFlatrateActive,
   getFlatrateExpiry,
+  clearCurrentCaseSelection,
   type PersistedCase,
 } from "@/lib/case-persistence";
 import {
@@ -95,6 +96,11 @@ export function MyCasesWidget() {
     refresh();
   };
 
+  const handleNewCase = () => {
+    clearCurrentCaseSelection();
+    setOpen(false);
+  };
+
   return (
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
@@ -180,7 +186,7 @@ export function MyCasesWidget() {
         )}
 
         <div className="p-3 border-t bg-muted/20">
-          <Link href="/vorlagen-generator" onClick={() => setOpen(false)}>
+          <Link href="/vorlagen-generator?new=1" onClick={handleNewCase}>
             <Button size="sm" className="w-full gap-2">
               Neuen Fall analysieren
               <ArrowRight className="w-3.5 h-3.5" />
