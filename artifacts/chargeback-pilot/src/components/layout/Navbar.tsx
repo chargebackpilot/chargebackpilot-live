@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { useState, lazy, Suspense } from "react";
 import { DisclaimerBanner } from "./DisclaimerBanner";
 import { LogoLockup } from "../ui/Logo";
-import { clearCurrentCaseSelection } from "@/lib/case-persistence";
+import { openNewWizardCase } from "@/lib/case-persistence";
 const MyCasesWidget = lazy(() => import("../MyCasesWidget").then((m) => ({ default: m.MyCasesWidget })));
 
 export function Navbar() {
@@ -13,7 +13,7 @@ export function Navbar() {
   const showDisclaimerBanner = pathname !== "/vorlagen-generator";
 
   const handleNewCaseClick = () => {
-    clearCurrentCaseSelection();
+    openNewWizardCase();
   };
 
   return (
@@ -32,7 +32,7 @@ export function Navbar() {
           <Suspense fallback={null}>
             <MyCasesWidget />
           </Suspense>
-          <Link href="/vorlagen-generator?new=1" className="ml-1" onClick={handleNewCaseClick}>
+          <Link href="/vorlagen-generator?new=1" className="ml-1" onClick={(e) => { e.preventDefault(); handleNewCaseClick(); }}>
             <Button size="sm" className="gap-2">
               Vorlagen generieren
               <ArrowRight className="w-4 h-4" />
@@ -58,7 +58,7 @@ export function Navbar() {
             <Link href="/ratgeber" className="text-sm font-medium" onClick={() => setIsOpen(false)}>
               Ratgeber & Guides
             </Link>
-            <Link href="/vorlagen-generator?new=1" onClick={() => { handleNewCaseClick(); setIsOpen(false); }}>
+            <Link href="/vorlagen-generator?new=1" onClick={(e) => { e.preventDefault(); setIsOpen(false); handleNewCaseClick(); }}>
               <Button className="w-full gap-2">
                 Vorlagen generieren
                 <ArrowRight className="w-4 h-4" />

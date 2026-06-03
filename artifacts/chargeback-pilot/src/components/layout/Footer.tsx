@@ -1,13 +1,13 @@
 import { Link } from "wouter";
 import { useLocation } from "wouter";
 import { LogoLockup } from "../ui/Logo";
-import { clearCurrentCaseSelection } from "@/lib/case-persistence";
+import { openNewWizardCase } from "@/lib/case-persistence";
 
 export function Footer() {
   const [pathname] = useLocation();
 
   const handleNewCaseClick = () => {
-    clearCurrentCaseSelection();
+    openNewWizardCase();
   };
 
   return (
@@ -29,7 +29,7 @@ export function Footer() {
         <div>
           <h3 className="font-bold mb-4">Produkt</h3>
           <ul className="space-y-2 text-sm text-muted-foreground">
-            <li><Link href="/vorlagen-generator?new=1" onClick={handleNewCaseClick} className="hover:text-foreground transition-colors">Vorlagen generieren</Link></li>
+            <li><Link href="/vorlagen-generator?new=1" onClick={(e) => { e.preventDefault(); handleNewCaseClick(); }} className="hover:text-foreground transition-colors">Vorlagen generieren</Link></li>
             <li><Link href="/ratgeber" className="hover:text-foreground transition-colors">Ratgeber</Link></li>
           </ul>
         </div>

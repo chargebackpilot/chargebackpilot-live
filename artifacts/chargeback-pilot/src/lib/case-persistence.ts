@@ -147,6 +147,29 @@ export function clearCurrentCaseSelection(): void {
   clearCurrentCase();
 }
 
+function navigateTo(path: string): void {
+  window.location.assign(path);
+}
+
+export function openNewWizardCase(): void {
+  clearCurrentCaseSelection();
+  navigateTo("/vorlagen-generator?new=1");
+}
+
+export function openSavedCase(caseId: string): void {
+  if (!caseId) return;
+  navigateTo(`/vorlagen-generator?caseId=${encodeURIComponent(caseId)}`);
+}
+
+export function openCurrentCasePaywall(): void {
+  const current = loadCurrentCase();
+  if (!current?.caseId) {
+    openNewWizardCase();
+    return;
+  }
+  navigateTo(`/vorlagen-generator?caseId=${encodeURIComponent(current.caseId)}&scroll=paywall`);
+}
+
 /** Lists all saved cases, newest first, filtered to the last 90 days. */
 export function listSavedCases(): PersistedCase[] {
   return loadCaseList();

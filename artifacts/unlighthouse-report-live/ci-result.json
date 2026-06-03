@@ -1,0 +1,2943 @@
+{
+  "summary": {
+    "score": 0.97,
+    "categories": {
+      "performance": {
+        "score": 0.93,
+        "scores": [
+          0.88,
+          0.93,
+          0.91,
+          0.93,
+          0.9,
+          0.95,
+          0.93,
+          0.89,
+          0.92,
+          0.92,
+          0.92,
+          0.92,
+          0.92,
+          0.92,
+          0.92,
+          0.92,
+          0.92,
+          0.92,
+          0.92,
+          0.92,
+          0.92,
+          0.92,
+          0.92,
+          0.92,
+          0.92,
+          0.92,
+          0.92,
+          0.96,
+          0.92,
+          0.92,
+          0.92,
+          0.92,
+          0.92,
+          0.92,
+          0.92,
+          0.92,
+          0.92,
+          0.92,
+          0.92,
+          0.92,
+          0.92,
+          0.92,
+          0.91,
+          0.93,
+          0.93,
+          0.93,
+          0.9,
+          0.93,
+          0.9,
+          0.93,
+          0.92,
+          0.93
+        ],
+        "averageScore": 0.92
+      },
+      "accessibility": {
+        "score": 1,
+        "scores": [
+          1,
+          1,
+          1,
+          1,
+          1,
+          0.98,
+          1,
+          0.96,
+          0.96,
+          0.96,
+          0.96,
+          0.96,
+          0.96,
+          0.96,
+          1,
+          0.96,
+          0.96,
+          1,
+          0.96,
+          1,
+          0.96,
+          1,
+          0.96,
+          0.96,
+          0.96,
+          1,
+          0.96,
+          0.96,
+          0.96,
+          1,
+          0.96,
+          0.96,
+          0.96,
+          0.96,
+          0.96,
+          0.98,
+          0.98,
+          1,
+          0.96,
+          0.96,
+          0.96,
+          0.96,
+          0.98,
+          1,
+          1,
+          1,
+          0.96,
+          1,
+          1,
+          1,
+          1,
+          1
+        ],
+        "averageScore": 0.98
+      },
+      "best-practices": {
+        "score": 1,
+        "scores": [
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1
+        ],
+        "averageScore": 1
+      },
+      "seo": {
+        "score": 1,
+        "scores": [
+          1,
+          1,
+          0.92,
+          1,
+          0.92,
+          0.92,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          0.92,
+          0.92,
+          1,
+          1,
+          1,
+          1,
+          1,
+          0.92,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          0.92,
+          1
+        ],
+        "averageScore": 0.99
+      }
+    },
+    "metrics": {
+      "largest-contentful-paint": {
+        "numericValue": 2602.12715,
+        "displayValue": "2.6 s",
+        "numericValues": [
+          3155.8770000000004,
+          2597.5583999999994,
+          2891.3597500000005,
+          2591.11575,
+          2915.3617999999997,
+          2383.7155,
+          2595.5128999999997,
+          3042.9223500000007,
+          2665.2995,
+          2669.1603,
+          2671.2598500000004,
+          2672.8747999999996,
+          2673.3005000000003,
+          2674.487975,
+          2675.75615,
+          2682.1453999999994,
+          2668.865,
+          2672.9897,
+          2668.0478,
+          2677.686175,
+          2674.4686249999995,
+          2671.29115,
+          2670.052375,
+          2672.97245,
+          2676.4864500000003,
+          2750.18285,
+          2680.3624,
+          2668.34725,
+          2672.03495,
+          2677.0278,
+          2675.8319250000004,
+          2759.3799,
+          2662.10515,
+          2672.627325,
+          2672.39225,
+          2666.108649999999,
+          2663.66665,
+          2671.5891,
+          2667.3589,
+          2683.1317,
+          2678.33425,
+          2673.500225,
+          2890.3954,
+          2593.8230000000003,
+          2603.94905,
+          2599.9889,
+          2897.6782999999996,
+          2599.8411000000006,
+          2902.8398999999995,
+          2598.5868000000005,
+          2675.393825,
+          2602.12715
+        ],
+        "averageNumericValue": 2695.56
+      },
+      "cumulative-layout-shift": {
+        "numericValue": 0.00052,
+        "displayValue": "0.001",
+        "numericValues": [
+          0,
+          0.00052,
+          0.00052,
+          0.00052,
+          0.00052,
+          0.00052,
+          0.00052,
+          0.00052,
+          0.00052,
+          0.00052,
+          0.00052,
+          0.00052,
+          0.00052,
+          0.00052,
+          0.00052,
+          0.00052,
+          0.00052,
+          0.00052,
+          0.00052,
+          0.00052,
+          0.00052,
+          0.00052,
+          0.00052,
+          0.00052,
+          0.00052,
+          0.00052,
+          0.00052,
+          0.00052,
+          0.00052,
+          0.00052,
+          0.00052,
+          0.00052,
+          0.00052,
+          0.00052,
+          0.00052,
+          0.00052,
+          0.00052,
+          0.00052,
+          0.00052,
+          0.00052,
+          0.00052,
+          0.00052,
+          0.00052,
+          0.00052,
+          0.00052,
+          0.00052,
+          0.00052,
+          0.00052,
+          0.00052,
+          0.00052,
+          0.001231,
+          0.00052
+        ],
+        "averageNumericValue": 0
+      },
+      "first-contentful-paint": {
+        "numericValue": 2602.12715,
+        "displayValue": "2.6 s",
+        "numericValues": [
+          2958.615,
+          2597.5583999999994,
+          2740.32045,
+          2591.11575,
+          2766.9554,
+          2278.1767499999996,
+          2595.5128999999997,
+          2829.80455,
+          2665.2995,
+          2669.1603,
+          2671.2598500000004,
+          2672.8747999999996,
+          2673.3005000000003,
+          2674.487975,
+          2675.75615,
+          2682.1453999999994,
+          2668.865,
+          2672.9897,
+          2668.0478,
+          2677.686175,
+          2674.4686249999995,
+          2671.29115,
+          2670.052375,
+          2672.97245,
+          2676.4864500000003,
+          2675.18285,
+          2680.3624,
+          1709.9036500000002,
+          2672.03495,
+          2677.0278,
+          2675.8319250000004,
+          2684.280375,
+          2662.10515,
+          2672.627325,
+          2672.39225,
+          2666.108649999999,
+          2663.66665,
+          2671.5891,
+          2667.3589,
+          2683.1317,
+          2678.33425,
+          2673.500225,
+          2712.9664999999995,
+          2593.8230000000003,
+          2603.94905,
+          2599.9888999999994,
+          2822.6483249999997,
+          2599.8411000000006,
+          2827.832725,
+          2598.5868,
+          2675.393825,
+          2602.12715
+        ],
+        "averageNumericValue": 2652.27
+      },
+      "total-blocking-time": {
+        "numericValue": 0,
+        "displayValue": "0 ms",
+        "numericValues": [
+          34,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "averageNumericValue": 0.65
+      },
+      "max-potential-fid": {
+        "numericValue": 16,
+        "displayValue": "20 ms",
+        "numericValues": [
+          79.5,
+          16,
+          16,
+          16,
+          16,
+          33,
+          16,
+          66.5,
+          16,
+          16,
+          16,
+          16,
+          16,
+          16,
+          16,
+          16,
+          16,
+          16,
+          16,
+          16,
+          16,
+          16,
+          16,
+          16,
+          16,
+          16,
+          16,
+          16,
+          16,
+          16,
+          16,
+          16,
+          16,
+          16,
+          16,
+          16,
+          16,
+          16,
+          16,
+          16,
+          16,
+          16,
+          16,
+          16,
+          16,
+          16,
+          16,
+          16,
+          16,
+          16,
+          16,
+          16
+        ],
+        "averageNumericValue": 18.52
+      },
+      "interactive": {
+        "numericValue": 2602.12715,
+        "displayValue": "2.6 s",
+        "numericValues": [
+          3281.4747000000007,
+          2597.5584,
+          2891.3597500000005,
+          2591.11575,
+          2915.3617999999997,
+          2383.7155000000002,
+          2595.5128999999997,
+          3042.9223500000007,
+          2665.2995,
+          2669.1603,
+          2671.2598500000004,
+          2672.8747999999996,
+          2673.3005000000003,
+          2674.487975,
+          2675.75615,
+          2682.1453999999994,
+          2668.865,
+          2672.9897,
+          2668.0478,
+          2677.686175,
+          2674.4686249999995,
+          2671.29115,
+          2670.052375,
+          2672.97245,
+          2676.4864500000003,
+          2750.18285,
+          2680.3624,
+          2668.34725,
+          2672.03495,
+          2677.0278,
+          2675.8319250000004,
+          2759.3799,
+          2662.10515,
+          2672.627325,
+          2672.39225,
+          2666.108649999999,
+          2663.66665,
+          2671.5891,
+          2667.3589,
+          2683.1317,
+          2678.33425,
+          2673.500225,
+          2890.3954000000003,
+          2593.8230000000003,
+          2603.94905,
+          2599.9889000000003,
+          2897.6782999999996,
+          2599.8411000000006,
+          2902.8399,
+          2598.586800000001,
+          2675.393825,
+          2602.12715
+        ],
+        "averageNumericValue": 2697.98
+      }
+    }
+  },
+  "routes": [
+    {
+      "path": "/",
+      "score": 0.97,
+      "categories": {
+        "performance": {
+          "score": 0.88
+        },
+        "accessibility": {
+          "score": 1
+        },
+        "best-practices": {
+          "score": 1
+        },
+        "seo": {
+          "score": 1
+        }
+      },
+      "metrics": {
+        "largest-contentful-paint": {
+          "numericValue": 3155.8770000000004,
+          "displayValue": "3.2 s"
+        },
+        "cumulative-layout-shift": {
+          "numericValue": 0,
+          "displayValue": "0"
+        },
+        "first-contentful-paint": {
+          "numericValue": 2958.615,
+          "displayValue": "3.0 s"
+        },
+        "total-blocking-time": {
+          "numericValue": 34,
+          "displayValue": "30 ms"
+        },
+        "max-potential-fid": {
+          "numericValue": 79.5,
+          "displayValue": "80 ms"
+        },
+        "interactive": {
+          "numericValue": 3281.4747000000007,
+          "displayValue": "3.3 s"
+        }
+      }
+    },
+    {
+      "path": "/abo-falle-chargeback",
+      "score": 0.98,
+      "categories": {
+        "performance": {
+          "score": 0.93
+        },
+        "accessibility": {
+          "score": 1
+        },
+        "best-practices": {
+          "score": 1
+        },
+        "seo": {
+          "score": 1
+        }
+      },
+      "metrics": {
+        "largest-contentful-paint": {
+          "numericValue": 2597.5583999999994,
+          "displayValue": "2.6 s"
+        },
+        "cumulative-layout-shift": {
+          "numericValue": 0.00052,
+          "displayValue": "0.001"
+        },
+        "first-contentful-paint": {
+          "numericValue": 2597.5583999999994,
+          "displayValue": "2.6 s"
+        },
+        "total-blocking-time": {
+          "numericValue": 0,
+          "displayValue": "0 ms"
+        },
+        "max-potential-fid": {
+          "numericValue": 16,
+          "displayValue": "20 ms"
+        },
+        "interactive": {
+          "numericValue": 2597.5584,
+          "displayValue": "2.6 s"
+        }
+      }
+    },
+    {
+      "path": "/agb",
+      "score": 0.96,
+      "categories": {
+        "performance": {
+          "score": 0.91
+        },
+        "accessibility": {
+          "score": 1
+        },
+        "best-practices": {
+          "score": 1
+        },
+        "seo": {
+          "score": 0.92
+        }
+      },
+      "metrics": {
+        "largest-contentful-paint": {
+          "numericValue": 2891.3597500000005,
+          "displayValue": "2.9 s"
+        },
+        "cumulative-layout-shift": {
+          "numericValue": 0.00052,
+          "displayValue": "0.001"
+        },
+        "first-contentful-paint": {
+          "numericValue": 2740.32045,
+          "displayValue": "2.7 s"
+        },
+        "total-blocking-time": {
+          "numericValue": 0,
+          "displayValue": "0 ms"
+        },
+        "max-potential-fid": {
+          "numericValue": 16,
+          "displayValue": "20 ms"
+        },
+        "interactive": {
+          "numericValue": 2891.3597500000005,
+          "displayValue": "2.9 s"
+        }
+      }
+    },
+    {
+      "path": "/amex-chargeback",
+      "score": 0.98,
+      "categories": {
+        "performance": {
+          "score": 0.93
+        },
+        "accessibility": {
+          "score": 1
+        },
+        "best-practices": {
+          "score": 1
+        },
+        "seo": {
+          "score": 1
+        }
+      },
+      "metrics": {
+        "largest-contentful-paint": {
+          "numericValue": 2591.11575,
+          "displayValue": "2.6 s"
+        },
+        "cumulative-layout-shift": {
+          "numericValue": 0.00052,
+          "displayValue": "0.001"
+        },
+        "first-contentful-paint": {
+          "numericValue": 2591.11575,
+          "displayValue": "2.6 s"
+        },
+        "total-blocking-time": {
+          "numericValue": 0,
+          "displayValue": "0 ms"
+        },
+        "max-potential-fid": {
+          "numericValue": 16,
+          "displayValue": "20 ms"
+        },
+        "interactive": {
+          "numericValue": 2591.11575,
+          "displayValue": "2.6 s"
+        }
+      }
+    },
+    {
+      "path": "/datenschutz",
+      "score": 0.96,
+      "categories": {
+        "performance": {
+          "score": 0.9
+        },
+        "accessibility": {
+          "score": 1
+        },
+        "best-practices": {
+          "score": 1
+        },
+        "seo": {
+          "score": 0.92
+        }
+      },
+      "metrics": {
+        "largest-contentful-paint": {
+          "numericValue": 2915.3617999999997,
+          "displayValue": "2.9 s"
+        },
+        "cumulative-layout-shift": {
+          "numericValue": 0.00052,
+          "displayValue": "0.001"
+        },
+        "first-contentful-paint": {
+          "numericValue": 2766.9554,
+          "displayValue": "2.8 s"
+        },
+        "total-blocking-time": {
+          "numericValue": 0,
+          "displayValue": "0 ms"
+        },
+        "max-potential-fid": {
+          "numericValue": 16,
+          "displayValue": "20 ms"
+        },
+        "interactive": {
+          "numericValue": 2915.3617999999997,
+          "displayValue": "2.9 s"
+        }
+      }
+    },
+    {
+      "path": "/disclaimer",
+      "score": 0.96,
+      "categories": {
+        "performance": {
+          "score": 0.95
+        },
+        "accessibility": {
+          "score": 0.98
+        },
+        "best-practices": {
+          "score": 1
+        },
+        "seo": {
+          "score": 0.92
+        }
+      },
+      "metrics": {
+        "largest-contentful-paint": {
+          "numericValue": 2383.7155,
+          "displayValue": "2.4 s"
+        },
+        "cumulative-layout-shift": {
+          "numericValue": 0.00052,
+          "displayValue": "0.001"
+        },
+        "first-contentful-paint": {
+          "numericValue": 2278.1767499999996,
+          "displayValue": "2.3 s"
+        },
+        "total-blocking-time": {
+          "numericValue": 0,
+          "displayValue": "0 ms"
+        },
+        "max-potential-fid": {
+          "numericValue": 33,
+          "displayValue": "30 ms"
+        },
+        "interactive": {
+          "numericValue": 2383.7155000000002,
+          "displayValue": "2.4 s"
+        }
+      }
+    },
+    {
+      "path": "/flug-chargeback",
+      "score": 0.98,
+      "categories": {
+        "performance": {
+          "score": 0.93
+        },
+        "accessibility": {
+          "score": 1
+        },
+        "best-practices": {
+          "score": 1
+        },
+        "seo": {
+          "score": 1
+        }
+      },
+      "metrics": {
+        "largest-contentful-paint": {
+          "numericValue": 2595.5128999999997,
+          "displayValue": "2.6 s"
+        },
+        "cumulative-layout-shift": {
+          "numericValue": 0.00052,
+          "displayValue": "0.001"
+        },
+        "first-contentful-paint": {
+          "numericValue": 2595.5128999999997,
+          "displayValue": "2.6 s"
+        },
+        "total-blocking-time": {
+          "numericValue": 0,
+          "displayValue": "0 ms"
+        },
+        "max-potential-fid": {
+          "numericValue": 16,
+          "displayValue": "20 ms"
+        },
+        "interactive": {
+          "numericValue": 2595.5128999999997,
+          "displayValue": "2.6 s"
+        }
+      }
+    },
+    {
+      "path": "/hilfe/airbnb/hotel-anders-als-beschrieben",
+      "score": 0.96,
+      "categories": {
+        "performance": {
+          "score": 0.89
+        },
+        "accessibility": {
+          "score": 0.96
+        },
+        "best-practices": {
+          "score": 1
+        },
+        "seo": {
+          "score": 1
+        }
+      },
+      "metrics": {
+        "largest-contentful-paint": {
+          "numericValue": 3042.9223500000007,
+          "displayValue": "3.0 s"
+        },
+        "cumulative-layout-shift": {
+          "numericValue": 0.00052,
+          "displayValue": "0.001"
+        },
+        "first-contentful-paint": {
+          "numericValue": 2829.80455,
+          "displayValue": "2.8 s"
+        },
+        "total-blocking-time": {
+          "numericValue": 0,
+          "displayValue": "0 ms"
+        },
+        "max-potential-fid": {
+          "numericValue": 66.5,
+          "displayValue": "70 ms"
+        },
+        "interactive": {
+          "numericValue": 3042.9223500000007,
+          "displayValue": "3.0 s"
+        }
+      }
+    },
+    {
+      "path": "/hilfe/aliexpress/ware-defekt",
+      "score": 0.97,
+      "categories": {
+        "performance": {
+          "score": 0.92
+        },
+        "accessibility": {
+          "score": 0.96
+        },
+        "best-practices": {
+          "score": 1
+        },
+        "seo": {
+          "score": 1
+        }
+      },
+      "metrics": {
+        "largest-contentful-paint": {
+          "numericValue": 2665.2995,
+          "displayValue": "2.7 s"
+        },
+        "cumulative-layout-shift": {
+          "numericValue": 0.00052,
+          "displayValue": "0.001"
+        },
+        "first-contentful-paint": {
+          "numericValue": 2665.2995,
+          "displayValue": "2.7 s"
+        },
+        "total-blocking-time": {
+          "numericValue": 0,
+          "displayValue": "0 ms"
+        },
+        "max-potential-fid": {
+          "numericValue": 16,
+          "displayValue": "20 ms"
+        },
+        "interactive": {
+          "numericValue": 2665.2995,
+          "displayValue": "2.7 s"
+        }
+      }
+    },
+    {
+      "path": "/hilfe/aliexpress/ware-nicht-erhalten",
+      "score": 0.97,
+      "categories": {
+        "performance": {
+          "score": 0.92
+        },
+        "accessibility": {
+          "score": 0.96
+        },
+        "best-practices": {
+          "score": 1
+        },
+        "seo": {
+          "score": 1
+        }
+      },
+      "metrics": {
+        "largest-contentful-paint": {
+          "numericValue": 2669.1603,
+          "displayValue": "2.7 s"
+        },
+        "cumulative-layout-shift": {
+          "numericValue": 0.00052,
+          "displayValue": "0.001"
+        },
+        "first-contentful-paint": {
+          "numericValue": 2669.1603,
+          "displayValue": "2.7 s"
+        },
+        "total-blocking-time": {
+          "numericValue": 0,
+          "displayValue": "0 ms"
+        },
+        "max-potential-fid": {
+          "numericValue": 16,
+          "displayValue": "20 ms"
+        },
+        "interactive": {
+          "numericValue": 2669.1603,
+          "displayValue": "2.7 s"
+        }
+      }
+    },
+    {
+      "path": "/hilfe/amazon/abbuchung-ohne-zustimmung",
+      "score": 0.97,
+      "categories": {
+        "performance": {
+          "score": 0.92
+        },
+        "accessibility": {
+          "score": 0.96
+        },
+        "best-practices": {
+          "score": 1
+        },
+        "seo": {
+          "score": 1
+        }
+      },
+      "metrics": {
+        "largest-contentful-paint": {
+          "numericValue": 2671.2598500000004,
+          "displayValue": "2.7 s"
+        },
+        "cumulative-layout-shift": {
+          "numericValue": 0.00052,
+          "displayValue": "0.001"
+        },
+        "first-contentful-paint": {
+          "numericValue": 2671.2598500000004,
+          "displayValue": "2.7 s"
+        },
+        "total-blocking-time": {
+          "numericValue": 0,
+          "displayValue": "0 ms"
+        },
+        "max-potential-fid": {
+          "numericValue": 16,
+          "displayValue": "20 ms"
+        },
+        "interactive": {
+          "numericValue": 2671.2598500000004,
+          "displayValue": "2.7 s"
+        }
+      }
+    },
+    {
+      "path": "/hilfe/amazon/ware-defekt",
+      "score": 0.97,
+      "categories": {
+        "performance": {
+          "score": 0.92
+        },
+        "accessibility": {
+          "score": 0.96
+        },
+        "best-practices": {
+          "score": 1
+        },
+        "seo": {
+          "score": 1
+        }
+      },
+      "metrics": {
+        "largest-contentful-paint": {
+          "numericValue": 2672.8747999999996,
+          "displayValue": "2.7 s"
+        },
+        "cumulative-layout-shift": {
+          "numericValue": 0.00052,
+          "displayValue": "0.001"
+        },
+        "first-contentful-paint": {
+          "numericValue": 2672.8747999999996,
+          "displayValue": "2.7 s"
+        },
+        "total-blocking-time": {
+          "numericValue": 0,
+          "displayValue": "0 ms"
+        },
+        "max-potential-fid": {
+          "numericValue": 16,
+          "displayValue": "20 ms"
+        },
+        "interactive": {
+          "numericValue": 2672.8747999999996,
+          "displayValue": "2.7 s"
+        }
+      }
+    },
+    {
+      "path": "/hilfe/amazon/ware-nicht-erhalten",
+      "score": 0.97,
+      "categories": {
+        "performance": {
+          "score": 0.92
+        },
+        "accessibility": {
+          "score": 0.96
+        },
+        "best-practices": {
+          "score": 1
+        },
+        "seo": {
+          "score": 1
+        }
+      },
+      "metrics": {
+        "largest-contentful-paint": {
+          "numericValue": 2673.3005000000003,
+          "displayValue": "2.7 s"
+        },
+        "cumulative-layout-shift": {
+          "numericValue": 0.00052,
+          "displayValue": "0.001"
+        },
+        "first-contentful-paint": {
+          "numericValue": 2673.3005000000003,
+          "displayValue": "2.7 s"
+        },
+        "total-blocking-time": {
+          "numericValue": 0,
+          "displayValue": "0 ms"
+        },
+        "max-potential-fid": {
+          "numericValue": 16,
+          "displayValue": "20 ms"
+        },
+        "interactive": {
+          "numericValue": 2673.3005000000003,
+          "displayValue": "2.7 s"
+        }
+      }
+    },
+    {
+      "path": "/hilfe/apple/abbuchung-ohne-zustimmung",
+      "score": 0.97,
+      "categories": {
+        "performance": {
+          "score": 0.92
+        },
+        "accessibility": {
+          "score": 0.96
+        },
+        "best-practices": {
+          "score": 1
+        },
+        "seo": {
+          "score": 1
+        }
+      },
+      "metrics": {
+        "largest-contentful-paint": {
+          "numericValue": 2674.487975,
+          "displayValue": "2.7 s"
+        },
+        "cumulative-layout-shift": {
+          "numericValue": 0.00052,
+          "displayValue": "0.001"
+        },
+        "first-contentful-paint": {
+          "numericValue": 2674.487975,
+          "displayValue": "2.7 s"
+        },
+        "total-blocking-time": {
+          "numericValue": 0,
+          "displayValue": "0 ms"
+        },
+        "max-potential-fid": {
+          "numericValue": 16,
+          "displayValue": "20 ms"
+        },
+        "interactive": {
+          "numericValue": 2674.487975,
+          "displayValue": "2.7 s"
+        }
+      }
+    },
+    {
+      "path": "/hilfe/booking",
+      "score": 0.98,
+      "categories": {
+        "performance": {
+          "score": 0.92
+        },
+        "accessibility": {
+          "score": 1
+        },
+        "best-practices": {
+          "score": 1
+        },
+        "seo": {
+          "score": 1
+        }
+      },
+      "metrics": {
+        "largest-contentful-paint": {
+          "numericValue": 2675.75615,
+          "displayValue": "2.7 s"
+        },
+        "cumulative-layout-shift": {
+          "numericValue": 0.00052,
+          "displayValue": "0.001"
+        },
+        "first-contentful-paint": {
+          "numericValue": 2675.75615,
+          "displayValue": "2.7 s"
+        },
+        "total-blocking-time": {
+          "numericValue": 0,
+          "displayValue": "0 ms"
+        },
+        "max-potential-fid": {
+          "numericValue": 16,
+          "displayValue": "20 ms"
+        },
+        "interactive": {
+          "numericValue": 2675.75615,
+          "displayValue": "2.7 s"
+        }
+      }
+    },
+    {
+      "path": "/hilfe/booking/flug-storniert",
+      "score": 0.97,
+      "categories": {
+        "performance": {
+          "score": 0.92
+        },
+        "accessibility": {
+          "score": 0.96
+        },
+        "best-practices": {
+          "score": 1
+        },
+        "seo": {
+          "score": 1
+        }
+      },
+      "metrics": {
+        "largest-contentful-paint": {
+          "numericValue": 2682.1453999999994,
+          "displayValue": "2.7 s"
+        },
+        "cumulative-layout-shift": {
+          "numericValue": 0.00052,
+          "displayValue": "0.001"
+        },
+        "first-contentful-paint": {
+          "numericValue": 2682.1453999999994,
+          "displayValue": "2.7 s"
+        },
+        "total-blocking-time": {
+          "numericValue": 0,
+          "displayValue": "0 ms"
+        },
+        "max-potential-fid": {
+          "numericValue": 16,
+          "displayValue": "20 ms"
+        },
+        "interactive": {
+          "numericValue": 2682.1453999999994,
+          "displayValue": "2.7 s"
+        }
+      }
+    },
+    {
+      "path": "/hilfe/booking/hotel-anders-als-beschrieben",
+      "score": 0.97,
+      "categories": {
+        "performance": {
+          "score": 0.92
+        },
+        "accessibility": {
+          "score": 0.96
+        },
+        "best-practices": {
+          "score": 1
+        },
+        "seo": {
+          "score": 1
+        }
+      },
+      "metrics": {
+        "largest-contentful-paint": {
+          "numericValue": 2668.865,
+          "displayValue": "2.7 s"
+        },
+        "cumulative-layout-shift": {
+          "numericValue": 0.00052,
+          "displayValue": "0.001"
+        },
+        "first-contentful-paint": {
+          "numericValue": 2668.865,
+          "displayValue": "2.7 s"
+        },
+        "total-blocking-time": {
+          "numericValue": 0,
+          "displayValue": "0 ms"
+        },
+        "max-potential-fid": {
+          "numericValue": 16,
+          "displayValue": "20 ms"
+        },
+        "interactive": {
+          "numericValue": 2668.865,
+          "displayValue": "2.7 s"
+        }
+      }
+    },
+    {
+      "path": "/hilfe/dazn",
+      "score": 0.98,
+      "categories": {
+        "performance": {
+          "score": 0.92
+        },
+        "accessibility": {
+          "score": 1
+        },
+        "best-practices": {
+          "score": 1
+        },
+        "seo": {
+          "score": 1
+        }
+      },
+      "metrics": {
+        "largest-contentful-paint": {
+          "numericValue": 2672.9897,
+          "displayValue": "2.7 s"
+        },
+        "cumulative-layout-shift": {
+          "numericValue": 0.00052,
+          "displayValue": "0.001"
+        },
+        "first-contentful-paint": {
+          "numericValue": 2672.9897,
+          "displayValue": "2.7 s"
+        },
+        "total-blocking-time": {
+          "numericValue": 0,
+          "displayValue": "0 ms"
+        },
+        "max-potential-fid": {
+          "numericValue": 16,
+          "displayValue": "20 ms"
+        },
+        "interactive": {
+          "numericValue": 2672.9897,
+          "displayValue": "2.7 s"
+        }
+      }
+    },
+    {
+      "path": "/hilfe/dazn/abbuchung-ohne-zustimmung",
+      "score": 0.97,
+      "categories": {
+        "performance": {
+          "score": 0.92
+        },
+        "accessibility": {
+          "score": 0.96
+        },
+        "best-practices": {
+          "score": 1
+        },
+        "seo": {
+          "score": 1
+        }
+      },
+      "metrics": {
+        "largest-contentful-paint": {
+          "numericValue": 2668.0478,
+          "displayValue": "2.7 s"
+        },
+        "cumulative-layout-shift": {
+          "numericValue": 0.00052,
+          "displayValue": "0.001"
+        },
+        "first-contentful-paint": {
+          "numericValue": 2668.0478,
+          "displayValue": "2.7 s"
+        },
+        "total-blocking-time": {
+          "numericValue": 0,
+          "displayValue": "0 ms"
+        },
+        "max-potential-fid": {
+          "numericValue": 16,
+          "displayValue": "20 ms"
+        },
+        "interactive": {
+          "numericValue": 2668.0478,
+          "displayValue": "2.7 s"
+        }
+      }
+    },
+    {
+      "path": "/hilfe/eurowings",
+      "score": 0.98,
+      "categories": {
+        "performance": {
+          "score": 0.92
+        },
+        "accessibility": {
+          "score": 1
+        },
+        "best-practices": {
+          "score": 1
+        },
+        "seo": {
+          "score": 1
+        }
+      },
+      "metrics": {
+        "largest-contentful-paint": {
+          "numericValue": 2677.686175,
+          "displayValue": "2.7 s"
+        },
+        "cumulative-layout-shift": {
+          "numericValue": 0.00052,
+          "displayValue": "0.001"
+        },
+        "first-contentful-paint": {
+          "numericValue": 2677.686175,
+          "displayValue": "2.7 s"
+        },
+        "total-blocking-time": {
+          "numericValue": 0,
+          "displayValue": "0 ms"
+        },
+        "max-potential-fid": {
+          "numericValue": 16,
+          "displayValue": "20 ms"
+        },
+        "interactive": {
+          "numericValue": 2677.686175,
+          "displayValue": "2.7 s"
+        }
+      }
+    },
+    {
+      "path": "/hilfe/eurowings/flug-storniert",
+      "score": 0.97,
+      "categories": {
+        "performance": {
+          "score": 0.92
+        },
+        "accessibility": {
+          "score": 0.96
+        },
+        "best-practices": {
+          "score": 1
+        },
+        "seo": {
+          "score": 1
+        }
+      },
+      "metrics": {
+        "largest-contentful-paint": {
+          "numericValue": 2674.4686249999995,
+          "displayValue": "2.7 s"
+        },
+        "cumulative-layout-shift": {
+          "numericValue": 0.00052,
+          "displayValue": "0.001"
+        },
+        "first-contentful-paint": {
+          "numericValue": 2674.4686249999995,
+          "displayValue": "2.7 s"
+        },
+        "total-blocking-time": {
+          "numericValue": 0,
+          "displayValue": "0 ms"
+        },
+        "max-potential-fid": {
+          "numericValue": 16,
+          "displayValue": "20 ms"
+        },
+        "interactive": {
+          "numericValue": 2674.4686249999995,
+          "displayValue": "2.7 s"
+        }
+      }
+    },
+    {
+      "path": "/hilfe/lieferando",
+      "score": 0.98,
+      "categories": {
+        "performance": {
+          "score": 0.92
+        },
+        "accessibility": {
+          "score": 1
+        },
+        "best-practices": {
+          "score": 1
+        },
+        "seo": {
+          "score": 1
+        }
+      },
+      "metrics": {
+        "largest-contentful-paint": {
+          "numericValue": 2671.29115,
+          "displayValue": "2.7 s"
+        },
+        "cumulative-layout-shift": {
+          "numericValue": 0.00052,
+          "displayValue": "0.001"
+        },
+        "first-contentful-paint": {
+          "numericValue": 2671.29115,
+          "displayValue": "2.7 s"
+        },
+        "total-blocking-time": {
+          "numericValue": 0,
+          "displayValue": "0 ms"
+        },
+        "max-potential-fid": {
+          "numericValue": 16,
+          "displayValue": "20 ms"
+        },
+        "interactive": {
+          "numericValue": 2671.29115,
+          "displayValue": "2.7 s"
+        }
+      }
+    },
+    {
+      "path": "/hilfe/lieferando/lieferung-falsch",
+      "score": 0.97,
+      "categories": {
+        "performance": {
+          "score": 0.92
+        },
+        "accessibility": {
+          "score": 0.96
+        },
+        "best-practices": {
+          "score": 1
+        },
+        "seo": {
+          "score": 1
+        }
+      },
+      "metrics": {
+        "largest-contentful-paint": {
+          "numericValue": 2670.052375,
+          "displayValue": "2.7 s"
+        },
+        "cumulative-layout-shift": {
+          "numericValue": 0.00052,
+          "displayValue": "0.001"
+        },
+        "first-contentful-paint": {
+          "numericValue": 2670.052375,
+          "displayValue": "2.7 s"
+        },
+        "total-blocking-time": {
+          "numericValue": 0,
+          "displayValue": "0 ms"
+        },
+        "max-potential-fid": {
+          "numericValue": 16,
+          "displayValue": "20 ms"
+        },
+        "interactive": {
+          "numericValue": 2670.052375,
+          "displayValue": "2.7 s"
+        }
+      }
+    },
+    {
+      "path": "/hilfe/lufthansa/flug-storniert",
+      "score": 0.97,
+      "categories": {
+        "performance": {
+          "score": 0.92
+        },
+        "accessibility": {
+          "score": 0.96
+        },
+        "best-practices": {
+          "score": 1
+        },
+        "seo": {
+          "score": 1
+        }
+      },
+      "metrics": {
+        "largest-contentful-paint": {
+          "numericValue": 2672.97245,
+          "displayValue": "2.7 s"
+        },
+        "cumulative-layout-shift": {
+          "numericValue": 0.00052,
+          "displayValue": "0.001"
+        },
+        "first-contentful-paint": {
+          "numericValue": 2672.97245,
+          "displayValue": "2.7 s"
+        },
+        "total-blocking-time": {
+          "numericValue": 0,
+          "displayValue": "0 ms"
+        },
+        "max-potential-fid": {
+          "numericValue": 16,
+          "displayValue": "20 ms"
+        },
+        "interactive": {
+          "numericValue": 2672.97245,
+          "displayValue": "2.7 s"
+        }
+      }
+    },
+    {
+      "path": "/hilfe/netflix/abbuchung-ohne-zustimmung",
+      "score": 0.97,
+      "categories": {
+        "performance": {
+          "score": 0.92
+        },
+        "accessibility": {
+          "score": 0.96
+        },
+        "best-practices": {
+          "score": 1
+        },
+        "seo": {
+          "score": 1
+        }
+      },
+      "metrics": {
+        "largest-contentful-paint": {
+          "numericValue": 2676.4864500000003,
+          "displayValue": "2.7 s"
+        },
+        "cumulative-layout-shift": {
+          "numericValue": 0.00052,
+          "displayValue": "0.001"
+        },
+        "first-contentful-paint": {
+          "numericValue": 2676.4864500000003,
+          "displayValue": "2.7 s"
+        },
+        "total-blocking-time": {
+          "numericValue": 0,
+          "displayValue": "0 ms"
+        },
+        "max-potential-fid": {
+          "numericValue": 16,
+          "displayValue": "20 ms"
+        },
+        "interactive": {
+          "numericValue": 2676.4864500000003,
+          "displayValue": "2.7 s"
+        }
+      }
+    },
+    {
+      "path": "/hilfe/ryanair",
+      "score": 0.98,
+      "categories": {
+        "performance": {
+          "score": 0.92
+        },
+        "accessibility": {
+          "score": 1
+        },
+        "best-practices": {
+          "score": 1
+        },
+        "seo": {
+          "score": 1
+        }
+      },
+      "metrics": {
+        "largest-contentful-paint": {
+          "numericValue": 2750.18285,
+          "displayValue": "2.8 s"
+        },
+        "cumulative-layout-shift": {
+          "numericValue": 0.00052,
+          "displayValue": "0.001"
+        },
+        "first-contentful-paint": {
+          "numericValue": 2675.18285,
+          "displayValue": "2.7 s"
+        },
+        "total-blocking-time": {
+          "numericValue": 0,
+          "displayValue": "0 ms"
+        },
+        "max-potential-fid": {
+          "numericValue": 16,
+          "displayValue": "20 ms"
+        },
+        "interactive": {
+          "numericValue": 2750.18285,
+          "displayValue": "2.8 s"
+        }
+      }
+    },
+    {
+      "path": "/hilfe/ryanair/flug-storniert",
+      "score": 0.97,
+      "categories": {
+        "performance": {
+          "score": 0.92
+        },
+        "accessibility": {
+          "score": 0.96
+        },
+        "best-practices": {
+          "score": 1
+        },
+        "seo": {
+          "score": 1
+        }
+      },
+      "metrics": {
+        "largest-contentful-paint": {
+          "numericValue": 2680.3624,
+          "displayValue": "2.7 s"
+        },
+        "cumulative-layout-shift": {
+          "numericValue": 0.00052,
+          "displayValue": "0.001"
+        },
+        "first-contentful-paint": {
+          "numericValue": 2680.3624,
+          "displayValue": "2.7 s"
+        },
+        "total-blocking-time": {
+          "numericValue": 0,
+          "displayValue": "0 ms"
+        },
+        "max-potential-fid": {
+          "numericValue": 16,
+          "displayValue": "20 ms"
+        },
+        "interactive": {
+          "numericValue": 2680.3624,
+          "displayValue": "2.7 s"
+        }
+      }
+    },
+    {
+      "path": "/hilfe/shein/ware-defekt",
+      "score": 0.98,
+      "categories": {
+        "performance": {
+          "score": 0.96
+        },
+        "accessibility": {
+          "score": 0.96
+        },
+        "best-practices": {
+          "score": 1
+        },
+        "seo": {
+          "score": 1
+        }
+      },
+      "metrics": {
+        "largest-contentful-paint": {
+          "numericValue": 2668.34725,
+          "displayValue": "2.7 s"
+        },
+        "cumulative-layout-shift": {
+          "numericValue": 0.00052,
+          "displayValue": "0.001"
+        },
+        "first-contentful-paint": {
+          "numericValue": 1709.9036500000002,
+          "displayValue": "1.7 s"
+        },
+        "total-blocking-time": {
+          "numericValue": 0,
+          "displayValue": "0 ms"
+        },
+        "max-potential-fid": {
+          "numericValue": 16,
+          "displayValue": "20 ms"
+        },
+        "interactive": {
+          "numericValue": 2668.34725,
+          "displayValue": "2.7 s"
+        }
+      }
+    },
+    {
+      "path": "/hilfe/shein/ware-nicht-erhalten",
+      "score": 0.97,
+      "categories": {
+        "performance": {
+          "score": 0.92
+        },
+        "accessibility": {
+          "score": 0.96
+        },
+        "best-practices": {
+          "score": 1
+        },
+        "seo": {
+          "score": 1
+        }
+      },
+      "metrics": {
+        "largest-contentful-paint": {
+          "numericValue": 2672.03495,
+          "displayValue": "2.7 s"
+        },
+        "cumulative-layout-shift": {
+          "numericValue": 0.00052,
+          "displayValue": "0.001"
+        },
+        "first-contentful-paint": {
+          "numericValue": 2672.03495,
+          "displayValue": "2.7 s"
+        },
+        "total-blocking-time": {
+          "numericValue": 0,
+          "displayValue": "0 ms"
+        },
+        "max-potential-fid": {
+          "numericValue": 16,
+          "displayValue": "20 ms"
+        },
+        "interactive": {
+          "numericValue": 2672.03495,
+          "displayValue": "2.7 s"
+        }
+      }
+    },
+    {
+      "path": "/hilfe/sky",
+      "score": 0.98,
+      "categories": {
+        "performance": {
+          "score": 0.92
+        },
+        "accessibility": {
+          "score": 1
+        },
+        "best-practices": {
+          "score": 1
+        },
+        "seo": {
+          "score": 1
+        }
+      },
+      "metrics": {
+        "largest-contentful-paint": {
+          "numericValue": 2677.0278,
+          "displayValue": "2.7 s"
+        },
+        "cumulative-layout-shift": {
+          "numericValue": 0.00052,
+          "displayValue": "0.001"
+        },
+        "first-contentful-paint": {
+          "numericValue": 2677.0278,
+          "displayValue": "2.7 s"
+        },
+        "total-blocking-time": {
+          "numericValue": 0,
+          "displayValue": "0 ms"
+        },
+        "max-potential-fid": {
+          "numericValue": 16,
+          "displayValue": "20 ms"
+        },
+        "interactive": {
+          "numericValue": 2677.0278,
+          "displayValue": "2.7 s"
+        }
+      }
+    },
+    {
+      "path": "/hilfe/sky/abbuchung-ohne-zustimmung",
+      "score": 0.97,
+      "categories": {
+        "performance": {
+          "score": 0.92
+        },
+        "accessibility": {
+          "score": 0.96
+        },
+        "best-practices": {
+          "score": 1
+        },
+        "seo": {
+          "score": 1
+        }
+      },
+      "metrics": {
+        "largest-contentful-paint": {
+          "numericValue": 2675.8319250000004,
+          "displayValue": "2.7 s"
+        },
+        "cumulative-layout-shift": {
+          "numericValue": 0.00052,
+          "displayValue": "0.001"
+        },
+        "first-contentful-paint": {
+          "numericValue": 2675.8319250000004,
+          "displayValue": "2.7 s"
+        },
+        "total-blocking-time": {
+          "numericValue": 0,
+          "displayValue": "0 ms"
+        },
+        "max-potential-fid": {
+          "numericValue": 16,
+          "displayValue": "20 ms"
+        },
+        "interactive": {
+          "numericValue": 2675.8319250000004,
+          "displayValue": "2.7 s"
+        }
+      }
+    },
+    {
+      "path": "/hilfe/spotify/abbuchung-ohne-zustimmung",
+      "score": 0.97,
+      "categories": {
+        "performance": {
+          "score": 0.92
+        },
+        "accessibility": {
+          "score": 0.96
+        },
+        "best-practices": {
+          "score": 1
+        },
+        "seo": {
+          "score": 1
+        }
+      },
+      "metrics": {
+        "largest-contentful-paint": {
+          "numericValue": 2759.3799,
+          "displayValue": "2.8 s"
+        },
+        "cumulative-layout-shift": {
+          "numericValue": 0.00052,
+          "displayValue": "0.001"
+        },
+        "first-contentful-paint": {
+          "numericValue": 2684.280375,
+          "displayValue": "2.7 s"
+        },
+        "total-blocking-time": {
+          "numericValue": 0,
+          "displayValue": "0 ms"
+        },
+        "max-potential-fid": {
+          "numericValue": 16,
+          "displayValue": "20 ms"
+        },
+        "interactive": {
+          "numericValue": 2759.3799,
+          "displayValue": "2.8 s"
+        }
+      }
+    },
+    {
+      "path": "/hilfe/temu/betrugsverdacht",
+      "score": 0.97,
+      "categories": {
+        "performance": {
+          "score": 0.92
+        },
+        "accessibility": {
+          "score": 0.96
+        },
+        "best-practices": {
+          "score": 1
+        },
+        "seo": {
+          "score": 1
+        }
+      },
+      "metrics": {
+        "largest-contentful-paint": {
+          "numericValue": 2662.10515,
+          "displayValue": "2.7 s"
+        },
+        "cumulative-layout-shift": {
+          "numericValue": 0.00052,
+          "displayValue": "0.001"
+        },
+        "first-contentful-paint": {
+          "numericValue": 2662.10515,
+          "displayValue": "2.7 s"
+        },
+        "total-blocking-time": {
+          "numericValue": 0,
+          "displayValue": "0 ms"
+        },
+        "max-potential-fid": {
+          "numericValue": 16,
+          "displayValue": "20 ms"
+        },
+        "interactive": {
+          "numericValue": 2662.10515,
+          "displayValue": "2.7 s"
+        }
+      }
+    },
+    {
+      "path": "/hilfe/temu/ware-defekt",
+      "score": 0.97,
+      "categories": {
+        "performance": {
+          "score": 0.92
+        },
+        "accessibility": {
+          "score": 0.96
+        },
+        "best-practices": {
+          "score": 1
+        },
+        "seo": {
+          "score": 1
+        }
+      },
+      "metrics": {
+        "largest-contentful-paint": {
+          "numericValue": 2672.627325,
+          "displayValue": "2.7 s"
+        },
+        "cumulative-layout-shift": {
+          "numericValue": 0.00052,
+          "displayValue": "0.001"
+        },
+        "first-contentful-paint": {
+          "numericValue": 2672.627325,
+          "displayValue": "2.7 s"
+        },
+        "total-blocking-time": {
+          "numericValue": 0,
+          "displayValue": "0 ms"
+        },
+        "max-potential-fid": {
+          "numericValue": 16,
+          "displayValue": "20 ms"
+        },
+        "interactive": {
+          "numericValue": 2672.627325,
+          "displayValue": "2.7 s"
+        }
+      }
+    },
+    {
+      "path": "/hilfe/temu/ware-nicht-erhalten",
+      "score": 0.97,
+      "categories": {
+        "performance": {
+          "score": 0.92
+        },
+        "accessibility": {
+          "score": 0.96
+        },
+        "best-practices": {
+          "score": 1
+        },
+        "seo": {
+          "score": 1
+        }
+      },
+      "metrics": {
+        "largest-contentful-paint": {
+          "numericValue": 2672.39225,
+          "displayValue": "2.7 s"
+        },
+        "cumulative-layout-shift": {
+          "numericValue": 0.00052,
+          "displayValue": "0.001"
+        },
+        "first-contentful-paint": {
+          "numericValue": 2672.39225,
+          "displayValue": "2.7 s"
+        },
+        "total-blocking-time": {
+          "numericValue": 0,
+          "displayValue": "0 ms"
+        },
+        "max-potential-fid": {
+          "numericValue": 16,
+          "displayValue": "20 ms"
+        },
+        "interactive": {
+          "numericValue": 2672.39225,
+          "displayValue": "2.7 s"
+        }
+      }
+    },
+    {
+      "path": "/hilfe/uber-eats",
+      "score": 0.96,
+      "categories": {
+        "performance": {
+          "score": 0.92
+        },
+        "accessibility": {
+          "score": 0.98
+        },
+        "best-practices": {
+          "score": 1
+        },
+        "seo": {
+          "score": 0.92
+        }
+      },
+      "metrics": {
+        "largest-contentful-paint": {
+          "numericValue": 2666.108649999999,
+          "displayValue": "2.7 s"
+        },
+        "cumulative-layout-shift": {
+          "numericValue": 0.00052,
+          "displayValue": "0.001"
+        },
+        "first-contentful-paint": {
+          "numericValue": 2666.108649999999,
+          "displayValue": "2.7 s"
+        },
+        "total-blocking-time": {
+          "numericValue": 0,
+          "displayValue": "0 ms"
+        },
+        "max-potential-fid": {
+          "numericValue": 16,
+          "displayValue": "20 ms"
+        },
+        "interactive": {
+          "numericValue": 2666.108649999999,
+          "displayValue": "2.7 s"
+        }
+      }
+    },
+    {
+      "path": "/hilfe/uber-eats/lieferung-falsch",
+      "score": 0.96,
+      "categories": {
+        "performance": {
+          "score": 0.92
+        },
+        "accessibility": {
+          "score": 0.98
+        },
+        "best-practices": {
+          "score": 1
+        },
+        "seo": {
+          "score": 0.92
+        }
+      },
+      "metrics": {
+        "largest-contentful-paint": {
+          "numericValue": 2663.66665,
+          "displayValue": "2.7 s"
+        },
+        "cumulative-layout-shift": {
+          "numericValue": 0.00052,
+          "displayValue": "0.001"
+        },
+        "first-contentful-paint": {
+          "numericValue": 2663.66665,
+          "displayValue": "2.7 s"
+        },
+        "total-blocking-time": {
+          "numericValue": 0,
+          "displayValue": "0 ms"
+        },
+        "max-potential-fid": {
+          "numericValue": 16,
+          "displayValue": "20 ms"
+        },
+        "interactive": {
+          "numericValue": 2663.66665,
+          "displayValue": "2.7 s"
+        }
+      }
+    },
+    {
+      "path": "/hilfe/wish",
+      "score": 0.98,
+      "categories": {
+        "performance": {
+          "score": 0.92
+        },
+        "accessibility": {
+          "score": 1
+        },
+        "best-practices": {
+          "score": 1
+        },
+        "seo": {
+          "score": 1
+        }
+      },
+      "metrics": {
+        "largest-contentful-paint": {
+          "numericValue": 2671.5891,
+          "displayValue": "2.7 s"
+        },
+        "cumulative-layout-shift": {
+          "numericValue": 0.00052,
+          "displayValue": "0.001"
+        },
+        "first-contentful-paint": {
+          "numericValue": 2671.5891,
+          "displayValue": "2.7 s"
+        },
+        "total-blocking-time": {
+          "numericValue": 0,
+          "displayValue": "0 ms"
+        },
+        "max-potential-fid": {
+          "numericValue": 16,
+          "displayValue": "20 ms"
+        },
+        "interactive": {
+          "numericValue": 2671.5891,
+          "displayValue": "2.7 s"
+        }
+      }
+    },
+    {
+      "path": "/hilfe/wish/betrugsverdacht",
+      "score": 0.97,
+      "categories": {
+        "performance": {
+          "score": 0.92
+        },
+        "accessibility": {
+          "score": 0.96
+        },
+        "best-practices": {
+          "score": 1
+        },
+        "seo": {
+          "score": 1
+        }
+      },
+      "metrics": {
+        "largest-contentful-paint": {
+          "numericValue": 2667.3589,
+          "displayValue": "2.7 s"
+        },
+        "cumulative-layout-shift": {
+          "numericValue": 0.00052,
+          "displayValue": "0.001"
+        },
+        "first-contentful-paint": {
+          "numericValue": 2667.3589,
+          "displayValue": "2.7 s"
+        },
+        "total-blocking-time": {
+          "numericValue": 0,
+          "displayValue": "0 ms"
+        },
+        "max-potential-fid": {
+          "numericValue": 16,
+          "displayValue": "20 ms"
+        },
+        "interactive": {
+          "numericValue": 2667.3589,
+          "displayValue": "2.7 s"
+        }
+      }
+    },
+    {
+      "path": "/hilfe/wish/ware-defekt",
+      "score": 0.97,
+      "categories": {
+        "performance": {
+          "score": 0.92
+        },
+        "accessibility": {
+          "score": 0.96
+        },
+        "best-practices": {
+          "score": 1
+        },
+        "seo": {
+          "score": 1
+        }
+      },
+      "metrics": {
+        "largest-contentful-paint": {
+          "numericValue": 2683.1317,
+          "displayValue": "2.7 s"
+        },
+        "cumulative-layout-shift": {
+          "numericValue": 0.00052,
+          "displayValue": "0.001"
+        },
+        "first-contentful-paint": {
+          "numericValue": 2683.1317,
+          "displayValue": "2.7 s"
+        },
+        "total-blocking-time": {
+          "numericValue": 0,
+          "displayValue": "0 ms"
+        },
+        "max-potential-fid": {
+          "numericValue": 16,
+          "displayValue": "20 ms"
+        },
+        "interactive": {
+          "numericValue": 2683.1317,
+          "displayValue": "2.7 s"
+        }
+      }
+    },
+    {
+      "path": "/hilfe/wish/ware-nicht-erhalten",
+      "score": 0.97,
+      "categories": {
+        "performance": {
+          "score": 0.92
+        },
+        "accessibility": {
+          "score": 0.96
+        },
+        "best-practices": {
+          "score": 1
+        },
+        "seo": {
+          "score": 1
+        }
+      },
+      "metrics": {
+        "largest-contentful-paint": {
+          "numericValue": 2678.33425,
+          "displayValue": "2.7 s"
+        },
+        "cumulative-layout-shift": {
+          "numericValue": 0.00052,
+          "displayValue": "0.001"
+        },
+        "first-contentful-paint": {
+          "numericValue": 2678.33425,
+          "displayValue": "2.7 s"
+        },
+        "total-blocking-time": {
+          "numericValue": 0,
+          "displayValue": "0 ms"
+        },
+        "max-potential-fid": {
+          "numericValue": 16,
+          "displayValue": "20 ms"
+        },
+        "interactive": {
+          "numericValue": 2678.33425,
+          "displayValue": "2.7 s"
+        }
+      }
+    },
+    {
+      "path": "/hilfe/wolt/lieferung-falsch",
+      "score": 0.97,
+      "categories": {
+        "performance": {
+          "score": 0.92
+        },
+        "accessibility": {
+          "score": 0.96
+        },
+        "best-practices": {
+          "score": 1
+        },
+        "seo": {
+          "score": 1
+        }
+      },
+      "metrics": {
+        "largest-contentful-paint": {
+          "numericValue": 2673.500225,
+          "displayValue": "2.7 s"
+        },
+        "cumulative-layout-shift": {
+          "numericValue": 0.00052,
+          "displayValue": "0.001"
+        },
+        "first-contentful-paint": {
+          "numericValue": 2673.500225,
+          "displayValue": "2.7 s"
+        },
+        "total-blocking-time": {
+          "numericValue": 0,
+          "displayValue": "0 ms"
+        },
+        "max-potential-fid": {
+          "numericValue": 16,
+          "displayValue": "20 ms"
+        },
+        "interactive": {
+          "numericValue": 2673.500225,
+          "displayValue": "2.7 s"
+        }
+      }
+    },
+    {
+      "path": "/impressum",
+      "score": 0.95,
+      "categories": {
+        "performance": {
+          "score": 0.91
+        },
+        "accessibility": {
+          "score": 0.98
+        },
+        "best-practices": {
+          "score": 1
+        },
+        "seo": {
+          "score": 0.92
+        }
+      },
+      "metrics": {
+        "largest-contentful-paint": {
+          "numericValue": 2890.3954,
+          "displayValue": "2.9 s"
+        },
+        "cumulative-layout-shift": {
+          "numericValue": 0.00052,
+          "displayValue": "0.001"
+        },
+        "first-contentful-paint": {
+          "numericValue": 2712.9664999999995,
+          "displayValue": "2.7 s"
+        },
+        "total-blocking-time": {
+          "numericValue": 0,
+          "displayValue": "0 ms"
+        },
+        "max-potential-fid": {
+          "numericValue": 16,
+          "displayValue": "20 ms"
+        },
+        "interactive": {
+          "numericValue": 2890.3954000000003,
+          "displayValue": "2.9 s"
+        }
+      }
+    },
+    {
+      "path": "/klarna-reklamation",
+      "score": 0.98,
+      "categories": {
+        "performance": {
+          "score": 0.93
+        },
+        "accessibility": {
+          "score": 1
+        },
+        "best-practices": {
+          "score": 1
+        },
+        "seo": {
+          "score": 1
+        }
+      },
+      "metrics": {
+        "largest-contentful-paint": {
+          "numericValue": 2593.8230000000003,
+          "displayValue": "2.6 s"
+        },
+        "cumulative-layout-shift": {
+          "numericValue": 0.00052,
+          "displayValue": "0.001"
+        },
+        "first-contentful-paint": {
+          "numericValue": 2593.8230000000003,
+          "displayValue": "2.6 s"
+        },
+        "total-blocking-time": {
+          "numericValue": 0,
+          "displayValue": "0 ms"
+        },
+        "max-potential-fid": {
+          "numericValue": 16,
+          "displayValue": "20 ms"
+        },
+        "interactive": {
+          "numericValue": 2593.8230000000003,
+          "displayValue": "2.6 s"
+        }
+      }
+    },
+    {
+      "path": "/lieferando-rueckerstattung",
+      "score": 0.98,
+      "categories": {
+        "performance": {
+          "score": 0.93
+        },
+        "accessibility": {
+          "score": 1
+        },
+        "best-practices": {
+          "score": 1
+        },
+        "seo": {
+          "score": 1
+        }
+      },
+      "metrics": {
+        "largest-contentful-paint": {
+          "numericValue": 2603.94905,
+          "displayValue": "2.6 s"
+        },
+        "cumulative-layout-shift": {
+          "numericValue": 0.00052,
+          "displayValue": "0.001"
+        },
+        "first-contentful-paint": {
+          "numericValue": 2603.94905,
+          "displayValue": "2.6 s"
+        },
+        "total-blocking-time": {
+          "numericValue": 0,
+          "displayValue": "0 ms"
+        },
+        "max-potential-fid": {
+          "numericValue": 16,
+          "displayValue": "20 ms"
+        },
+        "interactive": {
+          "numericValue": 2603.94905,
+          "displayValue": "2.6 s"
+        }
+      }
+    },
+    {
+      "path": "/paypal-chargeback",
+      "score": 0.98,
+      "categories": {
+        "performance": {
+          "score": 0.93
+        },
+        "accessibility": {
+          "score": 1
+        },
+        "best-practices": {
+          "score": 1
+        },
+        "seo": {
+          "score": 1
+        }
+      },
+      "metrics": {
+        "largest-contentful-paint": {
+          "numericValue": 2599.9889,
+          "displayValue": "2.6 s"
+        },
+        "cumulative-layout-shift": {
+          "numericValue": 0.00052,
+          "displayValue": "0.001"
+        },
+        "first-contentful-paint": {
+          "numericValue": 2599.9888999999994,
+          "displayValue": "2.6 s"
+        },
+        "total-blocking-time": {
+          "numericValue": 0,
+          "displayValue": "0 ms"
+        },
+        "max-potential-fid": {
+          "numericValue": 16,
+          "displayValue": "20 ms"
+        },
+        "interactive": {
+          "numericValue": 2599.9889000000003,
+          "displayValue": "2.6 s"
+        }
+      }
+    },
+    {
+      "path": "/ratgeber",
+      "score": 0.97,
+      "categories": {
+        "performance": {
+          "score": 0.9
+        },
+        "accessibility": {
+          "score": 0.96
+        },
+        "best-practices": {
+          "score": 1
+        },
+        "seo": {
+          "score": 1
+        }
+      },
+      "metrics": {
+        "largest-contentful-paint": {
+          "numericValue": 2897.6782999999996,
+          "displayValue": "2.9 s"
+        },
+        "cumulative-layout-shift": {
+          "numericValue": 0.00052,
+          "displayValue": "0.001"
+        },
+        "first-contentful-paint": {
+          "numericValue": 2822.6483249999997,
+          "displayValue": "2.8 s"
+        },
+        "total-blocking-time": {
+          "numericValue": 0,
+          "displayValue": "0 ms"
+        },
+        "max-potential-fid": {
+          "numericValue": 16,
+          "displayValue": "20 ms"
+        },
+        "interactive": {
+          "numericValue": 2897.6782999999996,
+          "displayValue": "2.9 s"
+        }
+      }
+    },
+    {
+      "path": "/scam-shops-2026",
+      "score": 0.98,
+      "categories": {
+        "performance": {
+          "score": 0.93
+        },
+        "accessibility": {
+          "score": 1
+        },
+        "best-practices": {
+          "score": 1
+        },
+        "seo": {
+          "score": 1
+        }
+      },
+      "metrics": {
+        "largest-contentful-paint": {
+          "numericValue": 2599.8411000000006,
+          "displayValue": "2.6 s"
+        },
+        "cumulative-layout-shift": {
+          "numericValue": 0.00052,
+          "displayValue": "0.001"
+        },
+        "first-contentful-paint": {
+          "numericValue": 2599.8411000000006,
+          "displayValue": "2.6 s"
+        },
+        "total-blocking-time": {
+          "numericValue": 0,
+          "displayValue": "0 ms"
+        },
+        "max-potential-fid": {
+          "numericValue": 16,
+          "displayValue": "20 ms"
+        },
+        "interactive": {
+          "numericValue": 2599.8411000000006,
+          "displayValue": "2.6 s"
+        }
+      }
+    },
+    {
+      "path": "/vergleich/paypal-vs-kreditkarte-vs-klarna",
+      "score": 0.98,
+      "categories": {
+        "performance": {
+          "score": 0.9
+        },
+        "accessibility": {
+          "score": 1
+        },
+        "best-practices": {
+          "score": 1
+        },
+        "seo": {
+          "score": 1
+        }
+      },
+      "metrics": {
+        "largest-contentful-paint": {
+          "numericValue": 2902.8398999999995,
+          "displayValue": "2.9 s"
+        },
+        "cumulative-layout-shift": {
+          "numericValue": 0.00052,
+          "displayValue": "0.001"
+        },
+        "first-contentful-paint": {
+          "numericValue": 2827.832725,
+          "displayValue": "2.8 s"
+        },
+        "total-blocking-time": {
+          "numericValue": 0,
+          "displayValue": "0 ms"
+        },
+        "max-potential-fid": {
+          "numericValue": 16,
+          "displayValue": "20 ms"
+        },
+        "interactive": {
+          "numericValue": 2902.8399,
+          "displayValue": "2.9 s"
+        }
+      }
+    },
+    {
+      "path": "/visa-mastercard-chargeback",
+      "score": 0.98,
+      "categories": {
+        "performance": {
+          "score": 0.93
+        },
+        "accessibility": {
+          "score": 1
+        },
+        "best-practices": {
+          "score": 1
+        },
+        "seo": {
+          "score": 1
+        }
+      },
+      "metrics": {
+        "largest-contentful-paint": {
+          "numericValue": 2598.5868000000005,
+          "displayValue": "2.6 s"
+        },
+        "cumulative-layout-shift": {
+          "numericValue": 0.00052,
+          "displayValue": "0.001"
+        },
+        "first-contentful-paint": {
+          "numericValue": 2598.5868,
+          "displayValue": "2.6 s"
+        },
+        "total-blocking-time": {
+          "numericValue": 0,
+          "displayValue": "0 ms"
+        },
+        "max-potential-fid": {
+          "numericValue": 16,
+          "displayValue": "20 ms"
+        },
+        "interactive": {
+          "numericValue": 2598.586800000001,
+          "displayValue": "2.6 s"
+        }
+      }
+    },
+    {
+      "path": "/vorlagen-generator",
+      "score": 0.96,
+      "categories": {
+        "performance": {
+          "score": 0.92
+        },
+        "accessibility": {
+          "score": 1
+        },
+        "best-practices": {
+          "score": 1
+        },
+        "seo": {
+          "score": 0.92
+        }
+      },
+      "metrics": {
+        "largest-contentful-paint": {
+          "numericValue": 2675.393825,
+          "displayValue": "2.7 s"
+        },
+        "cumulative-layout-shift": {
+          "numericValue": 0.001231,
+          "displayValue": "0.001"
+        },
+        "first-contentful-paint": {
+          "numericValue": 2675.393825,
+          "displayValue": "2.7 s"
+        },
+        "total-blocking-time": {
+          "numericValue": 0,
+          "displayValue": "0 ms"
+        },
+        "max-potential-fid": {
+          "numericValue": 16,
+          "displayValue": "20 ms"
+        },
+        "interactive": {
+          "numericValue": 2675.393825,
+          "displayValue": "2.7 s"
+        }
+      }
+    },
+    {
+      "path": "/ware-nicht-erhalten",
+      "score": 0.98,
+      "categories": {
+        "performance": {
+          "score": 0.93
+        },
+        "accessibility": {
+          "score": 1
+        },
+        "best-practices": {
+          "score": 1
+        },
+        "seo": {
+          "score": 1
+        }
+      },
+      "metrics": {
+        "largest-contentful-paint": {
+          "numericValue": 2602.12715,
+          "displayValue": "2.6 s"
+        },
+        "cumulative-layout-shift": {
+          "numericValue": 0.00052,
+          "displayValue": "0.001"
+        },
+        "first-contentful-paint": {
+          "numericValue": 2602.12715,
+          "displayValue": "2.6 s"
+        },
+        "total-blocking-time": {
+          "numericValue": 0,
+          "displayValue": "0 ms"
+        },
+        "max-potential-fid": {
+          "numericValue": 16,
+          "displayValue": "20 ms"
+        },
+        "interactive": {
+          "numericValue": 2602.12715,
+          "displayValue": "2.6 s"
+        }
+      }
+    }
+  ],
+  "metadata": {
+    "metrics": {
+      "largest-contentful-paint": {
+        "id": "largest-contentful-paint",
+        "title": "Largest Contentful Paint",
+        "description": "Largest Contentful Paint marks the time at which the largest text or image is painted. [Learn more about the Largest Contentful Paint metric](https://developer.chrome.com/docs/lighthouse/performance/lighthouse-largest-contentful-paint/)",
+        "numericUnit": "millisecond"
+      },
+      "cumulative-layout-shift": {
+        "id": "cumulative-layout-shift",
+        "title": "Cumulative Layout Shift",
+        "description": "Cumulative Layout Shift measures the movement of visible elements within the viewport. [Learn more about the Cumulative Layout Shift metric](https://web.dev/articles/cls).",
+        "numericUnit": "unitless"
+      },
+      "first-contentful-paint": {
+        "id": "first-contentful-paint",
+        "title": "First Contentful Paint",
+        "description": "First Contentful Paint marks the time at which the first text or image is painted. [Learn more about the First Contentful Paint metric](https://developer.chrome.com/docs/lighthouse/performance/first-contentful-paint/).",
+        "numericUnit": "millisecond"
+      },
+      "total-blocking-time": {
+        "id": "total-blocking-time",
+        "title": "Total Blocking Time",
+        "description": "Sum of all time periods between FCP and Time to Interactive, when task length exceeded 50ms, expressed in milliseconds. [Learn more about the Total Blocking Time metric](https://developer.chrome.com/docs/lighthouse/performance/lighthouse-total-blocking-time/).",
+        "numericUnit": "millisecond"
+      },
+      "max-potential-fid": {
+        "id": "max-potential-fid",
+        "title": "Max Potential First Input Delay",
+        "description": "The maximum potential First Input Delay that your users could experience is the duration of the longest task. [Learn more about the Maximum Potential First Input Delay metric](https://developer.chrome.com/docs/lighthouse/performance/lighthouse-max-potential-fid/).",
+        "numericUnit": "millisecond"
+      },
+      "interactive": {
+        "id": "interactive",
+        "title": "Time to Interactive",
+        "description": "Time to Interactive is the amount of time it takes for the page to become fully interactive. [Learn more about the Time to Interactive metric](https://developer.chrome.com/docs/lighthouse/performance/interactive/).",
+        "numericUnit": "millisecond"
+      }
+    },
+    "categories": {
+      "performance": {
+        "id": "performance",
+        "title": "Performance"
+      },
+      "accessibility": {
+        "id": "accessibility",
+        "title": "Accessibility"
+      },
+      "best-practices": {
+        "id": "best-practices",
+        "title": "Best Practices"
+      },
+      "seo": {
+        "id": "seo",
+        "title": "SEO"
+      }
+    }
+  }
+}

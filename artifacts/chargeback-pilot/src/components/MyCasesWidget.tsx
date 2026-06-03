@@ -6,7 +6,8 @@ import {
   removeSavedCase,
   isFlatrateActive,
   getFlatrateExpiry,
-  clearCurrentCaseSelection,
+  openNewWizardCase,
+  openSavedCase,
   type PersistedCase,
 } from "@/lib/case-persistence";
 import {
@@ -97,8 +98,14 @@ export function MyCasesWidget() {
   };
 
   const handleNewCase = () => {
-    clearCurrentCaseSelection();
     setOpen(false);
+    openNewWizardCase();
+  };
+
+  const handleOpenCase = (caseId: string, e: React.MouseEvent) => {
+    e.preventDefault();
+    setOpen(false);
+    openSavedCase(caseId);
   };
 
   return (
@@ -155,7 +162,7 @@ export function MyCasesWidget() {
                 <li key={c.caseId} className="group">
                   <Link
                     href={`/vorlagen-generator?caseId=${encodeURIComponent(c.caseId)}`}
-                    onClick={() => setOpen(false)}
+                    onClick={(e) => handleOpenCase(c.caseId, e)}
                     className="flex items-start gap-2 px-4 py-3 hover:bg-muted/60 transition-colors"
                     data-testid={`case-item-${c.caseId}`}
                   >
@@ -186,7 +193,7 @@ export function MyCasesWidget() {
         )}
 
         <div className="p-3 border-t bg-muted/20">
-          <Link href="/vorlagen-generator?new=1" onClick={handleNewCase}>
+          <Link href="/vorlagen-generator?new=1" onClick={(e) => { e.preventDefault(); handleNewCase(); }}>
             <Button size="sm" className="w-full gap-2">
               Neuen Fall analysieren
               <ArrowRight className="w-3.5 h-3.5" />
