@@ -88,7 +88,7 @@ router.post("/checkout", async (req, res) => {
       custom_text: {
         submit: { message: "Einmalige Zahlung · Kein Abo · digitale Inhalte nach bestätigter Zahlung" },
         terms_of_service_acceptance: {
-          message: "Mit dem Kauf akzeptierst du unsere [AGB](https://chargebackpilot.de/agb) und bestätigst die [Widerrufshinweise](https://chargebackpilot.de/widerruf) für digitale Inhalte.",
+          message: "Mit dem Kauf akzeptierst du unsere [AGB](https://chargebackpilot.de/agb). Du verlangst ausdrücklich, dass ChargebackPilot vor Ablauf der Widerrufsfrist mit der Ausführung des Vertrags beginnt. Du bestätigst, die [Widerrufshinweise](https://chargebackpilot.de/widerruf) für digitale Inhalte gelesen zu haben, und weißt, dass dein Widerrufsrecht bei vollständiger Vertragserfüllung vorzeitig erlöschen kann.",
         }
       },
       consent_collection: {
@@ -157,7 +157,7 @@ router.post("/flatrate-checkout", async (req, res) => {
       custom_text: {
         submit: { message: "Einmalig 9,99 € · 12 Monate unbegrenzte Freischaltung · Kein Abo" },
         terms_of_service_acceptance: {
-          message: "Mit dem Kauf akzeptierst du unsere [AGB](https://chargebackpilot.de/agb) und bestätigst die [Widerrufshinweise](https://chargebackpilot.de/widerruf) für digitale Inhalte.",
+          message: "Mit dem Kauf akzeptierst du unsere [AGB](https://chargebackpilot.de/agb). Du verlangst ausdrücklich, dass ChargebackPilot vor Ablauf der Widerrufsfrist mit der Ausführung des Vertrags beginnt. Du bestätigst, die [Widerrufshinweise](https://chargebackpilot.de/widerruf) für digitale Inhalte gelesen zu haben, und weißt, dass dein Widerrufsrecht bei vollständiger Vertragserfüllung vorzeitig erlöschen kann.",
         },
       },
       consent_collection: {

@@ -150,7 +150,7 @@ export default function Wizard() {
   // Wizard ALWAYS starts at step 1 for new flows — even when problem/payment/merchant
   // are prefilled. Prefills only seed form data; the user still walks every step that
   // needs input, so nothing gets silently skipped.
-  const [acceptedLegal, setAcceptedLegal] = useState(!!restoredResult);
+  const [acceptedLegal, setAcceptedLegal] = useState(false);
   const [step, setStep] = useState<number>(() => {
     if (restoredResult) return 6;
     return 1;
@@ -394,6 +394,7 @@ export default function Wizard() {
     setStep(1);
     setResult(undefined);
     createCase.reset();
+    setAcceptedLegal(false);
     setHasUnlocked(false);
     setIsPaying(false);
     setFormData({
