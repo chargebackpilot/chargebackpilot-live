@@ -48,17 +48,6 @@ const AboFalleSEO = lazyWithPreload(() => loadSeoPages().then((m) => ({ default:
 const Admin = lazyWithPreload(() => import("@/pages/Admin"));
 const AdminDemo = lazyWithPreload(() => import("@/pages/AdminDemo"));
 
-const PUBLIC_ROUTE_PRELOADERS = [
-  loadWizard,
-  loadRatgeberIndex,
-  loadLegalPages,
-  loadSeoPages,
-  loadMerchantProblemPage,
-  loadMerchantIndexPage,
-  loadScamShopsPage,
-  loadComparePage,
-] as const;
-
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
@@ -251,22 +240,8 @@ function RouteMetaUpdater() {
   return null;
 }
 
-function RoutePreloader() {
-  useEffect(() => {
-    const preload = () => {
-      for (const load of PUBLIC_ROUTE_PRELOADERS) {
-        void load();
-      }
-    };
-    const id = window.setTimeout(preload, 900);
-    return () => window.clearTimeout(id);
-  }, []);
-
-  return null;
-}
-
 function RouteShellFallback() {
-  return <div className="min-h-[55vh] bg-background" aria-hidden="true" />;
+  return <div className="min-h-screen bg-background" aria-hidden="true" />;
 }
 
 const withAdminSuspense = (Component: React.ComponentType<any>) => (props: any) => (
@@ -333,7 +308,6 @@ function App() {
           <main className="flex-1">
             <ScrollToTop />
             <RouteMetaUpdater />
-            <RoutePreloader />
             <Router />
           </main>
           <Footer />
