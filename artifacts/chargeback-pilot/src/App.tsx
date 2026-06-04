@@ -3,14 +3,11 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { useEffect, useLayoutEffect, Suspense, lazy } from "react";
 import { Toaster } from "@/components/ui/toaster";
 import NotFound from "@/pages/not-found";
-import { Navbar } from "@/components/layout/Navbar";
-import { Footer } from "@/components/layout/Footer";
+import Home from "@/pages/Home";
 
-// Lazy-loaded routes for better performance
-const Home = lazy(() => import("@/pages/Home"));
+// Route chunks stay lazy for PageSpeed, but public routes no longer render skeleton fallbacks.
+// This keeps the first bundle small while avoiding visible skeleton loading on public pages.
 const Wizard = lazy(() => import("@/pages/Wizard"));
-const Admin = lazy(() => import("@/pages/Admin"));
-const AdminDemo = lazy(() => import("@/pages/AdminDemo"));
 const RatgeberIndex = lazy(() => import("@/pages/RatgeberIndex"));
 const MerchantProblemPage = lazy(() => import("@/pages/MerchantProblemPage"));
 const MerchantIndexPage = lazy(() => import("@/pages/MerchantIndexPage"));
@@ -31,6 +28,8 @@ const WoltSEO = lazy(() => import("@/pages/SEOPages").then((m) => ({ default: m.
 const UberEatsSEO = lazy(() => import("@/pages/SEOPages").then((m) => ({ default: m.UberEatsSEO })));
 const WareNichtErhaltenSEO = lazy(() => import("@/pages/SEOPages").then((m) => ({ default: m.WareNichtErhaltenSEO })));
 const AboFalleSEO = lazy(() => import("@/pages/SEOPages").then((m) => ({ default: m.AboFalleSEO })));
+const Admin = lazy(() => import("@/pages/Admin"));
+const AdminDemo = lazy(() => import("@/pages/AdminDemo"));
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -175,76 +174,14 @@ function RouteMetaUpdater() {
   return null;
 }
 
-function DefaultSkeleton() {
-  return (
-    <div className="min-h-screen flex flex-col font-sans">
-      <Navbar />
-      <main className="flex-1 w-full bg-background pt-20 pb-20">
-        <div className="container mx-auto px-4 w-full max-w-5xl animate-pulse">
-          <div className="h-10 w-64 bg-muted rounded-lg mb-4" />
-          <div className="h-5 w-full max-w-2xl bg-muted rounded mb-2" />
-          <div className="h-5 w-4/5 max-w-xl bg-muted rounded mb-8" />
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
-            <div className="h-32 bg-muted rounded-xl" />
-            <div className="h-32 bg-muted rounded-xl" />
-            <div className="h-32 bg-muted rounded-xl" />
-          </div>
-        </div>
-      </main>
-      <Footer />
-    </div>
-  );
-}
+const withAdminSuspense = (Component: React.ComponentType<any>) => (props: any) => (
+  <Suspense fallback={null}>
+    <Component {...props} />
+  </Suspense>
+);
 
-function ArticleSkeleton() {
-  return (
-    <div className="min-h-screen flex flex-col font-sans">
-      <Navbar />
-      <main className="flex-1 w-full bg-background">
-        <div className="bg-muted/50 py-12 px-4 border-b">
-          <div className="container mx-auto max-w-3xl animate-pulse">
-            <div className="h-9 w-3/4 bg-muted rounded-lg mb-5" />
-            <div className="h-5 w-full bg-muted rounded mb-2" />
-            <div className="h-5 w-2/3 bg-muted rounded" />
-          </div>
-        </div>
-        <div className="container mx-auto max-w-3xl px-4 mt-10 animate-pulse space-y-6 pb-16">
-          <div className="h-5 w-full bg-muted rounded" />
-          <div className="h-5 w-11/12 bg-muted rounded" />
-          <div className="h-5 w-10/12 bg-muted rounded" />
-          <div className="h-5 w-9/12 bg-muted rounded" />
-        </div>
-      </main>
-      <Footer />
-    </div>
-  );
-}
-
-function WizardSkeleton() {
-  return (
-    <div className="min-h-screen flex flex-col font-sans bg-muted/20">
-      <Navbar />
-      <main className="flex-1 w-full flex items-center justify-center p-4">
-        <div className="w-full max-w-3xl animate-pulse">
-          <div className="bg-card rounded-2xl border shadow-sm p-6 sm:p-8 min-h-[380px]">
-             <div className="h-7 w-1/3 bg-muted rounded mb-2" />
-             <div className="h-4 w-1/2 bg-muted rounded mb-6" />
-             <div className="space-y-3">
-                <div className="h-14 bg-muted rounded-xl" />
-                <div className="h-14 bg-muted rounded-xl" />
-                <div className="h-14 bg-muted rounded-xl" />
-             </div>
-          </div>
-        </div>
-      </main>
-      <Footer />
-    </div>
-  );
-}
-
-// Wrapper for route-specific suspense
-const withSuspense = (Component: React.ComponentType<any>, Fallback: React.ComponentType<any>) => (props: any) => (
-  <Suspense fallback={<Fallback />}>
+const withoutSkeleton = (Component: React.ComponentType<any>) => (props: any) => (
+  <Suspense fallback={null}>
     <Component {...props} />
   </Suspense>
 );
@@ -252,40 +189,40 @@ const withSuspense = (Component: React.ComponentType<any>, Fallback: React.Compo
 function Router() {
   return (
     <Switch>
-      <Route path="/" component={withSuspense(Home, DefaultSkeleton)} />
-      <Route path="/vorlagen-generator" component={withSuspense(Wizard, WizardSkeleton)} />
-      <Route path="/ratgeber" component={withSuspense(RatgeberIndex, DefaultSkeleton)} />
-      <Route path="/admin" component={withSuspense(Admin, DefaultSkeleton)} />
-      <Route path="/admin/demo" component={withSuspense(AdminDemo, DefaultSkeleton)} />
+      <Route path="/" component={Home} />
+      <Route path="/vorlagen-generator" component={withoutSkeleton(Wizard)} />
+      <Route path="/ratgeber" component={withoutSkeleton(RatgeberIndex)} />
+      <Route path="/admin" component={withAdminSuspense(Admin)} />
+      <Route path="/admin/demo" component={withAdminSuspense(AdminDemo)} />
       
       {/* Legal Pages */}
-      <Route path="/impressum" component={withSuspense(Impressum, ArticleSkeleton)} />
-      <Route path="/datenschutz" component={withSuspense(Datenschutz, ArticleSkeleton)} />
-      <Route path="/agb" component={withSuspense(AGB, ArticleSkeleton)} />
-      <Route path="/widerruf" component={withSuspense(Widerruf, ArticleSkeleton)} />
+      <Route path="/impressum" component={withoutSkeleton(Impressum)} />
+      <Route path="/datenschutz" component={withoutSkeleton(Datenschutz)} />
+      <Route path="/agb" component={withoutSkeleton(AGB)} />
+      <Route path="/widerruf" component={withoutSkeleton(Widerruf)} />
       
       {/* SEO Landing Pages */}
-      <Route path="/paypal-chargeback" component={withSuspense(PayPalSEO, ArticleSkeleton)} />
-      <Route path="/amex-chargeback" component={withSuspense(AmexSEO, ArticleSkeleton)} />
-      <Route path="/visa-mastercard-chargeback" component={withSuspense(VisaMastercardSEO, ArticleSkeleton)} />
-      <Route path="/klarna-reklamation" component={withSuspense(KlarnaSEO, ArticleSkeleton)} />
-      <Route path="/flug-chargeback" component={withSuspense(FlugSEO, ArticleSkeleton)} />
-      <Route path="/kiwi-rueckerstattung" component={withSuspense(KiwiSEO, ArticleSkeleton)} />
-      <Route path="/lieferando-rueckerstattung" component={withSuspense(LieferandoSEO, ArticleSkeleton)} />
-      <Route path="/wolt-rueckerstattung" component={withSuspense(WoltSEO, ArticleSkeleton)} />
-      <Route path="/ubereats-rueckerstattung" component={withSuspense(UberEatsSEO, ArticleSkeleton)} />
-      <Route path="/ware-nicht-erhalten" component={withSuspense(WareNichtErhaltenSEO, ArticleSkeleton)} />
-      <Route path="/abo-falle-chargeback" component={withSuspense(AboFalleSEO, ArticleSkeleton)} />
+      <Route path="/paypal-chargeback" component={withoutSkeleton(PayPalSEO)} />
+      <Route path="/amex-chargeback" component={withoutSkeleton(AmexSEO)} />
+      <Route path="/visa-mastercard-chargeback" component={withoutSkeleton(VisaMastercardSEO)} />
+      <Route path="/klarna-reklamation" component={withoutSkeleton(KlarnaSEO)} />
+      <Route path="/flug-chargeback" component={withoutSkeleton(FlugSEO)} />
+      <Route path="/kiwi-rueckerstattung" component={withoutSkeleton(KiwiSEO)} />
+      <Route path="/lieferando-rueckerstattung" component={withoutSkeleton(LieferandoSEO)} />
+      <Route path="/wolt-rueckerstattung" component={withoutSkeleton(WoltSEO)} />
+      <Route path="/ubereats-rueckerstattung" component={withoutSkeleton(UberEatsSEO)} />
+      <Route path="/ware-nicht-erhalten" component={withoutSkeleton(WareNichtErhaltenSEO)} />
+      <Route path="/abo-falle-chargeback" component={withoutSkeleton(AboFalleSEO)} />
 
       {/* Programmatic merchant SEO */}
-      <Route path="/hilfe/:merchantSlug/:problemSlug" component={withSuspense(MerchantProblemPage, ArticleSkeleton)} />
-      <Route path="/hilfe/:merchantSlug" component={withSuspense(MerchantIndexPage, DefaultSkeleton)} />
+      <Route path="/hilfe/:merchantSlug/:problemSlug" component={withoutSkeleton(MerchantProblemPage)} />
+      <Route path="/hilfe/:merchantSlug" component={withoutSkeleton(MerchantIndexPage)} />
 
       {/* Trust / scam ratgeber */}
-      <Route path="/scam-shops-2026" component={withSuspense(ScamShopsPage, ArticleSkeleton)} />
+      <Route path="/scam-shops-2026" component={withoutSkeleton(ScamShopsPage)} />
 
       {/* Comparison */}
-      <Route path="/vergleich/paypal-vs-kreditkarte-vs-klarna" component={withSuspense(ComparePage, ArticleSkeleton)} />
+      <Route path="/vergleich/paypal-vs-kreditkarte-vs-klarna" component={withoutSkeleton(ComparePage)} />
 
       <Route component={NotFound} />
     </Switch>
