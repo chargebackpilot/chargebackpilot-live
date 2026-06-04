@@ -266,13 +266,7 @@ function RoutePreloader() {
 }
 
 function RouteShellFallback() {
-  return (
-    <div className="min-h-screen flex flex-col font-sans bg-background">
-      <Navbar />
-      <main className="flex-1" />
-      <Footer />
-    </div>
-  );
+  return <div className="min-h-[55vh] bg-background" aria-hidden="true" />;
 }
 
 const withAdminSuspense = (Component: React.ComponentType<any>) => (props: any) => (
@@ -334,10 +328,16 @@ function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <WouterRouter base={import.meta.env.BASE_URL.replace(/\/$/, "")}>
-        <ScrollToTop />
-        <RouteMetaUpdater />
-        <RoutePreloader />
-        <Router />
+        <div className="min-h-screen flex flex-col font-sans bg-background">
+          <Navbar />
+          <main className="flex-1">
+            <ScrollToTop />
+            <RouteMetaUpdater />
+            <RoutePreloader />
+            <Router />
+          </main>
+          <Footer />
+        </div>
       </WouterRouter>
       <Toaster />
     </QueryClientProvider>

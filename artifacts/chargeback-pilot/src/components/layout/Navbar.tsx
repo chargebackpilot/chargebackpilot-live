@@ -1,4 +1,4 @@
-import { Link, useLocation } from "wouter";
+import { Link } from "wouter";
 import { Menu, X, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
@@ -9,8 +9,6 @@ import { MyCasesWidget } from "../MyCasesWidget";
 
 export function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
-  const [pathname] = useLocation();
-  const showDisclaimerBanner = pathname !== "/vorlagen-generator";
 
   const handleNewCaseClick = () => {
     openNewWizardCase();
@@ -18,7 +16,7 @@ export function Navbar() {
 
   return (
     <header className="sticky top-0 z-50 w-full bg-background border-b border-border md:bg-background/95 md:backdrop-blur md:supports-[backdrop-filter]:bg-background/60">
-      {showDisclaimerBanner && <div className="hidden md:block"><DisclaimerBanner /></div>}
+      <div className="hidden md:block"><DisclaimerBanner /></div>
       <div className="container mx-auto max-w-7xl px-4 h-16 flex items-center justify-between">
         <Link href="/" className="flex items-center">
           <LogoLockup size={30} />
