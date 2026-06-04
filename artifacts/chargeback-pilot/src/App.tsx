@@ -4,32 +4,60 @@ import { useEffect, useLayoutEffect, Suspense, lazy } from "react";
 import { Toaster } from "@/components/ui/toaster";
 import NotFound from "@/pages/not-found";
 import Home from "@/pages/Home";
+import { Navbar } from "@/components/layout/Navbar";
+import { Footer } from "@/components/layout/Footer";
 
 // Route chunks stay lazy for PageSpeed, but public routes no longer render skeleton fallbacks.
 // This keeps the first bundle small while avoiding visible skeleton loading on public pages.
-const Wizard = lazy(() => import("@/pages/Wizard"));
-const RatgeberIndex = lazy(() => import("@/pages/RatgeberIndex"));
-const MerchantProblemPage = lazy(() => import("@/pages/MerchantProblemPage"));
-const MerchantIndexPage = lazy(() => import("@/pages/MerchantIndexPage"));
-const ScamShopsPage = lazy(() => import("@/pages/ScamShopsPage"));
-const ComparePage = lazy(() => import("@/pages/ComparePage"));
-const Impressum = lazy(() => import("@/pages/LegalPages").then((m) => ({ default: m.Impressum })));
-const Datenschutz = lazy(() => import("@/pages/LegalPages").then((m) => ({ default: m.Datenschutz })));
-const AGB = lazy(() => import("@/pages/LegalPages").then((m) => ({ default: m.AGB })));
-const Widerruf = lazy(() => import("@/pages/LegalPages").then((m) => ({ default: m.Widerruf })));
-const PayPalSEO = lazy(() => import("@/pages/SEOPages").then((m) => ({ default: m.PayPalSEO })));
-const AmexSEO = lazy(() => import("@/pages/SEOPages").then((m) => ({ default: m.AmexSEO })));
-const VisaMastercardSEO = lazy(() => import("@/pages/SEOPages").then((m) => ({ default: m.VisaMastercardSEO })));
-const KlarnaSEO = lazy(() => import("@/pages/SEOPages").then((m) => ({ default: m.KlarnaSEO })));
-const FlugSEO = lazy(() => import("@/pages/SEOPages").then((m) => ({ default: m.FlugSEO })));
-const KiwiSEO = lazy(() => import("@/pages/SEOPages").then((m) => ({ default: m.KiwiSEO })));
-const LieferandoSEO = lazy(() => import("@/pages/SEOPages").then((m) => ({ default: m.LieferandoSEO })));
-const WoltSEO = lazy(() => import("@/pages/SEOPages").then((m) => ({ default: m.WoltSEO })));
-const UberEatsSEO = lazy(() => import("@/pages/SEOPages").then((m) => ({ default: m.UberEatsSEO })));
-const WareNichtErhaltenSEO = lazy(() => import("@/pages/SEOPages").then((m) => ({ default: m.WareNichtErhaltenSEO })));
-const AboFalleSEO = lazy(() => import("@/pages/SEOPages").then((m) => ({ default: m.AboFalleSEO })));
-const Admin = lazy(() => import("@/pages/Admin"));
-const AdminDemo = lazy(() => import("@/pages/AdminDemo"));
+function lazyWithPreload<T extends React.ComponentType<any>>(loader: () => Promise<{ default: T }>) {
+  const Component = lazy(loader) as React.LazyExoticComponent<T> & { preload: () => Promise<{ default: T }> };
+  Component.preload = loader;
+  return Component;
+}
+
+const loadWizard = () => import("@/pages/Wizard");
+const loadRatgeberIndex = () => import("@/pages/RatgeberIndex");
+const loadMerchantProblemPage = () => import("@/pages/MerchantProblemPage");
+const loadMerchantIndexPage = () => import("@/pages/MerchantIndexPage");
+const loadScamShopsPage = () => import("@/pages/ScamShopsPage");
+const loadComparePage = () => import("@/pages/ComparePage");
+const loadLegalPages = () => import("@/pages/LegalPages");
+const loadSeoPages = () => import("@/pages/SEOPages");
+
+const Wizard = lazyWithPreload(loadWizard);
+const RatgeberIndex = lazyWithPreload(loadRatgeberIndex);
+const MerchantProblemPage = lazyWithPreload(loadMerchantProblemPage);
+const MerchantIndexPage = lazyWithPreload(loadMerchantIndexPage);
+const ScamShopsPage = lazyWithPreload(loadScamShopsPage);
+const ComparePage = lazyWithPreload(loadComparePage);
+const Impressum = lazyWithPreload(() => loadLegalPages().then((m) => ({ default: m.Impressum })));
+const Datenschutz = lazyWithPreload(() => loadLegalPages().then((m) => ({ default: m.Datenschutz })));
+const AGB = lazyWithPreload(() => loadLegalPages().then((m) => ({ default: m.AGB })));
+const Widerruf = lazyWithPreload(() => loadLegalPages().then((m) => ({ default: m.Widerruf })));
+const PayPalSEO = lazyWithPreload(() => loadSeoPages().then((m) => ({ default: m.PayPalSEO })));
+const AmexSEO = lazyWithPreload(() => loadSeoPages().then((m) => ({ default: m.AmexSEO })));
+const VisaMastercardSEO = lazyWithPreload(() => loadSeoPages().then((m) => ({ default: m.VisaMastercardSEO })));
+const KlarnaSEO = lazyWithPreload(() => loadSeoPages().then((m) => ({ default: m.KlarnaSEO })));
+const FlugSEO = lazyWithPreload(() => loadSeoPages().then((m) => ({ default: m.FlugSEO })));
+const KiwiSEO = lazyWithPreload(() => loadSeoPages().then((m) => ({ default: m.KiwiSEO })));
+const LieferandoSEO = lazyWithPreload(() => loadSeoPages().then((m) => ({ default: m.LieferandoSEO })));
+const WoltSEO = lazyWithPreload(() => loadSeoPages().then((m) => ({ default: m.WoltSEO })));
+const UberEatsSEO = lazyWithPreload(() => loadSeoPages().then((m) => ({ default: m.UberEatsSEO })));
+const WareNichtErhaltenSEO = lazyWithPreload(() => loadSeoPages().then((m) => ({ default: m.WareNichtErhaltenSEO })));
+const AboFalleSEO = lazyWithPreload(() => loadSeoPages().then((m) => ({ default: m.AboFalleSEO })));
+const Admin = lazyWithPreload(() => import("@/pages/Admin"));
+const AdminDemo = lazyWithPreload(() => import("@/pages/AdminDemo"));
+
+const PUBLIC_ROUTE_PRELOADERS = [
+  loadWizard,
+  loadRatgeberIndex,
+  loadLegalPages,
+  loadSeoPages,
+  loadMerchantProblemPage,
+  loadMerchantIndexPage,
+  loadScamShopsPage,
+  loadComparePage,
+] as const;
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -52,11 +80,6 @@ function RouteMetaUpdater() {
   const [pathname] = useLocation();
 
   useLayoutEffect(() => {
-    // IMPORTANT: Most public SEO routes already define precise <SeoHead> metadata.
-    // We only force metadata for operational routes that don't provide page-level SEO tags.
-    const shouldForceMeta = /^\/(admin|admin\/demo|vorlagen-generator|impressum|datenschutz|agb|widerruf)$/.test(pathname);
-    if (!shouldForceMeta) return;
-
     const origin = "https://chargebackpilot.de";
     const metaByPath: Array<{ match: RegExp; title: string; description: string }> = [
       {
@@ -102,10 +125,59 @@ function RouteMetaUpdater() {
           "Widerrufsbelehrung von ChargebackPilot mit Fristen, Voraussetzungen und Musterinformationen für Verbraucher.",
       },
       {
-        match: /^\/(paypal-chargeback|amex-chargeback|visa-mastercard-chargeback|klarna-reklamation|flug-chargeback|kiwi-rueckerstattung|lieferando-rueckerstattung|wolt-rueckerstattung|ubereats-rueckerstattung|ware-nicht-erhalten|abo-falle-chargeback)$/,
-        title: "Chargeback-Ratgeber 2026 · ChargebackPilot",
-        description:
-          "Konkrete Schritt-für-Schritt-Hilfen für Rückerstattung, Chargeback und Käuferschutz je nach Zahlungsart und Problemfall.",
+        match: /^\/paypal-chargeback$/,
+        title: "PayPal Chargeback / Käuferschutz erfolgreich nutzen | ChargebackPilot",
+        description: "PayPal Chargeback / Käuferschutz erfolgreich nutzen: typische Fristenhinweise, Belege und strukturierte Orientierung bei PayPal. Mit unverbindlichen Textentwürfen.",
+      },
+      {
+        match: /^\/amex-chargeback$/,
+        title: "American Express Chargeback einleiten | ChargebackPilot",
+        description: "American Express Chargeback einleiten: typische Fristenhinweise, Belege und strukturierte Orientierung bei Amex. Mit unverbindlichen Textentwürfen.",
+      },
+      {
+        match: /^\/visa-mastercard-chargeback$/,
+        title: "Visa / Mastercard Chargeback: Geld zurück | ChargebackPilot",
+        description: "Visa / Mastercard Chargeback: Geld zurück: typische Fristenhinweise, Belege und strukturierte Orientierung bei Kreditkarte. Mit unverbindlichen Textentwürfen.",
+      },
+      {
+        match: /^\/klarna-reklamation$/,
+        title: "Klarna Reklamation & Käuferschutz | ChargebackPilot",
+        description: "Klarna Reklamation & Käuferschutz: typische Fristenhinweise, Belege und strukturierte Orientierung bei Klarna. Mit unverbindlichen Textentwürfen.",
+      },
+      {
+        match: /^\/flug-chargeback$/,
+        title: "Flug Chargeback / Reiserückerstattung | ChargebackPilot",
+        description: "Flug Chargeback / Reiserückerstattung: typische Fristenhinweise, Belege und strukturierte Orientierung bei Flug/Reise. Mit unverbindlichen Textentwürfen.",
+      },
+      {
+        match: /^\/kiwi-rueckerstattung$/,
+        title: "Kiwi.com Steuern & Gebühren ohne 59€ Servicegebühr zurückholen | ChargebackPilot",
+        description: "Kiwi.com Steuern & Gebühren ohne 59€ Servicegebühr zurückholen: typische Fristenhinweise, Belege und strukturierte Orientierung bei Flug/Reise. Mit unverbindlichen Textentwürfen.",
+      },
+      {
+        match: /^\/lieferando-rueckerstattung$/,
+        title: "Lieferando / Essen Rückerstattung | ChargebackPilot",
+        description: "Lieferando / Essen Rückerstattung: typische Fristenhinweise, Belege und strukturierte Orientierung bei Lieferdienst. Mit unverbindlichen Textentwürfen.",
+      },
+      {
+        match: /^\/wolt-rueckerstattung$/,
+        title: "Wolt Rückerstattung (Essen kalt / nicht geliefert) | ChargebackPilot",
+        description: "Wolt Rückerstattung (Essen kalt / nicht geliefert): typische Fristenhinweise, Belege und strukturierte Orientierung bei Lieferdienst. Mit unverbindlichen Textentwürfen.",
+      },
+      {
+        match: /^\/ubereats-rueckerstattung$/,
+        title: "Uber Eats Erstattung & Chargeback | ChargebackPilot",
+        description: "Uber Eats Erstattung & Chargeback: typische Fristenhinweise, Belege und strukturierte Orientierung bei Lieferdienst. Mit unverbindlichen Textentwürfen.",
+      },
+      {
+        match: /^\/ware-nicht-erhalten$/,
+        title: "Chargeback: Ware nicht erhalten | ChargebackPilot",
+        description: "Chargeback: Ware nicht erhalten: typische Fristenhinweise, Belege und strukturierte Orientierung bei Online-Shopping. Mit unverbindlichen Textentwürfen.",
+      },
+      {
+        match: /^\/abo-falle-chargeback$/,
+        title: "Abo-Falle Chargeback | ChargebackPilot",
+        description: "Abo-Falle Chargeback: typische Fristenhinweise, Belege und strukturierte Orientierung bei Abonnements. Mit unverbindlichen Textentwürfen.",
       },
       {
         match: /^\/hilfe\//,
@@ -115,9 +187,14 @@ function RouteMetaUpdater() {
       },
       {
         match: /^\/vergleich\//,
-        title: "Vergleich: PayPal vs Kreditkarte vs Klarna · ChargebackPilot",
+        title: "PayPal vs Kreditkarte vs Klarna: Käuferschutz Vergleich 2026 | ChargebackPilot",
         description:
           "Welcher Weg ist in deinem Fall am besten? Vergleich von Fristen, Erfolgschancen und Vorgehen bei Rückerstattungen.",
+      },
+      {
+        match: /^\/scam-shops-2026$/,
+        title: "Scam-Shops 2026 erkennen & Geld zurückholen | ChargebackPilot",
+        description: "Scam-Shops 2026: Warnsignale, Belege und nächste Schritte bei Fake-Shops, Käuferschutz und Chargeback.",
       },
     ];
 
@@ -174,14 +251,38 @@ function RouteMetaUpdater() {
   return null;
 }
 
+function RoutePreloader() {
+  useEffect(() => {
+    const preload = () => {
+      for (const load of PUBLIC_ROUTE_PRELOADERS) {
+        void load();
+      }
+    };
+    const id = window.setTimeout(preload, 900);
+    return () => window.clearTimeout(id);
+  }, []);
+
+  return null;
+}
+
+function RouteShellFallback() {
+  return (
+    <div className="min-h-screen flex flex-col font-sans bg-background">
+      <Navbar />
+      <main className="flex-1" />
+      <Footer />
+    </div>
+  );
+}
+
 const withAdminSuspense = (Component: React.ComponentType<any>) => (props: any) => (
-  <Suspense fallback={null}>
+  <Suspense fallback={<RouteShellFallback />}>
     <Component {...props} />
   </Suspense>
 );
 
 const withoutSkeleton = (Component: React.ComponentType<any>) => (props: any) => (
-  <Suspense fallback={null}>
+  <Suspense fallback={<RouteShellFallback />}>
     <Component {...props} />
   </Suspense>
 );
@@ -235,6 +336,7 @@ function App() {
       <WouterRouter base={import.meta.env.BASE_URL.replace(/\/$/, "")}>
         <ScrollToTop />
         <RouteMetaUpdater />
+        <RoutePreloader />
         <Router />
       </WouterRouter>
       <Toaster />
