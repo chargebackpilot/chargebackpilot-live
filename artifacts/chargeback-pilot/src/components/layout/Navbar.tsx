@@ -1,11 +1,11 @@
 import { Link, useLocation } from "wouter";
 import { Menu, X, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { useState, lazy, Suspense } from "react";
+import { useState } from "react";
 import { DisclaimerBanner } from "./DisclaimerBanner";
 import { LogoLockup } from "../ui/Logo";
 import { openNewWizardCase } from "@/lib/case-persistence";
-const MyCasesWidget = lazy(() => import("../MyCasesWidget").then((m) => ({ default: m.MyCasesWidget })));
+import { MyCasesWidget } from "../MyCasesWidget";
 
 export function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
@@ -29,9 +29,7 @@ export function Navbar() {
           <Link href="/ratgeber" className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors px-3 h-9 inline-flex items-center">
             Ratgeber & Guides
           </Link>
-          <Suspense fallback={null}>
-            <MyCasesWidget />
-          </Suspense>
+          <MyCasesWidget />
           <Link href="/vorlagen-generator?new=1" className="ml-1" onClick={(e) => { e.preventDefault(); handleNewCaseClick(); }}>
             <Button size="sm" className="gap-2">
               Vorlagen generieren
@@ -42,9 +40,7 @@ export function Navbar() {
 
         {/* Mobile: cases widget + menu toggle */}
         <div className="md:hidden flex items-center gap-1">
-          <Suspense fallback={null}>
-            <MyCasesWidget />
-          </Suspense>
+          <MyCasesWidget />
           <button className="p-2" onClick={() => setIsOpen(!isOpen)} aria-label="Menü">
             {isOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
           </button>
