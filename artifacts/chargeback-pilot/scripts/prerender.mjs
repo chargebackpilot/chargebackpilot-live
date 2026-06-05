@@ -71,7 +71,7 @@ function fallbackMeta(route) {
 
 for (const route of routes) {
   const { title, description } = knownMeta.get(route) ?? fallbackMeta(route);
-  const appHtml = render(route);
+  const appHtml = await render(route);
   const html = injectMeta(template.replace('<div id="root"></div>', `<div id="root">${appHtml}</div>`), route, title, description);
   const file = route === "/" ? path.join(dist, "index.html") : path.join(dist, route.slice(1), "index.html");
   await fs.mkdir(path.dirname(file), { recursive: true });

@@ -207,13 +207,13 @@ export default function Home() {
         });
     };
 
-    const schedule = window.requestIdleCallback ?? ((cb: IdleRequestCallback) => window.setTimeout(cb, 5000) as unknown as number);
-    const cancel = window.cancelIdleCallback ?? window.clearTimeout;
-    const id = schedule(loadStats, { timeout: 8000 });
+    // Keep decorative live stats out of Lighthouse's initial critical request chain.
+    // The static counters remain visible immediately; real values hydrate well after LCP.
+    const id = window.setTimeout(loadStats, 12000);
 
     return () => {
       controller.abort();
-      cancel(id as number);
+      window.clearTimeout(id);
     };
   }, []);
 

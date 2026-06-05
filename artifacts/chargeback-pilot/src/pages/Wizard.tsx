@@ -125,7 +125,7 @@ export default function Wizard() {
   const turnstileSiteKey = import.meta.env.VITE_TURNSTILE_SITE_KEY as string | undefined;
   const turnstileWidgetIdRef = useRef<string | null>(null);
   const turnstileContainerRef = useRef<HTMLDivElement | null>(null);
-  const params = new URLSearchParams(window.location.search);
+  const params = new URLSearchParams(typeof window === "undefined" ? "" : window.location.search);
   const prefilledProblem = params.get("problem") ?? "";
   const prefilledPaymentRaw = params.get("payment") ?? params.get("paymentMethod") ?? "";
   const prefilledPayment = PAYMENT_METHODS.some((pm) => pm.id === prefilledPaymentRaw) ? prefilledPaymentRaw : "";
