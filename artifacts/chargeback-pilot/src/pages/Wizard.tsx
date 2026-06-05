@@ -2,9 +2,8 @@ import { MainLayout } from "@/components/layout/MainLayout";
 import { SeoHead } from "@/components/SeoHead";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { useCreateCase } from "@workspace/api-client-react";
-import { lazy, Suspense, useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { wizardSchema, type WizardFormData } from "@/components/wizard/wizard-schema";
@@ -15,6 +14,9 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Progress } from "@/components/ui/progress";
 import { useToast } from "@/hooks/use-toast";
+import { PaywallModal } from "@/components/PaywallModal";
+import { PaypalGuide } from "@/components/PaypalGuide";
+import { generatePdf } from "@/lib/pdf-generator";
 import {
   AlertTriangle,
   ArrowLeft,
@@ -78,6 +80,7 @@ import {
   QuestionField 
 } from "@/components/wizard/WizardComponents";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
+import { LetterGenerator } from "@/components/LetterGenerator";
 import {
   saveCurrentCase,
   loadCurrentCase,
@@ -88,10 +91,6 @@ import {
   clearCurrentCase,
 } from "@/lib/case-persistence";
 import { Lock as LockIcon } from "lucide-react";
-
-const PaywallModal = lazy(() => import("@/components/PaywallModal").then((m) => ({ default: m.PaywallModal })));
-const PaypalGuide = lazy(() => import("@/components/PaypalGuide").then((m) => ({ default: m.PaypalGuide })));
-const LetterGenerator = lazy(() => import("@/components/LetterGenerator").then((m) => ({ default: m.LetterGenerator })));
 
 interface FormData {
   paymentMethod: string;
@@ -110,15 +109,6 @@ interface FormData {
 
 type CaseResult = ReturnType<typeof useCreateCase>["data"];
 
-const queryClient = new QueryClient({
-  defaultOptions: {
-    queries: {
-      retry: 1,
-      refetchOnWindowFocus: false,
-    },
-  },
-});
-
 declare global {
   interface Window {
     turnstile?: {
@@ -129,7 +119,7 @@ declare global {
   }
 }
 
-function WizardContent() {
+export default function Wizard() {
   const amountInputRef = useRef<HTMLInputElement | null>(null);
   const disputedInputRef = useRef<HTMLInputElement | null>(null);
   const turnstileSiteKey = import.meta.env.VITE_TURNSTILE_SITE_KEY as string | undefined;
@@ -441,7 +431,6 @@ function WizardContent() {
   const handleDownloadPdf = async () => {
     if (!result || !analysis) return;
     try {
-      const { generatePdf } = await import("@/lib/pdf-generator");
       await generatePdf({
         merchantName: result.merchantName ?? formData.merchantName,
         amount: (result.amount ?? (Number(formData.disputedAmount) || Number(formData.purchaseAmount) || 0)),
@@ -1050,17 +1039,15 @@ function WizardContent() {
                             <LockedTeaser icon={<FileSignature className="w-4 h-4 text-primary" />} title="Druckfertige DIN-5008-Briefe als PDF" lines={3} />
                           </div>
                           <div data-testid="paywall-anchor">
-                            <Suspense fallback={null}>
-                              <PaywallModal
-                                onUnlock={handlePayment}
-                                isPaying={isPaying}
-                                caseId={result.id}
-                                merchantName={result.merchantName ?? formData.merchantName}
-                                amount={(result.amount ?? (Number(formData.disputedAmount) || Number(formData.purchaseAmount) || 0))}
-                                strategyLabel={analysis?.successProbabilityLabel ?? ""}
-                                paymentMethod={result.paymentMethod ?? formData.paymentMethod}
-                              />
-                            </Suspense>
+                          <PaywallModal
+                            onUnlock={handlePayment}
+                            isPaying={isPaying}
+                            caseId={result.id}
+                            merchantName={result.merchantName ?? formData.merchantName}
+                            amount={(result.amount ?? (Number(formData.disputedAmount) || Number(formData.purchaseAmount) || 0))}
+                            strategyLabel={analysis?.successProbabilityLabel ?? ""}
+                            paymentMethod={result.paymentMethod ?? formData.paymentMethod}
+                          />
                           </div>
                         </>
                       ) : (
@@ -1085,13 +1072,11 @@ function WizardContent() {
 
                           {/* PayPal step-by-step guide */}
                           {(result.paymentMethod === "paypal" || formData.paymentMethod === "paypal") && (
-                            <Suspense fallback={null}>
-                              <PaypalGuide
-                                problemType={result.problemType ?? formData.problemType}
-                                merchantName={result.merchantName ?? formData.merchantName}
-                                amount={(result.amount ?? (Number(formData.disputedAmount) || 0))}
-                              />
-                            </Suspense>
+                            <PaypalGuide
+                              problemType={result.problemType ?? formData.problemType}
+                              merchantName={result.merchantName ?? formData.merchantName}
+                              amount={(result.amount ?? (Number(formData.disputedAmount) || 0))}
+                            />
                           )}
 
                           {/* Recommended category */}
@@ -1156,16 +1141,14 @@ function WizardContent() {
                                   text={analysis.merchantTemplate}
                                   onCopy={() => copyToClipboard(analysis.merchantTemplate, "Händler-Vorlage")}
                                 />
-                                <Suspense fallback={null}>
-                                  <LetterGenerator
-                                    variant="merchant"
-                                    recipientCompany={result.merchantName ?? formData.merchantName ?? "Unbekannter Händler"}
-                                    amount={(result.amount ?? (Number(formData.disputedAmount) || Number(formData.purchaseAmount) || 0))}
-                                    paymentDate={result.paymentDate ?? formData.paymentDate}
-                                    defaultSubject={extractSubject(analysis.merchantTemplate, `Formelle Reklamation — ${result.merchantName ?? "Händler"}`)}
-                                    defaultBody={extractBody(analysis.merchantTemplate)}
-                                  />
-                                </Suspense>
+                                <LetterGenerator
+                                  variant="merchant"
+                                  recipientCompany={result.merchantName ?? formData.merchantName ?? "Unbekannter Händler"}
+                                  amount={(result.amount ?? (Number(formData.disputedAmount) || Number(formData.purchaseAmount) || 0))}
+                                  paymentDate={result.paymentDate ?? formData.paymentDate}
+                                  defaultSubject={extractSubject(analysis.merchantTemplate, `Formelle Reklamation — ${result.merchantName ?? "Händler"}`)}
+                                  defaultBody={extractBody(analysis.merchantTemplate)}
+                                />
                               </div>
                             )}
                             {analysis?.bankTemplate && (
@@ -1176,16 +1159,14 @@ function WizardContent() {
                                   text={analysis.bankTemplate}
                                   onCopy={() => copyToClipboard(analysis.bankTemplate, "Bank-Vorlage")}
                                 />
-                                <Suspense fallback={null}>
-                                  <LetterGenerator
-                                    variant="bank"
-                                    recipientCompany="Meine Bank / Zahlungsdienstleister"
-                                    amount={(result.amount ?? (Number(formData.disputedAmount) || Number(formData.purchaseAmount) || 0))}
-                                    paymentDate={result.paymentDate ?? formData.paymentDate}
-                                    defaultSubject={extractSubject(analysis.bankTemplate, `Antrag auf Chargeback — ${result.merchantName ?? "Händler"}`)}
-                                    defaultBody={extractBody(analysis.bankTemplate)}
-                                  />
-                                </Suspense>
+                                <LetterGenerator
+                                  variant="bank"
+                                  recipientCompany="Meine Bank / Zahlungsdienstleister"
+                                  amount={(result.amount ?? (Number(formData.disputedAmount) || Number(formData.purchaseAmount) || 0))}
+                                  paymentDate={result.paymentDate ?? formData.paymentDate}
+                                  defaultSubject={extractSubject(analysis.bankTemplate, `Antrag auf Chargeback — ${result.merchantName ?? "Händler"}`)}
+                                  defaultBody={extractBody(analysis.bankTemplate)}
+                                />
                               </div>
                             )}
                             {analysis?.escalationTemplate && (
@@ -1196,16 +1177,14 @@ function WizardContent() {
                                   text={analysis.escalationTemplate}
                                   onCopy={() => copyToClipboard(analysis.escalationTemplate, "Eskalations-Vorlage")}
                                 />
-                                <Suspense fallback={null}>
-                                  <LetterGenerator
-                                    variant="escalation"
-                                    recipientCompany="Schlichtungsstelle / Verbraucherzentrale"
-                                    amount={(result.amount ?? (Number(formData.disputedAmount) || Number(formData.purchaseAmount) || 0))}
-                                    paymentDate={result.paymentDate ?? formData.paymentDate}
-                                    defaultSubject={extractSubject(analysis.escalationTemplate, `Eskalation — Ungelöster Streitfall`)}
-                                    defaultBody={extractBody(analysis.escalationTemplate)}
-                                  />
-                                </Suspense>
+                                <LetterGenerator
+                                  variant="escalation"
+                                  recipientCompany="Schlichtungsstelle / Verbraucherzentrale"
+                                  amount={(result.amount ?? (Number(formData.disputedAmount) || Number(formData.purchaseAmount) || 0))}
+                                  paymentDate={result.paymentDate ?? formData.paymentDate}
+                                  defaultSubject={extractSubject(analysis.escalationTemplate, `Eskalation — Ungelöster Streitfall`)}
+                                  defaultBody={extractBody(analysis.escalationTemplate)}
+                                />
                               </div>
                             )}
                           </div>
@@ -1270,13 +1249,5 @@ function WizardContent() {
         </div>
       </ErrorBoundary>
     </MainLayout>
-  );
-}
-
-export default function Wizard() {
-  return (
-    <QueryClientProvider client={queryClient}>
-      <WizardContent />
-    </QueryClientProvider>
   );
 }

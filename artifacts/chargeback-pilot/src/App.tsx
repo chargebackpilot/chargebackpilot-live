@@ -1,6 +1,27 @@
 import { Switch, Route, Router as WouterRouter, useLocation } from "wouter";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { useEffect, useState, Suspense, lazy } from "react";
 import NotFound from "@/pages/not-found";
+import Home from "@/pages/Home";
+import RatgeberIndex from "@/pages/RatgeberIndex";
+import MerchantProblemPage from "@/pages/MerchantProblemPage";
+import MerchantIndexPage from "@/pages/MerchantIndexPage";
+import ScamShopsPage from "@/pages/ScamShopsPage";
+import ComparePage from "@/pages/ComparePage";
+import { AGB, Datenschutz, Impressum, Widerruf } from "@/pages/LegalPages";
+import {
+  AboFalleSEO,
+  AmexSEO,
+  FlugSEO,
+  KlarnaSEO,
+  KiwiSEO,
+  LieferandoSEO,
+  PayPalSEO,
+  UberEatsSEO,
+  VisaMastercardSEO,
+  WareNichtErhaltenSEO,
+  WoltSEO,
+} from "@/pages/SEOPages";
 import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
 
@@ -15,30 +36,18 @@ function lazyWithPreload<T extends React.ComponentType<any>>(loader: () => Promi
 const loadWizard = () => import("@/pages/Wizard");
 
 const LazyToaster = lazy(() => import("@/components/ui/toaster").then((m) => ({ default: m.Toaster })));
-const Home = lazyWithPreload(() => import("@/pages/Home"));
-const RatgeberIndex = lazyWithPreload(() => import("@/pages/RatgeberIndex"));
 const Wizard = lazyWithPreload(loadWizard);
 const Admin = lazyWithPreload(() => import("@/pages/Admin"));
 const AdminDemo = lazyWithPreload(() => import("@/pages/AdminDemo"));
-const MerchantProblemPage = lazyWithPreload(() => import("@/pages/MerchantProblemPage"));
-const MerchantIndexPage = lazyWithPreload(() => import("@/pages/MerchantIndexPage"));
-const ScamShopsPage = lazyWithPreload(() => import("@/pages/ScamShopsPage"));
-const ComparePage = lazyWithPreload(() => import("@/pages/ComparePage"));
-const Impressum = lazyWithPreload(() => import("@/pages/LegalPages").then((m) => ({ default: m.Impressum })));
-const Datenschutz = lazyWithPreload(() => import("@/pages/LegalPages").then((m) => ({ default: m.Datenschutz })));
-const AGB = lazyWithPreload(() => import("@/pages/LegalPages").then((m) => ({ default: m.AGB })));
-const Widerruf = lazyWithPreload(() => import("@/pages/LegalPages").then((m) => ({ default: m.Widerruf })));
-const PayPalSEO = lazyWithPreload(() => import("@/pages/SEOPages").then((m) => ({ default: m.PayPalSEO })));
-const AmexSEO = lazyWithPreload(() => import("@/pages/SEOPages").then((m) => ({ default: m.AmexSEO })));
-const VisaMastercardSEO = lazyWithPreload(() => import("@/pages/SEOPages").then((m) => ({ default: m.VisaMastercardSEO })));
-const KlarnaSEO = lazyWithPreload(() => import("@/pages/SEOPages").then((m) => ({ default: m.KlarnaSEO })));
-const FlugSEO = lazyWithPreload(() => import("@/pages/SEOPages").then((m) => ({ default: m.FlugSEO })));
-const KiwiSEO = lazyWithPreload(() => import("@/pages/SEOPages").then((m) => ({ default: m.KiwiSEO })));
-const LieferandoSEO = lazyWithPreload(() => import("@/pages/SEOPages").then((m) => ({ default: m.LieferandoSEO })));
-const WoltSEO = lazyWithPreload(() => import("@/pages/SEOPages").then((m) => ({ default: m.WoltSEO })));
-const UberEatsSEO = lazyWithPreload(() => import("@/pages/SEOPages").then((m) => ({ default: m.UberEatsSEO })));
-const WareNichtErhaltenSEO = lazyWithPreload(() => import("@/pages/SEOPages").then((m) => ({ default: m.WareNichtErhaltenSEO })));
-const AboFalleSEO = lazyWithPreload(() => import("@/pages/SEOPages").then((m) => ({ default: m.AboFalleSEO })));
+
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      retry: 1,
+      refetchOnWindowFocus: false,
+    },
+  },
+});
 
 function ScrollToTop() {
   const [pathname] = useLocation();
@@ -148,7 +157,7 @@ function Router() {
 
   return (
     <Switch>
-      <Route path="/" component={withoutSkeleton(Home)} />
+      <Route path="/" component={Home} />
       <Route path="/vorlagen-generator">
         {() => (
           <Suspense fallback={<RouteShellFallback />}>
@@ -200,17 +209,19 @@ interface AppProps {
 
 function App({ ssrPath }: AppProps) {
   return (
-    <WouterRouter base={import.meta.env.BASE_URL.replace(/\/$/, "")} ssrPath={ssrPath}>
-      <div className="min-h-screen flex flex-col font-sans bg-background">
-        <Navbar />
-        <main className="flex-1">
-          <ScrollToTop />
-          <Router />
-        </main>
-        <Footer />
-      </div>
+    <QueryClientProvider client={queryClient}>
+      <WouterRouter base={import.meta.env.BASE_URL.replace(/\/$/, "")} ssrPath={ssrPath}>
+        <div className="min-h-screen flex flex-col font-sans bg-background">
+          <Navbar />
+          <main className="flex-1">
+            <ScrollToTop />
+            <Router />
+          </main>
+          <Footer />
+        </div>
+      </WouterRouter>
       <IdleToaster />
-    </WouterRouter>
+    </QueryClientProvider>
   );
 }
 
