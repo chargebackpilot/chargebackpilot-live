@@ -1,4 +1,5 @@
 import { MainLayout } from "@/components/layout/MainLayout";
+import { SeoHead } from "@/components/SeoHead";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useCreateCase } from "@workspace/api-client-react";
@@ -504,6 +505,11 @@ export default function Wizard() {
 
   return (
     <MainLayout>
+      <SeoHead
+        title="Vorlagen-Generator · ChargebackPilot"
+        description="Erstelle in wenigen Schritten professionelle Reklamationsvorlagen für Händler, Bank/PayPal/Klarna und Eskalation."
+        canonical="/vorlagen-generator"
+      />
       <ErrorBoundary>
         <div className={`container mx-auto py-10 px-4 ${step < 6 ? "max-w-5xl" : "max-w-3xl"}`}>
           <div className={step < 6 ? "lg:grid lg:grid-cols-[240px_1fr] lg:gap-8" : ""}>

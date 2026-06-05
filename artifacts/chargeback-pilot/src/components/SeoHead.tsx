@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useLayoutEffect } from "react";
 
 interface SeoHeadProps {
   title: string;
@@ -10,6 +10,7 @@ interface SeoHeadProps {
 }
 
 const SITE_ORIGIN = "https://chargebackpilot.de";
+const useIsomorphicLayoutEffect = typeof window === "undefined" ? useEffect : useLayoutEffect;
 
 function upsertMeta(selector: string, attrName: "name" | "property", attrVal: string, content: string) {
   let el = document.head.querySelector<HTMLMetaElement>(selector);
@@ -36,8 +37,10 @@ function upsertLink(rel: string, href: string) {
  * and injects optional JSON-LD <script> tags. Cleans up its own JSON-LD on unmount.
  */
 export function SeoHead({ title, description, canonical, noindex = false, jsonLd }: SeoHeadProps) {
-  useEffect(() => {
-    document.title = title;
+  useIsomorphicLayoutEffect(() => {
+    if (document.title !== title) {
+      document.title = title;
+    }
 
     const canonicalUrl = canonical
       ? (canonical.startsWith("http") ? canonical : `${SITE_ORIGIN}${canonical}`)

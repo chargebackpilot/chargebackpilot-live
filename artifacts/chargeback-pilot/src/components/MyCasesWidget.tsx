@@ -1,4 +1,4 @@
-import { lazy, Suspense, useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Briefcase, Infinity as InfinityIcon } from "lucide-react";
 import {
   listSavedCases,
@@ -6,8 +6,7 @@ import {
   getFlatrateExpiry,
   type PersistedCase,
 } from "@/lib/case-persistence";
-
-const MyCasesMenuContent = lazy(() => import("./MyCasesMenuContent"));
+import MyCasesMenuContent from "./MyCasesMenuContent";
 
 const STORAGE_EVENT_KEYS = new Set([
   "cbp_case_list_v1",
@@ -15,8 +14,13 @@ const STORAGE_EVENT_KEYS = new Set([
   "cbp_flatrate_v1",
 ]);
 
-// Synchronous initial data load for instant rendering (no flash)
-function getInitialData() {
+const EMPTY_INITIAL_DATA = {
+  cases: [] as PersistedCase[],
+  flatActive: false,
+  flatExpiry: null as Date | null,
+};
+
+function readStoredData() {
   return {
     cases: listSavedCases(),
     flatActive: isFlatrateActive(),
@@ -25,22 +29,22 @@ function getInitialData() {
 }
 
 export function MyCasesWidget() {
-  // Initialize with synchronous data - no loading state, instant render
-  const initialData = useMemo(() => getInitialData(), []);
-  const [cases, setCases] = useState<PersistedCase[]>(initialData.cases);
-  const [flatActive, setFlatActive] = useState(initialData.flatActive);
-  const [flatExpiry, setFlatExpiry] = useState<Date | null>(initialData.flatExpiry);
+  const [cases, setCases] = useState<PersistedCase[]>(EMPTY_INITIAL_DATA.cases);
+  const [flatActive, setFlatActive] = useState(EMPTY_INITIAL_DATA.flatActive);
+  const [flatExpiry, setFlatExpiry] = useState<Date | null>(EMPTY_INITIAL_DATA.flatExpiry);
   const [open, setOpen] = useState(false);
   const rootRef = useRef<HTMLDivElement | null>(null);
 
   const refresh = () => {
-    setCases(listSavedCases());
-    setFlatActive(isFlatrateActive());
-    setFlatExpiry(getFlatrateExpiry());
+    const next = readStoredData();
+    setCases(next.cases);
+    setFlatActive(next.flatActive);
+    setFlatExpiry(next.flatExpiry);
   };
 
   useEffect(() => {
-    // No initial refresh needed - we already have sync data
+    refresh();
+
     const onStorage = (e: StorageEvent) => {
       if (!e.key || STORAGE_EVENT_KEYS.has(e.key)) refresh();
     };
@@ -51,21 +55,16 @@ export function MyCasesWidget() {
     };
     document.addEventListener("pointerdown", onPointerDown);
 
-    const warmMenuChunk = () => { void import("./MyCasesMenuContent"); };
-    const warmupId = window.setTimeout(warmMenuChunk, 1200);
-
     // Light polling for same-tab updates after saveCurrentCase
     const id = window.setInterval(refresh, 4000);
     return () => {
       window.removeEventListener("storage", onStorage);
       document.removeEventListener("pointerdown", onPointerDown);
-      window.clearTimeout(warmupId);
       window.clearInterval(id);
     };
   }, []);
 
   const count = cases.length;
-  if (count === 0 && !flatActive) return null;
 
   return (
     <div ref={rootRef} className="relative inline-flex">
@@ -76,7 +75,10 @@ export function MyCasesWidget() {
         aria-expanded={open}
         aria-haspopup="menu"
         data-testid="my-cases-trigger"
-        onClick={() => setOpen((value) => !value)}
+        onClick={() => {
+          refresh();
+          setOpen((value) => !value);
+        }}
       >
         <Briefcase className="w-4 h-4" />
         <span className="hidden sm:inline">Meine Fälle</span>
@@ -93,16 +95,14 @@ export function MyCasesWidget() {
       </button>
 
       {open && (
-        <Suspense fallback={null}>
-          <MyCasesMenuContent
-            cases={cases}
-            count={count}
-            flatActive={flatActive}
-            flatExpiry={flatExpiry}
-            onClose={() => setOpen(false)}
-            onRefresh={refresh}
-          />
-        </Suspense>
+        <MyCasesMenuContent
+          cases={cases}
+          count={count}
+          flatActive={flatActive}
+          flatExpiry={flatExpiry}
+          onClose={() => setOpen(false)}
+          onRefresh={refresh}
+        />
       )}
     </div>
   );

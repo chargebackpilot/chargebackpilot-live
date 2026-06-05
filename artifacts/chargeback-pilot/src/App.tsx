@@ -1,6 +1,6 @@
 import { Switch, Route, Router as WouterRouter, useLocation } from "wouter";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { useEffect, useLayoutEffect, useState, Suspense, lazy } from "react";
+import { useEffect, useState, Suspense, lazy } from "react";
 import NotFound from "@/pages/not-found";
 import Home from "@/pages/Home";
 import RatgeberIndex from "@/pages/RatgeberIndex";
@@ -54,181 +54,6 @@ function ScrollToTop() {
   useEffect(() => {
     window.scrollTo(0, 0);
   }, [pathname]);
-  return null;
-}
-
-function RouteMetaUpdater() {
-  const [pathname] = useLocation();
-
-  useLayoutEffect(() => {
-    const origin = "https://chargebackpilot.de";
-    const metaByPath: Array<{ match: RegExp; title: string; description: string }> = [
-      {
-        match: /^\/$/,
-        title: "ChargebackPilot · KI-Hilfe für Chargeback, PayPal-Käuferschutz & Reklamation 2026",
-        description:
-          "Ware nicht erhalten, Flug ausgefallen, doppelt belastet? ChargebackPilot prüft deinen Fall mit KI in 60 Sekunden und liefert dir 3 fertige Textvorlagen.",
-      },
-      {
-        match: /^\/vorlagen-generator$/,
-        title: "Vorlagen-Generator · ChargebackPilot",
-        description:
-          "Erstelle in wenigen Schritten professionelle Reklamationsvorlagen für Händler, Bank/PayPal/Klarna und Eskalation.",
-      },
-      {
-        match: /^\/ratgeber/,
-        title: "Ratgeber & Guides zu Chargeback, Käuferschutz und Rückerstattung · ChargebackPilot",
-        description:
-          "Praxisnahe Anleitungen für PayPal, Kreditkarten-Chargeback, Klarna-Reklamation und typische Problemfälle im Onlinekauf.",
-      },
-      {
-        match: /^\/impressum$/,
-        title: "Impressum · ChargebackPilot",
-        description:
-          "Impressum von ChargebackPilot gemäß den geltenden Informationspflichten für Online-Angebote in Deutschland.",
-      },
-      {
-        match: /^\/datenschutz$/,
-        title: "Datenschutzerklärung · ChargebackPilot",
-        description:
-          "Datenschutzerklärung von ChargebackPilot mit Informationen zur Datenverarbeitung, Rechtsgrundlagen und Betroffenenrechten.",
-      },
-      {
-        match: /^\/agb$/,
-        title: "Allgemeine Geschäftsbedingungen (AGB) · ChargebackPilot",
-        description:
-          "Allgemeine Geschäftsbedingungen von ChargebackPilot für Nutzung, Leistungsumfang, Vergütung und Haftung.",
-      },
-      {
-        match: /^\/widerruf$/,
-        title: "Widerrufsbelehrung · ChargebackPilot",
-        description:
-          "Widerrufsbelehrung von ChargebackPilot mit Fristen, Voraussetzungen und Musterinformationen für Verbraucher.",
-      },
-      {
-        match: /^\/paypal-chargeback$/,
-        title: "PayPal Chargeback / Käuferschutz erfolgreich nutzen | ChargebackPilot",
-        description: "PayPal Chargeback / Käuferschutz erfolgreich nutzen: typische Fristenhinweise, Belege und strukturierte Orientierung bei PayPal. Mit unverbindlichen Textentwürfen.",
-      },
-      {
-        match: /^\/amex-chargeback$/,
-        title: "American Express Chargeback einleiten | ChargebackPilot",
-        description: "American Express Chargeback einleiten: typische Fristenhinweise, Belege und strukturierte Orientierung bei Amex. Mit unverbindlichen Textentwürfen.",
-      },
-      {
-        match: /^\/visa-mastercard-chargeback$/,
-        title: "Visa / Mastercard Chargeback: Geld zurück | ChargebackPilot",
-        description: "Visa / Mastercard Chargeback: Geld zurück: typische Fristenhinweise, Belege und strukturierte Orientierung bei Kreditkarte. Mit unverbindlichen Textentwürfen.",
-      },
-      {
-        match: /^\/klarna-reklamation$/,
-        title: "Klarna Reklamation & Käuferschutz | ChargebackPilot",
-        description: "Klarna Reklamation & Käuferschutz: typische Fristenhinweise, Belege und strukturierte Orientierung bei Klarna. Mit unverbindlichen Textentwürfen.",
-      },
-      {
-        match: /^\/flug-chargeback$/,
-        title: "Flug Chargeback / Reiserückerstattung | ChargebackPilot",
-        description: "Flug Chargeback / Reiserückerstattung: typische Fristenhinweise, Belege und strukturierte Orientierung bei Flug/Reise. Mit unverbindlichen Textentwürfen.",
-      },
-      {
-        match: /^\/kiwi-rueckerstattung$/,
-        title: "Kiwi.com Steuern & Gebühren ohne 59€ Servicegebühr zurückholen | ChargebackPilot",
-        description: "Kiwi.com Steuern & Gebühren ohne 59€ Servicegebühr zurückholen: typische Fristenhinweise, Belege und strukturierte Orientierung bei Flug/Reise. Mit unverbindlichen Textentwürfen.",
-      },
-      {
-        match: /^\/lieferando-rueckerstattung$/,
-        title: "Lieferando / Essen Rückerstattung | ChargebackPilot",
-        description: "Lieferando / Essen Rückerstattung: typische Fristenhinweise, Belege und strukturierte Orientierung bei Lieferdienst. Mit unverbindlichen Textentwürfen.",
-      },
-      {
-        match: /^\/wolt-rueckerstattung$/,
-        title: "Wolt Rückerstattung (Essen kalt / nicht geliefert) | ChargebackPilot",
-        description: "Wolt Rückerstattung (Essen kalt / nicht geliefert): typische Fristenhinweise, Belege und strukturierte Orientierung bei Lieferdienst. Mit unverbindlichen Textentwürfen.",
-      },
-      {
-        match: /^\/ubereats-rueckerstattung$/,
-        title: "Uber Eats Erstattung & Chargeback | ChargebackPilot",
-        description: "Uber Eats Erstattung & Chargeback: typische Fristenhinweise, Belege und strukturierte Orientierung bei Lieferdienst. Mit unverbindlichen Textentwürfen.",
-      },
-      {
-        match: /^\/ware-nicht-erhalten$/,
-        title: "Chargeback: Ware nicht erhalten | ChargebackPilot",
-        description: "Chargeback: Ware nicht erhalten: typische Fristenhinweise, Belege und strukturierte Orientierung bei Online-Shopping. Mit unverbindlichen Textentwürfen.",
-      },
-      {
-        match: /^\/abo-falle-chargeback$/,
-        title: "Abo-Falle Chargeback | ChargebackPilot",
-        description: "Abo-Falle Chargeback: typische Fristenhinweise, Belege und strukturierte Orientierung bei Abonnements. Mit unverbindlichen Textentwürfen.",
-      },
-      {
-        match: /^\/hilfe\//,
-        title: "Händler-spezifische Hilfe bei Reklamationen · ChargebackPilot",
-        description:
-          "Konkrete Leitfäden zu typischen Problemen bei bekannten Händlern inklusive Beweis-Checkliste und Eskalationspfad.",
-      },
-      {
-        match: /^\/vergleich\//,
-        title: "PayPal vs Kreditkarte vs Klarna: Käuferschutz Vergleich 2026 | ChargebackPilot",
-        description:
-          "Welcher Weg ist in deinem Fall am besten? Vergleich von Fristen, Erfolgschancen und Vorgehen bei Rückerstattungen.",
-      },
-      {
-        match: /^\/scam-shops-2026$/,
-        title: "Scam-Shops 2026 erkennen & Geld zurückholen | ChargebackPilot",
-        description: "Scam-Shops 2026: Warnsignale, Belege und nächste Schritte bei Fake-Shops, Käuferschutz und Chargeback.",
-      },
-    ];
-
-    const current =
-      metaByPath.find((m) => m.match.test(pathname)) ?? {
-        title: "ChargebackPilot · Chargeback & Reklamationshilfe",
-        description:
-          "ChargebackPilot unterstützt dich mit KI-gestützter Formulierungshilfe für Rückerstattungen und Reklamationen.",
-      };
-
-    const noindex = /^\/(admin|admin\/demo)$/.test(pathname);
-
-    document.title = current.title;
-
-    const upsertMeta = (name: string, content: string) => {
-      let el = document.head.querySelector<HTMLMetaElement>(`meta[name="${name}"]`);
-      if (!el) {
-        el = document.createElement("meta");
-        el.setAttribute("name", name);
-        document.head.appendChild(el);
-      }
-      el.setAttribute("content", content);
-    };
-
-    const upsertOg = (property: string, content: string) => {
-      let el = document.head.querySelector<HTMLMetaElement>(`meta[property="${property}"]`);
-      if (!el) {
-        el = document.createElement("meta");
-        el.setAttribute("property", property);
-        document.head.appendChild(el);
-      }
-      el.setAttribute("content", content);
-    };
-
-    const canonicalUrl = `${origin}${pathname}`;
-    upsertMeta("description", current.description);
-    upsertMeta("robots", noindex ? "noindex, nofollow" : "index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1");
-    upsertMeta("googlebot", noindex ? "noindex, nofollow" : "index, follow, max-image-preview:large, max-snippet:-1");
-    upsertMeta("twitter:title", current.title);
-    upsertMeta("twitter:description", current.description);
-    upsertOg("og:title", current.title);
-    upsertOg("og:description", current.description);
-    upsertOg("og:url", canonicalUrl);
-
-    let canonical = document.head.querySelector<HTMLLinkElement>('link[rel="canonical"]');
-    if (!canonical) {
-      canonical = document.createElement("link");
-      canonical.setAttribute("rel", "canonical");
-      document.head.appendChild(canonical);
-    }
-    canonical.setAttribute("href", canonicalUrl);
-  }, [pathname]);
-
   return null;
 }
 
@@ -382,7 +207,6 @@ function App({ ssrPath }: AppProps) {
           <Navbar />
           <main className="flex-1">
             <ScrollToTop />
-            <RouteMetaUpdater />
             <Router />
           </main>
           <Footer />

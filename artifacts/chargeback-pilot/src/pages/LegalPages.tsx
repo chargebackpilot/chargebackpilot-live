@@ -1,8 +1,14 @@
 import { MainLayout } from "@/components/layout/MainLayout";
+import { SeoHead } from "@/components/SeoHead";
 
 export function Impressum() {
   return (
     <MainLayout>
+      <SeoHead
+        title="Impressum · ChargebackPilot"
+        description="Impressum von ChargebackPilot gemäß den geltenden Informationspflichten für Online-Angebote in Deutschland."
+        canonical="/impressum"
+      />
       <div className="container mx-auto max-w-3xl py-16 px-4">
         <h1 className="text-3xl font-bold mb-8">Impressum</h1>
         <div className="prose prose-slate max-w-none">
@@ -46,6 +52,11 @@ export function Impressum() {
 export function Datenschutz() {
   return (
     <MainLayout>
+      <SeoHead
+        title="Datenschutzerklärung · ChargebackPilot"
+        description="Datenschutzerklärung von ChargebackPilot mit Informationen zur Datenverarbeitung, Rechtsgrundlagen und Betroffenenrechten."
+        canonical="/datenschutz"
+      />
       <div className="container mx-auto max-w-3xl py-16 px-4">
         <h1 className="text-3xl font-bold mb-8">Datenschutzerklärung</h1>
         <div className="prose prose-slate max-w-none">
@@ -107,6 +118,11 @@ export function Datenschutz() {
 export function Widerruf() {
   return (
     <MainLayout>
+      <SeoHead
+        title="Widerrufsbelehrung · ChargebackPilot"
+        description="Widerrufsbelehrung von ChargebackPilot mit Fristen, Voraussetzungen und Musterinformationen für Verbraucher."
+        canonical="/widerruf"
+      />
       <div className="container mx-auto max-w-3xl py-16 px-4">
         <h1 className="text-3xl font-bold mb-8">Widerrufsbelehrung</h1>
         <div className="prose prose-slate max-w-none">
@@ -134,6 +150,11 @@ export function Widerruf() {
 export function AGB() {
   return (
     <MainLayout>
+      <SeoHead
+        title="Allgemeine Geschäftsbedingungen (AGB) · ChargebackPilot"
+        description="Allgemeine Geschäftsbedingungen von ChargebackPilot für Nutzung, Leistungsumfang, Vergütung und Haftung."
+        canonical="/agb"
+      />
       <div className="container mx-auto max-w-3xl py-16 px-4">
         <h1 className="text-3xl font-bold mb-8">Allgemeine Nutzungsbedingungen (AGB)</h1>
         <div className="prose prose-slate max-w-none">

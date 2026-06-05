@@ -1,10 +1,9 @@
 import { Link } from "wouter";
-import { lazy, Suspense, useEffect, useState } from "react";
+import { useState } from "react";
 import { DisclaimerBanner } from "./DisclaimerBanner";
 import { LogoLockup } from "../ui/Logo";
 import { openNewWizardCase } from "@/lib/case-persistence";
-
-const DeferredMyCasesWidget = lazy(() => import("../MyCasesWidget").then((m) => ({ default: m.MyCasesWidget })));
+import { MyCasesWidget } from "../MyCasesWidget";
 
 function ArrowRightIcon({ className = "" }: { className?: string }) {
   return (
@@ -34,22 +33,6 @@ function XIcon({ className = "" }: { className?: string }) {
   );
 }
 
-function IdleMyCasesWidget() {
-  const [enabled, setEnabled] = useState(false);
-
-  useEffect(() => {
-    const id = window.setTimeout(() => setEnabled(true), 1500);
-    return () => window.clearTimeout(id);
-  }, []);
-
-  if (!enabled) return null;
-  return (
-    <Suspense fallback={null}>
-      <DeferredMyCasesWidget />
-    </Suspense>
-  );
-}
-
 export function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
 
@@ -70,7 +53,7 @@ export function Navbar() {
           <Link href="/ratgeber" className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors px-3 h-9 inline-flex items-center">
             Ratgeber & Guides
           </Link>
-          <IdleMyCasesWidget />
+          <MyCasesWidget />
           <Link href="/vorlagen-generator?new=1" className="ml-1" onClick={(e) => { e.preventDefault(); handleNewCaseClick(); }}>
             <span className="inline-flex min-h-8 items-center justify-center gap-2 whitespace-nowrap rounded-md bg-primary px-3 text-xs font-medium text-primary-foreground border border-primary-border hover-elevate active-elevate-2">
               Vorlagen generieren
@@ -81,7 +64,7 @@ export function Navbar() {
 
         {/* Mobile: cases widget + menu toggle */}
         <div className="md:hidden flex items-center gap-1">
-          <IdleMyCasesWidget />
+          <MyCasesWidget />
           <button className="p-2" onClick={() => setIsOpen(!isOpen)} aria-label="Menü">
             {isOpen ? <XIcon className="w-6 h-6" /> : <MenuIcon className="w-6 h-6" />}
           </button>
