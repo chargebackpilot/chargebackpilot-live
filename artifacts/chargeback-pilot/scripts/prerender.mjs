@@ -12,6 +12,7 @@ const sitemap = await fs.readFile(path.join(root, "public", "sitemap.xml"), "utf
 
 const routeMeta = [
   ["/", "ChargebackPilot · KI-Hilfe für Chargeback, PayPal-Käuferschutz & Reklamation 2026", "Ware nicht erhalten, Flug ausgefallen, doppelt belastet? ChargebackPilot strukturiert deinen Fall mit KI und liefert unverbindliche Textentwürfe für deine Reklamation."],
+  ["/vorlagen-generator", "Vorlagen-Generator · ChargebackPilot", "Erstelle in wenigen Schritten professionelle Reklamationsvorlagen für Händler, Bank/PayPal/Klarna und Eskalation."],
   ["/ratgeber", "Ratgeber & Chargeback-Guides 2026 | ChargebackPilot", "Über 30 Schritt-für-Schritt-Anleitungen für Käuferschutz, Chargeback und Reklamation — sortiert nach Zahlungsart, Anbieter und Problemtyp."],
   ["/paypal-chargeback", "PayPal Chargeback / Käuferschutz erfolgreich nutzen | ChargebackPilot", "PayPal Chargeback / Käuferschutz erfolgreich nutzen: typische Fristenhinweise, Belege und strukturierte Orientierung bei PayPal. Mit unverbindlichen Textentwürfen."],
   ["/amex-chargeback", "American Express Chargeback einleiten | ChargebackPilot", "American Express Chargeback einleiten: typische Fristenhinweise, Belege und strukturierte Orientierung bei Amex. Mit unverbindlichen Textentwürfen."],
@@ -31,7 +32,7 @@ const routeMeta = [
 const knownMeta = new Map(routeMeta.map(([route, title, description]) => [route, { title, description }]));
 const sitemapRoutes = [...sitemap.matchAll(/<loc>https:\/\/chargebackpilot\.de([^<]+)<\/loc>/g)]
   .map((match) => match[1])
-  .filter((route) => route !== "/vorlagen-generator" && route !== "/disclaimer");
+  .filter((route) => route !== "/disclaimer");
 const routes = [...new Set([...routeMeta.map(([route]) => route), ...sitemapRoutes])];
 
 const escapeAttr = (value) => value.replace(/&/g, "&amp;").replace(/"/g, "&quot;").replace(/</g, "&lt;");

@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useTransition } from "react";
 import { MainLayout } from "@/components/layout/MainLayout";
 import { SeoHead } from "@/components/SeoHead";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
@@ -151,6 +151,7 @@ export default function Home() {
   const [stats, setStats] = useState<CaseStats | null>(null);
   const [flatrateLoading, setFlatrateLoading] = useState(false);
   const [flatrateActive, setFlatrateActive] = useState(false);
+  const [, startStatsTransition] = useTransition();
 
   const handleFreshWizardStart = () => {
     openNewWizardCase();
@@ -199,16 +200,16 @@ export default function Home() {
       fetch("/api/cases/stats", { signal: controller.signal })
         .then((res) => (res.ok ? res.json() : null))
         .then((data) => {
-          if (data) setStats(data);
+          if (data) startStatsTransition(() => setStats(data));
         })
         .catch(() => {
           // Stats are decorative; never block or disturb the landing page.
         });
     };
 
-    const schedule = window.requestIdleCallback ?? ((cb: IdleRequestCallback) => window.setTimeout(cb, 1800) as unknown as number);
+    const schedule = window.requestIdleCallback ?? ((cb: IdleRequestCallback) => window.setTimeout(cb, 5000) as unknown as number);
     const cancel = window.cancelIdleCallback ?? window.clearTimeout;
-    const id = schedule(loadStats, { timeout: 3000 });
+    const id = schedule(loadStats, { timeout: 8000 });
 
     return () => {
       controller.abort();
