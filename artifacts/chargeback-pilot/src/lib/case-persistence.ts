@@ -162,14 +162,19 @@ function navigateTo(path: string): void {
   }
 }
 
+function navigateToDocument(path: string): void {
+  const target = new URL(path, window.location.origin);
+  window.location.assign(target.href);
+}
+
 export function openNewWizardCase(): void {
   clearCurrentCaseSelection();
-  navigateTo("/vorlagen-generator?new=1");
+  navigateToDocument("/vorlagen-generator?new=1");
 }
 
 export function openSavedCase(caseId: string): void {
   if (!caseId) return;
-  navigateTo(`/vorlagen-generator?caseId=${encodeURIComponent(caseId)}`);
+  navigateToDocument(`/vorlagen-generator?caseId=${encodeURIComponent(caseId)}`);
 }
 
 export function openCurrentCasePaywall(): void {
@@ -178,7 +183,7 @@ export function openCurrentCasePaywall(): void {
     openNewWizardCase();
     return;
   }
-  navigateTo(`/vorlagen-generator?caseId=${encodeURIComponent(current.caseId)}&scroll=paywall`);
+  navigateToDocument(`/vorlagen-generator?caseId=${encodeURIComponent(current.caseId)}&scroll=paywall`);
 }
 
 /** Lists all saved cases, newest first, filtered to the last 90 days. */
