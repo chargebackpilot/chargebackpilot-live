@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { lazy, Suspense, useEffect, useRef, useState } from "react";
 import { Briefcase, Infinity as InfinityIcon } from "lucide-react";
 import {
   listSavedCases,
@@ -6,7 +6,8 @@ import {
   getFlatrateExpiry,
   type PersistedCase,
 } from "@/lib/case-persistence";
-import MyCasesMenuContent from "./MyCasesMenuContent";
+
+const MyCasesMenuContent = lazy(() => import("./MyCasesMenuContent"));
 
 const STORAGE_EVENT_KEYS = new Set([
   "cbp_case_list_v1",
@@ -95,14 +96,16 @@ export function MyCasesWidget() {
       </button>
 
       {open && (
-        <MyCasesMenuContent
-          cases={cases}
-          count={count}
-          flatActive={flatActive}
-          flatExpiry={flatExpiry}
-          onClose={() => setOpen(false)}
-          onRefresh={refresh}
-        />
+        <Suspense fallback={null}>
+          <MyCasesMenuContent
+            cases={cases}
+            count={count}
+            flatActive={flatActive}
+            flatExpiry={flatExpiry}
+            onClose={() => setOpen(false)}
+            onRefresh={refresh}
+          />
+        </Suspense>
       )}
     </div>
   );
