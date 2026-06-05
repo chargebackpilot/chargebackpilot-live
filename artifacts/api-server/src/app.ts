@@ -202,15 +202,32 @@ function renderSeoHtml(pathname: string) {
 }
 
 app.use(express.static(staticDir, {
+  index: false,
+  redirect: false,
   setHeaders: (res, filePath) => {
+    if (filePath.includes(`${path.sep}assets${path.sep}`)) {
+      res.setHeader("Cache-Control", "public, max-age=31536000, immutable");
+      return;
+    }
     if (filePath.includes(`${path.sep}fonts${path.sep}inter${path.sep}`)) {
       res.setHeader("Cache-Control", "public, max-age=31536000, immutable");
     }
   },
 }));
 app.get(/(.*)/, (req, res) => {
+  const prerenderedPath = req.path === "/"
+    ? indexPath
+    : path.join(staticDir, req.path, "index.html");
+  if (fs.existsSync(prerenderedPath)) {
+    res.setHeader("Content-Type", "text/html; charset=utf-8");
+    res.setHeader("Cache-Control", "public, max-age=300, stale-while-revalidate=86400");
+    res.status(200).send(fs.readFileSync(prerenderedPath, "utf-8"));
+    return;
+  }
+
   const { html, isKnownRoute } = renderSeoHtml(req.path || "/");
   res.setHeader("Content-Type", "text/html; charset=utf-8");
+  res.setHeader("Cache-Control", "public, max-age=60, stale-while-revalidate=3600");
   res.status(isKnownRoute ? 200 : 404).send(html);
 });
 

@@ -101,5 +101,20 @@ export function SeoHead({ title, description, canonical, noindex = false, jsonLd
     };
   }, [title, description, canonical, noindex, jsonLd]);
 
+  if (typeof window === "undefined" && jsonLd?.length) {
+    return (
+      <>
+        {jsonLd.map((obj, index) => (
+          <script
+            key={index}
+            type="application/ld+json"
+            data-cbp-ssr-json-ld="1"
+            dangerouslySetInnerHTML={{ __html: JSON.stringify(obj) }}
+          />
+        ))}
+      </>
+    );
+  }
+
   return null;
 }

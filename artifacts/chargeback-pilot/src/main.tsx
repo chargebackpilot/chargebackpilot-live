@@ -1,10 +1,17 @@
-import { createRoot } from "react-dom/client";
+import { createRoot, hydrateRoot } from "react-dom/client";
 import App from "./App";
 import "./index.css";
 import { AppErrorBoundary } from "@/components/AppErrorBoundary";
 
-createRoot(document.getElementById("root")!).render(
+const root = document.getElementById("root")!;
+const app = (
   <AppErrorBoundary>
     <App />
-  </AppErrorBoundary>,
+  </AppErrorBoundary>
 );
+
+if (root.hasChildNodes()) {
+  hydrateRoot(root, app);
+} else {
+  createRoot(root).render(app);
+}

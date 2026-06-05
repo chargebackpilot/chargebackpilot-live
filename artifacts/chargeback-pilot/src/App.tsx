@@ -4,6 +4,11 @@ import { useEffect, useLayoutEffect, useState, Suspense, lazy } from "react";
 import NotFound from "@/pages/not-found";
 import Home from "@/pages/Home";
 import RatgeberIndex from "@/pages/RatgeberIndex";
+import MerchantProblemPage from "@/pages/MerchantProblemPage";
+import MerchantIndexPage from "@/pages/MerchantIndexPage";
+import ScamShopsPage from "@/pages/ScamShopsPage";
+import ComparePage from "@/pages/ComparePage";
+import { AGB, Datenschutz, Impressum, Widerruf } from "@/pages/LegalPages";
 import {
   AboFalleSEO,
   AmexSEO,
@@ -29,22 +34,9 @@ function lazyWithPreload<T extends React.ComponentType<any>>(loader: () => Promi
 }
 
 const loadWizard = () => import("@/pages/Wizard");
-const loadMerchantProblemPage = () => import("@/pages/MerchantProblemPage");
-const loadMerchantIndexPage = () => import("@/pages/MerchantIndexPage");
-const loadScamShopsPage = () => import("@/pages/ScamShopsPage");
-const loadComparePage = () => import("@/pages/ComparePage");
-const loadLegalPages = () => import("@/pages/LegalPages");
 
 const LazyToaster = lazy(() => import("@/components/ui/toaster").then((m) => ({ default: m.Toaster })));
 const Wizard = lazyWithPreload(loadWizard);
-const MerchantProblemPage = lazyWithPreload(loadMerchantProblemPage);
-const MerchantIndexPage = lazyWithPreload(loadMerchantIndexPage);
-const ScamShopsPage = lazyWithPreload(loadScamShopsPage);
-const ComparePage = lazyWithPreload(loadComparePage);
-const Impressum = lazyWithPreload(() => loadLegalPages().then((m) => ({ default: m.Impressum })));
-const Datenschutz = lazyWithPreload(() => loadLegalPages().then((m) => ({ default: m.Datenschutz })));
-const AGB = lazyWithPreload(() => loadLegalPages().then((m) => ({ default: m.AGB })));
-const Widerruf = lazyWithPreload(() => loadLegalPages().then((m) => ({ default: m.Widerruf })));
 const Admin = lazyWithPreload(() => import("@/pages/Admin"));
 const AdminDemo = lazyWithPreload(() => import("@/pages/AdminDemo"));
 
@@ -378,10 +370,14 @@ function Router() {
   );
 }
 
-function App() {
+interface AppProps {
+  ssrPath?: string;
+}
+
+function App({ ssrPath }: AppProps) {
   return (
     <QueryClientProvider client={queryClient}>
-      <WouterRouter base={import.meta.env.BASE_URL.replace(/\/$/, "")}>
+      <WouterRouter base={import.meta.env.BASE_URL.replace(/\/$/, "")} ssrPath={ssrPath}>
         <div className="min-h-screen flex flex-col font-sans bg-background">
           <Navbar />
           <main className="flex-1">
