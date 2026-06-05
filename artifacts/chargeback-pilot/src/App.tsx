@@ -143,28 +143,8 @@ const withoutSkeleton = (Component: React.ComponentType<any>) => (props: any) =>
   </Suspense>
 );
 
-function useBrowserLocationKey() {
-  const [locationKey, setLocationKey] = useState(() => {
-    if (typeof window === "undefined") return "/vorlagen-generator";
-    return `${window.location.pathname}${window.location.search}${window.location.hash}`;
-  });
-
-  useEffect(() => {
-    const updateLocationKey = () => {
-      setLocationKey(`${window.location.pathname}${window.location.search}${window.location.hash}`);
-    };
-
-    updateLocationKey();
-    window.addEventListener("popstate", updateLocationKey);
-    return () => window.removeEventListener("popstate", updateLocationKey);
-  }, []);
-
-  return locationKey;
-}
-
 function Router() {
   const [location] = useLocation();
-  const browserLocationKey = useBrowserLocationKey();
 
   return (
     <Switch>
@@ -172,7 +152,7 @@ function Router() {
       <Route path="/vorlagen-generator">
         {() => (
           <Suspense fallback={<RouteShellFallback />}>
-            <Wizard key={browserLocationKey} />
+            <Wizard key={location} />
           </Suspense>
         )}
       </Route>
