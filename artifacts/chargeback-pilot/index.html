@@ -37,6 +37,51 @@
     <link rel="canonical" href="https://chargebackpilot.de/" />
     <link rel="manifest" href="/manifest.json" />
 
+    <script>
+      (() => {
+        const origin = "https://chargebackpilot.de";
+        const path = window.location.pathname.replace(/\/$/, "") || "/";
+        const routes = [
+          ["/", "ChargebackPilot · KI-Hilfe für Chargeback, PayPal-Käuferschutz & Reklamation 2026", "Ware nicht erhalten, Flug ausgefallen, doppelt belastet? ChargebackPilot strukturiert deinen Fall mit KI und liefert unverbindliche Textentwürfe für deine Reklamation."],
+          ["/vorlagen-generator", "Vorlagen-Generator · ChargebackPilot", "Erstelle in wenigen Schritten professionelle Reklamationsvorlagen für Händler, Bank/PayPal/Klarna und Eskalation."],
+          ["/ratgeber", "Ratgeber & Guides zu Chargeback, Käuferschutz und Rückerstattung · ChargebackPilot", "Praxisnahe Anleitungen für PayPal, Kreditkarten-Chargeback, Klarna-Reklamation und typische Problemfälle im Onlinekauf."],
+          ["/paypal-chargeback", "PayPal Chargeback / Käuferschutz erfolgreich nutzen | ChargebackPilot", "PayPal Chargeback / Käuferschutz erfolgreich nutzen: typische Fristenhinweise, Belege und strukturierte Orientierung bei PayPal. Mit unverbindlichen Textentwürfen."],
+          ["/amex-chargeback", "American Express Chargeback einleiten | ChargebackPilot", "American Express Chargeback einleiten: typische Fristenhinweise, Belege und strukturierte Orientierung bei Amex. Mit unverbindlichen Textentwürfen."],
+          ["/visa-mastercard-chargeback", "Visa / Mastercard Chargeback: Geld zurück | ChargebackPilot", "Visa / Mastercard Chargeback: Geld zurück: typische Fristenhinweise, Belege und strukturierte Orientierung bei Kreditkarte. Mit unverbindlichen Textentwürfen."],
+          ["/klarna-reklamation", "Klarna Reklamation & Käuferschutz | ChargebackPilot", "Klarna Reklamation & Käuferschutz: typische Fristenhinweise, Belege und strukturierte Orientierung bei Klarna. Mit unverbindlichen Textentwürfen."],
+          ["/flug-chargeback", "Flug Chargeback / Reiserückerstattung | ChargebackPilot", "Flug Chargeback / Reiserückerstattung: typische Fristenhinweise, Belege und strukturierte Orientierung bei Flug/Reise. Mit unverbindlichen Textentwürfen."],
+          ["/kiwi-rueckerstattung", "Kiwi.com Steuern & Gebühren ohne 59€ Servicegebühr zurückholen | ChargebackPilot", "Kiwi.com Steuern & Gebühren ohne 59€ Servicegebühr zurückholen: typische Fristenhinweise, Belege und strukturierte Orientierung bei Flug/Reise. Mit unverbindlichen Textentwürfen."],
+          ["/lieferando-rueckerstattung", "Lieferando / Essen Rückerstattung | ChargebackPilot", "Lieferando / Essen Rückerstattung: typische Fristenhinweise, Belege und strukturierte Orientierung bei Lieferdienst. Mit unverbindlichen Textentwürfen."],
+          ["/wolt-rueckerstattung", "Wolt Rückerstattung (Essen kalt / nicht geliefert) | ChargebackPilot", "Wolt Rückerstattung (Essen kalt / nicht geliefert): typische Fristenhinweise, Belege und strukturierte Orientierung bei Lieferdienst. Mit unverbindlichen Textentwürfen."],
+          ["/ubereats-rueckerstattung", "Uber Eats Erstattung & Chargeback | ChargebackPilot", "Uber Eats Erstattung & Chargeback: typische Fristenhinweise, Belege und strukturierte Orientierung bei Lieferdienst. Mit unverbindlichen Textentwürfen."],
+          ["/ware-nicht-erhalten", "Chargeback: Ware nicht erhalten | ChargebackPilot", "Chargeback: Ware nicht erhalten: typische Fristenhinweise, Belege und strukturierte Orientierung bei Online-Shopping. Mit unverbindlichen Textentwürfen."],
+          ["/abo-falle-chargeback", "Abo-Falle Chargeback | ChargebackPilot", "Abo-Falle Chargeback: typische Fristenhinweise, Belege und strukturierte Orientierung bei Abonnements. Mit unverbindlichen Textentwürfen."],
+          ["/scam-shops-2026", "Scam-Shops 2026 erkennen & Geld zurückholen | ChargebackPilot", "Scam-Shops 2026: Warnsignale, Belege und nächste Schritte bei Fake-Shops, Käuferschutz und Chargeback."],
+          ["/vergleich/paypal-vs-kreditkarte-vs-klarna", "PayPal vs Kreditkarte vs Klarna: Käuferschutz Vergleich 2026 | ChargebackPilot", "Welcher Weg ist in deinem Fall am besten? Vergleich von Fristen, Erfolgschancen und Vorgehen bei Rückerstattungen."]
+        ];
+        const dynamic = path.startsWith("/hilfe/")
+          ? [path, "Händler-spezifische Hilfe bei Reklamationen · ChargebackPilot", "Konkrete Leitfäden zu typischen Problemen bei bekannten Händlern inklusive Beweis-Checkliste und Eskalationspfad."]
+          : null;
+        const current = dynamic || routes.find(([route]) => route === path);
+        if (!current) return;
+        const [, title, description] = current;
+        document.title = title;
+        const setMeta = (selector, attr, name, content) => {
+          const el = document.head.querySelector(selector);
+          if (el) el.setAttribute("content", content);
+        };
+        setMeta('meta[name="description"]', "name", "description", description);
+        setMeta('meta[property="og:title"]', "property", "og:title", title);
+        setMeta('meta[property="og:description"]', "property", "og:description", description);
+        setMeta('meta[name="twitter:title"]', "name", "twitter:title", title);
+        setMeta('meta[name="twitter:description"]', "name", "twitter:description", description);
+        const canonical = document.head.querySelector('link[rel="canonical"]');
+        const canonicalUrl = origin + path;
+        if (canonical) canonical.setAttribute("href", canonicalUrl);
+        setMeta('meta[property="og:url"]', "property", "og:url", canonicalUrl);
+      })();
+    </script>
+
     <link rel="preload" as="style" href="/fonts/inter/inter.css" />
     <link rel="stylesheet" href="/fonts/inter/inter.css" media="print" onload="this.media='all'" />
     <noscript>

@@ -27,7 +27,11 @@ import {
   CreditCard,
   TrendingUp,
 } from "lucide-react";
-import { useGetCaseStats } from "@workspace/api-client-react";
+
+interface CaseStats {
+  totalCases?: number;
+  strongCases?: number;
+}
 
 const SCENARIOS = [
   {
@@ -143,8 +147,8 @@ const FAQS = [
 ];
 
 export default function Home() {
-  const { data: stats } = useGetCaseStats();
   const { toast } = useToast();
+  const [stats, setStats] = useState<CaseStats | null>(null);
   const [flatrateLoading, setFlatrateLoading] = useState(false);
   const [flatrateActive, setFlatrateActive] = useState(false);
 
@@ -188,6 +192,29 @@ export default function Home() {
       window.history.replaceState({}, "", url.pathname + (url.search ? url.search : ""));
     }
   }, [toast]);
+
+  useEffect(() => {
+    const controller = new AbortController();
+    const loadStats = () => {
+      fetch("/api/cases/stats", { signal: controller.signal })
+        .then((res) => (res.ok ? res.json() : null))
+        .then((data) => {
+          if (data) setStats(data);
+        })
+        .catch(() => {
+          // Stats are decorative; never block or disturb the landing page.
+        });
+    };
+
+    const schedule = window.requestIdleCallback ?? ((cb: IdleRequestCallback) => window.setTimeout(cb, 1800) as unknown as number);
+    const cancel = window.cancelIdleCallback ?? window.clearTimeout;
+    const id = schedule(loadStats, { timeout: 3000 });
+
+    return () => {
+      controller.abort();
+      cancel(id as number);
+    };
+  }, []);
 
   const handleFlatrateCheckout = async () => {
     setFlatrateLoading(true);

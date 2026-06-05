@@ -1,4 +1,4 @@
-import { useLayoutEffect } from "react";
+import { useEffect } from "react";
 
 interface SeoHeadProps {
   title: string;
@@ -36,7 +36,7 @@ function upsertLink(rel: string, href: string) {
  * and injects optional JSON-LD <script> tags. Cleans up its own JSON-LD on unmount.
  */
 export function SeoHead({ title, description, canonical, noindex = false, jsonLd }: SeoHeadProps) {
-  useLayoutEffect(() => {
+  useEffect(() => {
     document.title = title;
 
     const canonicalUrl = canonical

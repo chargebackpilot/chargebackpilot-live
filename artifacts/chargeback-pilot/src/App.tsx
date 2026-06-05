@@ -1,9 +1,22 @@
 import { Switch, Route, Router as WouterRouter, useLocation } from "wouter";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { useEffect, useLayoutEffect, Suspense, lazy } from "react";
-import { Toaster } from "@/components/ui/toaster";
+import { useEffect, useLayoutEffect, useState, Suspense, lazy } from "react";
 import NotFound from "@/pages/not-found";
 import Home from "@/pages/Home";
+import RatgeberIndex from "@/pages/RatgeberIndex";
+import {
+  AboFalleSEO,
+  AmexSEO,
+  FlugSEO,
+  KlarnaSEO,
+  KiwiSEO,
+  LieferandoSEO,
+  PayPalSEO,
+  UberEatsSEO,
+  VisaMastercardSEO,
+  WareNichtErhaltenSEO,
+  WoltSEO,
+} from "@/pages/SEOPages";
 import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
 
@@ -16,16 +29,14 @@ function lazyWithPreload<T extends React.ComponentType<any>>(loader: () => Promi
 }
 
 const loadWizard = () => import("@/pages/Wizard");
-const loadRatgeberIndex = () => import("@/pages/RatgeberIndex");
 const loadMerchantProblemPage = () => import("@/pages/MerchantProblemPage");
 const loadMerchantIndexPage = () => import("@/pages/MerchantIndexPage");
 const loadScamShopsPage = () => import("@/pages/ScamShopsPage");
 const loadComparePage = () => import("@/pages/ComparePage");
 const loadLegalPages = () => import("@/pages/LegalPages");
-const loadSeoPages = () => import("@/pages/SEOPages");
 
+const LazyToaster = lazy(() => import("@/components/ui/toaster").then((m) => ({ default: m.Toaster })));
 const Wizard = lazyWithPreload(loadWizard);
-const RatgeberIndex = lazyWithPreload(loadRatgeberIndex);
 const MerchantProblemPage = lazyWithPreload(loadMerchantProblemPage);
 const MerchantIndexPage = lazyWithPreload(loadMerchantIndexPage);
 const ScamShopsPage = lazyWithPreload(loadScamShopsPage);
@@ -34,17 +45,6 @@ const Impressum = lazyWithPreload(() => loadLegalPages().then((m) => ({ default:
 const Datenschutz = lazyWithPreload(() => loadLegalPages().then((m) => ({ default: m.Datenschutz })));
 const AGB = lazyWithPreload(() => loadLegalPages().then((m) => ({ default: m.AGB })));
 const Widerruf = lazyWithPreload(() => loadLegalPages().then((m) => ({ default: m.Widerruf })));
-const PayPalSEO = lazyWithPreload(() => loadSeoPages().then((m) => ({ default: m.PayPalSEO })));
-const AmexSEO = lazyWithPreload(() => loadSeoPages().then((m) => ({ default: m.AmexSEO })));
-const VisaMastercardSEO = lazyWithPreload(() => loadSeoPages().then((m) => ({ default: m.VisaMastercardSEO })));
-const KlarnaSEO = lazyWithPreload(() => loadSeoPages().then((m) => ({ default: m.KlarnaSEO })));
-const FlugSEO = lazyWithPreload(() => loadSeoPages().then((m) => ({ default: m.FlugSEO })));
-const KiwiSEO = lazyWithPreload(() => loadSeoPages().then((m) => ({ default: m.KiwiSEO })));
-const LieferandoSEO = lazyWithPreload(() => loadSeoPages().then((m) => ({ default: m.LieferandoSEO })));
-const WoltSEO = lazyWithPreload(() => loadSeoPages().then((m) => ({ default: m.WoltSEO })));
-const UberEatsSEO = lazyWithPreload(() => loadSeoPages().then((m) => ({ default: m.UberEatsSEO })));
-const WareNichtErhaltenSEO = lazyWithPreload(() => loadSeoPages().then((m) => ({ default: m.WareNichtErhaltenSEO })));
-const AboFalleSEO = lazyWithPreload(() => loadSeoPages().then((m) => ({ default: m.AboFalleSEO })));
 const Admin = lazyWithPreload(() => import("@/pages/Admin"));
 const AdminDemo = lazyWithPreload(() => import("@/pages/AdminDemo"));
 
@@ -240,8 +240,87 @@ function RouteMetaUpdater() {
   return null;
 }
 
+function IdleToaster() {
+  const [enabled, setEnabled] = useState(false);
+
+  useEffect(() => {
+    const schedule = window.requestIdleCallback ?? ((cb: IdleRequestCallback) => window.setTimeout(cb, 1200) as unknown as number);
+    const cancel = window.cancelIdleCallback ?? window.clearTimeout;
+    const id = schedule(() => setEnabled(true), { timeout: 2500 });
+    return () => cancel(id as number);
+  }, []);
+
+  if (!enabled) return null;
+  return (
+    <Suspense fallback={null}>
+      <LazyToaster />
+    </Suspense>
+  );
+}
+
 function RouteShellFallback() {
-  return <div className="min-h-screen bg-background" aria-hidden="true" />;
+  const [pathname] = useLocation();
+  const isWizard = pathname === "/vorlagen-generator";
+  const isGuide = pathname === "/ratgeber" || pathname.includes("chargeback") || pathname.includes("rueckerstattung") || pathname.includes("reklamation") || pathname.includes("ware-nicht-erhalten") || pathname.includes("abo-falle") || pathname.startsWith("/hilfe/") || pathname.startsWith("/vergleich/") || pathname === "/scam-shops-2026";
+
+  if (isWizard) {
+    return (
+      <div className="container mx-auto max-w-5xl py-10 px-4" aria-busy="true" aria-label="Vorlagen-Generator wird geladen">
+        <div className="lg:grid lg:grid-cols-[240px_1fr] lg:gap-8">
+          <aside className="hidden lg:block">
+            <div className="h-7 w-44 rounded bg-muted mb-2" />
+            <div className="h-4 w-24 rounded bg-muted mb-6" />
+            <div className="space-y-2">
+              {Array.from({ length: 5 }).map((_, i) => (
+                <div key={i} className="h-12 rounded-lg bg-muted/60" />
+              ))}
+            </div>
+          </aside>
+          <div>
+            <div className="lg:hidden mb-6 space-y-3">
+              <div className="h-7 w-48 rounded bg-muted" />
+              <div className="h-2 rounded bg-muted" />
+            </div>
+            <div className="rounded-xl border bg-card p-6 sm:p-8 shadow-sm">
+              <div className="h-7 w-56 rounded bg-muted mb-2" />
+              <div className="h-4 w-72 max-w-full rounded bg-muted mb-6" />
+              <div className="space-y-2">
+                {Array.from({ length: 5 }).map((_, i) => (
+                  <div key={i} className="h-14 rounded-xl border bg-background" />
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (isGuide) {
+    return (
+      <div className="container mx-auto max-w-5xl py-12 px-4" aria-busy="true" aria-label="Ratgeber wird geladen">
+        <div className="text-center mb-12">
+          <div className="mx-auto mb-6 h-16 w-16 rounded-full bg-primary/10" />
+          <div className="mx-auto h-10 w-80 max-w-full rounded bg-muted mb-4" />
+          <div className="mx-auto h-6 w-[32rem] max-w-full rounded bg-muted" />
+        </div>
+        <div className="mb-16">
+          <div className="h-8 w-52 rounded bg-muted mb-5" />
+          <div className="grid md:grid-cols-2 gap-4">
+            <div className="h-36 rounded-xl border bg-card" />
+            <div className="h-36 rounded-xl border bg-card" />
+          </div>
+        </div>
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+          {Array.from({ length: 6 }).map((_, i) => (
+            <div key={i} className="h-28 rounded-xl border bg-card" />
+          ))}
+        </div>
+      </div>
+    );
+  }
+
+  return <div className="min-h-[60vh] bg-background" aria-hidden="true" />;
 }
 
 const withAdminSuspense = (Component: React.ComponentType<any>) => (props: any) => (
@@ -313,7 +392,7 @@ function App() {
           <Footer />
         </div>
       </WouterRouter>
-      <Toaster />
+      <IdleToaster />
     </QueryClientProvider>
   );
 }

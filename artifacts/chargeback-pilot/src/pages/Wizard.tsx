@@ -490,6 +490,7 @@ export default function Wizard() {
 
   useEffect(() => {
     if (!turnstileSiteKey) return;
+    if (step < 5) return;
     const existing = document.querySelector('script[src="https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit"]');
     if (existing) return;
     const script = document.createElement("script");
@@ -497,7 +498,7 @@ export default function Wizard() {
     script.async = true;
     script.defer = true;
     document.head.appendChild(script);
-  }, [turnstileSiteKey]);
+  }, [turnstileSiteKey, step]);
 
   const disputedPct = getDisputedPercent(formData.purchaseAmount || "", formData.disputedAmount || "");
 
