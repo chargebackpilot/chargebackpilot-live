@@ -148,7 +148,18 @@ export function clearCurrentCaseSelection(): void {
 }
 
 function navigateTo(path: string): void {
-  window.location.assign(path);
+  const target = new URL(path, window.location.origin);
+  if (target.origin !== window.location.origin) {
+    window.location.assign(target.href);
+    return;
+  }
+
+  const nextPath = `${target.pathname}${target.search}${target.hash}`;
+  const currentPath = `${window.location.pathname}${window.location.search}${window.location.hash}`;
+  if (nextPath !== currentPath) {
+    window.history.pushState({}, "", nextPath);
+    window.dispatchEvent(new PopStateEvent("popstate"));
+  }
 }
 
 export function openNewWizardCase(): void {

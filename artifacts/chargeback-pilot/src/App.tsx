@@ -153,10 +153,18 @@ const withoutSkeleton = (Component: React.ComponentType<any>) => (props: any) =>
 );
 
 function Router() {
+  const [location] = useLocation();
+
   return (
     <Switch>
       <Route path="/" component={Home} />
-      <Route path="/vorlagen-generator" component={withoutSkeleton(Wizard)} />
+      <Route path="/vorlagen-generator">
+        {() => (
+          <Suspense fallback={<RouteShellFallback />}>
+            <Wizard key={location} />
+          </Suspense>
+        )}
+      </Route>
       <Route path="/ratgeber" component={withoutSkeleton(RatgeberIndex)} />
       <Route path="/admin" component={withAdminSuspense(Admin)} />
       <Route path="/admin/demo" component={withAdminSuspense(AdminDemo)} />
