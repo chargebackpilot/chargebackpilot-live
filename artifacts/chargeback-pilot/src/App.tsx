@@ -138,7 +138,7 @@ const withAdminSuspense = (Component: React.ComponentType<any>) => (props: any) 
 );
 
 const withoutSkeleton = (Component: React.ComponentType<any>) => (props: any) => (
-  <Suspense fallback={null}>
+  <Suspense fallback={<RouteShellFallback />}>
     <Component {...props} />
   </Suspense>
 );
