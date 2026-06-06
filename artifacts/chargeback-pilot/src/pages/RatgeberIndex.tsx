@@ -42,7 +42,7 @@ export default function RatgeberIndex() {
     <MainLayout>
       <SeoHead
         title="Ratgeber & Chargeback-Guides 2026 | ChargebackPilot"
-        description="Über 30 Schritt-für-Schritt-Anleitungen für Käuferschutz, Chargeback und Reklamation — sortiert nach Zahlungsart, Anbieter und Problemtyp."
+        description="Praxisnahe Schritt-für-Schritt-Anleitungen für Käuferschutz, Chargeback und Reklamation — sortiert nach Zahlungsart, Anbieter und Problemtyp."
         canonical="/ratgeber"
       />
       <Breadcrumbs items={[{ label: "Ratgeber" }]} />
@@ -55,7 +55,7 @@ export default function RatgeberIndex() {
           <h1 className="text-4xl font-bold mb-4">Ratgeber & Chargeback-Guides</h1>
           <p className="text-xl text-muted-foreground max-w-2xl mx-auto min-h-[3.5rem] [font-family:Inter,system-ui,-apple-system,Segoe_UI,Roboto,Helvetica,Arial,sans-serif]">
             <span className="md:hidden">Praxis-Guides für schnelle Rückerstattung bei Zahlungsproblemen.</span>
-            <span className="hidden md:inline">Umfassende Informationen, Tipps und Schritt-für-Schritt-Anleitungen für jede Art von Zahlungsproblem.</span>
+            <span className="hidden md:inline">Praxisnahe Informationen, Tipps und Schritt-für-Schritt-Anleitungen für typische Zahlungsprobleme.</span>
           </p>
         </div>
 

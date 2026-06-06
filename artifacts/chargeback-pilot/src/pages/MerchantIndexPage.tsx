@@ -28,7 +28,7 @@ export default function MerchantIndexPage() {
             <p className="text-lg text-muted-foreground mb-6">{merchant.description}</p>
             <Link href="/vorlagen-generator">
               <Button size="lg" className="gap-2">
-                Generator starten <ArrowRight className="w-4 h-4" />
+                Kostenlosen Fall-Check starten <ArrowRight className="w-4 h-4" />
               </Button>
             </Link>
           </div>

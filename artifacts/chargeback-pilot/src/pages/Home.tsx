@@ -277,7 +277,7 @@ export default function Home() {
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link href="/vorlagen-generator?new=1" onClick={(e) => { e.preventDefault(); handleFreshWizardStart(); }}>
               <Button size="lg" className="w-full sm:w-auto text-base px-8 gap-2 h-12" data-testid="hero-cta-primary">
-                Kostenlose Hilfe starten
+                Kostenlosen Fall-Check starten
                 <ArrowRight className="w-5 h-5" />
               </Button>
             </Link>
@@ -304,7 +304,7 @@ export default function Home() {
                 <TrendingUp className="w-4 h-4 text-primary" />
               </div>
               <div className="text-left">
-                <div className="font-bold text-lg leading-none">{stats?.totalCases ?? 0}</div>
+                <div className="font-bold text-lg leading-none" aria-live="polite">{stats?.totalCases ?? "—"}</div>
                 <div className="text-muted-foreground text-xs">Fälle analysiert</div>
               </div>
             </div>
@@ -313,7 +313,7 @@ export default function Home() {
                 <CheckCircle2 className="w-4 h-4 text-emerald-600" />
               </div>
               <div className="text-left">
-                <div className="font-bold text-lg leading-none">{stats?.strongCases ?? 0}</div>
+                <div className="font-bold text-lg leading-none" aria-live="polite">{stats?.strongCases ?? "—"}</div>
                 <div className="text-muted-foreground text-xs">Starke Ausgangslage</div>
               </div>
             </div>
@@ -399,7 +399,7 @@ export default function Home() {
           <p className="text-muted-foreground text-sm mb-4">Dein Fall ist nicht dabei?</p>
           <Link href="/vorlagen-generator?new=1" onClick={(e) => { e.preventDefault(); handleFreshWizardStart(); }}>
             <Button variant="outline" className="gap-2">
-              Trotzdem kostenlos Hilfe starten
+              Kostenlosen Fall-Check starten
               <ArrowRight className="w-4 h-4" />
             </Button>
           </Link>
@@ -477,7 +477,7 @@ export default function Home() {
                   ))}
                 </ul>
                 <Link href="/vorlagen-generator?new=1" onClick={(e) => { e.preventDefault(); handleFreshWizardStart(); }}>
-                  <Button className="w-full mt-2" variant="outline">Unverbindlich starten</Button>
+                  <Button className="w-full mt-2" variant="outline">Kostenlosen Fall-Check starten</Button>
                 </Link>
               </CardContent>
             </Card>
@@ -488,7 +488,7 @@ export default function Home() {
                 Empfohlen
               </div>
               <CardHeader className="pb-4">
-                <CardTitle className="text-lg">Einzelfall Freischaltung</CardTitle>
+                <CardTitle className="text-lg">Einzelfall-Freischaltung</CardTitle>
                 <CardDescription>Einmalig pro Vorlagen-Paket</CardDescription>
                 <div className="text-4xl font-black mt-3">0,99 <span className="text-lg font-normal text-muted-foreground">€</span></div>
                 <p className="text-[11px] text-muted-foreground mt-1">Endpreis · gemäß § 19 UStG keine Umsatzsteuer-Ausweisung</p>
@@ -504,7 +504,7 @@ export default function Home() {
                 </ul>
                 <div className="!mt-5">
                   <Link href="/vorlagen-generator?scroll=paywall" onClick={(e) => { e.preventDefault(); handleOpenPaywall(); }}>
-                    <Button className="w-full">Paket für 0,99 € freischalten</Button>
+                    <Button className="w-full">Alle Vorlagen freischalten</Button>
                   </Link>
                 </div>
               </CardContent>
@@ -562,10 +562,10 @@ export default function Home() {
           </Accordion>
 
           <div className="mt-12 text-center">
-            <p className="text-muted-foreground mb-4 text-sm">Bereit, Brief-Vorlagen zu generieren?</p>
+            <p className="text-muted-foreground mb-4 text-sm">Bereit für deinen kostenlosen Fall-Check?</p>
             <Link href="/vorlagen-generator?new=1" onClick={(e) => { e.preventDefault(); handleFreshWizardStart(); }}>
               <Button size="lg" className="gap-2">
-                Unverbindlich starten
+                Kostenlosen Fall-Check starten
                 <ArrowRight className="w-4 h-4" />
               </Button>
             </Link>

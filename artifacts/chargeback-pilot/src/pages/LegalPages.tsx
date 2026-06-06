@@ -115,6 +115,89 @@ export function Datenschutz() {
   );
 }
 
+export function UeberUns() {
+  return (
+    <MainLayout>
+      <SeoHead
+        title="Über ChargebackPilot · Verbraucherhilfe mit KI"
+        description="Was ChargebackPilot ist, für wen das Tool gedacht ist und warum es keine Rechtsberatung, sondern strukturierte Verbraucherhilfe mit KI bietet."
+        canonical="/ueber-uns"
+      />
+      <div className="container mx-auto max-w-3xl py-16 px-4">
+        <h1 className="text-3xl font-bold mb-8">Über ChargebackPilot</h1>
+        <div className="prose prose-slate max-w-none">
+          <p>ChargebackPilot ist ein unabhängiges Software-Tool für Verbraucher, die bei Online-Käufen, Reisen, Lieferdiensten oder Abos strukturiert reklamieren möchten.</p>
+          <p>Das Ziel ist nicht, Rechtsberatung zu ersetzen, sondern die häufig chaotische erste Beschwerde in eine klare, nachvollziehbare und sachliche Darstellung zu überführen. Nutzer sollen schneller erkennen, welche Belege relevant sein könnten, welche nächsten Schritte typischerweise in Betracht kommen und wie ein erstes Anschreiben formuliert werden kann.</p>
+          <h2>Für wen das Tool gedacht ist</h2>
+          <p>ChargebackPilot richtet sich an Privatpersonen in Deutschland, die eine verständliche Orientierung für Käuferschutz, Chargeback oder Reklamationen suchen — insbesondere bei typischen Verbraucherproblemen wie nicht gelieferter Ware, stornierten Flügen, falschen Essenslieferungen oder ungewollten Abbuchungen.</p>
+          <h2>Wofür ChargebackPilot nicht gedacht ist</h2>
+          <p>ChargebackPilot ist keine Kanzlei, keine Schlichtungsstelle und kein Vertreter gegenüber Banken oder Händlern. Bei komplexen Sachverhalten, hohem Streitwert oder rechtlich schwierigen Fällen sollte zusätzlich eine Verbraucherzentrale oder ein Fachanwalt einbezogen werden.</p>
+        </div>
+      </div>
+    </MainLayout>
+  );
+}
+
+export function Methodik() {
+  return (
+    <MainLayout>
+      <SeoHead
+        title="So funktioniert die Einschätzung · ChargebackPilot"
+        description="Transparente Methodik von ChargebackPilot: Wie die KI-Einschätzung entsteht, welche Daten verwendet werden und wo die Grenzen der automatischen Orientierung liegen."
+        canonical="/methodik"
+      />
+      <div className="container mx-auto max-w-3xl py-16 px-4">
+        <h1 className="text-3xl font-bold mb-8">So funktioniert die Einschätzung</h1>
+        <div className="prose prose-slate max-w-none">
+          <p>ChargebackPilot nutzt die von Nutzern eingegebenen Informationen — etwa Zahlungsart, Problemtyp, Händlername, Belege und Chronologie — um daraus eine strukturierte, indikative Einschätzung zu erzeugen.</p>
+          <h2>Welche Daten fließen ein?</h2>
+          <p>Berücksichtigt werden insbesondere Problemkategorie, Zahlungsweg, Beleglage, bisherige Kommunikation mit dem Händler und typische Fristenhinweise aus gängigen Verbraucherfällen.</p>
+          <h2>Wie entsteht das Ergebnis?</h2>
+          <p>Aus den Eingaben werden eine Fallzusammenfassung, Beweis-Checkliste, mögliche nächste Schritte und Textentwürfe für Händler oder Zahlungsdienstleister erzeugt. Die Ausgaben sollen helfen, den eigenen Fall klarer aufzubereiten.</p>
+          <h2>Wo liegen die Grenzen?</h2>
+          <p>Die Einschätzung ist nicht verbindlich. Sie ersetzt keine anwaltliche Prüfung, keine bankinterne Bewertung und keine Entscheidung eines Zahlungsdienstleisters. Fristen, Anbieterregeln und Einzelfaktoren müssen immer zusätzlich geprüft werden.</p>
+          <h2>Transparenz zur KI-Nutzung</h2>
+          <p>Die Textgenerierung erfolgt über die Gemini API von Google LLC. Vor der Nutzung wird die erforderliche Einwilligung im Formular abgefragt. Weitere Details findest du in der Datenschutzerklärung.</p>
+        </div>
+      </div>
+    </MainLayout>
+  );
+}
+
+export function Disclaimer() {
+  return (
+    <MainLayout>
+      <SeoHead
+        title="Disclaimer · Keine Rechtsberatung · ChargebackPilot"
+        description="Wichtige Hinweise zum Leistungsumfang von ChargebackPilot: keine Rechtsberatung, keine Vertretung und keine Erfolgsgarantie."
+        canonical="/disclaimer"
+      />
+      <div className="container mx-auto max-w-3xl py-16 px-4">
+        <h1 className="text-3xl font-bold mb-8">Disclaimer</h1>
+        <div className="prose prose-slate max-w-none">
+          <h2>Keine Rechtsberatung</h2>
+          <p>ChargebackPilot ist ein Software-Tool zur strukturierten Formulierungshilfe. Wir bieten keine Rechtsberatung, keine Rechtsdienstleistung und keine anwaltliche Prüfung an.</p>
+
+          <h2>Keine Vertretung gegenüber Dritten</h2>
+          <p>Wir vertreten Nutzer nicht gegenüber Händlern, Banken, Zahlungsdienstleistern, Plattformen oder Behörden. Alle generierten Texte müssen von Nutzern selbst geprüft, angepasst und eigenständig versendet werden.</p>
+
+          <h2>Keine Erfolgsgarantie</h2>
+          <p>Ob eine Rückerstattung, ein Chargeback, ein Käuferschutzantrag oder eine Reklamation erfolgreich ist, hängt vom Einzelfall sowie von den Regeln des jeweiligen Händlers, Zahlungsdienstleisters oder Kartenherausgebers ab. ChargebackPilot gibt keine Garantie für ein bestimmtes Ergebnis.</p>
+
+          <h2>Fristen und Anbieterregeln selbst prüfen</h2>
+          <p>Hinweise zu Fristen, Belegen und möglichen nächsten Schritten sind allgemeine Orientierung. Nutzer bleiben selbst dafür verantwortlich, aktuelle Fristen und Anforderungen direkt beim jeweiligen Anbieter zu prüfen und einzuhalten.</p>
+
+          <h2>KI-generierte Inhalte</h2>
+          <p>Die Textentwürfe werden mithilfe künstlicher Intelligenz erstellt. Sie können unvollständig, ungenau oder im Einzelfall unpassend sein. Bitte prüfe jeden Entwurf sorgfältig, bevor du ihn verwendest.</p>
+
+          <h2>Markenhinweis</h2>
+          <p>Genannte Marken wie PayPal, Klarna, Visa, Mastercard, American Express, Lieferando, Wolt, Uber Eats oder andere Anbieter sind Marken der jeweiligen Rechteinhaber. ChargebackPilot ist unabhängig und steht in keiner Partnerschaft oder Kooperation mit diesen Unternehmen.</p>
+        </div>
+      </div>
+    </MainLayout>
+  );
+}
+
 export function Widerruf() {
   return (
     <MainLayout>

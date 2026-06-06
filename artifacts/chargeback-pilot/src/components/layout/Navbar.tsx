@@ -56,7 +56,7 @@ export function Navbar() {
           <MyCasesWidget />
           <Link href="/vorlagen-generator?new=1" className="ml-1" onClick={(e) => { e.preventDefault(); handleNewCaseClick(); }}>
             <span className="inline-flex min-h-8 items-center justify-center gap-2 whitespace-nowrap rounded-md bg-primary px-3 text-xs font-medium text-primary-foreground border border-primary-border hover-elevate active-elevate-2">
-              Vorlagen generieren
+              Kostenlosen Fall-Check starten
               <ArrowRightIcon className="w-4 h-4" />
             </span>
           </Link>
@@ -80,7 +80,7 @@ export function Navbar() {
             </Link>
             <Link href="/vorlagen-generator?new=1" onClick={(e) => { e.preventDefault(); setIsOpen(false); handleNewCaseClick(); }}>
               <span className="inline-flex min-h-9 w-full items-center justify-center gap-2 whitespace-nowrap rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground border border-primary-border hover-elevate active-elevate-2">
-                Vorlagen generieren
+                Kostenlosen Fall-Check starten
                 <ArrowRightIcon className="w-4 h-4" />
               </span>
             </Link>

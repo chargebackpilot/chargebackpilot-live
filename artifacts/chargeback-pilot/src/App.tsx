@@ -8,7 +8,7 @@ import MerchantProblemPage from "@/pages/MerchantProblemPage";
 import MerchantIndexPage from "@/pages/MerchantIndexPage";
 import ScamShopsPage from "@/pages/ScamShopsPage";
 import ComparePage from "@/pages/ComparePage";
-import { AGB, Datenschutz, Impressum, Widerruf } from "@/pages/LegalPages";
+import { AGB, Datenschutz, Disclaimer, Impressum, Methodik, UeberUns, Widerruf } from "@/pages/LegalPages";
 import {
   AboFalleSEO,
   AmexSEO,
@@ -172,6 +172,9 @@ function Router() {
       {/* Legal Pages */}
       <Route path="/impressum" component={withoutSkeleton(Impressum)} />
       <Route path="/datenschutz" component={withoutSkeleton(Datenschutz)} />
+      <Route path="/ueber-uns" component={withoutSkeleton(UeberUns)} />
+      <Route path="/methodik" component={withoutSkeleton(Methodik)} />
+      <Route path="/disclaimer" component={withoutSkeleton(Disclaimer)} />
       <Route path="/agb" component={withoutSkeleton(AGB)} />
       <Route path="/widerruf" component={withoutSkeleton(Widerruf)} />
       

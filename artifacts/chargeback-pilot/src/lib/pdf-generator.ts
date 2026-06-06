@@ -1,6 +1,6 @@
 import type jsPDF from "jspdf";
 
-interface PdfData {
+export interface PdfData {
   merchantName: string;
   amount: number;
   paymentDate: string;

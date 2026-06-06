@@ -15,7 +15,7 @@ import {
   Building2,
   Landmark,
 } from "lucide-react";
-import { generatePdf } from "@/lib/pdf-generator";
+import type { PdfData } from "@/lib/pdf-generator";
 import { PaymentLogoStrip } from "@/components/PaymentLogos";
 import { Dialog, DialogContent, DialogDescription, DialogTitle } from "@/components/ui/dialog";
 
@@ -28,7 +28,7 @@ interface PaywallProps {
   /** Qualitative strategy band — "Hoch" | "Mittel" | "Niedrig" from the analysis */
   strategyLabel: string;
   paymentMethod: string;
-  pdfData?: Parameters<typeof generatePdf>[0];
+  pdfData?: PdfData;
 }
 
 interface Benefit {

@@ -150,7 +150,7 @@ export default function MerchantProblemPage() {
             <div className="flex flex-wrap gap-3">
               <Link href={wizardHref}>
                 <Button size="lg" className="gap-2">
-                  Fall jetzt unverbindlich einordnen
+                  Kostenlosen Fall-Check starten
                   <ArrowRight className="w-4 h-4" />
                 </Button>
               </Link>
@@ -316,7 +316,7 @@ export default function MerchantProblemPage() {
             </p>
             <Link href={wizardHref}>
               <Button size="lg" variant="secondary" className="gap-2">
-                Jetzt Fall einordnen
+                Kostenlosen Fall-Check starten
                 <ArrowRight className="w-4 h-4" />
               </Button>
             </Link>

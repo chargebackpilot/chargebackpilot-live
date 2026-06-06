@@ -16,7 +16,6 @@ import { Progress } from "@/components/ui/progress";
 import { useToast } from "@/hooks/use-toast";
 import { PaywallModal } from "@/components/PaywallModal";
 import { PaypalGuide } from "@/components/PaypalGuide";
-import { generatePdf } from "@/lib/pdf-generator";
 import {
   AlertTriangle,
   ArrowLeft,
@@ -457,6 +456,7 @@ export default function Wizard() {
   const handleDownloadPdf = async () => {
     if (!result || !analysis) return;
     try {
+      const { generatePdf } = await import("@/lib/pdf-generator");
       await generatePdf({
         merchantName: result.merchantName ?? formData.merchantName,
         amount: (result.amount ?? (Number(formData.disputedAmount) || Number(formData.purchaseAmount) || 0)),

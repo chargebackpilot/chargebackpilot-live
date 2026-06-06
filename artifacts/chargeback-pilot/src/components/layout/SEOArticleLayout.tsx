@@ -105,7 +105,7 @@ export function SEOArticleLayout({ title, category, whenApplies, evidence, steps
             </p>
             <Link href="/vorlagen-generator?new=1" onClick={(e) => { e.preventDefault(); handleNewCaseClick(); }}>
               <Button size="lg" className="gap-2">
-                Vorlagen für {category} generieren
+                Kostenlosen Fall-Check starten
                 <ArrowRight className="w-5 h-5" />
               </Button>
             </Link>
@@ -195,7 +195,7 @@ export function SEOArticleLayout({ title, category, whenApplies, evidence, steps
             <h2 className="text-2xl font-bold mb-4">Unsicher bei deinem Fall?</h2>
             <p className="text-muted-foreground mb-6">Nutze unseren Generator und erhalte unverbindliche Textentwürfe zur eigenen Prüfung.</p>
             <Link href="/vorlagen-generator?new=1" onClick={(e) => { e.preventDefault(); handleNewCaseClick(); }}>
-              <Button size="lg">Vorlagen generieren</Button>
+              <Button size="lg">Kostenlosen Fall-Check starten</Button>
             </Link>
           </section>
 

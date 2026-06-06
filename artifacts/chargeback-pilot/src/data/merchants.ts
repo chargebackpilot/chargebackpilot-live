@@ -196,7 +196,7 @@ export const MERCHANTS: MerchantDef[] = [
     problems: ["lieferung-falsch", "ware-nicht-erhalten"],
   },
   {
-    slug: "ubereats",
+    slug: "uber-eats",
     name: "Uber Eats",
     sector: "food_delivery",
     country: "USA / Niederlande",
@@ -205,7 +205,7 @@ export const MERCHANTS: MerchantDef[] = [
     problems: ["lieferung-falsch", "ware-nicht-erhalten"],
   },
   {
-    slug: "kiwicom",
+    slug: "kiwi",
     name: "Kiwi.com",
     sector: "travel",
     country: "Tschechien",
