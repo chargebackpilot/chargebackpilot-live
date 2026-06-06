@@ -183,7 +183,7 @@ export function openSavedCase(caseId: string): void {
 }
 
 export function openCurrentCasePaywall(): void {
-  const current = loadCurrentCase();
+  const current = loadCurrentCase() ?? listSavedCases()[0] ?? null;
   if (!current?.caseId) {
     openNewWizardCase();
     return;

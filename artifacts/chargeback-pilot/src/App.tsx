@@ -161,7 +161,7 @@ function Router() {
       <Route path="/vorlagen-generator">
         {() => (
           <Suspense fallback={<RouteShellFallback />}>
-            <Wizard key={location} />
+            <Wizard key={location.split("?")[0]} />
           </Suspense>
         )}
       </Route>

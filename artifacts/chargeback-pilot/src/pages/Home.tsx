@@ -204,6 +204,14 @@ export default function Home() {
 
   useEffect(() => {
     const controller = new AbortController();
+    const localCases = listSavedCases();
+    if (localCases.length > 0) {
+      setStats({
+        totalCases: localCases.length,
+        strongCases: localCases.filter((c) => (c.successProbabilityLabel ?? "").toLowerCase() === "hoch").length,
+      });
+    }
+
     const loadStats = () => {
       fetch("/api/cases/stats", { signal: controller.signal })
         .then((res) => (res.ok ? res.json() : null))
@@ -215,11 +223,10 @@ export default function Home() {
         });
     };
 
-    const id = window.setTimeout(loadStats, 800);
+    loadStats();
 
     return () => {
       controller.abort();
-      window.clearTimeout(id);
     };
   }, []);
 

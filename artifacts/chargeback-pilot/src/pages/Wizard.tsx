@@ -4,6 +4,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useCreateCase } from "@workspace/api-client-react";
 import { useState, useEffect, useRef } from "react";
+import { useLocation } from "wouter";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { wizardSchema, type WizardFormData } from "@/components/wizard/wizard-schema";
@@ -124,7 +125,8 @@ export default function Wizard() {
   const turnstileSiteKey = import.meta.env.VITE_TURNSTILE_SITE_KEY as string | undefined;
   const turnstileWidgetIdRef = useRef<string | null>(null);
   const turnstileContainerRef = useRef<HTMLDivElement | null>(null);
-  const params = new URLSearchParams(typeof window === "undefined" ? "" : window.location.search);
+  const [location] = useLocation();
+  const params = new URLSearchParams(location.split("?")[1] ?? "");
   const prefilledProblem = params.get("problem") ?? "";
   const prefilledPaymentRaw = params.get("payment") ?? params.get("paymentMethod") ?? "";
   const prefilledPayment = PAYMENT_METHODS.some((pm) => pm.id === prefilledPaymentRaw) ? prefilledPaymentRaw : "";
@@ -247,6 +249,23 @@ export default function Wizard() {
   const [result, setResult] = useState<CaseResult>(restoredResult);
   const [isSubmittingCase, setIsSubmittingCase] = useState(false);
   const { toast } = useToast();
+
+  useEffect(() => {
+    if (!caseIdParam || forceNew) return;
+    const selected = setCurrentCaseById(caseIdParam);
+    if (!selected) return;
+
+    const selectedResult = (selected.result as CaseResult) ?? undefined;
+    const selectedFormData = (selected.formData as FormData | undefined) ?? null;
+    if (selectedFormData) {
+      form.reset(selectedFormData);
+    }
+    setResult(selectedResult);
+    setStep(selectedResult ? 6 : 1);
+    setHasUnlocked(isFlatrateActive() || isCaseUnlocked(selected.caseId));
+    setIsPaying(false);
+    setAcceptedLegal(false);
+  }, [caseIdParam, forceNew]);
 
   const setAnswer = (id: string, val: string) => {
     const prev = form.getValues();
