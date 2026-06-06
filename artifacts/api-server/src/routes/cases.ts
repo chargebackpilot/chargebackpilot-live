@@ -3,7 +3,7 @@ import { db } from "@workspace/db";
 import { casesTable } from "@workspace/db";
 import { CreateCaseBody, GetCaseParams } from "@workspace/api-zod";
 import { eq, count, sql } from "drizzle-orm";
-import rateLimit from "express-rate-limit";
+import rateLimit, { ipKeyGenerator } from "express-rate-limit";
 import { analyzeWithGemini } from "../lib/gemini-analysis";
 import { createHash } from "node:crypto";
 
@@ -11,16 +11,28 @@ const router = Router();
 const aiCache = new Map<string, any>();
 const ipRecentSubmissions = new Map<string, number[]>();
 const TURNSTILE_VERIFY_URL = "https://challenges.cloudflare.com/turnstile/v0/siteverify";
+const CASE_CREATE_WINDOW_MS = Number(process.env.CASE_CREATE_WINDOW_MS ?? 60 * 60 * 1000);
+const CASE_CREATE_LIMIT = Number(process.env.CASE_CREATE_LIMIT_PER_WINDOW ?? 10);
+const TURNSTILE_AFTER_ATTEMPTS = Number(process.env.TURNSTILE_AFTER_ATTEMPTS ?? 2);
+const REQUIRE_TURNSTILE_IN_PROD = process.env.REQUIRE_TURNSTILE_ON_CASE_CREATE !== "0";
 
-function isSuspiciousSubmission(ip: string) {
+function firstForwardedIp(value: string | string[] | undefined): string | undefined {
+  const raw = Array.isArray(value) ? value[0] : value;
+  return raw?.split(",")[0]?.trim() || undefined;
+}
+
+function getClientIp(req: { ip?: string; socket?: { remoteAddress?: string }; headers?: Record<string, unknown> }) {
+  const forwarded = firstForwardedIp(req.headers?.["x-forwarded-for"] as string | string[] | undefined);
+  return forwarded || req.ip || req.socket?.remoteAddress || "unknown";
+}
+
+function countRecentSubmissions(ip: string) {
   const now = Date.now();
-  const windowMs = 60 * 1000;
   const attempts = ipRecentSubmissions.get(ip) ?? [];
-  const recent = attempts.filter((ts) => now - ts <= windowMs);
+  const recent = attempts.filter((ts) => now - ts <= CASE_CREATE_WINDOW_MS);
   recent.push(now);
-  ipRecentSubmissions.set(ip, recent.slice(-20));
-  // only challenge clear burst behavior (e.g. rapid-fire clicks/bots)
-  return recent.length >= 4;
+  ipRecentSubmissions.set(ip, recent.slice(-CASE_CREATE_LIMIT));
+  return recent.length;
 }
 
 async function verifyTurnstileToken(token: string, ip?: string) {
@@ -43,21 +55,26 @@ async function verifyTurnstileToken(token: string, ip?: string) {
 }
 
 const limiter = rateLimit({
-  windowMs: 60 * 60 * 1000, // 1 hour
-  max: 3, // Limit each IP to 3 create case requests per `window` (here, per hour)
+  windowMs: CASE_CREATE_WINDOW_MS,
+  max: CASE_CREATE_LIMIT,
   message: { error: "Zu viele Anfragen. Bitte versuche es in einer Stunde erneut." },
   standardHeaders: true, // Return rate limit info in the `RateLimit-*` headers
   legacyHeaders: false, // Disable the `X-RateLimit-*` headers
+  keyGenerator: (req) => ipKeyGenerator(getClientIp(req)),
 });
 
 router.post("/cases", limiter, async (req, res) => {
-  const ip = req.ip || req.socket.remoteAddress || "unknown";
-  const suspicious = isSuspiciousSubmission(ip);
+  const ip = getClientIp(req);
+  const submissionCount = countRecentSubmissions(ip);
+  const turnstileRequired =
+    (process.env.NODE_ENV === "production" && REQUIRE_TURNSTILE_IN_PROD) ||
+    submissionCount > TURNSTILE_AFTER_ATTEMPTS;
   const turnstileToken = typeof req.body?.turnstileToken === "string" ? req.body.turnstileToken : "";
 
-  if (suspicious || turnstileToken) {
+  if (turnstileRequired || turnstileToken) {
     const verification = await verifyTurnstileToken(turnstileToken, ip);
-    if (suspicious && !verification.ok) {
+    if (turnstileRequired && !verification.ok) {
+      req.log.warn({ ip, submissionCount, reason: verification.reason }, "Case create Turnstile challenge failed");
       res.status(403).json({ error: "Sicherheitsprüfung fehlgeschlagen. Bitte versuche es erneut." });
       return;
     }

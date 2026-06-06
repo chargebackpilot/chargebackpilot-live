@@ -280,8 +280,18 @@ export default function Wizard() {
   const handleBack = () => { if (step > 1) setStep(step - 1); };
 
   const getTurnstileToken = async (): Promise<string> => {
-    if (!turnstileSiteKey) return "";
-    if (!window.turnstile) return "";
+    if (!turnstileSiteKey) {
+      if (import.meta.env.PROD) {
+        throw new Error("Turnstile ist in Produktion nicht konfiguriert.");
+      }
+      return "";
+    }
+    if (!window.turnstile) {
+      if (import.meta.env.PROD) {
+        throw new Error("Sicherheitsprüfung konnte nicht geladen werden.");
+      }
+      return "";
+    }
 
     if (!turnstileWidgetIdRef.current && turnstileContainerRef.current) {
       turnstileWidgetIdRef.current = window.turnstile.render(turnstileContainerRef.current, {
@@ -293,7 +303,12 @@ export default function Wizard() {
     }
 
     const widgetId = turnstileWidgetIdRef.current;
-    if (!widgetId || !window.turnstile) return "";
+    if (!widgetId || !window.turnstile) {
+      if (import.meta.env.PROD) {
+        throw new Error("Sicherheitsprüfung konnte nicht gestartet werden.");
+      }
+      return "";
+    }
 
     return await new Promise<string>((resolve) => {
       const timeout = window.setTimeout(() => resolve(""), 3500);
@@ -323,7 +338,18 @@ export default function Wizard() {
   const handleSubmit = async () => {
     if (createCase.isPending || isSubmittingCase) return;
     setIsSubmittingCase(true);
-    const turnstileToken = await getTurnstileToken();
+    let turnstileToken = "";
+    try {
+      turnstileToken = await getTurnstileToken();
+    } catch {
+      setIsSubmittingCase(false);
+      toast({
+        title: "Sicherheitsprüfung fehlgeschlagen",
+        description: "Bitte lade die Seite neu und versuche es erneut.",
+        variant: "destructive",
+      });
+      return;
+    }
     const description = buildDescription(
       formData.structuredAnswers,
       formData.problemType,
@@ -480,12 +506,17 @@ export default function Wizard() {
   useEffect(() => {
     if (scrollTarget !== "paywall") return;
     if (step !== 6 || !result || hasUnlocked) return;
-    const timer = window.setTimeout(() => {
+    let attempts = 0;
+    const scrollToPaywall = () => {
+      attempts += 1;
       const el = document.querySelector('[data-testid="paywall-anchor"], .rounded-2xl.border-2.border-primary\/30');
       if (el instanceof HTMLElement) {
         el.scrollIntoView({ behavior: "smooth", block: "start" });
+        return;
       }
-    }, 150);
+      if (attempts < 12) window.setTimeout(scrollToPaywall, 150);
+    };
+    const timer = window.setTimeout(scrollToPaywall, 100);
     return () => window.clearTimeout(timer);
   }, [scrollTarget, step, result, hasUnlocked]);
 
@@ -664,7 +695,7 @@ export default function Wizard() {
 
                   {/* Beträge */}
                   <div className="space-y-3">
-                    <div className="grid gap-4 sm:grid-cols-2">
+                    <div className="grid gap-4 sm:grid-cols-[minmax(0,12rem)_minmax(0,12rem)]">
                       <div className="space-y-1.5">
                         <Label htmlFor="purchaseAmount">
                           Kaufbetrag gesamt (EUR)

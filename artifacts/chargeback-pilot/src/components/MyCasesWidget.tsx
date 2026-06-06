@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { Briefcase, Infinity as InfinityIcon } from "lucide-react";
 import {
+  CASE_STORAGE_CHANGED_EVENT,
   listSavedCases,
   isFlatrateActive,
   getFlatrateExpiry,
@@ -21,6 +22,7 @@ const EMPTY_INITIAL_DATA = {
 };
 
 function readStoredData() {
+  if (typeof window === "undefined") return EMPTY_INITIAL_DATA;
   return {
     cases: listSavedCases(),
     flatActive: isFlatrateActive(),
@@ -29,9 +31,10 @@ function readStoredData() {
 }
 
 export function MyCasesWidget() {
-  const [cases, setCases] = useState<PersistedCase[]>(EMPTY_INITIAL_DATA.cases);
-  const [flatActive, setFlatActive] = useState(EMPTY_INITIAL_DATA.flatActive);
-  const [flatExpiry, setFlatExpiry] = useState<Date | null>(EMPTY_INITIAL_DATA.flatExpiry);
+  const initialData = useRef(readStoredData()).current;
+  const [cases, setCases] = useState<PersistedCase[]>(initialData.cases);
+  const [flatActive, setFlatActive] = useState(initialData.flatActive);
+  const [flatExpiry, setFlatExpiry] = useState<Date | null>(initialData.flatExpiry);
   const [open, setOpen] = useState(false);
   const rootRef = useRef<HTMLDivElement | null>(null);
 
@@ -49,18 +52,17 @@ export function MyCasesWidget() {
       if (!e.key || STORAGE_EVENT_KEYS.has(e.key)) refresh();
     };
     window.addEventListener("storage", onStorage);
+    window.addEventListener(CASE_STORAGE_CHANGED_EVENT, refresh);
 
     const onPointerDown = (e: PointerEvent) => {
       if (!rootRef.current?.contains(e.target as Node)) setOpen(false);
     };
     document.addEventListener("pointerdown", onPointerDown);
 
-    // Light polling for same-tab updates after saveCurrentCase
-    const id = window.setInterval(refresh, 4000);
     return () => {
       window.removeEventListener("storage", onStorage);
+      window.removeEventListener(CASE_STORAGE_CHANGED_EVENT, refresh);
       document.removeEventListener("pointerdown", onPointerDown);
-      window.clearInterval(id);
     };
   }, []);
 

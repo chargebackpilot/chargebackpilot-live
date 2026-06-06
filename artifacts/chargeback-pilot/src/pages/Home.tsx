@@ -7,7 +7,7 @@ import { Link } from "wouter";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { PaymentHelpGrid } from "@/components/PaymentLogos";
 import { useToast } from "@/hooks/use-toast";
-import { activateFlatrate, isFlatrateActive } from "@/lib/case-persistence";
+import { activateFlatrate, isFlatrateActive, listSavedCases } from "@/lib/case-persistence";
 import { openCurrentCasePaywall, openNewWizardCase } from "@/lib/case-persistence";
 import {
   ArrowRight,
@@ -148,7 +148,15 @@ const FAQS = [
 
 export default function Home() {
   const { toast } = useToast();
-  const [stats, setStats] = useState<CaseStats | null>(null);
+  const [stats, setStats] = useState<CaseStats | null>(() => {
+    if (typeof window === "undefined") return null;
+    const localCases = listSavedCases();
+    if (localCases.length === 0) return null;
+    return {
+      totalCases: localCases.length,
+      strongCases: localCases.filter((c) => (c.successProbabilityLabel ?? "").toLowerCase() === "hoch").length,
+    };
+  });
   const [flatrateLoading, setFlatrateLoading] = useState(false);
   const [flatrateActive, setFlatrateActive] = useState(false);
   const [, startStatsTransition] = useTransition();
@@ -207,9 +215,7 @@ export default function Home() {
         });
     };
 
-    // Keep decorative live stats out of Lighthouse's initial critical request chain.
-    // The static counters remain visible immediately; real values hydrate well after LCP.
-    const id = window.setTimeout(loadStats, 12000);
+    const id = window.setTimeout(loadStats, 800);
 
     return () => {
       controller.abort();

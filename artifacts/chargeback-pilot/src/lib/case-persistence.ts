@@ -4,6 +4,12 @@ const DRAFT_KEY = "cbp_wizard_draft_v1";
 const UNLOCKED_CASE_IDS_KEY = "cbp_unlocked_case_ids_v1";
 const FLATRATE_KEY = "cbp_flatrate_v1";
 const MAX_CASES = 20;
+export const CASE_STORAGE_CHANGED_EVENT = "cbp:case-storage-changed";
+
+function notifyCaseStorageChanged(): void {
+  if (typeof window === "undefined") return;
+  window.dispatchEvent(new Event(CASE_STORAGE_CHANGED_EVENT));
+}
 
 // ---------------------------------------------------------------------------
 // Per-case unlock tracking
@@ -45,6 +51,7 @@ export function markCaseIdUnlocked(caseId: string): void {
     set.push({ caseId, unlockedAt: new Date().toISOString() });
     const trimmed = set.slice(-50);
     localStorage.setItem(UNLOCKED_CASE_IDS_KEY, JSON.stringify(trimmed));
+    notifyCaseStorageChanged();
   } catch {
     /* ignore */
   }
@@ -114,6 +121,7 @@ export function saveCurrentCase(c: PersistedCase): void {
     // Sort newest first
     list.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
     writeCaseList(list);
+    notifyCaseStorageChanged();
   } catch {
     /* ignore */
   }
@@ -138,6 +146,7 @@ export function loadCurrentCase(): PersistedCase | null {
 export function clearCurrentCase(): void {
   try {
     localStorage.removeItem(CURRENT_CASE_KEY);
+    notifyCaseStorageChanged();
   } catch {
     /* ignore */
   }
@@ -162,19 +171,15 @@ function navigateTo(path: string): void {
   }
 }
 
-function navigateToDocument(path: string): void {
-  const target = new URL(path, window.location.origin);
-  window.location.assign(target.href);
-}
-
 export function openNewWizardCase(): void {
   clearCurrentCaseSelection();
-  navigateToDocument("/vorlagen-generator?new=1");
+  navigateTo("/vorlagen-generator?new=1");
 }
 
 export function openSavedCase(caseId: string): void {
   if (!caseId) return;
-  navigateToDocument(`/vorlagen-generator?caseId=${encodeURIComponent(caseId)}`);
+  setCurrentCaseById(caseId);
+  navigateTo(`/vorlagen-generator?caseId=${encodeURIComponent(caseId)}`);
 }
 
 export function openCurrentCasePaywall(): void {
@@ -183,7 +188,8 @@ export function openCurrentCasePaywall(): void {
     openNewWizardCase();
     return;
   }
-  navigateToDocument(`/vorlagen-generator?caseId=${encodeURIComponent(current.caseId)}&scroll=paywall`);
+  setCurrentCaseById(current.caseId);
+  navigateTo(`/vorlagen-generator?caseId=${encodeURIComponent(current.caseId)}&scroll=paywall`);
 }
 
 /** Lists all saved cases, newest first, filtered to the last 90 days. */
@@ -205,6 +211,7 @@ export function setCurrentCaseById(caseId: string): PersistedCase | null {
   } catch {
     /* ignore */
   }
+  notifyCaseStorageChanged();
   return c;
 }
 
@@ -218,6 +225,7 @@ export function removeSavedCase(caseId: string): void {
     if (cur && cur.caseId === caseId) {
       localStorage.removeItem(CURRENT_CASE_KEY);
     }
+    notifyCaseStorageChanged();
   } catch {
     /* ignore */
   }
@@ -266,6 +274,7 @@ export function activateFlatrate(sessionId: string, durationMonths = 12): void {
       sessionId,
     };
     localStorage.setItem(FLATRATE_KEY, JSON.stringify(entry));
+    notifyCaseStorageChanged();
   } catch {
     /* ignore */
   }

@@ -290,7 +290,7 @@ export function QuestionField({
         placeholder={question.placeholder}
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        className="resize-none text-sm"
+        className="resize-none text-base sm:text-sm scroll-mt-24"
       />
     );
   }
@@ -301,7 +301,7 @@ export function QuestionField({
         type="date"
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        className="max-w-xs"
+        className="max-w-xs text-base sm:text-sm"
       />
     );
   }
@@ -315,7 +315,7 @@ export function QuestionField({
           max="99"
           value={value}
           onChange={(e) => onChange(e.target.value)}
-          className="w-24"
+          className="w-24 text-base sm:text-sm"
           placeholder="0"
         />
         {question.suffix && <span className="text-sm text-muted-foreground">{question.suffix}</span>}
