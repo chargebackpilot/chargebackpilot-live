@@ -139,42 +139,21 @@ export default function Wizard() {
   const forceNew = params.get("new") === "1";
   const scrollTarget = params.get("scroll");
 
-  // ---- Initial state: restore persisted case when user returns ----
-  // Restore the persisted in-progress case ONLY when there's no fresh prefill from a
-  // landing-page CTA (problem/payment/merchant). A fresh CTA click means "start a new
-  // case with these values" — we shouldn't silently resurrect an old half-filled form.
-  const persisted = forceNew
-    ? null
-    : caseIdParam
-    ? (setCurrentCaseById(caseIdParam) ?? loadCurrentCase())
-    : (paymentSuccess || paymentCancel || !hasAnyPrefill)
-      ? loadCurrentCase()
-      : null;
-  const restoredResult = (persisted?.result as CaseResult) ?? undefined;
-  const restoredFormData = (persisted?.formData as FormData | undefined) ?? null;
-
-  // Wizard ALWAYS starts at step 1 for new flows — even when problem/payment/merchant
-  // are prefilled. Prefills only seed form data; the user still walks every step that
-  // needs input, so nothing gets silently skipped.
+  // SSR-safe initial render: never read localStorage during render, otherwise the
+  // server can render step 1 while the client immediately renders a restored case.
+  // That causes a hydration mismatch (#418 in minified React).
   const [acceptedLegal, setAcceptedLegal] = useState(false);
-  const [step, setStep] = useState<number>(() => {
-    if (restoredResult) return 6;
-    return 1;
-  });
+  const [step, setStep] = useState<number>(1);
   
   // hasUnlocked: bound to specific caseId; flatrate also unlocks
-  const [hasUnlocked, setHasUnlocked] = useState<boolean>(() => {
-    if (isFlatrateActive()) return true;
-    if (persisted?.caseId && isCaseUnlocked(persisted.caseId)) return true;
-    return false;
-  });
+  const [hasUnlocked, setHasUnlocked] = useState<boolean>(false);
 
   // On return from Stripe Checkout: verify server-side, then bind unlock to caseId
   useEffect(() => {
     if (paymentSuccess && sessionIdParam) {
       // Pin the case this session is allowed to unlock — anti-replay against
       // reusing a paid session_id to unlock a different case in-session.
-      const expectedCaseId = persisted?.caseId ? String(persisted.caseId) : null;
+      const expectedCaseId = caseIdParam ? String(caseIdParam) : (loadCurrentCase()?.caseId ?? null);
       fetch(`/api/stripe/checkout/verify/${encodeURIComponent(sessionIdParam)}`)
         .then((r) => r.json())
         .then((j) => {
@@ -218,7 +197,7 @@ export default function Wizard() {
   const validatedPrefilledProblem = PROBLEM_TYPES.some((pt) => pt.id === prefilledProblem) ? prefilledProblem : "";
   const form = useForm<WizardFormData>({
     resolver: zodResolver(wizardSchema),
-    defaultValues: restoredFormData ?? {
+    defaultValues: {
       paymentMethod: prefilledPayment,
       problemType: validatedPrefilledProblem,
       merchantName: prefilledMerchant,
@@ -246,9 +225,42 @@ export default function Wizard() {
   };
 
   const createCase = useCreateCase();
-  const [result, setResult] = useState<CaseResult>(restoredResult);
+  const [result, setResult] = useState<CaseResult>(undefined);
   const [isSubmittingCase, setIsSubmittingCase] = useState(false);
   const { toast } = useToast();
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+
+    if (forceNew) {
+      setResult(undefined);
+      setStep(1);
+      setHasUnlocked(isFlatrateActive());
+      return;
+    }
+
+    // Restore the persisted in-progress case ONLY when there's no fresh prefill from a
+    // landing-page CTA (problem/payment/merchant). A fresh CTA click means "start a new
+    // case with these values" — we shouldn't silently resurrect an old half-filled form.
+    const persisted = caseIdParam
+      ? (setCurrentCaseById(caseIdParam) ?? loadCurrentCase())
+      : (paymentSuccess || paymentCancel || !hasAnyPrefill)
+        ? loadCurrentCase()
+        : null;
+
+    const restoredResult = (persisted?.result as CaseResult) ?? undefined;
+    const restoredFormData = (persisted?.formData as FormData | undefined) ?? null;
+
+    if (restoredFormData) {
+      form.reset(restoredFormData);
+    }
+
+    setResult(restoredResult);
+    setStep(restoredResult ? 6 : 1);
+    setHasUnlocked(
+      isFlatrateActive() || (persisted?.caseId ? isCaseUnlocked(persisted.caseId) : false),
+    );
+  }, [caseIdParam, forceNew, paymentSuccess, paymentCancel, hasAnyPrefill, form]);
 
   useEffect(() => {
     if (!caseIdParam || forceNew) return;
