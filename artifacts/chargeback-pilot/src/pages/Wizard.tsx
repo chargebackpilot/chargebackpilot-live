@@ -148,7 +148,10 @@ export default function Wizard() {
   // hasUnlocked: bound to specific caseId; flatrate also unlocks
   const [hasUnlocked, setHasUnlocked] = useState<boolean>(false);
 
-  // On return from Stripe Checkout: verify server-side, then bind unlock to caseId
+  // On return from Stripe Checkout: verify server-side, then bind unlock to caseId.
+  // Keep caseId/scroll/new query params available for the restore effect below; stripping
+  // them here before React has applied the selected case can make in-app navigation look
+  // like the URL changed while the wizard content stayed stale.
   useEffect(() => {
     if (paymentSuccess && sessionIdParam) {
       // Pin the case this session is allowed to unlock — anti-replay against
@@ -178,17 +181,6 @@ export default function Wizard() {
       const url = new URL(window.location.href);
       url.searchParams.delete("payment_cancel");
       url.searchParams.delete("case_id");
-      window.history.replaceState({}, "", url.pathname + (url.search ? url.search : ""));
-    } else if (caseIdParam) {
-      // Strip caseId param after restoring so refresh doesn't re-trigger restore loops.
-      const url = new URL(window.location.href);
-      url.searchParams.delete("caseId");
-      url.searchParams.delete("scroll");
-      url.searchParams.delete("new");
-      window.history.replaceState({}, "", url.pathname + (url.search ? url.search : ""));
-    } else if (forceNew) {
-      const url = new URL(window.location.href);
-      url.searchParams.delete("new");
       window.history.replaceState({}, "", url.pathname + (url.search ? url.search : ""));
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -226,15 +218,23 @@ export default function Wizard() {
 
   const createCase = useCreateCase();
   const [result, setResult] = useState<CaseResult>(undefined);
+  const resultAnimationTimerRef = useRef<number | null>(null);
   const [isSubmittingCase, setIsSubmittingCase] = useState(false);
   const { toast } = useToast();
+
+  useEffect(() => {
+    return () => {
+      if (resultAnimationTimerRef.current != null) {
+        window.clearTimeout(resultAnimationTimerRef.current);
+      }
+    };
+  }, []);
 
   useEffect(() => {
     if (typeof window === "undefined") return;
 
     if (forceNew) {
       clearCurrentCase();
-      createCase.reset();
       setResult(undefined);
       setStep(1);
       setHasUnlocked(isFlatrateActive());
@@ -257,12 +257,17 @@ export default function Wizard() {
       return;
     }
 
+    if (caseIdParam) {
+      // Explicit case selection is handled by the dedicated effect below so that
+      // switching between saved results always shows the standard generation/result
+      // animation instead of replacing the content abruptly.
+      return;
+    }
+
     // Restore the persisted in-progress case ONLY when there's no fresh prefill from a
     // landing-page CTA (problem/payment/merchant). A fresh CTA click means "start a new
     // case with these values" — we shouldn't silently resurrect an old half-filled form.
-    const persisted = caseIdParam
-      ? (setCurrentCaseById(caseIdParam) ?? loadCurrentCase())
-      : (paymentSuccess || paymentCancel || !hasAnyPrefill)
+    const persisted = (paymentSuccess || paymentCancel || !hasAnyPrefill)
         ? loadCurrentCase()
         : null;
 
@@ -278,7 +283,11 @@ export default function Wizard() {
     setHasUnlocked(
       isFlatrateActive() || (persisted?.caseId ? isCaseUnlocked(persisted.caseId) : false),
     );
-  }, [caseIdParam, forceNew, paymentSuccess, paymentCancel, hasAnyPrefill, form, createCase, prefilledPayment, validatedPrefilledProblem, prefilledMerchant]);
+    // This effect intentionally runs for navigation inputs only. Adding mutation objects
+    // such as createCase here can reset the form on every mutation-state render and break
+    // wizard progression (e.g. the "Weiter" button appears to do nothing).
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [location]);
 
   useEffect(() => {
     if (!caseIdParam || forceNew) return;
@@ -287,15 +296,25 @@ export default function Wizard() {
 
     const selectedResult = (selected.result as CaseResult) ?? undefined;
     const selectedFormData = (selected.formData as FormData | undefined) ?? null;
+    if (resultAnimationTimerRef.current != null) {
+      window.clearTimeout(resultAnimationTimerRef.current);
+      resultAnimationTimerRef.current = null;
+    }
     if (selectedFormData) {
       form.reset(selectedFormData);
     }
-    setResult(selectedResult);
     setStep(selectedResult ? 6 : 1);
+    setResult(undefined);
     setHasUnlocked(isFlatrateActive() || isCaseUnlocked(selected.caseId));
     setIsPaying(false);
     setAcceptedLegal(false);
-  }, [caseIdParam, forceNew]);
+    if (selectedResult) {
+      resultAnimationTimerRef.current = window.setTimeout(() => {
+        setResult(selectedResult);
+        resultAnimationTimerRef.current = null;
+      }, 650);
+    }
+  }, [caseIdParam, forceNew, form]);
 
   const setAnswer = (id: string, val: string) => {
     const prev = form.getValues();
