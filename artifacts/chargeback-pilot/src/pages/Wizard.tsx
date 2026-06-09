@@ -83,6 +83,7 @@ import { ErrorBoundary } from "@/components/ErrorBoundary";
 import { LetterGenerator } from "@/components/LetterGenerator";
 import {
   CASE_NAVIGATION_EVENT,
+  PENDING_PAYWALL_SCROLL_KEY,
   saveCurrentCase,
   loadCurrentCase,
   setCurrentCaseById,
@@ -576,7 +577,15 @@ export default function Wizard() {
   }, [step]);
 
   useEffect(() => {
-    if (scrollTarget !== "paywall") return;
+    const pendingCaseId = (() => {
+      try {
+        return sessionStorage.getItem(PENDING_PAYWALL_SCROLL_KEY);
+      } catch {
+        return null;
+      }
+    })();
+    const shouldScroll = scrollTarget === "paywall" || (result?.id != null && pendingCaseId === String(result.id));
+    if (!shouldScroll) return;
     if (step !== 6 || !result || hasUnlocked) return;
     let attempts = 0;
     const scrollToPaywall = () => {
@@ -585,6 +594,11 @@ export default function Wizard() {
       if (el instanceof HTMLElement) {
         const y = el.getBoundingClientRect().top + window.scrollY - 24;
         window.scrollTo({ top: Math.max(0, y), behavior: "smooth" });
+        try {
+          sessionStorage.removeItem(PENDING_PAYWALL_SCROLL_KEY);
+        } catch {
+          /* ignore */
+        }
         return;
       }
       if (attempts < 24) window.setTimeout(scrollToPaywall, 150);

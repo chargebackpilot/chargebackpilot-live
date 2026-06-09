@@ -6,6 +6,7 @@ const FLATRATE_KEY = "cbp_flatrate_v1";
 const MAX_CASES = 20;
 export const CASE_STORAGE_CHANGED_EVENT = "cbp:case-storage-changed";
 export const CASE_NAVIGATION_EVENT = "cbp:case-navigation";
+export const PENDING_PAYWALL_SCROLL_KEY = "cbp_pending_paywall_scroll_v1";
 
 function notifyCaseStorageChanged(): void {
   if (typeof window === "undefined") return;
@@ -195,6 +196,11 @@ export function openCurrentCasePaywall(): void {
   }
 
   setCurrentCaseById(lastAnalyzed.caseId);
+  try {
+    sessionStorage.setItem(PENDING_PAYWALL_SCROLL_KEY, lastAnalyzed.caseId);
+  } catch {
+    /* ignore */
+  }
   navigateTo(`/vorlagen-generator?caseId=${encodeURIComponent(lastAnalyzed.caseId)}&scroll=paywall`);
 }
 

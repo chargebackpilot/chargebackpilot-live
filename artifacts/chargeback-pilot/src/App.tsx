@@ -82,29 +82,49 @@ function RouteShellFallback() {
 
   if (isWizard) {
     return (
-      <div className="container mx-auto max-w-5xl py-10 px-4" aria-busy="true" aria-label="Vorlagen-Generator wird geladen">
+      <div className="container mx-auto max-w-5xl py-10 px-4 animate-pulse" aria-busy="true" aria-label="Vorlagen-Generator wird geladen">
         <div className="lg:grid lg:grid-cols-[240px_1fr] lg:gap-8">
           <aside className="hidden lg:block">
-            <div className="h-7 w-44 rounded bg-muted mb-2" />
+            <div className="sticky top-6">
+            <div className="h-8 w-52 rounded-lg bg-muted mb-2" />
             <div className="h-4 w-24 rounded bg-muted mb-6" />
-            <div className="space-y-2">
+            <div className="space-y-1.5">
               {Array.from({ length: 5 }).map((_, i) => (
-                <div key={i} className="h-12 rounded-lg bg-muted/60" />
+                <div key={i} className={`flex items-center gap-3 rounded-lg px-3 py-2.5 ${i === 0 ? "bg-primary/10 border border-primary/20" : ""}`}>
+                  <div className={`w-7 h-7 rounded-full ${i === 0 ? "bg-primary/25" : "bg-muted"}`} />
+                  <div className={`h-4 rounded bg-muted ${i === 2 ? "w-24" : i === 3 ? "w-32" : "w-36"}`} />
+                </div>
               ))}
+            </div>
+            <div className="mt-6 rounded-xl border bg-muted/50 p-3">
+              <div className="h-4 w-32 rounded bg-muted mb-2" />
+              <div className="h-3 w-full rounded bg-muted" />
+              <div className="h-3 w-4/5 rounded bg-muted mt-1.5" />
+            </div>
             </div>
           </aside>
           <div>
             <div className="lg:hidden mb-6 space-y-3">
-              <div className="h-7 w-48 rounded bg-muted" />
-              <div className="h-2 rounded bg-muted" />
+              <div className="h-8 w-56 rounded-lg bg-muted" />
+              <div className="h-4 w-44 rounded bg-muted" />
+              <div className="h-2 rounded-full bg-muted overflow-hidden">
+                <div className="h-full w-1/5 bg-primary/30 rounded-full" />
+              </div>
             </div>
-            <div className="rounded-xl border bg-card p-6 sm:p-8 shadow-sm">
-              <div className="h-7 w-56 rounded bg-muted mb-2" />
-              <div className="h-4 w-72 max-w-full rounded bg-muted mb-6" />
+            <div className="rounded-xl border bg-card p-6 sm:p-8 pb-24 lg:pb-8 shadow-sm min-h-[520px] lg:min-h-[560px]">
+              <div className="h-7 w-60 rounded-lg bg-muted mb-2" />
+              <div className="h-4 w-80 max-w-full rounded bg-muted mb-6" />
               <div className="space-y-2">
                 {Array.from({ length: 5 }).map((_, i) => (
-                  <div key={i} className="h-14 rounded-xl border bg-background" />
+                  <div key={i} className="flex items-center gap-3 h-[58px] rounded-xl border-2 border-border bg-background px-4">
+                    <div className="w-4 h-4 rounded-full border-2 border-muted" />
+                    <div className={`h-4 rounded bg-muted ${i === 0 ? "w-28" : i === 1 ? "w-36" : i === 2 ? "w-44" : "w-32"}`} />
+                  </div>
                 ))}
+              </div>
+              <div className="mt-8 pt-6 border-t flex justify-between">
+                <div className="h-10 w-24 rounded-md bg-muted" />
+                <div className="h-10 w-28 rounded-md bg-primary/25" />
               </div>
             </div>
           </div>
