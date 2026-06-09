@@ -82,6 +82,7 @@ import {
 import { ErrorBoundary } from "@/components/ErrorBoundary";
 import { LetterGenerator } from "@/components/LetterGenerator";
 import {
+  CASE_NAVIGATION_EVENT,
   saveCurrentCase,
   loadCurrentCase,
   setCurrentCaseById,
@@ -126,7 +127,26 @@ export default function Wizard() {
   const turnstileWidgetIdRef = useRef<string | null>(null);
   const turnstileContainerRef = useRef<HTMLDivElement | null>(null);
   const [location] = useLocation();
-  const params = new URLSearchParams(location.split("?")[1] ?? "");
+  const [navigationKey, setNavigationKey] = useState(() => {
+    if (typeof window === "undefined") return "";
+    return `${window.location.pathname}${window.location.search}${window.location.hash}`;
+  });
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const syncNavigationKey = () => {
+      setNavigationKey(`${window.location.pathname}${window.location.search}${window.location.hash}`);
+    };
+    window.addEventListener("popstate", syncNavigationKey);
+    window.addEventListener(CASE_NAVIGATION_EVENT, syncNavigationKey);
+    return () => {
+      window.removeEventListener("popstate", syncNavigationKey);
+      window.removeEventListener(CASE_NAVIGATION_EVENT, syncNavigationKey);
+    };
+  }, []);
+
+  const rawSearch = typeof window !== "undefined" ? window.location.search : (navigationKey.includes("?") ? `?${navigationKey.split("?")[1]?.split("#")[0] ?? ""}` : "");
+  const params = new URLSearchParams(rawSearch.startsWith("?") ? rawSearch.slice(1) : rawSearch);
   const prefilledProblem = params.get("problem") ?? "";
   const prefilledPaymentRaw = params.get("payment") ?? params.get("paymentMethod") ?? "";
   const prefilledPayment = PAYMENT_METHODS.some((pm) => pm.id === prefilledPaymentRaw) ? prefilledPaymentRaw : "";
@@ -287,7 +307,7 @@ export default function Wizard() {
     // such as createCase here can reset the form on every mutation-state render and break
     // wizard progression (e.g. the "Weiter" button appears to do nothing).
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [location]);
+  }, [navigationKey]);
 
   useEffect(() => {
     if (!caseIdParam || forceNew) return;

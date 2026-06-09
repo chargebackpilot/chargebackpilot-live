@@ -5,6 +5,7 @@ const UNLOCKED_CASE_IDS_KEY = "cbp_unlocked_case_ids_v1";
 const FLATRATE_KEY = "cbp_flatrate_v1";
 const MAX_CASES = 20;
 export const CASE_STORAGE_CHANGED_EVENT = "cbp:case-storage-changed";
+export const CASE_NAVIGATION_EVENT = "cbp:case-navigation";
 
 function notifyCaseStorageChanged(): void {
   if (typeof window === "undefined") return;
@@ -169,6 +170,7 @@ function navigateTo(path: string): void {
     window.history.pushState({}, "", nextPath);
     window.dispatchEvent(new PopStateEvent("popstate"));
   }
+  window.dispatchEvent(new CustomEvent(CASE_NAVIGATION_EVENT, { detail: { path: nextPath } }));
 }
 
 export function openNewWizardCase(): void {
