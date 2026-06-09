@@ -238,17 +238,9 @@ export default function Wizard() {
 
   const createCase = useCreateCase();
   const [result, setResult] = useState<CaseResult>(undefined);
-  const resultAnimationTimerRef = useRef<number | null>(null);
+  const [resultViewKey, setResultViewKey] = useState(0);
   const [isSubmittingCase, setIsSubmittingCase] = useState(false);
   const { toast } = useToast();
-
-  useEffect(() => {
-    return () => {
-      if (resultAnimationTimerRef.current != null) {
-        window.clearTimeout(resultAnimationTimerRef.current);
-      }
-    };
-  }, []);
 
   useEffect(() => {
     if (typeof window === "undefined") return;
@@ -316,24 +308,15 @@ export default function Wizard() {
 
     const selectedResult = (selected.result as CaseResult) ?? undefined;
     const selectedFormData = (selected.formData as FormData | undefined) ?? null;
-    if (resultAnimationTimerRef.current != null) {
-      window.clearTimeout(resultAnimationTimerRef.current);
-      resultAnimationTimerRef.current = null;
-    }
     if (selectedFormData) {
       form.reset(selectedFormData);
     }
     setStep(selectedResult ? 6 : 1);
-    setResult(undefined);
+    setResult(selectedResult);
+    setResultViewKey((key) => key + 1);
     setHasUnlocked(isFlatrateActive() || isCaseUnlocked(selected.caseId));
     setIsPaying(false);
     setAcceptedLegal(false);
-    if (selectedResult) {
-      resultAnimationTimerRef.current = window.setTimeout(() => {
-        setResult(selectedResult);
-        resultAnimationTimerRef.current = null;
-      }, 650);
-    }
   }, [caseIdParam, forceNew, form]);
 
   const setAnswer = (id: string, val: string) => {
@@ -468,6 +451,7 @@ export default function Wizard() {
         onSuccess: (data) => {
           setIsSubmittingCase(false);
           setResult(data);
+          setResultViewKey((key) => key + 1);
           if (data) {
             const newCaseId = String(data.id ?? "");
             // Restore unlock ONLY for this exact caseId (handles refresh after payment)
@@ -599,14 +583,15 @@ export default function Wizard() {
       attempts += 1;
       const el = document.querySelector('[data-testid="paywall-anchor"], .rounded-2xl.border-2.border-primary\/30');
       if (el instanceof HTMLElement) {
-        el.scrollIntoView({ behavior: "smooth", block: "start" });
+        const y = el.getBoundingClientRect().top + window.scrollY - 24;
+        window.scrollTo({ top: Math.max(0, y), behavior: "smooth" });
         return;
       }
-      if (attempts < 12) window.setTimeout(scrollToPaywall, 150);
+      if (attempts < 24) window.setTimeout(scrollToPaywall, 150);
     };
-    const timer = window.setTimeout(scrollToPaywall, 100);
+    const timer = window.setTimeout(scrollToPaywall, 250);
     return () => window.clearTimeout(timer);
-  }, [scrollTarget, step, result, hasUnlocked]);
+  }, [scrollTarget, step, result, hasUnlocked, navigationKey]);
 
   useEffect(() => {
     if (!turnstileSiteKey) return;
@@ -1049,7 +1034,7 @@ export default function Wizard() {
                   {!result ? (
                     <GeneratorLoader merchantName={formData.merchantName} />
                   ) : (
-                    <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
+                    <div key={resultViewKey} className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
 
                       {/* Header */}
                       <div className="text-center pb-2">

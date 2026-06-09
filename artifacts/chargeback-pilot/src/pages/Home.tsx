@@ -148,15 +148,7 @@ const FAQS = [
 
 export default function Home() {
   const { toast } = useToast();
-  const [stats, setStats] = useState<CaseStats | null>(() => {
-    if (typeof window === "undefined") return null;
-    const localCases = listSavedCases();
-    if (localCases.length === 0) return null;
-    return {
-      totalCases: localCases.length,
-      strongCases: localCases.filter((c) => (c.successProbabilityLabel ?? "").toLowerCase() === "hoch").length,
-    };
-  });
+  const [stats, setStats] = useState<CaseStats | null>(null);
   const [flatrateLoading, setFlatrateLoading] = useState(false);
   const [flatrateActive, setFlatrateActive] = useState(false);
   const [, startStatsTransition] = useTransition();
@@ -204,13 +196,6 @@ export default function Home() {
 
   useEffect(() => {
     const controller = new AbortController();
-    const localCases = listSavedCases();
-    if (localCases.length > 0) {
-      setStats({
-        totalCases: localCases.length,
-        strongCases: localCases.filter((c) => (c.successProbabilityLabel ?? "").toLowerCase() === "hoch").length,
-      });
-    }
 
     const loadStats = () => {
       fetch("/api/cases/stats", { signal: controller.signal })
