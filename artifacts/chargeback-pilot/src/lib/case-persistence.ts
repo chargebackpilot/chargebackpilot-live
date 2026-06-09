@@ -183,13 +183,17 @@ export function openSavedCase(caseId: string): void {
 }
 
 export function openCurrentCasePaywall(): void {
-  const current = loadCurrentCase() ?? listSavedCases()[0] ?? null;
-  if (!current?.caseId) {
+  const cases = listSavedCases();
+  const current = loadCurrentCase();
+  const lastAnalyzed = cases.find((c) => !!c.result) ?? (current?.result ? current : null);
+
+  if (!lastAnalyzed?.caseId) {
     openNewWizardCase();
     return;
   }
-  setCurrentCaseById(current.caseId);
-  navigateTo(`/vorlagen-generator?caseId=${encodeURIComponent(current.caseId)}&scroll=paywall`);
+
+  setCurrentCaseById(lastAnalyzed.caseId);
+  navigateTo(`/vorlagen-generator?caseId=${encodeURIComponent(lastAnalyzed.caseId)}&scroll=paywall`);
 }
 
 /** Lists all saved cases, newest first, filtered to the last 90 days. */

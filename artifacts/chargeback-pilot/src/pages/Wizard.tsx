@@ -233,9 +233,27 @@ export default function Wizard() {
     if (typeof window === "undefined") return;
 
     if (forceNew) {
+      clearCurrentCase();
+      createCase.reset();
       setResult(undefined);
       setStep(1);
       setHasUnlocked(isFlatrateActive());
+      setIsPaying(false);
+      setAcceptedLegal(false);
+      form.reset({
+        paymentMethod: prefilledPayment,
+        problemType: validatedPrefilledProblem,
+        merchantName: prefilledMerchant,
+        purchaseAmount: "",
+        disputedAmount: "",
+        paymentDate: "",
+        merchantCountry: "",
+        merchantContacted: false,
+        merchantResponseType: "",
+        merchantResponseNote: "",
+        evidence: [],
+        structuredAnswers: {},
+      });
       return;
     }
 
@@ -260,7 +278,7 @@ export default function Wizard() {
     setHasUnlocked(
       isFlatrateActive() || (persisted?.caseId ? isCaseUnlocked(persisted.caseId) : false),
     );
-  }, [caseIdParam, forceNew, paymentSuccess, paymentCancel, hasAnyPrefill, form]);
+  }, [caseIdParam, forceNew, paymentSuccess, paymentCancel, hasAnyPrefill, form, createCase, prefilledPayment, validatedPrefilledProblem, prefilledMerchant]);
 
   useEffect(() => {
     if (!caseIdParam || forceNew) return;
