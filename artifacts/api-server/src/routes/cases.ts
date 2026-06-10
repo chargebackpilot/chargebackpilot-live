@@ -1,20 +1,35 @@
-import { Router } from "express";
+import { Router, type Request, type Response } from "express";
 import { db } from "@workspace/db";
 import { casesTable } from "@workspace/db";
 import { CreateCaseBody, GetCaseParams } from "@workspace/api-zod";
 import { eq, count, sql } from "drizzle-orm";
 import rateLimit, { ipKeyGenerator } from "express-rate-limit";
 import { analyzeWithGemini } from "../lib/gemini-analysis";
+import { LRUCache } from "../lib/lru-cache";
+import { getApiServerEnv } from "@workspace/env";
+import { logger } from "../lib/logger";
 import { createHash } from "node:crypto";
 
+const env = getApiServerEnv();
 const router = Router();
-const aiCache = new Map<string, any>();
+
+/**
+ * LRU Cache for AI analysis results
+ * Prevents duplicate API calls for identical inputs
+ * Max 500 entries, 1 hour TTL
+ */
+const aiCache = new LRUCache<string, unknown>(500, 60 * 60 * 1000);
+
+/**
+ * Track recent submissions per IP for rate limiting
+ */
 const ipRecentSubmissions = new Map<string, number[]>();
+
 const TURNSTILE_VERIFY_URL = "https://challenges.cloudflare.com/turnstile/v0/siteverify";
-const CASE_CREATE_WINDOW_MS = Number(process.env.CASE_CREATE_WINDOW_MS ?? 60 * 60 * 1000);
-const CASE_CREATE_LIMIT = Number(process.env.CASE_CREATE_LIMIT_PER_WINDOW ?? 10);
-const TURNSTILE_AFTER_ATTEMPTS = Number(process.env.TURNSTILE_AFTER_ATTEMPTS ?? 2);
-const REQUIRE_TURNSTILE_IN_PROD = process.env.REQUIRE_TURNSTILE_ON_CASE_CREATE !== "0";
+const CASE_CREATE_WINDOW_MS = env.CASE_CREATE_WINDOW_MS;
+const CASE_CREATE_LIMIT = env.CASE_CREATE_LIMIT_PER_WINDOW;
+const TURNSTILE_AFTER_ATTEMPTS = env.TURNSTILE_AFTER_ATTEMPTS;
+const REQUIRE_TURNSTILE_IN_PROD = env.REQUIRE_TURNSTILE_ON_CASE_CREATE === "1";
 
 function firstForwardedIp(value: string | string[] | undefined): string | undefined {
   const raw = Array.isArray(value) ? value[0] : value;
@@ -107,18 +122,16 @@ router.post("/cases", limiter, async (req, res) => {
   };
 
   const payloadHash = createHash("sha256").update(JSON.stringify(analysisInput)).digest("hex");
-  
+
   let analysis;
-  if (aiCache.has(payloadHash)) {
-    analysis = aiCache.get(payloadHash);
+  const cachedAnalysis = aiCache.get(payloadHash);
+  if (cachedAnalysis) {
+    logger.debug({ hash: payloadHash.slice(0, 8) }, "Using cached AI analysis");
+    analysis = cachedAnalysis;
   } else {
+    logger.debug({ hash: payloadHash.slice(0, 8) }, "Computing new AI analysis");
     analysis = await analyzeWithGemini(analysisInput);
     aiCache.set(payloadHash, analysis);
-    // Optional: limit cache size to prevent memory leaks over time
-    if (aiCache.size > 1000) {
-      const firstKey = aiCache.keys().next().value;
-      if (firstKey) aiCache.delete(firstKey);
-    }
   }
 
   const [newCase] = await db

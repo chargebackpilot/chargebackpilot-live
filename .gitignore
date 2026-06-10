@@ -1,5 +1,11 @@
 # See https://docs.github.com/en/get-started/getting-started-with-git/ignoring-files for more about ignoring files.
 
+# Environment variables
+.env
+.env.local
+.env.*.local
+.env.production
+
 # compiled output
 dist
 tmp
@@ -19,6 +25,7 @@ node_modules
 *.launch
 .settings/
 *.sublime-workspace
+.eslintcache
 
 # IDE - VSCode
 .vscode/*

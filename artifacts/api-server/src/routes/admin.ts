@@ -1,62 +1,107 @@
-import { Router, type Request, type Response, type NextFunction } from "express";
+import { Router, type Response } from "express";
 import { db, casesTable } from "@workspace/db";
 import { desc, eq, count, sql, and, gte } from "drizzle-orm";
 import rateLimit from "express-rate-limit";
-import { timingSafeEqual } from "node:crypto";
+import { getApiServerEnv } from "@workspace/env";
+import { safeCompare, sessionStore, adminAuth } from "../lib/auth";
+import { logger } from "../lib/logger";
 
+const env = getApiServerEnv();
 const router = Router();
 
-function safeCompare(a: string, b: string): boolean {
-  const aBuf = Buffer.from(a, "utf8");
-  const bBuf = Buffer.from(b, "utf8");
-  if (aBuf.length !== bBuf.length) {
-    // Still call timingSafeEqual on a same-length buffer to keep timing stable
-    timingSafeEqual(aBuf, aBuf);
-    return false;
-  }
-  return timingSafeEqual(aBuf, bBuf);
-}
-
-function adminAuth(req: Request, res: Response, next: NextFunction) {
-  const password = process.env.ADMIN_PASSWORD;
-  if (!password) {
-    res.status(503).json({ error: "Admin nicht konfiguriert (ADMIN_PASSWORD fehlt)." });
-    return;
-  }
-  const header = req.headers["x-admin-password"];
-  const provided = Array.isArray(header) ? header[0] : header;
-  if (!provided || !safeCompare(provided, password)) {
-    res.status(401).json({ error: "Nicht autorisiert" });
-    return;
-  }
-  next();
-}
-
+/**
+ * Login endpoint - validates password and returns session token
+ * Rate limited to prevent brute force attacks
+ */
 const loginLimiter = rateLimit({
-  windowMs: 15 * 60 * 1000,
-  max: 10,
-  message: { ok: false, error: "Zu viele Login-Versuche. Bitte 15 Minuten warten." },
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 5, // Max 5 attempts
+  message: {
+    code: "LOGIN_RATE_LIMIT",
+    message: "Zu viele Login-Versuche. Bitte 15 Minuten warten.",
+    timestamp: new Date().toISOString(),
+  },
   standardHeaders: true,
   legacyHeaders: false,
+  skip: (req) => req.method !== "POST",
 });
 
-router.post("/login", loginLimiter, (req, res) => {
-  const password = process.env.ADMIN_PASSWORD;
+router.post("/login", loginLimiter, (req: any, res: Response): void => {
+  if (!env.ADMIN_PASSWORD) {
+    logger.error("ADMIN_PASSWORD not configured");
+    res.status(503).json({
+      code: "ADMIN_NOT_CONFIGURED",
+      message: "Admin nicht konfiguriert.",
+      timestamp: new Date().toISOString(),
+    });
+    return;
+  }
+
+  const { password } = req.body as { password?: string };
   if (!password) {
-    res.status(503).json({ ok: false, error: "Admin nicht konfiguriert." });
+    res.status(400).json({
+      code: "MISSING_PASSWORD",
+      message: "Password erforderlich",
+      timestamp: new Date().toISOString(),
+    });
     return;
   }
-  const { password: provided } = req.body as { password?: string };
-  if (provided && safeCompare(provided, password)) {
-    res.json({ ok: true });
+
+  if (password.length < 8) {
+    res.status(400).json({
+      code: "INVALID_PASSWORD",
+      message: "Falsches Passwort",
+      timestamp: new Date().toISOString(),
+    });
     return;
   }
-  res.status(401).json({ ok: false, error: "Falsches Passwort" });
+
+  if (!safeCompare(password, env.ADMIN_PASSWORD)) {
+    logger.warn({ ip: req.ip }, "Failed admin login attempt");
+    res.status(401).json({
+      code: "INVALID_PASSWORD",
+      message: "Falsches Passwort",
+      timestamp: new Date().toISOString(),
+    });
+    return;
+  }
+
+  // Create session token
+  const token = sessionStore.create();
+  logger.info({ ip: req.ip }, "Admin login successful");
+
+  res.json({
+    ok: true,
+    token,
+    expiresIn: 24 * 60 * 60, // 24 hours in seconds
+    timestamp: new Date().toISOString(),
+  });
 });
 
+/**
+ * Logout endpoint - destroys session token
+ */
+router.post("/logout", adminAuth, (req: any, res: Response): void => {
+  const authHeader = req.headers.authorization;
+  if (authHeader?.startsWith("Bearer ")) {
+    const token = authHeader.slice(7);
+    sessionStore.destroy(token);
+    logger.info({ ip: req.ip }, "Admin logout");
+  }
+
+  res.json({
+    ok: true,
+    message: "Logged out",
+    timestamp: new Date().toISOString(),
+  });
+});
+
+/**
+ * Apply admin auth to all remaining routes
+ */
 router.use(adminAuth);
 
-router.get("/stats", async (_req, res) => {
+router.get("/stats", async (_req: any, res: Response): Promise<void> => {
   const now = new Date();
   const since24h = new Date(now.getTime() - 24 * 60 * 60 * 1000);
   const since7d = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);

@@ -1,0 +1,15 @@
+node_modules
+dist
+build
+*.mjs
+*.cjs
+*.min.js
+pnpm-lock.yaml
+.next
+.vercel
+.cache
+coverage
+.env
+.env.local
+.env.*.local
+*.log

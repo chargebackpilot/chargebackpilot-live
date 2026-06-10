@@ -1,16 +1,42 @@
-import express, { type Express } from "express";
+import express, { type Express, type Request, type Response, type NextFunction } from "express";
 import path from "node:path";
 import fs from "node:fs";
 import { fileURLToPath } from "node:url";
 import cors from "cors";
 import pinoHttp from "pino-http";
+import helmet from "helmet";
 import rateLimit from "express-rate-limit";
 import router from "./routes";
 import { logger } from "./lib/logger";
+import { getApiServerEnv } from "@workspace/env";
+
+const env = getApiServerEnv();
 
 const app: Express = express();
 
 app.set("trust proxy", 1);
+
+// Security Headers (HSTS, CSP, X-Frame-Options, etc.)
+app.use(
+  helmet({
+    contentSecurityPolicy: {
+      directives: {
+        defaultSrc: ["'self'"],
+        scriptSrc: ["'self'", "'unsafe-inline'", "cdn.jsdelivr.net"],
+        styleSrc: ["'self'", "'unsafe-inline'"],
+        imgSrc: ["'self'", "data:", "https:"],
+        connectSrc: ["'self'"],
+      },
+    },
+    hsts: {
+      maxAge: 31536000, // 1 year
+      includeSubDomains: true,
+      preload: true,
+    },
+    frameguard: { action: "deny" },
+    referrerPolicy: { policy: "strict-origin-when-cross-origin" },
+  })
+);
 
 app.use(
   pinoHttp({
@@ -21,6 +47,7 @@ app.use(
           id: req.id,
           method: req.method,
           url: req.url?.split("?")[0],
+          remoteAddress: req.ip,
         };
       },
       res(res) {
@@ -29,15 +56,28 @@ app.use(
         };
       },
     },
-  }),
+  })
 );
-app.use(cors({
-  origin: process.env.NODE_ENV === "production" 
+
+// CORS with environment-based configuration
+const corsOrigins =
+  env.NODE_ENV === "production"
     ? ["https://chargebackpilot.de", "https://www.chargebackpilot.de"]
-    : "*"
-}));
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+    : ["http://localhost:5173", "http://localhost:3000", "http://localhost:4173"];
+
+app.use(
+  cors({
+    origin: corsOrigins,
+    credentials: true,
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"],
+    maxAge: 600,
+  })
+);
+
+// Request body parsing with size limits (prevent abuse)
+app.use(express.json({ limit: "1mb" }));
+app.use(express.urlencoded({ extended: true, limit: "1mb" }));
 
 // Rate Limiting (DDoS & API Cost Protection)
 const apiLimiter = rateLimit({
@@ -45,33 +85,88 @@ const apiLimiter = rateLimit({
   max: 100, // limit each IP to 100 requests per windowMs
   standardHeaders: true,
   legacyHeaders: false,
-  message: { error: "Zu viele Anfragen. Bitte versuche es in einer Stunde erneut." },
+  message: { 
+    error: "Zu viele Anfragen. Bitte versuche es in einer Stunde erneut.",
+    code: "RATE_LIMIT_EXCEEDED",
+  },
+  skip: (req) => {
+    // Don't rate limit health checks
+    return req.path === "/healthz";
+  },
 });
 
 // Apply rate limiter specifically to the API
 app.use("/api", apiLimiter, router);
 
-// Global Error Handler
+/**
+ * Standardized error response type
+ */
+interface ApiErrorResponse {
+  code: string;
+  message: string;
+  details?: unknown;
+  timestamp: string;
+}
+
+/**
+ * Global Error Handler - must be last middleware
+ */
 app.use(
-  (
-    err: unknown,
-    req: express.Request,
-    res: express.Response,
-    next: express.NextFunction,
-  ) => {
+  (err: unknown, _req: Request, res: Response, _next: NextFunction): void => {
+    const errorCode = err instanceof ApiError ? err.code : "INTERNAL_SERVER_ERROR";
+    const statusCode = err instanceof ApiError ? err.statusCode : 500;
+    const message =
+      err instanceof Error ? err.message : "Ein interner Serverfehler ist aufgetreten.";
+
     logger.error(
-      err,
-      
-      "Unhandled error in API",
+      {
+        error: err instanceof Error ? err : String(err),
+        code: errorCode,
+        statusCode,
+      },
+      "Unhandled error in API"
     );
-    res.status(500).json({
-      error: "Ein interner Serverfehler ist aufgetreten.",
-      details: process.env.NODE_ENV === "development"
-        ? (err instanceof Error ? err.message : String(err))
-        : undefined,
-    });
-  },
+
+    const response: ApiErrorResponse = {
+      code: errorCode,
+      message,
+      timestamp: new Date().toISOString(),
+    };
+
+    if (env.NODE_ENV === "development" && err instanceof Error) {
+      response.details = {
+        stack: err.stack,
+      };
+    }
+
+    res.status(statusCode).json(response);
+  }
 );
+
+/**
+ * 404 Handler
+ */
+app.use((_req: Request, res: Response): void => {
+  res.status(404).json({
+    code: "NOT_FOUND",
+    message: "Endpoint nicht gefunden",
+    timestamp: new Date().toISOString(),
+  });
+});
+
+/**
+ * Custom API Error class for standardized error handling
+ */
+export class ApiError extends Error {
+  constructor(
+    public code: string,
+    message: string,
+    public statusCode: number = 400
+  ) {
+    super(message);
+    this.name = "ApiError";
+  }
+}
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);

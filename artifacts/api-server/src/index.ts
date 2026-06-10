@@ -1,19 +1,20 @@
 import app from "./app";
+import { getApiServerEnv } from "@workspace/env";
 import { logger } from "./lib/logger";
 
-const rawPort = process.env["PORT"];
+let env: ReturnType<typeof getApiServerEnv>;
 
-if (!rawPort) {
-  throw new Error(
-    "PORT environment variable is required but was not provided.",
+try {
+  env = getApiServerEnv();
+} catch (error) {
+  logger.error(
+    { error: error instanceof Error ? error.message : String(error) },
+    "Failed to parse environment variables"
   );
+  process.exit(1);
 }
 
-const port = Number(rawPort);
-
-if (Number.isNaN(port) || port <= 0) {
-  throw new Error(`Invalid PORT value: "${rawPort}"`);
-}
+const port = env.PORT;
 
 app.listen(port, (err) => {
   if (err) {
