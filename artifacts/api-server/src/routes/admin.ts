@@ -27,7 +27,7 @@ const loginLimiter = rateLimit({
 });
 
 router.post("/login", loginLimiter, (req: any, res: Response): void => {
-  if (!env.ADMIN_PASSWORD) {
+  if (!env.ADMIN_PASSWORD || env.ADMIN_PASSWORD.length < 16) {
     logger.error("ADMIN_PASSWORD not configured");
     res.status(503).json({
       code: "ADMIN_NOT_CONFIGURED",

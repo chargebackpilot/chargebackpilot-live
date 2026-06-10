@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { randomBytes } from "node:crypto";
 
 /**
  * Environment variables schema for the entire workspace
@@ -11,6 +12,13 @@ const commonEnv = {
 };
 
 /**
+ * Generate a secure random admin password if not provided
+ */
+function generateSecureAdminPassword(): string {
+  return randomBytes(16).toString("hex");
+}
+
+/**
  * API Server environment variables
  */
 export const apiServerEnvSchema = z.object({
@@ -19,7 +27,10 @@ export const apiServerEnvSchema = z.object({
   DATABASE_URL: z.string().url("DATABASE_URL must be a valid PostgreSQL URL"),
   GEMINI_API_KEY: z.string().optional(),
   GEMINI_API_KEY_FALLBACK: z.string().optional(),
-  ADMIN_PASSWORD: z.string().min(16, "ADMIN_PASSWORD must be at least 16 characters"),
+  // Keep this optional at process startup so a misconfigured admin secret does
+  // not take the public website/API offline. getApiServerEnv() normalizes
+  // invalid values and the admin route returns 503 until a valid secret is set.
+  ADMIN_PASSWORD: z.string().optional(),
   STRIPE_SECRET_KEY: z.string().startsWith("sk_", "Invalid Stripe secret key"),
   STRIPE_WEBHOOK_SECRET: z.string().optional(),
   TURNSTILE_SECRET_KEY: z.string().optional(),
@@ -31,6 +42,15 @@ export const apiServerEnvSchema = z.object({
 });
 
 export type ApiServerEnv = z.infer<typeof apiServerEnvSchema>;
+
+/**
+ * Type guard: ApiServerEnv with guaranteed ADMIN_PASSWORD
+ */
+export type ApiServerEnvWithPassword = ApiServerEnv & { ADMIN_PASSWORD: string };
+
+function isValidAdminPassword(value: string | undefined): value is string {
+  return typeof value === "string" && value.length >= 16;
+}
 
 /**
  * Frontend environment variables
@@ -65,9 +85,37 @@ export function parseEnv<T extends z.ZodSchema>(
 
 /**
  * Get validated API server environment variables
+ * Normalizes ADMIN_PASSWORD without preventing public app startup.
  */
 export function getApiServerEnv(): ApiServerEnv {
-  return parseEnv(apiServerEnvSchema);
+  const env = parseEnv(apiServerEnvSchema);
+
+  if (env.ADMIN_PASSWORD && !isValidAdminPassword(env.ADMIN_PASSWORD)) {
+    console.warn("⚠️  ADMIN_PASSWORD is set but shorter than 16 characters. Admin login is disabled until it is fixed.");
+    return {
+      ...env,
+      ADMIN_PASSWORD: undefined,
+    };
+  }
+
+  // Generate a development/test password if not provided. In production, do not
+  // generate secrets at runtime because deploys/restarts would invalidate admin
+  // access and logs must not contain credentials.
+  if (!env.ADMIN_PASSWORD && env.NODE_ENV !== "production") {
+    const generatedPassword = generateSecureAdminPassword();
+    console.warn(`⚠️  ADMIN_PASSWORD not set. Generated temporary password: ${generatedPassword}`);
+    console.warn(`⚠️  Set ADMIN_PASSWORD environment variable to use a custom password.`);
+    return {
+      ...env,
+      ADMIN_PASSWORD: generatedPassword,
+    } as ApiServerEnvWithPassword;
+  }
+
+  if (!env.ADMIN_PASSWORD) {
+    console.warn("⚠️  ADMIN_PASSWORD not set. Admin login is disabled.");
+  }
+
+  return env;
 }
 
 /**
