@@ -144,9 +144,12 @@ app.use(
 );
 
 /**
- * 404 Handler
+ * API 404 Handler
+ *
+ * Keep this scoped to /api only. The static/SPA handlers below must still be
+ * able to serve frontend routes such as /, /methodik and /ratgeber.
  */
-app.use((_req: Request, res: Response): void => {
+app.use("/api", (_req: Request, res: Response): void => {
   res.status(404).json({
     code: "NOT_FOUND",
     message: "Endpoint nicht gefunden",
