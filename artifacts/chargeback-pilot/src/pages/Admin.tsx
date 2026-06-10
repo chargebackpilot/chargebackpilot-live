@@ -121,7 +121,8 @@ function AdminLogin({ onSuccess }: { onSuccess: () => void }) {
           </Button>
         </form>
         <p className="text-center text-xs text-slate-500 mt-4">
-          Zugang nur für autorisierte Personen. Passwort konfiguriert via <code>ADMIN_PASSWORD</code>.
+          Zugang nur für autorisierte Personen. Passwort konfiguriert via{" "}
+          <code>ADMIN_PASSWORD</code>.
         </p>
       </div>
     </div>
@@ -156,7 +157,6 @@ function AdminDashboard({ onLogout }: { onLogout: () => void }) {
 
   useEffect(() => {
     load();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [onlyPaid]);
 
   const logout = () => {
@@ -208,17 +208,56 @@ function AdminDashboard({ onLogout }: { onLogout: () => void }) {
           <>
             {/* KPI cards */}
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
-              <Kpi icon={Users} label="Fälle gesamt" value={stats.totalCases} sub={`+${stats.cases24h} in 24 h`} accent="blue" />
-              <Kpi icon={CheckCircle2} label="Bezahlt" value={stats.paidCases} sub={`+${stats.paid24h} in 24 h`} accent="emerald" />
-              <Kpi icon={TrendingUp} label="Conversion" value={`${stats.conversionRate}%`} sub="Frei → Bezahlt" accent="amber" />
-              <Kpi icon={Euro} label="Umsatz" value={`${stats.revenueEur.toFixed(2)} €`} sub="Brutto, einmalig" accent="violet" />
+              <Kpi
+                icon={Users}
+                label="Fälle gesamt"
+                value={stats.totalCases}
+                sub={`+${stats.cases24h} in 24 h`}
+                accent="blue"
+              />
+              <Kpi
+                icon={CheckCircle2}
+                label="Bezahlt"
+                value={stats.paidCases}
+                sub={`+${stats.paid24h} in 24 h`}
+                accent="emerald"
+              />
+              <Kpi
+                icon={TrendingUp}
+                label="Conversion"
+                value={`${stats.conversionRate}%`}
+                sub="Frei → Bezahlt"
+                accent="amber"
+              />
+              <Kpi
+                icon={Euro}
+                label="Umsatz"
+                value={`${stats.revenueEur.toFixed(2)} €`}
+                sub="Brutto, einmalig"
+                accent="violet"
+              />
             </div>
 
             {/* Activity summary */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-3 sm:gap-4">
-              <StatBlock label="Letzte 24 Stunden" value={stats.cases24h} sub="neue Fälle" icon={Activity} />
-              <StatBlock label="Letzte 7 Tage" value={stats.cases7d} sub="neue Fälle" icon={Calendar} />
-              <StatBlock label="Letzte 30 Tage" value={stats.cases30d} sub="neue Fälle" icon={Calendar} />
+              <StatBlock
+                label="Letzte 24 Stunden"
+                value={stats.cases24h}
+                sub="neue Fälle"
+                icon={Activity}
+              />
+              <StatBlock
+                label="Letzte 7 Tage"
+                value={stats.cases7d}
+                sub="neue Fälle"
+                icon={Calendar}
+              />
+              <StatBlock
+                label="Letzte 30 Tage"
+                value={stats.cases30d}
+                sub="neue Fälle"
+                icon={Calendar}
+              />
             </div>
 
             {/* Daily chart */}
@@ -231,17 +270,41 @@ function AdminDashboard({ onLogout }: { onLogout: () => void }) {
               <Card title="Erfolgsbewertung">
                 <DistributionBars
                   data={stats.byStrength.map((s) => ({
-                    label: s.strength === "stark" ? "Stark" : s.strength === "mittel" ? "Mittel" : s.strength === "schwach" ? "Schwach" : s.strength,
+                    label:
+                      s.strength === "stark"
+                        ? "Stark"
+                        : s.strength === "mittel"
+                          ? "Mittel"
+                          : s.strength === "schwach"
+                            ? "Schwach"
+                            : s.strength,
                     count: s.count,
-                    color: s.strength === "stark" ? "bg-emerald-500" : s.strength === "mittel" ? "bg-amber-500" : "bg-red-500",
+                    color:
+                      s.strength === "stark"
+                        ? "bg-emerald-500"
+                        : s.strength === "mittel"
+                          ? "bg-amber-500"
+                          : "bg-red-500",
                   }))}
                 />
               </Card>
               <Card title="Zahlungsarten">
-                <DistributionBars data={stats.byPaymentMethod.map((p) => ({ label: labelPayment(p.method), count: p.count, color: "bg-blue-500" }))} />
+                <DistributionBars
+                  data={stats.byPaymentMethod.map((p) => ({
+                    label: labelPayment(p.method),
+                    count: p.count,
+                    color: "bg-blue-500",
+                  }))}
+                />
               </Card>
               <Card title="Problemtypen">
-                <DistributionBars data={stats.byProblemType.map((p) => ({ label: labelProblem(p.type), count: p.count, color: "bg-violet-500" }))} />
+                <DistributionBars
+                  data={stats.byProblemType.map((p) => ({
+                    label: labelProblem(p.type),
+                    count: p.count,
+                    color: "bg-violet-500",
+                  }))}
+                />
               </Card>
             </div>
 
@@ -253,7 +316,9 @@ function AdminDashboard({ onLogout }: { onLogout: () => void }) {
                   type="button"
                   onClick={() => setOnlyPaid((v) => !v)}
                   className={`inline-flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-lg border transition-colors ${
-                    onlyPaid ? "bg-emerald-50 border-emerald-300 text-emerald-700" : "bg-white border-slate-200 text-slate-600 hover:bg-slate-50"
+                    onlyPaid
+                      ? "bg-emerald-50 border-emerald-300 text-emerald-700"
+                      : "bg-white border-slate-200 text-slate-600 hover:bg-slate-50"
                   }`}
                 >
                   <Filter className="w-3 h-3" />
@@ -262,7 +327,9 @@ function AdminDashboard({ onLogout }: { onLogout: () => void }) {
               }
             >
               {cases.length === 0 ? (
-                <p className="text-sm text-muted-foreground text-center py-10">Noch keine Fälle vorhanden.</p>
+                <p className="text-sm text-muted-foreground text-center py-10">
+                  Noch keine Fälle vorhanden.
+                </p>
               ) : (
                 <div className="overflow-x-auto -mx-5 sm:mx-0">
                   <table className="min-w-full text-sm">
@@ -283,12 +350,17 @@ function AdminDashboard({ onLogout }: { onLogout: () => void }) {
                         <tr key={c.id} className="hover:bg-slate-50">
                           <Td className="font-mono text-xs text-slate-500">#{c.id}</Td>
                           <Td className="whitespace-nowrap text-xs text-slate-600">
-                            {new Date(c.createdAt).toLocaleString("de-DE", { dateStyle: "short", timeStyle: "short" })}
+                            {new Date(c.createdAt).toLocaleString("de-DE", {
+                              dateStyle: "short",
+                              timeStyle: "short",
+                            })}
                           </Td>
                           <Td className="font-semibold">{c.merchantName}</Td>
                           <Td className="text-xs">{labelProblem(c.problemType)}</Td>
                           <Td className="text-xs">{labelPayment(c.paymentMethod)}</Td>
-                          <Td className="text-right tabular-nums font-semibold">{c.amount.toFixed(2)} €</Td>
+                          <Td className="text-right tabular-nums font-semibold">
+                            {c.amount.toFixed(2)} €
+                          </Td>
                           <Td className="text-right">
                             <span
                               className={`inline-block px-2 py-0.5 rounded-full text-xs font-bold ${
@@ -361,7 +433,17 @@ function Kpi({
   );
 }
 
-function StatBlock({ label, value, sub, icon: Icon }: { label: string; value: number; sub: string; icon: typeof Activity }) {
+function StatBlock({
+  label,
+  value,
+  sub,
+  icon: Icon,
+}: {
+  label: string;
+  value: number;
+  sub: string;
+  icon: typeof Activity;
+}) {
   return (
     <div className="bg-white rounded-xl border px-5 py-4 flex items-center gap-4">
       <div className="w-10 h-10 rounded-lg bg-slate-100 flex items-center justify-center">
@@ -377,7 +459,15 @@ function StatBlock({ label, value, sub, icon: Icon }: { label: string; value: nu
   );
 }
 
-function Card({ title, right, children }: { title: string; right?: React.ReactNode; children: React.ReactNode }) {
+function Card({
+  title,
+  right,
+  children,
+}: {
+  title: string;
+  right?: React.ReactNode;
+  children: React.ReactNode;
+}) {
   return (
     <section className="bg-white rounded-2xl border p-5">
       <div className="flex items-center justify-between mb-4">
@@ -408,7 +498,10 @@ function DistributionBars({ data }: { data: { label: string; count: number; colo
             <span className="font-bold text-slate-900 tabular-nums">{d.count}</span>
           </div>
           <div className="h-2 rounded-full bg-slate-100 overflow-hidden">
-            <div className={`h-full ${d.color} transition-all`} style={{ width: `${(d.count / max) * 100}%` }} />
+            <div
+              className={`h-full ${d.color} transition-all`}
+              style={{ width: `${(d.count / max) * 100}%` }}
+            />
           </div>
         </div>
       ))}
@@ -417,7 +510,8 @@ function DistributionBars({ data }: { data: { label: string; count: number; colo
 }
 
 function DailyChart({ series }: { series: { day: string; total: number; paid: number }[] }) {
-  if (series.length === 0) return <p className="text-sm text-muted-foreground text-center py-6">Noch keine Daten.</p>;
+  if (series.length === 0)
+    return <p className="text-sm text-muted-foreground text-center py-6">Noch keine Daten.</p>;
   const max = Math.max(1, ...series.map((s) => s.total));
   return (
     <div>
@@ -426,9 +520,15 @@ function DailyChart({ series }: { series: { day: string; total: number; paid: nu
           const totalH = (s.total / max) * 100;
           const paidH = (s.paid / max) * 100;
           return (
-            <div key={s.day} className="flex-1 flex flex-col justify-end items-center gap-0.5 group relative">
+            <div
+              key={s.day}
+              className="flex-1 flex flex-col justify-end items-center gap-0.5 group relative"
+            >
               <div className="w-full bg-slate-200 rounded-t" style={{ height: `${totalH}%` }}>
-                <div className="w-full bg-emerald-500 rounded-t" style={{ height: `${(paidH / Math.max(totalH, 1)) * 100}%` }} />
+                <div
+                  className="w-full bg-emerald-500 rounded-t"
+                  style={{ height: `${(paidH / Math.max(totalH, 1)) * 100}%` }}
+                />
               </div>
               <div className="absolute -top-9 hidden group-hover:block bg-slate-900 text-white text-[10px] rounded px-2 py-1 whitespace-nowrap z-10">
                 {s.day} · {s.total} ({s.paid} bezahlt)
@@ -440,8 +540,12 @@ function DailyChart({ series }: { series: { day: string; total: number; paid: nu
       <div className="flex items-center justify-between mt-3 text-xs text-slate-500">
         <span>{series[0]?.day}</span>
         <div className="flex items-center gap-3">
-          <span className="inline-flex items-center gap-1"><span className="w-2 h-2 rounded-sm bg-slate-300" /> Fälle</span>
-          <span className="inline-flex items-center gap-1"><span className="w-2 h-2 rounded-sm bg-emerald-500" /> bezahlt</span>
+          <span className="inline-flex items-center gap-1">
+            <span className="w-2 h-2 rounded-sm bg-slate-300" /> Fälle
+          </span>
+          <span className="inline-flex items-center gap-1">
+            <span className="w-2 h-2 rounded-sm bg-emerald-500" /> bezahlt
+          </span>
         </div>
         <span>{series[series.length - 1]?.day}</span>
       </div>
