@@ -187,14 +187,20 @@ export function PaywallModal({
 
       <div className="p-5 sm:p-6 space-y-5">
         {/* Case teaser — qualitative band, no raw % */}
-        <div className={`flex items-center justify-between rounded-xl border px-4 py-3 ${bandClass}`}>
+        <div
+          className={`flex items-center justify-between rounded-xl border px-4 py-3 ${bandClass}`}
+        >
           <div className="min-w-0">
-            <p className="text-[10px] font-semibold uppercase tracking-wide opacity-70 mb-0.5">Dein Fall gegen</p>
+            <p className="text-[10px] font-semibold uppercase tracking-wide opacity-70 mb-0.5">
+              Dein Fall gegen
+            </p>
             <p className="font-bold text-base truncate">{merchantName}</p>
             <p className="text-sm opacity-80">{amount.toFixed(2)} EUR streitig</p>
           </div>
           <div className="text-right flex-shrink-0 pl-3">
-            <p className="text-[10px] font-semibold uppercase tracking-wide opacity-70">Strategie-Einschätzung</p>
+            <p className="text-[10px] font-semibold uppercase tracking-wide opacity-70">
+              Strategie-Einschätzung
+            </p>
             <p className="text-lg font-black leading-tight">{band.name}</p>
             <p className="text-[10px] opacity-70 italic">indikativ, keine Rechtsberatung</p>
           </div>
@@ -223,19 +229,20 @@ export function PaywallModal({
           </div>
         </div>
 
-
         {/* Value reminder */}
         <div className="flex items-center gap-2.5 bg-amber-50 border border-amber-200 rounded-xl px-3 py-2.5">
           <Sparkles className="w-4 h-4 text-amber-600 flex-shrink-0" />
           <span className="text-xs text-amber-900 leading-snug">
-            <strong>Hinweis:</strong> Ein klar formuliertes Anschreiben und ein passender Grund (Reason Code) können die Nachvollziehbarkeit deines Antrags verbessern.
+            <strong>Hinweis:</strong> Ein klar formuliertes Anschreiben und ein passender Grund
+            (Reason Code) können die Nachvollziehbarkeit deines Antrags verbessern.
           </span>
         </div>
 
         {/* Checkout CTA */}
         <div className="space-y-3 pt-1">
           <p className="text-xs text-muted-foreground leading-relaxed">
-            Im nächsten Schritt im sicheren Stripe-Checkout bestätigst du AGB und Widerrufshinweise. Der Kauf ist eine einmalige Bereitstellung digitaler Inhalte; es entsteht kein Abo.
+            Im nächsten Schritt im sicheren Stripe-Checkout bestätigst du AGB und Widerrufshinweise.
+            Der Kauf ist eine einmalige Bereitstellung digitaler Inhalte; es entsteht kein Abo.
           </p>
 
           {error && (
@@ -247,7 +254,7 @@ export function PaywallModal({
 
           <Button
             size="lg"
-            className="w-full h-13 text-base font-bold gap-2 shadow-lg shadow-primary/20"
+            className="w-full min-h-[3.5rem] px-3 py-3 text-sm sm:text-base font-bold gap-2 shadow-lg shadow-primary/20"
             onClick={handleCheckout}
             disabled={loading || isPaying}
           >
@@ -255,14 +262,21 @@ export function PaywallModal({
               <Loader2 className="w-5 h-5 animate-spin" />
             ) : (
               <>
-                <CreditCard className="w-5 h-5" />
-                Weiter zum sicheren Checkout (0,99 € Endpreis)
+                <CreditCard className="w-5 h-5 flex-shrink-0" />
+                <span className="min-w-0 leading-tight text-center">
+                  <span className="block">Weiter zum sicheren Checkout</span>
+                  <span className="block text-[11px] sm:text-xs font-semibold opacity-85">
+                    0,99 € Endpreis · kein Abo
+                  </span>
+                </span>
               </>
             )}
           </Button>
 
           <div className="flex flex-col items-center gap-1.5">
-            <span className="text-[11px] uppercase tracking-wider font-semibold text-muted-foreground">Bezahlen mit</span>
+            <span className="text-[11px] uppercase tracking-wider font-semibold text-muted-foreground">
+              Bezahlen mit
+            </span>
             <PaymentLogoStrip />
           </div>
 

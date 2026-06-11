@@ -1,5 +1,14 @@
 import { useState, useEffect } from "react";
-import { Check, CheckCircle2, Copy, Sparkles, FileText, Lock as LockIcon, Loader2, ShieldCheck } from "lucide-react";
+import {
+  Check,
+  CheckCircle2,
+  Copy,
+  Sparkles,
+  FileText,
+  Lock as LockIcon,
+  Loader2,
+  ShieldCheck,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
@@ -19,7 +28,7 @@ export function GeneratorLoader({ merchantName }: { merchantName: string }) {
     "Mastercard und Visa nutzen interne Kategorien für Reklamationen. Die passende Kategorie hängt vom Einzelfall ab.",
     "Bei unklaren Abo-Abbuchungen helfen Kündigungsnachweis, Kontoauszug und eine klare Chronologie.",
     "Tipp: Eine sachliche, belegbare Reklamation wirkt meist besser als Druck oder Drohungen.",
-    "Wusstest du? Bei Unterkunftsmängeln sind Fotos, Zeitstempel und eine Meldung vor Ort besonders wichtig."
+    "Wusstest du? Bei Unterkunftsmängeln sind Fotos, Zeitstempel und eine Meldung vor Ort besonders wichtig.",
   ];
 
   useEffect(() => {
@@ -31,10 +40,15 @@ export function GeneratorLoader({ merchantName }: { merchantName: string }) {
     }, 23000);
 
     const fInterval = setInterval(() => {
-      setFactIndex(prev => (prev + 1) % facts.length);
+      setFactIndex((prev) => (prev + 1) % facts.length);
     }, 5000);
 
-    return () => { clearTimeout(t1); clearTimeout(t2); clearTimeout(t3); clearInterval(fInterval); };
+    return () => {
+      clearTimeout(t1);
+      clearTimeout(t2);
+      clearTimeout(t3);
+      clearInterval(fInterval);
+    };
   }, []);
 
   return (
@@ -71,8 +85,14 @@ export function GeneratorLoader({ merchantName }: { merchantName: string }) {
                   <div className="w-6 h-6 rounded-full border-2 border-muted" />
                 )}
               </div>
-              <span className={`font-medium transition-all duration-300 ${done ? "line-through text-muted-foreground" : ""}`}>
-                {done ? <span className="no-underline font-semibold text-emerald-700">{label}</span> : label}
+              <span
+                className={`font-medium transition-all duration-300 ${done ? "line-through text-muted-foreground" : ""}`}
+              >
+                {done ? (
+                  <span className="no-underline font-semibold text-emerald-700">{label}</span>
+                ) : (
+                  label
+                )}
               </span>
             </div>
           );
@@ -90,7 +110,10 @@ export function GeneratorLoader({ merchantName }: { merchantName: string }) {
           <div className="font-semibold text-primary mb-1 flex items-center justify-center gap-1.5">
             <Sparkles className="w-3.5 h-3.5" /> Wusstest du schon?
           </div>
-          <p key={factIndex} className="animate-in fade-in slide-in-from-bottom-1 duration-300 min-h-[40px] flex items-center justify-center">
+          <p
+            key={factIndex}
+            className="animate-in fade-in slide-in-from-bottom-1 duration-300 min-h-[40px] flex items-center justify-center"
+          >
             {facts[factIndex]}
           </p>
         </div>
@@ -103,10 +126,40 @@ export function StrategyIndicator({ label }: { label: string }) {
   const l = (label ?? "").toLowerCase();
   const band =
     l === "hoch"
-      ? { name: "Aussichtsreich", desc: "Gute Dokumentationslage. Mit klaren Belegen ist dein Anliegen für Händler oder Zahlungsdienstleister besser nachvollziehbar.", tone: { bg: "bg-emerald-50", border: "border-emerald-200", text: "text-emerald-800", accent: "bg-emerald-500", dotsActive: 3 } }
+      ? {
+          name: "Aussichtsreich",
+          desc: "Gute Dokumentationslage. Mit klaren Belegen ist dein Anliegen für Händler oder Zahlungsdienstleister besser nachvollziehbar.",
+          tone: {
+            bg: "bg-emerald-50",
+            border: "border-emerald-200",
+            text: "text-emerald-800",
+            accent: "bg-emerald-500",
+            dotsActive: 3,
+          },
+        }
       : l === "mittel"
-        ? { name: "Solide Ausgangslage", desc: "Mittlere Position. Fehlende Belege können deine Aussichten noch deutlich verbessern.", tone: { bg: "bg-amber-50", border: "border-amber-200", text: "text-amber-800", accent: "bg-amber-500", dotsActive: 2 } }
-        : { name: "Anspruchsvoll", desc: "Schwieriger Fall. Sichere zuerst fehlende Belege und prüfe die Anbieterregeln sorgfältig.", tone: { bg: "bg-rose-50", border: "border-rose-200", text: "text-rose-800", accent: "bg-rose-500", dotsActive: 1 } };
+        ? {
+            name: "Solide Ausgangslage",
+            desc: "Mittlere Position. Fehlende Belege können deine Aussichten noch deutlich verbessern.",
+            tone: {
+              bg: "bg-amber-50",
+              border: "border-amber-200",
+              text: "text-amber-800",
+              accent: "bg-amber-500",
+              dotsActive: 2,
+            },
+          }
+        : {
+            name: "Anspruchsvoll",
+            desc: "Schwieriger Fall. Sichere zuerst fehlende Belege und prüfe die Anbieterregeln sorgfältig.",
+            tone: {
+              bg: "bg-rose-50",
+              border: "border-rose-200",
+              text: "text-rose-800",
+              accent: "bg-rose-500",
+              dotsActive: 1,
+            },
+          };
 
   return (
     <div className={`rounded-2xl border-2 ${band.tone.border} ${band.tone.bg} p-5 sm:p-6`}>
@@ -119,7 +172,10 @@ export function StrategyIndicator({ label }: { label: string }) {
             {band.name}
           </h3>
           {/* qualitative 3-dot scale */}
-          <div className="flex items-center gap-1.5 mb-3" aria-label={`Stärke-Indikator ${band.tone.dotsActive} von 3`}>
+          <div
+            className="flex items-center gap-1.5 mb-3"
+            aria-label={`Stärke-Indikator ${band.tone.dotsActive} von 3`}
+          >
             {[0, 1, 2].map((i) => (
               <span
                 key={i}
@@ -137,20 +193,34 @@ export function StrategyIndicator({ label }: { label: string }) {
   );
 }
 
-export function LockedTeaser({ icon, title, lines = 3 }: { icon: React.ReactNode; title: string; lines?: number }) {
+export function LockedTeaser({
+  icon,
+  title,
+  lines = 3,
+}: {
+  icon: React.ReactNode;
+  title: string;
+  lines?: number;
+}) {
   return (
-    <div className="relative border rounded-xl p-5 overflow-hidden">
-      <div className="absolute top-3 right-3 z-10 flex items-center gap-1.5 bg-primary text-primary-foreground text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full shadow-sm">
-        <LockIcon className="w-3 h-3" />
-        Gesperrt
+    <div className="relative border rounded-xl p-4 sm:p-5 overflow-hidden">
+      <div className="mb-3 grid grid-cols-[minmax(0,1fr)_auto] items-start gap-3">
+        <h3 className="min-w-0 font-bold text-base leading-snug flex items-start gap-2">
+          <span className="mt-0.5 flex-shrink-0">{icon}</span>
+          <span className="min-w-0 break-words">{title}</span>
+        </h3>
+        <div className="z-10 flex flex-shrink-0 items-center gap-1.5 bg-primary text-primary-foreground text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full shadow-sm">
+          <LockIcon className="w-3 h-3" />
+          Gesperrt
+        </div>
       </div>
-      <h3 className="font-bold text-base mb-3 flex items-center gap-2">
-        {icon}
-        {title}
-      </h3>
       <div className="space-y-2 select-none pointer-events-none" style={{ filter: "blur(2.1px)" }}>
         {Array.from({ length: lines }).map((_, i) => (
-          <div key={i} className="h-3 bg-muted rounded" style={{ width: `${70 + ((i * 7) % 25)}%` }} />
+          <div
+            key={i}
+            className="h-3 bg-muted rounded"
+            style={{ width: `${70 + ((i * 7) % 25)}%` }}
+          />
         ))}
         <div className="h-3 bg-muted rounded w-2/5 mt-1" />
       </div>
@@ -159,13 +229,32 @@ export function LockedTeaser({ icon, title, lines = 3 }: { icon: React.ReactNode
   );
 }
 
-export function CopyableTemplate({ title, icon, text, onCopy }: { title: string; icon: React.ReactNode; text: string; onCopy: () => void }) {
+export function CopyableTemplate({
+  title,
+  icon,
+  text,
+  onCopy,
+}: {
+  title: string;
+  icon: React.ReactNode;
+  text: string;
+  onCopy: () => void;
+}) {
   return (
     <div className="border rounded-xl overflow-hidden shadow-sm">
       <div className="bg-muted/60 px-4 py-3 border-b flex justify-between items-center">
-        <span className="font-semibold text-sm flex items-center gap-2">{icon}{title}</span>
-        <Button size="sm" variant="outline" className="h-8 gap-2 text-xs cursor-pointer" onClick={onCopy}>
-          <Copy className="w-3.5 h-3.5" />Kopieren
+        <span className="font-semibold text-sm flex items-center gap-2">
+          {icon}
+          {title}
+        </span>
+        <Button
+          size="sm"
+          variant="outline"
+          className="h-8 gap-2 text-xs cursor-pointer"
+          onClick={onCopy}
+        >
+          <Copy className="w-3.5 h-3.5" />
+          Kopieren
         </Button>
       </div>
       <div className="p-4 sm:p-5 bg-background whitespace-pre-wrap text-sm font-mono leading-relaxed max-h-80 overflow-y-auto">
@@ -175,13 +264,23 @@ export function CopyableTemplate({ title, icon, text, onCopy }: { title: string;
   );
 }
 
-export function MerchantQuickSelect({ problemType, onSelect, selected }: { problemType: string; onSelect: (name: string) => void; selected: string }) {
+export function MerchantQuickSelect({
+  problemType,
+  onSelect,
+  selected,
+}: {
+  problemType: string;
+  onSelect: (name: string) => void;
+  selected: string;
+}) {
   const options = KNOWN_MERCHANTS[problemType];
   if (!options || options.length === 0) return null;
   return (
     <div className="space-y-3">
       <p className="text-sm font-semibold text-foreground flex items-center gap-2">
-        <span className="w-5 h-5 rounded-full bg-primary/10 text-primary text-xs font-bold flex items-center justify-center">✓</span>
+        <span className="w-5 h-5 rounded-full bg-primary/10 text-primary text-xs font-bold flex items-center justify-center">
+          ✓
+        </span>
         Bekannte Anbieter — schnell auswählen:
       </p>
       <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
@@ -194,11 +293,15 @@ export function MerchantQuickSelect({ problemType, onSelect, selected }: { probl
           >
             <span className="text-xl leading-none flex-shrink-0">{m.emoji}</span>
             <span className="font-semibold text-sm truncate">{m.name}</span>
-            {selected === m.name && <Check className="w-3.5 h-3.5 text-primary ml-auto flex-shrink-0" />}
+            {selected === m.name && (
+              <Check className="w-3.5 h-3.5 text-primary ml-auto flex-shrink-0" />
+            )}
           </button>
         ))}
       </div>
-      <p className="text-xs text-muted-foreground">Nicht dabei? Trage den Namen manuell unten ein.</p>
+      <p className="text-xs text-muted-foreground">
+        Nicht dabei? Trage den Namen manuell unten ein.
+      </p>
     </div>
   );
 }
@@ -207,7 +310,12 @@ export function Paywall({ onUnlock, isPaying }: { onUnlock: () => void; isPaying
   return (
     <div className="absolute inset-0 z-10 rounded-2xl flex items-center justify-center p-4">
       <div className="text-center">
-        <Button size="lg" className="text-base h-12 shadow-lg gap-2" onClick={onUnlock} disabled={isPaying}>
+        <Button
+          size="lg"
+          className="text-base h-12 shadow-lg gap-2"
+          onClick={onUnlock}
+          disabled={isPaying}
+        >
           {isPaying ? <Loader2 className="w-5 h-5 animate-spin" /> : "Für 0,99 € freischalten"}
         </Button>
         <div className="text-xs text-muted-foreground font-medium flex items-center justify-center gap-1.5 mt-2">
@@ -219,7 +327,17 @@ export function Paywall({ onUnlock, isPaying }: { onUnlock: () => void; isPaying
   );
 }
 
-export function ContentLocker({ hasUnlocked, onUnlock, isPaying, children }: { hasUnlocked: boolean; onUnlock: () => void; isPaying: boolean; children: React.ReactNode }) {
+export function ContentLocker({
+  hasUnlocked,
+  onUnlock,
+  isPaying,
+  children,
+}: {
+  hasUnlocked: boolean;
+  onUnlock: () => void;
+  isPaying: boolean;
+  children: React.ReactNode;
+}) {
   if (hasUnlocked) return <>{children}</>;
   return (
     <div className="relative">
@@ -247,7 +365,9 @@ export function QuestionField({
             onClick={() => onChange(opt.value)}
             className={`flex items-center gap-3 border-2 px-4 py-3 rounded-xl cursor-pointer transition-all select-none ${value === opt.value ? "border-primary bg-primary/5" : "border-border hover:border-primary/40 hover:bg-muted/30"}`}
           >
-            <div className={`w-4 h-4 rounded-full border-2 flex-shrink-0 flex items-center justify-center ${value === opt.value ? "border-primary" : "border-muted-foreground/40"}`}>
+            <div
+              className={`w-4 h-4 rounded-full border-2 flex-shrink-0 flex items-center justify-center ${value === opt.value ? "border-primary" : "border-muted-foreground/40"}`}
+            >
               {value === opt.value && <div className="w-2 h-2 rounded-full bg-primary" />}
             </div>
             <span className="text-sm font-medium">{opt.label}</span>
@@ -260,7 +380,9 @@ export function QuestionField({
   if (question.type === "multiselect") {
     const selected = value ? value.split("; ") : [];
     const toggle = (label: string) => {
-      const next = selected.includes(label) ? selected.filter((s) => s !== label) : [...selected, label];
+      const next = selected.includes(label)
+        ? selected.filter((s) => s !== label)
+        : [...selected, label];
       onChange(next.join("; "));
     };
     return (
@@ -318,7 +440,9 @@ export function QuestionField({
           className="w-24 text-base sm:text-sm"
           placeholder="0"
         />
-        {question.suffix && <span className="text-sm text-muted-foreground">{question.suffix}</span>}
+        {question.suffix && (
+          <span className="text-sm text-muted-foreground">{question.suffix}</span>
+        )}
       </div>
     );
   }
