@@ -2,7 +2,12 @@ import { MainLayout } from "@/components/layout/MainLayout";
 import { Link, useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
 import { ArrowRight, CheckCircle2, AlertTriangle, ShieldCheck } from "lucide-react";
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
 import { Breadcrumbs } from "@/components/Breadcrumbs";
 import { SeoHead } from "@/components/SeoHead";
 import { openNewWizardCase } from "@/lib/case-persistence";
@@ -19,7 +24,15 @@ interface SEOProps {
 
 const SITE = "https://chargebackpilot.de";
 
-export function SEOArticleLayout({ title, category, whenApplies, evidence, steps, mistakes, faq }: SEOProps) {
+export function SEOArticleLayout({
+  title,
+  category,
+  whenApplies,
+  evidence,
+  steps,
+  mistakes,
+  faq,
+}: SEOProps) {
   const [pathname] = useLocation();
   const description = `${title}: typische Fristenhinweise, Belege und strukturierte Orientierung bei ${category}. Mit unverbindlichen Textentwürfen.`;
   const canonicalPath = pathname || "/ratgeber";
@@ -69,22 +82,14 @@ export function SEOArticleLayout({ title, category, whenApplies, evidence, steps
     dateModified: "2026-05-20",
   };
 
-  const breadcrumbSchema = {
-    "@context": "https://schema.org",
-    "@type": "BreadcrumbList",
-    itemListElement: [
-      { "@type": "ListItem", position: 1, name: "Start", item: `${SITE}/` },
-      { "@type": "ListItem", position: 2, name: "Ratgeber", item: `${SITE}/ratgeber` },
-      { "@type": "ListItem", position: 3, name: category, item: `${SITE}${canonicalPath}` },
-    ],
-  };
-
   const relatedGuides = [
     { href: "/paypal-chargeback", label: "PayPal Käuferschutz" },
     { href: "/visa-mastercard-chargeback", label: "Visa & Mastercard" },
     { href: "/klarna-reklamation", label: "Klarna Reklamation" },
     { href: "/vergleich/paypal-vs-kreditkarte-vs-klarna", label: "Vergleich Käuferschutz" },
-  ].filter((g) => g.href !== canonicalPath).slice(0, 3);
+  ]
+    .filter((g) => g.href !== canonicalPath)
+    .slice(0, 3);
 
   return (
     <MainLayout>
@@ -92,7 +97,7 @@ export function SEOArticleLayout({ title, category, whenApplies, evidence, steps
         title={`${title} | ChargebackPilot`}
         description={description}
         canonical={canonicalPath}
-        jsonLd={[howToSchema, faqSchema, articleSchema, breadcrumbSchema]}
+        jsonLd={[howToSchema, faqSchema, articleSchema]}
       />
       <Breadcrumbs items={[{ label: "Ratgeber", href: "/ratgeber" }, { label: category }]} />
       <article className="pb-20">
@@ -101,9 +106,16 @@ export function SEOArticleLayout({ title, category, whenApplies, evidence, steps
           <div className="container mx-auto max-w-3xl">
             <h1 className="text-3xl md:text-5xl font-bold mb-6">{title}</h1>
             <p className="text-xl text-muted-foreground mb-8">
-              Erhalte eine strukturierte Orientierung zu {category}: typische Fristenhinweise, Belege und mögliche nächste Schritte.
+              Erhalte eine strukturierte Orientierung zu {category}: typische Fristenhinweise,
+              Belege und mögliche nächste Schritte.
             </p>
-            <Link href="/vorlagen-generator?new=1" onClick={(e) => { e.preventDefault(); handleNewCaseClick(); }}>
+            <Link
+              href="/vorlagen-generator?new=1"
+              onClick={(e) => {
+                e.preventDefault();
+                handleNewCaseClick();
+              }}
+            >
               <Button size="lg" className="gap-2">
                 Kostenlosen Fall-Check starten
                 <ArrowRight className="w-5 h-5" />
@@ -113,7 +125,6 @@ export function SEOArticleLayout({ title, category, whenApplies, evidence, steps
         </header>
 
         <div className="container mx-auto max-w-3xl px-4 mt-12 space-y-16">
-          
           {/* Wann greift es */}
           <section>
             <h2 className="text-2xl font-bold mb-6 border-b pb-2">Wann greift der Schutz?</h2>
@@ -135,7 +146,10 @@ export function SEOArticleLayout({ title, category, whenApplies, evidence, steps
             </h2>
             <div className="grid sm:grid-cols-2 gap-4">
               {evidence.map((item, i) => (
-                <div key={i} className="flex items-center gap-3 bg-background p-3 rounded-lg border shadow-sm">
+                <div
+                  key={i}
+                  className="flex items-center gap-3 bg-background p-3 rounded-lg border shadow-sm"
+                >
                   <div className="w-2 h-2 rounded-full bg-primary" />
                   <span className="text-sm font-medium">{item}</span>
                 </div>
@@ -145,7 +159,9 @@ export function SEOArticleLayout({ title, category, whenApplies, evidence, steps
 
           {/* Ablauf */}
           <section>
-            <h2 className="text-2xl font-bold mb-6 border-b pb-2">Schritt-für-Schritt Orientierung</h2>
+            <h2 className="text-2xl font-bold mb-6 border-b pb-2">
+              Schritt-für-Schritt Orientierung
+            </h2>
             <div className="space-y-6">
               {steps.map((step, i) => (
                 <div key={i} className="flex gap-4">
@@ -168,7 +184,10 @@ export function SEOArticleLayout({ title, category, whenApplies, evidence, steps
             </h2>
             <ul className="space-y-4">
               {mistakes.map((mistake, i) => (
-                <li key={i} className="bg-red-50 p-4 rounded-lg border border-red-100 text-red-900 text-sm">
+                <li
+                  key={i}
+                  className="bg-red-50 p-4 rounded-lg border border-red-100 text-red-900 text-sm"
+                >
                   {mistake}
                 </li>
               ))}
@@ -193,8 +212,16 @@ export function SEOArticleLayout({ title, category, whenApplies, evidence, steps
           {/* Bottom CTA */}
           <section className="bg-muted p-8 rounded-2xl text-center">
             <h2 className="text-2xl font-bold mb-4">Unsicher bei deinem Fall?</h2>
-            <p className="text-muted-foreground mb-6">Nutze unseren Generator und erhalte unverbindliche Textentwürfe zur eigenen Prüfung.</p>
-            <Link href="/vorlagen-generator?new=1" onClick={(e) => { e.preventDefault(); handleNewCaseClick(); }}>
+            <p className="text-muted-foreground mb-6">
+              Nutze unseren Generator und erhalte unverbindliche Textentwürfe zur eigenen Prüfung.
+            </p>
+            <Link
+              href="/vorlagen-generator?new=1"
+              onClick={(e) => {
+                e.preventDefault();
+                handleNewCaseClick();
+              }}
+            >
               <Button size="lg">Kostenlosen Fall-Check starten</Button>
             </Link>
           </section>
@@ -215,10 +242,14 @@ export function SEOArticleLayout({ title, category, whenApplies, evidence, steps
           {/* Trademark Disclaimer */}
           <section className="mt-16 text-xs text-muted-foreground bg-muted/50 p-4 rounded-lg border border-border/50 text-center">
             <p>
-              <strong>Markenrechtlicher Hinweis:</strong> Genannte Markenbezeichnungen (wie z.B. PayPal, Klarna, Visa, Mastercard, American Express, Ryanair, Lieferando etc.) sind eingetragene Warenzeichen der jeweiligen Eigentümer. ChargebackPilot steht in keinerlei Verbindung, Partnerschaft oder Kooperation mit diesen Unternehmen. Die Nennung dient ausschließlich der Beschreibung des Anwendungsbereichs unseres Text-Generators.
+              <strong>Markenrechtlicher Hinweis:</strong> Genannte Markenbezeichnungen (wie z.B.
+              PayPal, Klarna, Visa, Mastercard, American Express, Ryanair, Lieferando etc.) sind
+              eingetragene Warenzeichen der jeweiligen Eigentümer. ChargebackPilot steht in
+              keinerlei Verbindung, Partnerschaft oder Kooperation mit diesen Unternehmen. Die
+              Nennung dient ausschließlich der Beschreibung des Anwendungsbereichs unseres
+              Text-Generators.
             </p>
           </section>
-
         </div>
       </article>
     </MainLayout>

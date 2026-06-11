@@ -1,277 +1,202 @@
 # ChargebackPilot
 
-> KI-Hilfe für Chargeback, PayPal-Käuferschutz & Reklamation
+KI-Hilfe für Chargeback, PayPal-Käuferschutz, Klarna-Reklamation und Verbraucherbeschwerden.
 
-**[Live Demo](https://chargebackpilot.de)** | **[Documentation](#documentation)** | **[Security Policy](SECURITY.md)** | **[Contributing](CONTRIBUTING.md)**
+Live: https://chargebackpilot.de
 
-## Quick Start
+## Für Menschen Und AI-Assistenten
 
-### Prerequisites
+Diese `README.md` ist die einzige Root-Dokumentation und die Source of Truth für Codex, Cline, Copilot, ChatGPT und Menschen. Wenn du am Projekt arbeitest, lies zuerst diese Datei.
 
-- Node.js 20+
-- pnpm 9+
-- PostgreSQL 14+
+## Was Die App Macht
 
-### Development Setup
+ChargebackPilot ist eine deutschsprachige Verbraucher-SaaS. Nutzer schildern einen Fall, bekommen eine KI-gestützte erste Strukturierung und können vollständige Vorlagen freischalten:
+
+- Händler-Anschreiben
+- Antrag an Bank, PayPal, Klarna oder Zahlungsdienstleister
+- Eskalationsentwurf
+- PDF-/E-Mail-Export
+- Orientierung zu Belegen, möglichen Einwänden und nächsten Schritten
+
+Wichtig: Die App gibt keine Rechtsberatung, keine Erfolgsgarantie und vertritt Nutzer nicht gegenüber Banken, Händlern oder Zahlungsdienstleistern.
+
+## Repo-Karte
+
+```text
+artifacts/
+  chargeback-pilot/      React + Vite Frontend, Homepage, Wizard, Paywall, SEO-Seiten
+  api-server/            Express API, Gemini-Analyse, Stripe, Admin, Health Checks
+  mockup-sandbox/        Entwicklungs-/Mockup-Sandbox
+
+lib/
+  db/                    Drizzle/Postgres Schema
+  env/                   Environment-Validierung
+  api-zod/               geteilte API-Schemas
+  api-client-react/      React API Hooks
+```
+
+## Tech Stack
+
+- Monorepo: pnpm workspaces
+- Frontend: React, Vite, TypeScript, Tailwind, Radix UI, lucide-react
+- Backend: Node.js, Express, TypeScript
+- Database: PostgreSQL + Drizzle
+- AI: Google Gemini API
+- Payments: Stripe
+- Bot protection: Cloudflare Turnstile
+- Security: Helmet, rate limits, body limits, env validation
+
+## Commands
 
 ```bash
-# 1. Clone repository
-git clone https://github.com/chargebackpilot/chargebackpilot-live.git
-cd chargebackpilot
-
-# 2. Setup environment
-cp .env.example .env.local
-# Edit .env.local and fill in required variables
-
-# 3. Install dependencies
 pnpm install
-
-# 4. Setup database
-pnpm --filter @workspace/db run push
-
-# 5. Start development servers
-# Terminal 1:
-pnpm --filter @workspace/api-server run dev
-
-# Terminal 2 (optional):
 pnpm --filter @workspace/chargeback-pilot run dev
+pnpm --filter @workspace/api-server run dev
+pnpm --filter @workspace/chargeback-pilot run typecheck
+pnpm run typecheck
+pnpm run lint
+pnpm run build
+pnpm run build:render
+pnpm start
 ```
 
-### Commands
+In dieser Umgebung ist `rg` manchmal nicht installiert. Dann `find` und `grep` nutzen.
+
+## Entwicklung
+
+- Codeänderungen eng am bestehenden Stil halten.
+- Frontend-Design ist ruhiges SaaS-Design, nicht Marketing-Baukasten.
+- Cards nur für echte Items, Tools oder Modals verwenden.
+- Mobile zuerst auf lange deutsche Labels prüfen.
+- Keine Textüberlappungen, keine gequetschten Buttons, stabile Höhen/Breiten für UI-Elemente.
+- Icons bevorzugt aus `lucide-react`.
+- Bei neuen Produkttexten vorsichtig formulieren: indikativ, keine Rechtsberatung, Anbieterregeln prüfen.
+- Bei Änderungen im Frontend mindestens Paket-Typecheck laufen lassen:
 
 ```bash
-pnpm build              # Build all packages
-pnpm build:render       # Build for Render deployment
-pnpm start              # Start API server
-pnpm lint              # Check code quality
-pnpm lint:fix          # Fix linting issues
-pnpm format            # Format code
-pnpm format:check      # Check formatting
-pnpm typecheck         # TypeScript type checking
+pnpm --filter @workspace/chargeback-pilot run typecheck
 ```
 
-## Project Structure
+## Produktregeln
 
-```
-chargebackpilot/
-├── artifacts/
-│   ├── api-server/         # Express.js backend
-│   └── chargeback-pilot/    # React frontend
-├── lib/
-│   ├── env/                # Environment validation
-│   ├── db/                 # Database schema
-│   ├── api-zod/            # API types
-│   └── api-client-react/   # React hooks
-└── docs/
-    ├── ARCHITECTURE.md     # System design
-    ├── CONTRIBUTING.md     # Development guide
-    └── SECURITY.md         # Security policy
-```
+- Kostenloser Einstieg: Nutzer können einen Fall analysieren.
+- Einzel-Freischaltung: `0,99 €` Endpreis pro Fall, kein Abo.
+- Flatrate: `9,99 €` Endpreis für 12 Monate, kein Abo.
+- Unlocks sind case-bound. Niemals wieder eine globale Unlock-Flag einführen.
+- Aktuelle/saved Cases liegen clientseitig in localStorage.
+- Wichtige Keys:
+  - `cbp_current_case_v2`
+  - `cbp_case_list_v1`
+  - `cbp_unlocked_case_ids_v1`
+  - `cbp_flatrate_v1`
+  - `cbp_pending_paywall_scroll_v1`
 
-## Documentation
+## Wichtige Frontend-Dateien
 
-- **[Architecture](ARCHITECTURE.md)** - System design, database schema, API endpoints
-- **[Contributing](CONTRIBUTING.md)** - Development setup, git workflow, code standards
-- **[Security](SECURITY.md)** - Security policy, best practices, incident response
-- **[Implementation Summary](IMPLEMENTATION_SUMMARY.md)** - Details of all changes for AI assistants
+- Homepage: `artifacts/chargeback-pilot/src/pages/Home.tsx`
+- Wizard: `artifacts/chargeback-pilot/src/pages/Wizard.tsx`
+- Case Persistence: `artifacts/chargeback-pilot/src/lib/case-persistence.ts`
+- Paywall Modal: `artifacts/chargeback-pilot/src/components/PaywallModal.tsx`
+- Wizard Components: `artifacts/chargeback-pilot/src/components/wizard/WizardComponents.tsx`
+- Payment Logos: `artifacts/chargeback-pilot/src/components/PaymentLogos.tsx`
 
-## Features
+## Navigation Und Paywall
 
-✅ **AI-Powered Case Analysis** - Google Gemini analyzes chargebacks in 60 seconds  
-✅ **Professional Letter Templates** - Generated DIN 5008 compliant PDF letters  
-✅ **Merchant/Bank/Escalation Routes** - Tailored templates for each stage  
-✅ **Turnstile CAPTCHA** - Bot protection with Cloudflare  
-✅ **Stripe Integration** - Accept payments for premium features  
-✅ **Rate Limiting** - DDoS & API cost protection  
-✅ **Security Headers** - HSTS, CSP, X-Frame-Options with Helmet  
-✅ **Session Auth** - Secure admin authentication  
+- Neuer Fall: `openNewWizardCase()`
+- Gespeicherter Fall: `openSavedCase(caseId)`
+- Neuester analysierter Fall mit Paywall: `openCurrentCasePaywall()`
+- Homepage-Button "Alle Vorlagen freischalten":
+  - Wenn analysierter Fall existiert: neuesten Fall öffnen und zur Paywall scrollen.
+  - Wenn kein Fall existiert: neuen Wizard starten.
+- Paywall-Scroll läuft über `scroll=paywall` und `PENDING_PAYWALL_SCROLL_KEY`.
 
-## Technology Stack
+## Backend Und API
 
-### Backend
-- **Runtime**: Node.js
-- **Framework**: Express.js
-- **Language**: TypeScript
-- **Database**: PostgreSQL + Drizzle ORM
-- **AI**: Google Gemini API
-- **Payments**: Stripe
-- **Logging**: Pino
-- **Security**: Helmet.js, bcrypt, timing-safe-equal
+Wichtige Bereiche:
 
-### Frontend
-- **Framework**: React 19
-- **Bundler**: Vite
-- **Styling**: Tailwind CSS
-- **UI Components**: Radix UI
-- **Forms**: React Hook Form
-- **Validation**: Zod
-- **Query**: TanStack React Query
+- App Setup: `artifacts/api-server/src/app.ts`
+- Server Entry: `artifacts/api-server/src/index.ts`
+- Case Routes: `artifacts/api-server/src/routes/cases.ts`
+- Stripe Routes: `artifacts/api-server/src/routes/stripe.ts`
+- Admin Routes: `artifacts/api-server/src/routes/admin.ts`
+- Auth Helpers: `artifacts/api-server/src/lib/auth.ts`
+- Cache: `artifacts/api-server/src/lib/lru-cache.ts`
 
-### DevOps
-- **Package Manager**: pnpm
-- **TypeScript**: 5.9+
-- **Linting**: ESLint
-- **Formatting**: Prettier
-- **CI/CD**: GitHub Actions
-- **Deployment**: Render
-- **Monitoring**: Pino logs
+Typische öffentliche Endpunkte:
+
+- `POST /api/cases`
+- `GET /api/cases/:id`
+- `GET /api/healthz`
+
+Admin-Endpunkte sind geschützt und nutzen Bearer-Token-Sessions.
+
+## Sicherheit
+
+- Keine echten Secrets in Git, Markdown, Logs oder Kommentaren.
+- Render/Hosting-Secrets nur als Environment-Variablen setzen.
+- Wenn eine echte DB-URL oder ein API-Key versehentlich committed wurde: Credential sofort rotieren.
+- `DATABASE_URL` muss SSL nutzen, z. B. mit `sslmode=require`.
+- `ADMIN_PASSWORD` mindestens 16 Zeichen.
+- `STRIPE_SECRET_KEY`, `GEMINI_API_KEY`, `TURNSTILE_SECRET_KEY` wie Passwörter behandeln.
+- User input immer validieren.
+- Keine PII ungefiltert loggen.
+- Security-Meldungen: `security@chargebackpilot.de`.
 
 ## Deployment
 
-### Production (Render)
+Render Production:
 
 ```bash
-# Render auto-deploys on main branch push
-# Build command: pnpm run build:render
-# Start command: pnpm run start
-
-# Set environment variables in Render dashboard:
-DATABASE_URL           # PostgreSQL connection
-ADMIN_PASSWORD        # Admin panel password (16+ chars)
-GEMINI_API_KEY        # Google Gemini API key
-STRIPE_SECRET_KEY     # Stripe secret key
-TURNSTILE_SECRET_KEY  # Cloudflare Turnstile secret
+pnpm run build:render
+pnpm start
 ```
 
-### Health Check
+Render-Konfiguration:
 
-```bash
-curl https://chargebackpilot.de/api/healthz
-# {"ok": true}
+- Branch: `main`
+- Build Command: `pnpm run build:render`
+- Start Command: `pnpm run start`
+- Health Check: `/api/healthz`
+- Empfohlene Region: Frankfurt
+
+Wichtige Environment-Variablen:
+
+```text
+DATABASE_URL
+NODE_ENV=production
+BASE_PATH=/
+ADMIN_PASSWORD
+GEMINI_API_KEY
+STRIPE_SECRET_KEY
+STRIPE_WEBHOOK_SECRET
+TURNSTILE_SECRET_KEY
 ```
 
-## API Endpoints
+Cloudflare kann DNS, SSL und statisches Asset-Caching übernehmen. `/api` muss dynamisch beim Backend bleiben.
 
-### Public
+## SEO Und Content
 
-- `POST /api/cases` - Submit case for analysis (rate limited: 10/hour)
-- `GET /api/cases/:id` - Retrieve case result
-- `GET /api/healthz` - Health check
+- Homepage soll Vertrauen aufbauen und klar erklären, nicht keyword-stuffen.
+- Relevante Themen: Chargeback, PayPal Käuferschutz, Klarna Reklamation, Visa/Mastercard/Amex, Reason Codes, Fake-Shops, nicht gelieferte Ware, Flug/Hotel/Lieferdienst, Abo-Falle.
+- FAQ darf Long-tail-Fragen abdecken, muss aber rechtlich vorsichtig bleiben.
+- Keine Aussagen wie "du bekommst dein Geld zurück". Besser: "kann helfen", "kann eine Option sein", "entscheidet der Zahlungsdienstleister im Einzelfall".
 
-### Admin (Protected)
+## Git Und Arbeitsweise
 
-- `POST /api/admin/login` - Get session token
-- `POST /api/admin/logout` - Destroy session
-- `GET /api/admin/stats` - Analytics dashboard
+- Es kann einen dirty worktree geben. Fremde Änderungen nicht zurücksetzen.
+- Vor Commits prüfen, welche Dateien gestaged werden.
+- Husky/lint-staged formatiert staged TS/TSX/JS-Dateien automatisch.
+- Keine destruktiven Git-Kommandos ohne ausdrückliche Bitte.
 
-See [ARCHITECTURE.md](ARCHITECTURE.md) for full endpoint documentation.
+## Dokumentationspolitik
 
-## Security
+Diese Datei ersetzt die früheren Root-Dokumente:
 
-### Key Features
+- `ARCHITECTURE.md`
+- `CONTRIBUTING.md`
+- `SECURITY.md`
+- `RENDER_DEPLOYMENT.md`
+- `CHANGES.md`
+- `replit.md`
 
-✅ Environment variables validated with Zod  
-✅ Session-based admin authentication (Bearer tokens)  
-✅ Security headers (HSTS, CSP, X-Frame-Options)  
-✅ Rate limiting (100 req/hour global, 5/15min login)  
-✅ Request body size limits (1MB)  
-✅ LRU cache with TTL (prevents memory leaks)  
-✅ CORS whitelist (production domains only)  
-✅ Input validation (Zod schemas)  
-✅ Structured logging (no PII)  
-✅ Timing-safe password comparison  
-
-### Reporting Vulnerabilities
-
-Found a security issue? Email **security@chargebackpilot.de** (not GitHub issues)
-
-See [SECURITY.md](SECURITY.md) for full details.
-
-## Code Quality
-
-### Standards
-
-- TypeScript strict mode enabled
-- ESLint + Prettier enforced
-- Pre-commit hooks (Husky)
-- No `any` types allowed
-- Explicit error codes for all API responses
-- Comprehensive logging
-
-### Checks
-
-```bash
-pnpm run lint        # ESLint
-pnpm run format      # Prettier
-pnpm run typecheck   # TypeScript
-pnpm run build       # Full build test
-```
-
-### CI/CD
-
-GitHub Actions runs on every push:
-- ✅ Linting
-- ✅ Type checking
-- ✅ Build verification
-- ✅ Auto-deploy to Render (main branch only)
-
-## Performance
-
-### Optimization Strategies
-
-- **Frontend**: Vite code splitting, lazy route loading
-- **Backend**: LRU cache for AI results, connection pooling
-- **Database**: Indexed queries, prepared statements
-- **API**: Request body size limits, rate limiting
-
-### Metrics
-
-- Frontend bundle: ~180KB gzipped (initial)
-- API response time: <200ms (p95)
-- Cache hit rate: ~20-30% (Gemini queries)
-- Deployment: ~2 minutes (Render)
-
-## Monitoring
-
-### Current Setup
-
-- **Logs**: Structured JSON to stdout (Pino)
-- **Health**: `/api/healthz` endpoint
-- **Stats**: `/api/admin/stats` dashboard
-
-### Recommended Tools
-
-- APM: [Sentry](https://sentry.io), [Datadog](https://www.datadoghq.com)
-- Monitoring: [UptimeRobot](https://uptimerobot.com)
-- Analytics: [Plausible](https://plausible.io)
-
-## Contributing
-
-Contributions welcome! See [CONTRIBUTING.md](CONTRIBUTING.md) for:
-- Development setup
-- Git workflow
-- Code standards
-- PR process
-
-## License
-
-MIT License - See LICENSE file
-
-## Support
-
-- 📖 **Documentation**: [ARCHITECTURE.md](ARCHITECTURE.md)
-- 🔐 **Security**: [SECURITY.md](SECURITY.md)
-- 🤝 **Contributing**: [CONTRIBUTING.md](CONTRIBUTING.md)
-- 🐛 **Issues**: [GitHub Issues](https://github.com/chargebackpilot/chargebackpilot-live/issues)
-
-## Roadmap
-
-### Q3 2026
-- [ ] User accounts & case history
-- [ ] PDF template customization
-- [ ] Multi-language support
-
-### Q4 2026
-- [ ] Webhooks & integrations
-- [ ] Developer API keys
-- [ ] Rate limit tiers (free/pro)
-
-See [ARCHITECTURE.md](ARCHITECTURE.md) for full roadmap.
-
-## Credits
-
-Built with ❤️ by the ChargebackPilot team using modern web technologies.
-
----
-
-**Latest Update**: 2026-06-10 | **Version**: 1.0.0 | **Status**: Production Ready
+Neue Projektregeln, Architekturentscheidungen und Betriebsnotizen gehören hier hinein. Lieber kurz, konkret und aktuell als viele lange Dateien.

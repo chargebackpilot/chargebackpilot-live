@@ -12,7 +12,72 @@ interface SeoHeadProps {
 const SITE_ORIGIN = "https://chargebackpilot.de";
 const useIsomorphicLayoutEffect = typeof window === "undefined" ? useEffect : useLayoutEffect;
 
-function upsertMeta(selector: string, attrName: "name" | "property", attrVal: string, content: string) {
+function buildBaseJsonLd(canonicalUrl: string): object[] {
+  const organizationId = `${SITE_ORIGIN}/#organization`;
+  const websiteId = `${SITE_ORIGIN}/#website`;
+  const webApplicationId = `${SITE_ORIGIN}/#webapplication`;
+
+  return [
+    {
+      "@context": "https://schema.org",
+      "@type": "Organization",
+      "@id": organizationId,
+      name: "ChargebackPilot",
+      url: SITE_ORIGIN,
+      logo: {
+        "@type": "ImageObject",
+        url: `${SITE_ORIGIN}/favicon.svg`,
+      },
+      areaServed: {
+        "@type": "Country",
+        name: "Deutschland",
+      },
+    },
+    {
+      "@context": "https://schema.org",
+      "@type": "WebSite",
+      "@id": websiteId,
+      name: "ChargebackPilot",
+      url: SITE_ORIGIN,
+      inLanguage: "de-DE",
+      publisher: {
+        "@id": organizationId,
+      },
+    },
+    {
+      "@context": "https://schema.org",
+      "@type": "WebApplication",
+      "@id": webApplicationId,
+      name: "ChargebackPilot",
+      url: `${SITE_ORIGIN}/`,
+      description:
+        "KI-gestützte Formulierungshilfe für Chargeback, PayPal-Käuferschutz, Klarna-Reklamationen und Kreditkarten-Reklamationen in Deutschland. Erstellt strukturierte Textvorlagen und druckfertige DIN-5008-Briefe.",
+      applicationCategory: "FinanceApplication",
+      operatingSystem: "Web",
+      browserRequirements: "Requires JavaScript. Requires HTML5.",
+      inLanguage: "de-DE",
+      isAccessibleForFree: true,
+      publisher: {
+        "@id": organizationId,
+      },
+      offers: {
+        "@type": "Offer",
+        price: "0.99",
+        priceCurrency: "EUR",
+        availability: "https://schema.org/InStock",
+        url: canonicalUrl,
+        category: "Einzelfall-Freischaltung digitaler Inhalte",
+      },
+    },
+  ];
+}
+
+function upsertMeta(
+  selector: string,
+  attrName: "name" | "property",
+  attrVal: string,
+  content: string
+) {
   let el = document.head.querySelector<HTMLMetaElement>(selector);
   if (!el) {
     el = document.createElement("meta");
@@ -37,13 +102,24 @@ function upsertLink(rel: string, href: string) {
  * and injects optional JSON-LD <script> tags. Cleans up its own JSON-LD on unmount.
  */
 export function SeoHead({ title, description, canonical, noindex = false, jsonLd }: SeoHeadProps) {
+  const ssrCanonicalUrl =
+    typeof window === "undefined"
+      ? canonical
+        ? canonical.startsWith("http")
+          ? canonical
+          : `${SITE_ORIGIN}${canonical}`
+        : SITE_ORIGIN
+      : "";
+
   useIsomorphicLayoutEffect(() => {
     if (document.title !== title) {
       document.title = title;
     }
 
     const canonicalUrl = canonical
-      ? (canonical.startsWith("http") ? canonical : `${SITE_ORIGIN}${canonical}`)
+      ? canonical.startsWith("http")
+        ? canonical
+        : `${SITE_ORIGIN}${canonical}`
       : `${SITE_ORIGIN}${window.location.pathname}`;
 
     // Standard Meta
@@ -54,23 +130,23 @@ export function SeoHead({ title, description, canonical, noindex = false, jsonLd
       "robots",
       noindex
         ? "noindex, nofollow"
-        : "index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1",
+        : "index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1"
     );
     upsertMeta(
       'meta[name="googlebot"]',
       "name",
       "googlebot",
-      noindex ? "noindex, nofollow" : "index, follow, max-image-preview:large, max-snippet:-1",
+      noindex ? "noindex, nofollow" : "index, follow, max-image-preview:large, max-snippet:-1"
     );
-    
+
     // Open Graph (Facebook, LinkedIn, WhatsApp)
     upsertMeta('meta[property="og:title"]', "property", "og:title", title);
     upsertMeta('meta[property="og:description"]', "property", "og:description", description);
     upsertMeta('meta[property="og:url"]', "property", "og:url", canonicalUrl);
     upsertMeta('meta[property="og:type"]', "property", "og:type", "website");
-    
+
     // Fallback Image handling
-    // If a route wants a specific image, we could pass it via props. 
+    // If a route wants a specific image, we could pass it via props.
     // Here we ensure the base image is fully qualified for social crawlers.
     const ogImage = `${SITE_ORIGIN}/opengraph.jpg`;
     upsertMeta('meta[property="og:image"]', "property", "og:image", ogImage);
@@ -86,10 +162,14 @@ export function SeoHead({ title, description, canonical, noindex = false, jsonLd
     // Canonical
     upsertLink("canonical", canonicalUrl);
 
-    // JSON-LD Injection
+    // JSON-LD Injection. Global schemas describe the product/site/organization;
+    // route-specific schemas must still describe visible page content only.
     const injected: HTMLScriptElement[] = [];
-    if (jsonLd?.length) {
-      for (const obj of jsonLd) {
+    const allJsonLd = noindex
+      ? (jsonLd ?? [])
+      : [...buildBaseJsonLd(canonicalUrl), ...(jsonLd ?? [])];
+    if (allJsonLd.length) {
+      for (const obj of allJsonLd) {
         const s = document.createElement("script");
         s.type = "application/ld+json";
         s.dataset.cbpDynamic = "1";
@@ -104,10 +184,17 @@ export function SeoHead({ title, description, canonical, noindex = false, jsonLd
     };
   }, [title, description, canonical, noindex, jsonLd]);
 
-  if (typeof window === "undefined" && jsonLd?.length) {
+  const ssrJsonLd =
+    typeof window === "undefined"
+      ? noindex
+        ? (jsonLd ?? [])
+        : [...buildBaseJsonLd(ssrCanonicalUrl), ...(jsonLd ?? [])]
+      : [];
+
+  if (ssrJsonLd.length) {
     return (
       <>
-        {jsonLd.map((obj, index) => (
+        {ssrJsonLd.map((obj, index) => (
           <script
             key={index}
             type="application/ld+json"
