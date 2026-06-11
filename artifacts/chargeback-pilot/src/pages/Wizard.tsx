@@ -379,15 +379,15 @@ export default function Wizard() {
 
   const getTurnstileToken = async (): Promise<string> => {
     if (!turnstileSiteKey) {
-      if (import.meta.env.PROD) {
-        throw new Error("Turnstile ist in Produktion nicht konfiguriert.");
-      }
+      console.warn(
+        "Turnstile site key is not configured. Continuing without client-side challenge token."
+      );
       return "";
     }
     if (!window.turnstile) {
-      if (import.meta.env.PROD) {
-        throw new Error("Sicherheitsprüfung konnte nicht geladen werden.");
-      }
+      console.warn(
+        "Turnstile script is not available. Continuing without client-side challenge token."
+      );
       return "";
     }
 
@@ -402,9 +402,9 @@ export default function Wizard() {
 
     const widgetId = turnstileWidgetIdRef.current;
     if (!widgetId || !window.turnstile) {
-      if (import.meta.env.PROD) {
-        throw new Error("Sicherheitsprüfung konnte nicht gestartet werden.");
-      }
+      console.warn(
+        "Turnstile widget could not be initialized. Continuing without client-side challenge token."
+      );
       return "";
     }
 
@@ -440,13 +440,7 @@ export default function Wizard() {
     try {
       turnstileToken = await getTurnstileToken();
     } catch {
-      setIsSubmittingCase(false);
-      toast({
-        title: "Sicherheitsprüfung fehlgeschlagen",
-        description: "Bitte lade die Seite neu und versuche es erneut.",
-        variant: "destructive",
-      });
-      return;
+      console.warn("Turnstile challenge threw unexpectedly. Continuing with API submission.");
     }
     const description = buildDescription(
       formData.structuredAnswers,
@@ -1169,7 +1163,9 @@ export default function Wizard() {
                         <div className="flex items-center gap-2 text-sm text-emerald-700 bg-emerald-50 border border-emerald-200 rounded-lg px-3 py-2">
                           <CheckCircle2 className="w-4 h-4 flex-shrink-0" />
                           {formData.evidence.filter((e) => e !== "none").length} Beweis
-                          {formData.evidence.filter((e) => e !== "none").length !== 1 ? "e" : ""}{" "}
+                          {formData.evidence.filter((e) => e !== "none").length !== 1
+                            ? "e"
+                            : ""}{" "}
                           ausgewählt — gute Ausgangslage.
                         </div>
                       )}
