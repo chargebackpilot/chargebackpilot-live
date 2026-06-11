@@ -10,6 +10,10 @@ interface LogoProps {
  * implies protection. Designed to read at 16px (favicon) up to 96px+.
  */
 export function Logo({ className = "", size = 28 }: LogoProps) {
+  const gradientSuffix = `${size}`;
+  const shieldGradientId = `cbp-shield-${gradientSuffix}`;
+  const swooshGradientId = `cbp-swoosh-${gradientSuffix}`;
+
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
@@ -21,12 +25,26 @@ export function Logo({ className = "", size = 28 }: LogoProps) {
       aria-label="ChargebackPilot Logo"
     >
       <defs>
-        <linearGradient id="cbp-shield" x1="14" y1="6" x2="50" y2="58" gradientUnits="userSpaceOnUse">
+        <linearGradient
+          id={shieldGradientId}
+          x1="14"
+          y1="6"
+          x2="50"
+          y2="58"
+          gradientUnits="userSpaceOnUse"
+        >
           <stop offset="0%" stopColor="#1e3a8a" />
           <stop offset="55%" stopColor="#2563eb" />
           <stop offset="100%" stopColor="#3b82f6" />
         </linearGradient>
-        <linearGradient id="cbp-swoosh" x1="4" y1="32" x2="60" y2="32" gradientUnits="userSpaceOnUse">
+        <linearGradient
+          id={swooshGradientId}
+          x1="4"
+          y1="32"
+          x2="60"
+          y2="32"
+          gradientUnits="userSpaceOnUse"
+        >
           <stop offset="0%" stopColor="#60a5fa" />
           <stop offset="100%" stopColor="#1d4ed8" />
         </linearGradient>
@@ -35,7 +53,7 @@ export function Logo({ className = "", size = 28 }: LogoProps) {
       {/* Orbiting return-swoosh — left side fades, right side bold */}
       <path
         d="M 8 36 C 8 18, 24 8, 40 12"
-        stroke="url(#cbp-swoosh)"
+        stroke={`url(#${swooshGradientId})`}
         strokeWidth="3"
         strokeLinecap="round"
         opacity="0.55"
@@ -43,7 +61,7 @@ export function Logo({ className = "", size = 28 }: LogoProps) {
       />
       <path
         d="M 56 28 C 56 46, 40 56, 24 52"
-        stroke="url(#cbp-swoosh)"
+        stroke={`url(#${swooshGradientId})`}
         strokeWidth="3.2"
         strokeLinecap="round"
         fill="none"
@@ -52,7 +70,7 @@ export function Logo({ className = "", size = 28 }: LogoProps) {
       {/* Shield body */}
       <path
         d="M 32 7 L 50 13 L 50 32 C 50 44, 42 52, 32 56 C 22 52, 14 44, 14 32 L 14 13 Z"
-        fill="url(#cbp-shield)"
+        fill={`url(#${shieldGradientId})`}
       />
       {/* Inner shield highlight for depth */}
       <path
