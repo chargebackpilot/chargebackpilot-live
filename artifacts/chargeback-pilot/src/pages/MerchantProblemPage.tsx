@@ -97,16 +97,6 @@ export default function MerchantProblemPage() {
     })),
   };
 
-  const faqSchema = {
-    "@context": "https://schema.org",
-    "@type": "FAQPage",
-    mainEntity: copy.faq.map((f) => ({
-      "@type": "Question",
-      name: f.q,
-      acceptedAnswer: { "@type": "Answer", text: f.a },
-    })),
-  };
-
   const articleSchema = {
     "@context": "https://schema.org",
     "@type": "Article",
@@ -141,7 +131,7 @@ export default function MerchantProblemPage() {
         title={`${copy.title} | ChargebackPilot`}
         description={copy.metaDescription}
         canonical={canonicalPath}
-        jsonLd={[howToSchema, faqSchema, articleSchema]}
+        jsonLd={[howToSchema, articleSchema]}
       />
       <Breadcrumbs items={breadcrumbItems} />
 

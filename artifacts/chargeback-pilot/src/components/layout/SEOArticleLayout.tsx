@@ -65,15 +65,6 @@ export function SEOArticleLayout({
       text: s,
     })),
   };
-  const faqSchema = {
-    "@context": "https://schema.org",
-    "@type": "FAQPage",
-    mainEntity: faq.map((f) => ({
-      "@type": "Question",
-      name: f.q,
-      acceptedAnswer: { "@type": "Answer", text: f.a },
-    })),
-  };
   const articleSchema = {
     "@context": "https://schema.org",
     "@type": "Article",
@@ -106,7 +97,7 @@ export function SEOArticleLayout({
         title={`${title} | ChargebackPilot`}
         description={description}
         canonical={canonicalPath}
-        jsonLd={[howToSchema, faqSchema, articleSchema]}
+        jsonLd={[howToSchema, articleSchema]}
       />
       <Breadcrumbs items={[{ label: "Ratgeber", href: "/ratgeber" }, { label: category }]} />
       <article className="pb-20">
