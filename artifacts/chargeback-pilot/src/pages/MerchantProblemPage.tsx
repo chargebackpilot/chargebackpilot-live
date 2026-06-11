@@ -23,6 +23,7 @@ import {
 } from "lucide-react";
 import NotFound from "./not-found";
 import { getMerchant, getProblem, generateMerchantProblemCopy, MERCHANTS } from "@/data/merchants";
+import { isIndexableMerchantProblemPath } from "@/seo-routes";
 
 const SITE = "https://chargebackpilot.de";
 const DISPLAY_UPDATED_AT = "11. Juni 2026";
@@ -80,6 +81,7 @@ export default function MerchantProblemPage() {
 
   const canonicalPath = `/hilfe/${merchant.slug}/${problem.slug}`;
   const fullUrl = `${SITE}${canonicalPath}`;
+  const isIndexable = isIndexableMerchantProblemPath(canonicalPath);
 
   const howToSchema = {
     "@context": "https://schema.org",
@@ -124,6 +126,12 @@ export default function MerchantProblemPage() {
     .filter((p) => p !== problem.slug)
     .map((slug) => getProblem(slug))
     .filter((p): p is NonNullable<typeof p> => !!p);
+  const indexedSiblings = siblings.filter((p) =>
+    isIndexableMerchantProblemPath(`/hilfe/${merchant.slug}/${p.slug}`)
+  );
+  const candidateSiblings = siblings.filter(
+    (p) => !isIndexableMerchantProblemPath(`/hilfe/${merchant.slug}/${p.slug}`)
+  );
 
   return (
     <MainLayout>
@@ -131,6 +139,7 @@ export default function MerchantProblemPage() {
         title={`${copy.title} | ChargebackPilot`}
         description={copy.metaDescription}
         canonical={canonicalPath}
+        noindex={!isIndexable}
         jsonLd={[howToSchema, articleSchema]}
       />
       <Breadcrumbs items={breadcrumbItems} />
@@ -245,6 +254,20 @@ export default function MerchantProblemPage() {
             </div>
           </section>
 
+          <section className="rounded-2xl border bg-card p-6 md:p-8 shadow-sm">
+            <h2 className="text-2xl font-bold mb-5">
+              Was bei {merchant.name} besonders wichtig ist
+            </h2>
+            <ul className="space-y-3">
+              {copy.merchantFocus.map((item, i) => (
+                <li key={i} className="flex items-start gap-3">
+                  <CheckCircle2 className="w-5 h-5 text-primary shrink-0 mt-0.5" />
+                  <span className="text-sm leading-relaxed text-foreground/85">{item}</span>
+                </li>
+              ))}
+            </ul>
+          </section>
+
           {/* Steps */}
           <section>
             <h2 className="text-2xl font-bold mb-5 border-b pb-2">
@@ -285,6 +308,16 @@ export default function MerchantProblemPage() {
                 </div>
               ))}
             </div>
+          </section>
+
+          <section className="rounded-2xl border bg-emerald-50/50 p-6 md:p-8 border-emerald-100">
+            <h2 className="text-xl font-bold mb-3 flex items-center gap-2">
+              <ShieldCheck className="w-5 h-5 text-emerald-700" />
+              {copy.paymentNextStep.title}
+            </h2>
+            <p className="text-sm leading-relaxed text-foreground/85">
+              {copy.paymentNextStep.text}
+            </p>
           </section>
 
           {/* Dispute / Reason-Code */}
@@ -385,15 +418,35 @@ export default function MerchantProblemPage() {
           </section>
 
           {/* Sibling problems */}
-          {siblings.length > 0 && (
+          {indexedSiblings.length > 0 && (
             <section>
               <h2 className="text-2xl font-bold mb-5">Weitere {merchant.name}-Themen</h2>
               <div className="grid sm:grid-cols-2 gap-3">
-                {siblings.map((p) => (
+                {indexedSiblings.map((p) => (
                   <Link key={p.slug} href={`/hilfe/${merchant.slug}/${p.slug}`}>
                     <Card className="hover:border-primary transition-colors cursor-pointer">
                       <CardContent className="p-4 flex items-center justify-between gap-3">
                         <span className="font-medium text-sm">
+                          {merchant.name}: {p.label}
+                        </span>
+                        <ArrowRight className="w-4 h-4 text-muted-foreground shrink-0" />
+                      </CardContent>
+                    </Card>
+                  </Link>
+                ))}
+              </div>
+            </section>
+          )}
+
+          {candidateSiblings.length > 0 && (
+            <section>
+              <h2 className="text-lg font-bold mb-3">Weitere vorbereitete Themen</h2>
+              <div className="grid sm:grid-cols-2 gap-2.5">
+                {candidateSiblings.map((p) => (
+                  <Link key={p.slug} href={`/hilfe/${merchant.slug}/${p.slug}`}>
+                    <Card className="border-dashed hover:border-primary transition-colors cursor-pointer shadow-none">
+                      <CardContent className="p-4 flex items-center justify-between gap-3">
+                        <span className="font-medium text-sm text-muted-foreground">
                           {merchant.name}: {p.label}
                         </span>
                         <ArrowRight className="w-4 h-4 text-muted-foreground shrink-0" />

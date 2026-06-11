@@ -401,6 +401,8 @@ export interface GeneratedCopy {
   intro: string[];
   whenApplies: string[];
   evidence: string[];
+  merchantFocus: string[];
+  paymentNextStep: { title: string; text: string };
   steps: string[];
   /** Deadlines & timing info, payment-method-aware. */
   deadlines: { label: string; value: string; note: string }[];
@@ -429,6 +431,8 @@ export function generateMerchantProblemCopy(
 
   const whenApplies = applicableScenarios(merchant, problem);
   const evidence = evidenceForProblem(problem);
+  const merchantFocus = merchantFocusForCombo(merchant, problem);
+  const paymentNextStep = paymentNextStepForCombo(problem, merchant);
   const steps = stepsForCombo(merchant, problem);
   const mistakes = commonMistakes(problem);
   const faq = faqForCombo(merchant, problem, sectorWord);
@@ -444,12 +448,98 @@ export function generateMerchantProblemCopy(
     intro,
     whenApplies,
     evidence,
+    merchantFocus,
+    paymentNextStep,
     steps,
     deadlines,
     legalBasis,
     disputeCategory,
     mistakes,
     faq,
+  };
+}
+
+function merchantFocusForCombo(m: MerchantDef, p: ProblemDef): string[] {
+  const sectorHints: Record<MerchantDef["sector"], string[]> = {
+    marketplace: [
+      "Prüfe, ob du direkt beim Händler oder bei einem Drittanbieter auf dem Marktplatz gekauft hast.",
+      "Sichere die Verkäuferangaben, Angebotsseite und jede Nachricht im Plattform-Postfach als Screenshot.",
+    ],
+    fashion: [
+      "Dokumentiere Paketstatus, Retourenbeleg und Artikelzustand getrennt, damit Lieferung und Rücksendung klar nachvollziehbar bleiben.",
+      "Bewahre E-Mails zur Bestellung, Versandbestätigung und möglichen Retoure zusammen mit Zeitstempeln auf.",
+    ],
+    airline: [
+      "Halte Buchungscode, Ticketnummer und offizielle Stornierungs- oder Umbuchungsnachricht getrennt bereit.",
+      "Notiere, ob dir Gutschein, Umbuchung oder Erstattung angeboten wurde und ob bereits Teilbeträge geflossen sind.",
+    ],
+    travel: [
+      "Sichere Buchungsbestätigung, Anbieterrolle und Kommunikation mit Portal und Leistungserbringer getrennt.",
+      "Dokumentiere Zusatzkosten, Stornierungsbedingungen und jede Antwort auf deine Erstattungsanfrage.",
+    ],
+    food_delivery: [
+      "Erstelle direkt nach Lieferung Fotos von Zustand, Temperaturproblem, falschen Artikeln oder fehlenden Positionen.",
+      "Sichere Bestellübersicht, Support-Chat und Erstattungsentscheidung in der App, bevor der Verlauf verschwindet.",
+    ],
+    subscription: [
+      "Lege Vertragsabschluss, Kündigung, Abbuchungsdatum und genutzte E-Mail-Adresse chronologisch nebeneinander.",
+      "Prüfe, ob es sich um ein vergessenes Abo, eine Verlängerung oder eine aus deiner Sicht unautorisierte Zahlung handelt.",
+    ],
+    electronics: [
+      "Dokumentiere Seriennummer, Fotos des Defekts und Originalbeschreibung, damit Abweichung oder Mangel erkennbar bleiben.",
+      "Sichere Reparatur-, Rücksende- oder Supportnummern, falls der Händler Nachbesserung angeboten hat.",
+    ],
+    logistics: [
+      "Unterscheide zwischen Versanddienstleister, Absender und Händler, weil dein Vertragspartner oft nicht der Paketdienst ist.",
+      "Sichere Sendungsnummer, Zustellnachweis, Ablageort-Foto und jede Nachforschung zum Paketstatus.",
+    ],
+    app_store: [
+      "Sichere Bestellnummer, App-Name, Google-/Apple-Konto und den Zeitpunkt der Abbuchung aus dem Store-Konto.",
+      "Prüfe zuerst die Erstattungsfunktion im App-Store, bevor du Bank oder Zahlungsdienstleister einschaltest.",
+    ],
+  };
+
+  const problemHints: Record<string, string> = {
+    "ware-nicht-erhalten": `Für ${m.name} ist besonders wichtig, dass Tracking-Status, Lieferadresse und Kontaktversuche zeitlich zusammenpassen.`,
+    "ware-defekt": `Bei ${m.name} sollte die Abweichung zwischen Produktbeschreibung und erhaltener Ware mit Fotos oder Screenshots belegbar sein.`,
+    "flug-storniert": `Bei ${m.name} sollten Stornierungsgrund, angebotene Alternative und gewünschte Erstattung sauber getrennt werden.`,
+    "hotel-anders-als-beschrieben": `Bei ${m.name} helfen Fotos direkt vor Ort und eine zeitnahe Mängelmeldung an Unterkunft oder Plattform.`,
+    "abbuchung-ohne-zustimmung": `Bei ${m.name} solltest du zuerst prüfen, ob ein Konto, Abo oder Probemonat die Abbuchung ausgelöst haben kann.`,
+    "lieferung-falsch": `Bei ${m.name} zählen schnelle Fotos, App-Supportverlauf und die genaue Abweichung von der Bestellung besonders stark.`,
+    betrugsverdacht: `Bei ${m.name} sollten Website-Screenshots, Verkäuferdaten und Zahlungsbeleg gesichert werden, ohne unbelegte Vorwürfe zu formulieren.`,
+  };
+
+  return [...(sectorHints[m.sector] ?? []), problemHints[p.slug] ?? ""].filter(Boolean);
+}
+
+function paymentNextStepForCombo(p: ProblemDef, m: MerchantDef): { title: string; text: string } {
+  if (p.paymentMethods.includes("paypal")) {
+    return {
+      title: "Wenn du mit PayPal gezahlt hast",
+      text: `Öffne den Fall im PayPal-Konfliktcenter, lade die wichtigsten Belege hoch und eskaliere erst nach einem dokumentierten Lösungsversuch mit ${m.name}. Prüfe die aktuellen PayPal-Fristen direkt im Konto.`,
+    };
+  }
+  if (p.paymentMethods.includes("kreditkarte")) {
+    return {
+      title: "Wenn du per Kreditkarte gezahlt hast",
+      text: `Bitte deine kartenausgebende Bank sachlich um Prüfung einer Umsatzreklamation. Nenne Betrag, Datum, ${m.name}, den Problemtyp und verweise auf die beigefügten Belege.`,
+    };
+  }
+  if (p.paymentMethods.includes("klarna")) {
+    return {
+      title: "Wenn du über Klarna gezahlt hast",
+      text: `Melde das Problem zeitnah im Klarna-Konto, prüfe eine mögliche Zahlungspause und halte die Kommunikation mit ${m.name} schriftlich fest.`,
+    };
+  }
+  if (p.paymentMethods.includes("lastschrift")) {
+    return {
+      title: "Wenn per Lastschrift abgebucht wurde",
+      text: `Prüfe mit deiner Bank, ob eine Lastschriftrückgabe oder eine Klärung wegen nicht autorisierter Zahlung in Betracht kommt. Dokumentiere parallel die Anfrage an ${m.name}.`,
+    };
+  }
+  return {
+    title: "Nächster Zahlungsschritt",
+    text: `Prüfe zuerst die Regeln deiner konkreten Zahlungsart und sichere die Kommunikation mit ${m.name}, bevor du den Fall eskalierst.`,
   };
 }
 

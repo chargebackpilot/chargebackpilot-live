@@ -49,6 +49,14 @@ const merchantSectionMatch = merchantSource.match(/export const MERCHANTS:[\s\S]
 const merchantSection = merchantSectionMatch?.[1] ?? "";
 const problemSectionMatch = merchantSource.match(/export const PROBLEMS:[\s\S]*?=\s*\[([\s\S]*?)\n\];/);
 const problemSection = problemSectionMatch?.[1] ?? "";
+const lastmodMatch = seoRoutesSource.match(/export const SEO_LASTMOD\s*=\s*"([^"]+)"/);
+const sitemapLastmod = lastmodMatch?.[1] ?? new Date().toISOString().slice(0, 10);
+const indexableMerchantProblemSectionMatch = seoRoutesSource.match(
+  /export const INDEXABLE_MERCHANT_PROBLEM_PATHS\s*=\s*\[([\s\S]*?)\]\s*as const;/,
+);
+const indexableMerchantProblemPaths = new Set(
+  [...(indexableMerchantProblemSectionMatch?.[1] ?? "").matchAll(/"([^"]+)"/g)].map((m) => m[1]),
+);
 const merchantBlocks = [...merchantSection.matchAll(/slug:\s*"([^"]+)"[\s\S]*?problems:\s*\[([^\]]*)\]/g)];
 const merchantRoutes = merchantBlocks.map(([, merchantSlug]) => `/hilfe/${merchantSlug}`);
 const merchantProblemRoutes = merchantBlocks.flatMap(([, merchantSlug, problemBlock]) => {
@@ -66,6 +74,7 @@ const staticRouteMeta = new Map(
         description: match[3],
         changefreq: match[4],
         priority: Number(match[5]),
+        noindex: false,
       },
     ],
   ),
@@ -106,6 +115,7 @@ function getRouteMeta(route) {
       description: `Probleme mit ${merchantName}? Strukturierte Orientierung zum Thema ${searchPhrase.toLowerCase()} mit Belegen, Fristenhinweisen und unverbindlichen Textentwürfen für Händler, Bank, PayPal oder Klarna.`,
       changefreq: "monthly",
       priority: 0.6,
+      noindex: !indexableMerchantProblemPaths.has(route),
     };
   }
 
@@ -119,6 +129,7 @@ function getRouteMeta(route) {
       description: `Probleme mit ${merchantName}? Hier findest du Schritt-für-Schritt-Anleitungen für häufige ${merchantName}-Probleme, Belege und mögliche nächste Schritte.`,
       changefreq: "monthly",
       priority: 0.7,
+      noindex: false,
     };
   }
 
@@ -127,30 +138,38 @@ function getRouteMeta(route) {
 
 const escapeAttr = (value) => value.replace(/&/g, "&amp;").replace(/"/g, "&quot;").replace(/</g, "&lt;");
 
-function injectMeta(html, route, title, description) {
+function injectMeta(html, route, meta) {
   const canonical = `https://chargebackpilot.de${route}`;
+  const robots = meta.noindex
+    ? "noindex, follow"
+    : "index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1";
+  const googlebot = meta.noindex
+    ? "noindex, follow"
+    : "index, follow, max-image-preview:large, max-snippet:-1";
   return html
-    .replace(/<title>.*?<\/title>/i, `<title>${escapeAttr(title)}</title>`)
-    .replace(/<meta name="description" content=".*?"\s*\/>/i, `<meta name="description" content="${escapeAttr(description)}" />`)
-    .replace(/<meta property="og:title" content=".*?"\s*\/>/i, `<meta property="og:title" content="${escapeAttr(title)}" />`)
-    .replace(/<meta property="og:description" content=".*?"\s*\/>/i, `<meta property="og:description" content="${escapeAttr(description)}" />`)
+    .replace(/<title>.*?<\/title>/i, `<title>${escapeAttr(meta.title)}</title>`)
+    .replace(/<meta name="description" content=".*?"\s*\/>/i, `<meta name="description" content="${escapeAttr(meta.description)}" />`)
+    .replace(/<meta name="robots" content=".*?"\s*\/>/i, `<meta name="robots" content="${robots}" />`)
+    .replace(/<meta name="googlebot" content=".*?"\s*\/>/i, `<meta name="googlebot" content="${googlebot}" />`)
+    .replace(/<meta property="og:title" content=".*?"\s*\/>/i, `<meta property="og:title" content="${escapeAttr(meta.title)}" />`)
+    .replace(/<meta property="og:description" content=".*?"\s*\/>/i, `<meta property="og:description" content="${escapeAttr(meta.description)}" />`)
     .replace(/<meta property="og:url" content=".*?"\s*\/>/i, `<meta property="og:url" content="${canonical}" />`)
-    .replace(/<meta name="twitter:title" content=".*?"\s*\/>/i, `<meta name="twitter:title" content="${escapeAttr(title)}" />`)
-    .replace(/<meta name="twitter:description" content=".*?"\s*\/>/i, `<meta name="twitter:description" content="${escapeAttr(description)}" />`)
+    .replace(/<meta name="twitter:title" content=".*?"\s*\/>/i, `<meta name="twitter:title" content="${escapeAttr(meta.title)}" />`)
+    .replace(/<meta name="twitter:description" content=".*?"\s*\/>/i, `<meta name="twitter:description" content="${escapeAttr(meta.description)}" />`)
     .replace(/<link rel="canonical" href=".*?"\s*\/>/i, `<link rel="canonical" href="${canonical}" />`);
 }
 
 function toSitemapEntry(route) {
   const meta = getRouteMeta(route);
-  if (!meta) return null;
-  return `  <url><loc>https://chargebackpilot.de${route}</loc><changefreq>${meta.changefreq}</changefreq><priority>${meta.priority.toFixed(1)}</priority></url>`;
+  if (!meta || meta.noindex) return null;
+  return `  <url><loc>https://chargebackpilot.de${route}</loc><lastmod>${sitemapLastmod}</lastmod><changefreq>${meta.changefreq}</changefreq><priority>${meta.priority.toFixed(1)}</priority></url>`;
 }
 
 for (const route of routes) {
   const meta = getRouteMeta(route);
   if (!meta) continue;
   const appHtml = await render(route);
-  const html = injectMeta(template.replace('<div id="root"></div>', `<div id="root">${appHtml}</div>`), route, meta.title, meta.description);
+  const html = injectMeta(template.replace('<div id="root"></div>', `<div id="root">${appHtml}</div>`), route, meta);
   const file = route === "/" ? path.join(dist, "index.html") : path.join(dist, route.slice(1), "index.html");
   await fs.mkdir(path.dirname(file), { recursive: true });
   await fs.writeFile(file, html);

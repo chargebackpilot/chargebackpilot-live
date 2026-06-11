@@ -17,6 +17,39 @@ export interface SeoRouteMeta {
 }
 
 export const SITE_ORIGIN = "https://chargebackpilot.de";
+export const SEO_LASTMOD = "2026-06-11";
+
+export const INDEXABLE_MERCHANT_PROBLEM_PATHS = [
+  "/hilfe/amazon/ware-nicht-erhalten",
+  "/hilfe/temu/ware-nicht-erhalten",
+  "/hilfe/zalando/ware-nicht-erhalten",
+  "/hilfe/otto/ware-nicht-erhalten",
+  "/hilfe/ebay/ware-nicht-erhalten",
+  "/hilfe/vinted/ware-nicht-erhalten",
+  "/hilfe/lieferando/lieferung-falsch",
+  "/hilfe/wolt/lieferung-falsch",
+  "/hilfe/uber-eats/lieferung-falsch",
+  "/hilfe/kiwi/flug-storniert",
+  "/hilfe/ryanair/flug-storniert",
+  "/hilfe/google-play/abbuchung-ohne-zustimmung",
+] as const;
+
+const INDEXABLE_MERCHANT_PROBLEM_SET = new Set<string>(INDEXABLE_MERCHANT_PROBLEM_PATHS);
+
+export function isIndexableMerchantProblemPath(pathname: string) {
+  return INDEXABLE_MERCHANT_PROBLEM_SET.has(normalizeRoutePath(pathname));
+}
+
+export function isMerchantProblemPath(pathname: string) {
+  return /^\/hilfe\/[^/]+\/[^/]+$/.test(normalizeRoutePath(pathname));
+}
+
+export function isIndexableRoutePath(pathname: string) {
+  const normalized = normalizeRoutePath(pathname);
+  if (isMerchantProblemPath(normalized)) return isIndexableMerchantProblemPath(normalized);
+  const meta = findSeoRoute(normalized);
+  return !meta?.noindex;
+}
 
 export const SEO_ROUTES: SeoRouteMeta[] = [
   {
@@ -359,6 +392,7 @@ export function getRouteMeta(pathname: string): SeoRouteMeta | null {
       priority: 0.6,
       type: "guide",
       section: merchant.sector,
+      noindex: !isIndexableMerchantProblemPath(normalized),
     };
   }
 

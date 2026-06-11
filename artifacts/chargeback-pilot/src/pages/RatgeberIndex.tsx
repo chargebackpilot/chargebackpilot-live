@@ -4,7 +4,8 @@ import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/com
 import { ArrowRight, BookOpen, AlertTriangle, GitCompare, Store } from "lucide-react";
 import { Breadcrumbs } from "@/components/Breadcrumbs";
 import { SeoHead } from "@/components/SeoHead";
-import { MERCHANTS } from "@/data/merchants";
+import { getMerchant, getProblem, MERCHANTS } from "@/data/merchants";
+import { INDEXABLE_MERCHANT_PROBLEM_PATHS } from "@/seo-routes";
 
 export const GUIDES = [
   {
@@ -122,6 +123,20 @@ const HIGHLIGHTS = [
 ];
 
 export default function RatgeberIndex() {
+  const priorityMerchantProblems = INDEXABLE_MERCHANT_PROBLEM_PATHS.flatMap((path) => {
+    const [, , merchantSlug, problemSlug] = path.split("/");
+    const merchant = getMerchant(merchantSlug);
+    const problem = getProblem(problemSlug);
+    if (!merchant || !problem) return [];
+    return [
+      {
+        path,
+        title: `${merchant.name}: ${problem.label}`,
+        desc: `${problem.searchPhrase} bei ${merchant.name} strukturiert vorbereiten.`,
+      },
+    ];
+  });
+
   return (
     <MainLayout>
       <SeoHead
@@ -195,6 +210,27 @@ export default function RatgeberIndex() {
                     </CardTitle>
                     <CardDescription className="mt-2 text-sm leading-relaxed">
                       {guide.desc}
+                    </CardDescription>
+                  </CardHeader>
+                </Card>
+              </Link>
+            ))}
+          </div>
+        </section>
+
+        <section className="mb-16">
+          <h2 className="text-2xl font-bold mb-5">Priorisierte Anbieter-Probleme</h2>
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {priorityMerchantProblems.map((item) => (
+              <Link key={item.path} href={item.path}>
+                <Card className="h-full hover:border-primary transition-colors cursor-pointer group">
+                  <CardHeader>
+                    <CardTitle className="flex items-start justify-between gap-4 text-lg">
+                      <span>{item.title}</span>
+                      <ArrowRight className="w-5 h-5 text-muted-foreground group-hover:text-primary transition-colors shrink-0" />
+                    </CardTitle>
+                    <CardDescription className="mt-2 text-sm leading-relaxed">
+                      {item.desc}
                     </CardDescription>
                   </CardHeader>
                 </Card>

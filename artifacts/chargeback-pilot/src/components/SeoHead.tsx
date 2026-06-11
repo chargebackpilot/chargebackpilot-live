@@ -129,14 +129,14 @@ export function SeoHead({ title, description, canonical, noindex = false, jsonLd
       "name",
       "robots",
       noindex
-        ? "noindex, nofollow"
+        ? "noindex, follow"
         : "index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1"
     );
     upsertMeta(
       'meta[name="googlebot"]',
       "name",
       "googlebot",
-      noindex ? "noindex, nofollow" : "index, follow, max-image-preview:large, max-snippet:-1"
+      noindex ? "noindex, follow" : "index, follow, max-image-preview:large, max-snippet:-1"
     );
 
     // Open Graph (Facebook, LinkedIn, WhatsApp)
