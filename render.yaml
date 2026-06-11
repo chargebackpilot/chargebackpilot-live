@@ -27,8 +27,8 @@ services:
       - key: TURNSTILE_SECRET_KEY
         sync: false
       - key: VITE_TURNSTILE_SITE_KEY
-        sync: false
+        value: 0x4AAAAAADYBEjhoZ0EEJ7WK
       - key: REQUIRE_TURNSTILE_ON_CASE_CREATE
-        value: 0
+        value: 1
       - key: PORT
         value: 10000
