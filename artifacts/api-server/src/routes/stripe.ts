@@ -1,8 +1,7 @@
-import { Router } from "express";
+import express, { Router } from "express";
 import Stripe from "stripe";
-import { db, casesTable, consentsTable } from "@workspace/db";
+import { db, casesTable } from "@workspace/db";
 import { and, eq } from "drizzle-orm";
-import express from "express";
 import { createHash } from "crypto";
 
 const router = Router();
@@ -15,7 +14,7 @@ function hashValue(input?: string): string | null {
 function getStripe(): Stripe {
   const key = process.env.STRIPE_SECRET_KEY;
   if (!key) throw new Error("STRIPE_SECRET_KEY not set");
-  return new Stripe(key, { apiVersion: "2026-04-22.dahlia" });
+  return new Stripe(key, { apiVersion: "2026-05-27.dahlia" });
 }
 
 function getBaseUrl(): string {
@@ -46,14 +45,17 @@ router.post("/checkout", async (req, res) => {
   };
 
   if (!process.env.STRIPE_SECRET_KEY) {
-    res.status(503).json({ error: "Zahlung noch nicht konfiguriert. Bitte STRIPE_SECRET_KEY setzen." });
+    res
+      .status(503)
+      .json({ error: "Zahlung noch nicht konfiguriert. Bitte STRIPE_SECRET_KEY setzen." });
     return;
   }
 
   try {
     const stripe = getStripe();
     const baseUrl = getBaseUrl();
-    const ipRaw = (req.headers["x-forwarded-for"] as string | undefined)?.split(",")[0]?.trim() || req.ip;
+    const ipRaw =
+      (req.headers["x-forwarded-for"] as string | undefined)?.split(",")[0]?.trim() || req.ip;
     const uaRaw = req.headers["user-agent"];
     const ipHash = hashValue(ipRaw ?? undefined);
     const userAgentHash = hashValue(typeof uaRaw === "string" ? uaRaw : undefined);
@@ -67,7 +69,8 @@ router.post("/checkout", async (req, res) => {
             currency: "eur",
             product_data: {
               name: "ChargebackPilot — Fall freischalten",
-              description: "Digitale Formulierungshilfe: Textentwürfe, PDF-Download und strukturierte Orientierung. Keine Rechtsberatung.",
+              description:
+                "Digitale Formulierungshilfe: Textentwürfe, PDF-Download und strukturierte Orientierung. Keine Rechtsberatung.",
             },
             unit_amount: 99,
           },
@@ -86,10 +89,13 @@ router.post("/checkout", async (req, res) => {
         datenschutzVersion: "2026-06",
       },
       custom_text: {
-        submit: { message: "Einmalige Zahlung · Kein Abo · digitale Inhalte nach bestätigter Zahlung" },
+        submit: {
+          message: "Einmalige Zahlung · Kein Abo · digitale Inhalte nach bestätigter Zahlung",
+        },
         terms_of_service_acceptance: {
-          message: "Mit dem Kauf akzeptierst du unsere [AGB](https://chargebackpilot.de/agb). Du verlangst ausdrücklich, dass ChargebackPilot vor Ablauf der Widerrufsfrist mit der Ausführung des Vertrags beginnt. Du bestätigst, die [Widerrufshinweise](https://chargebackpilot.de/widerruf) für digitale Inhalte gelesen zu haben, und weißt, dass dein Widerrufsrecht bei vollständiger Vertragserfüllung vorzeitig erlöschen kann.",
-        }
+          message:
+            "Mit dem Kauf akzeptierst du unsere [AGB](https://chargebackpilot.de/agb). Du verlangst ausdrücklich, dass ChargebackPilot vor Ablauf der Widerrufsfrist mit der Ausführung des Vertrags beginnt. Du bestätigst, die [Widerrufshinweise](https://chargebackpilot.de/widerruf) für digitale Inhalte gelesen zu haben, und weißt, dass dein Widerrufsrecht bei vollständiger Vertragserfüllung vorzeitig erlöschen kann.",
+        },
       },
       consent_collection: {
         terms_of_service: "required",
@@ -137,7 +143,8 @@ router.post("/flatrate-checkout", async (req, res) => {
             currency: "eur",
             product_data: {
               name: "ChargebackPilot Flatrate — 12 Monate",
-              description: "Digitale Formulierungshilfe für 12 Monate. Einmalzahlung, kein Abo, keine Rechtsberatung.",
+              description:
+                "Digitale Formulierungshilfe für 12 Monate. Einmalzahlung, kein Abo, keine Rechtsberatung.",
             },
             unit_amount: 999,
           },
@@ -157,7 +164,8 @@ router.post("/flatrate-checkout", async (req, res) => {
       custom_text: {
         submit: { message: "Einmalig 9,99 € · 12 Monate unbegrenzte Freischaltung · Kein Abo" },
         terms_of_service_acceptance: {
-          message: "Mit dem Kauf akzeptierst du unsere [AGB](https://chargebackpilot.de/agb). Du verlangst ausdrücklich, dass ChargebackPilot vor Ablauf der Widerrufsfrist mit der Ausführung des Vertrags beginnt. Du bestätigst, die [Widerrufshinweise](https://chargebackpilot.de/widerruf) für digitale Inhalte gelesen zu haben, und weißt, dass dein Widerrufsrecht bei vollständiger Vertragserfüllung vorzeitig erlöschen kann.",
+          message:
+            "Mit dem Kauf akzeptierst du unsere [AGB](https://chargebackpilot.de/agb). Du verlangst ausdrücklich, dass ChargebackPilot vor Ablauf der Widerrufsfrist mit der Ausführung des Vertrags beginnt. Du bestätigst, die [Widerrufshinweise](https://chargebackpilot.de/widerruf) für digitale Inhalte gelesen zu haben, und weißt, dass dein Widerrufsrecht bei vollständiger Vertragserfüllung vorzeitig erlöschen kann.",
         },
       },
       consent_collection: {
@@ -215,56 +223,52 @@ router.get("/checkout/verify/:sessionId", async (req, res) => {
 // ---------------------------------------------------------------------------
 // Stripe Webhook (Async fulfillment & security)
 // ---------------------------------------------------------------------------
-router.post(
-  "/webhook",
-  express.raw({ type: "application/json" }),
-  async (req, res) => {
-    const sig = req.headers["stripe-signature"];
-    const endpointSecret = process.env.STRIPE_WEBHOOK_SECRET;
+router.post("/webhook", express.raw({ type: "application/json" }), async (req, res) => {
+  const sig = req.headers["stripe-signature"];
+  const endpointSecret = process.env.STRIPE_WEBHOOK_SECRET;
 
-    if (!sig || !endpointSecret || !process.env.STRIPE_SECRET_KEY) {
-      res.status(400).send(`Webhook Error: Missing signature or secret`);
-      return;
-    }
-
-    try {
-      const stripe = getStripe();
-      const event = stripe.webhooks.constructEvent(req.body, sig, endpointSecret);
-
-      if (event.type === "checkout.session.completed") {
-        const session = event.data.object as Stripe.Checkout.Session;
-        
-        if (session.payment_status === "paid") {
-          const mode = (session.metadata?.mode as "single" | "flatrate" | undefined) ?? "single";
-          const caseIdMeta = session.metadata?.caseId;
-          
-          if (mode === "single" && caseIdMeta) {
-            const caseIdNum = parseInt(caseIdMeta, 10);
-            const amountCents = typeof session.amount_total === "number" ? session.amount_total : 99;
-            
-            if (!isNaN(caseIdNum)) {
-              await db
-                .update(casesTable)
-                .set({
-                  paid: true,
-                  paidAt: new Date(),
-                  paidAmountCents: amountCents,
-                  stripeSessionId: session.id,
-                })
-                .where(eq(casesTable.id, caseIdNum));
-            }
-          }
-          // Note: for flatrate mode, we just let the frontend know via session_id matching,
-          // or we could store flatrate unlocks in a separate users table if auth is added later.
-        }
-      }
-
-      res.json({ received: true });
-    } catch (err) {
-      req.log.error({ err }, "Stripe webhook signature verification failed");
-      res.status(400).send(`Webhook Error: ${err instanceof Error ? err.message : "Unknown error"}`);
-    }
+  if (!sig || !endpointSecret || !process.env.STRIPE_SECRET_KEY) {
+    res.status(400).send(`Webhook Error: Missing signature or secret`);
+    return;
   }
-);
+
+  try {
+    const stripe = getStripe();
+    const event = stripe.webhooks.constructEvent(req.body, sig, endpointSecret);
+
+    if (event.type === "checkout.session.completed") {
+      const session = event.data.object as Stripe.Checkout.Session;
+
+      if (session.payment_status === "paid") {
+        const mode = (session.metadata?.mode as "single" | "flatrate" | undefined) ?? "single";
+        const caseIdMeta = session.metadata?.caseId;
+
+        if (mode === "single" && caseIdMeta) {
+          const caseIdNum = parseInt(caseIdMeta, 10);
+          const amountCents = typeof session.amount_total === "number" ? session.amount_total : 99;
+
+          if (!isNaN(caseIdNum)) {
+            await db
+              .update(casesTable)
+              .set({
+                paid: true,
+                paidAt: new Date(),
+                paidAmountCents: amountCents,
+                stripeSessionId: session.id,
+              })
+              .where(eq(casesTable.id, caseIdNum));
+          }
+        }
+        // Note: for flatrate mode, we just let the frontend know via session_id matching,
+        // or we could store flatrate unlocks in a separate users table if auth is added later.
+      }
+    }
+
+    res.json({ received: true });
+  } catch (err) {
+    req.log.error({ err }, "Stripe webhook signature verification failed");
+    res.status(400).send(`Webhook Error: ${err instanceof Error ? err.message : "Unknown error"}`);
+  }
+});
 
 export default router;
