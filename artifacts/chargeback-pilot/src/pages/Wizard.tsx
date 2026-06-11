@@ -123,6 +123,7 @@ declare global {
 export default function Wizard() {
   const amountInputRef = useRef<HTMLInputElement | null>(null);
   const disputedInputRef = useRef<HTMLInputElement | null>(null);
+  const paywallAnchorRef = useRef<HTMLDivElement | null>(null);
   const turnstileSiteKey = import.meta.env.VITE_TURNSTILE_SITE_KEY as string | undefined;
   const turnstileWidgetIdRef = useRef<string | null>(null);
   const turnstileContainerRef = useRef<HTMLDivElement | null>(null);
@@ -616,12 +617,13 @@ export default function Wizard() {
     step === 4;
 
   useEffect(() => {
+    if (scrollTarget === "paywall") return;
     const active = document.activeElement as HTMLElement | null;
     const isTextEntry = !!active && ["INPUT", "TEXTAREA", "SELECT"].includes(active.tagName);
     if (isTextEntry) return;
     const timer = setTimeout(() => window.scrollTo({ top: 0, behavior: "smooth" }), 50);
     return () => clearTimeout(timer);
-  }, [step]);
+  }, [step, scrollTarget]);
 
   useEffect(() => {
     const pendingCaseId = (() => {
@@ -638,9 +640,7 @@ export default function Wizard() {
     let attempts = 0;
     const scrollToPaywall = () => {
       attempts += 1;
-      const el = document.querySelector(
-        '[data-testid="paywall-anchor"], .rounded-2xl.border-2.border-primary\/30'
-      );
+      const el = paywallAnchorRef.current;
       if (el instanceof HTMLElement) {
         const y = el.getBoundingClientRect().top + window.scrollY - 24;
         window.scrollTo({ top: Math.max(0, y), behavior: "smooth" });
@@ -1428,7 +1428,7 @@ export default function Wizard() {
                                   lines={3}
                                 />
                               </div>
-                              <div data-testid="paywall-anchor">
+                              <div ref={paywallAnchorRef} data-testid="paywall-anchor">
                                 <PaywallModal
                                   onUnlock={handlePayment}
                                   isPaying={isPaying}

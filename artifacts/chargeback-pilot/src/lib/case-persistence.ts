@@ -188,7 +188,14 @@ export function openSavedCase(caseId: string): void {
 export function openCurrentCasePaywall(): void {
   const cases = listSavedCases();
   const current = loadCurrentCase();
-  const lastAnalyzed = cases.find((c) => !!c.result) ?? (current?.result ? current : null);
+  const candidates = [...cases, ...(current ? [current] : [])].filter((c, index, list) => {
+    if (!c.result) return false;
+    return list.findIndex((entry) => entry.caseId === c.caseId) === index;
+  });
+  const lastAnalyzed =
+    candidates.sort(
+      (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+    )[0] ?? null;
 
   if (!lastAnalyzed?.caseId) {
     openNewWizardCase();
@@ -201,7 +208,9 @@ export function openCurrentCasePaywall(): void {
   } catch {
     /* ignore */
   }
-  navigateTo(`/vorlagen-generator?caseId=${encodeURIComponent(lastAnalyzed.caseId)}&scroll=paywall`);
+  navigateTo(
+    `/vorlagen-generator?caseId=${encodeURIComponent(lastAnalyzed.caseId)}&scroll=paywall`
+  );
 }
 
 /** Lists all saved cases, newest first, filtered to the last 90 days. */
