@@ -4,30 +4,46 @@ import { Breadcrumbs } from "@/components/Breadcrumbs";
 import { SeoHead } from "@/components/SeoHead";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import {
-  ArrowRight, CheckCircle2, AlertTriangle, ShieldCheck, Clock, FileText, ExternalLink,
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
+import {
+  ArrowRight,
+  CheckCircle2,
+  AlertTriangle,
+  ShieldCheck,
+  Clock,
+  FileText,
+  ExternalLink,
+  CalendarCheck,
+  PenLine,
 } from "lucide-react";
 import NotFound from "./not-found";
-import {
-  getMerchant,
-  getProblem,
-  generateMerchantProblemCopy,
-  MERCHANTS,
-} from "@/data/merchants";
+import { getMerchant, getProblem, generateMerchantProblemCopy, MERCHANTS } from "@/data/merchants";
 
 const SITE = "https://chargebackpilot.de";
+const DISPLAY_UPDATED_AT = "11. Juni 2026";
+const SCHEMA_UPDATED_AT = "2026-06-11";
 
 const TRUST_LABEL: Record<string, { label: string; color: string }> = {
-  trusted: { label: "Etablierter Anbieter", color: "bg-emerald-100 text-emerald-800 border-emerald-300" },
+  trusted: {
+    label: "Etablierter Anbieter",
+    color: "bg-emerald-100 text-emerald-800 border-emerald-300",
+  },
   mixed: { label: "Gemischte Erfahrungen", color: "bg-amber-100 text-amber-800 border-amber-300" },
   risky: { label: "Häufige Beschwerden", color: "bg-orange-100 text-orange-800 border-orange-300" },
-  scam_reported: { label: "Betrugsverdacht gemeldet", color: "bg-red-100 text-red-800 border-red-300" },
+  scam_reported: {
+    label: "Betrugsverdacht gemeldet",
+    color: "bg-red-100 text-red-800 border-red-300",
+  },
 };
 
 export default function MerchantProblemPage() {
   const [, params] = useRoute<{ merchantSlug: string; problemSlug: string }>(
-    "/hilfe/:merchantSlug/:problemSlug",
+    "/hilfe/:merchantSlug/:problemSlug"
   );
   const merchant = params ? getMerchant(params.merchantSlug) : null;
   const problem = params ? getProblem(params.problemSlug) : null;
@@ -48,7 +64,7 @@ export default function MerchantProblemPage() {
     lastschrift: "bank_transfer",
     apple_pay: "apple_google_pay",
   };
-  const wizardPayment = preferredPayment ? wizardPaymentParam[preferredPayment] ?? "" : "";
+  const wizardPayment = preferredPayment ? (wizardPaymentParam[preferredPayment] ?? "") : "";
   const wizardParams = new URLSearchParams({
     problem: problem.wizardProblemId,
     merchant: merchant.name,
@@ -105,12 +121,12 @@ export default function MerchantProblemPage() {
     },
     mainEntityOfPage: fullUrl,
     datePublished: "2026-01-15",
-    dateModified: "2026-05-20",
+    dateModified: SCHEMA_UPDATED_AT,
   };
 
   // Related merchants in same sector
   const related = MERCHANTS.filter(
-    (m) => m.slug !== merchant.slug && m.sector === merchant.sector,
+    (m) => m.slug !== merchant.slug && m.sector === merchant.sector
   ).slice(0, 4);
 
   // Sibling problems for this merchant
@@ -134,7 +150,9 @@ export default function MerchantProblemPage() {
         <header className="bg-gradient-to-b from-blue-50 to-background py-12 px-4 border-b">
           <div className="container mx-auto max-w-3xl">
             <div className="flex items-center gap-2 mb-4 flex-wrap">
-              <span className={`text-[11px] font-semibold uppercase tracking-wide px-2 py-0.5 rounded border ${trust.color}`}>
+              <span
+                className={`text-[11px] font-semibold uppercase tracking-wide px-2 py-0.5 rounded border ${trust.color}`}
+              >
                 {trust.label}
               </span>
               <span className="text-[11px] font-medium uppercase tracking-wide px-2 py-0.5 rounded bg-muted text-muted-foreground">
@@ -145,8 +163,23 @@ export default function MerchantProblemPage() {
               {merchant.name}: {problem.label}
             </h1>
             <p className="text-lg md:text-xl text-muted-foreground mb-6 leading-relaxed">
-              {merchant.description} Hier liest du, wie du bei <strong>{problem.searchPhrase}</strong> strukturiert vorgehst — mit Fristen, Beweisen und fertigen Textvorlagen.
+              {merchant.description} Hier liest du, wie du bei{" "}
+              <strong>{problem.searchPhrase}</strong> strukturiert vorgehst — mit Fristen, Beweisen
+              und fertigen Textvorlagen.
             </p>
+            <div className="mb-6 flex flex-wrap items-center gap-2 text-sm text-muted-foreground">
+              <span className="inline-flex items-center gap-2 rounded-md border bg-background px-3 py-1.5">
+                <PenLine className="h-4 w-4 text-primary" />
+                ChargebackPilot Redaktion
+              </span>
+              <span className="inline-flex items-center gap-2 rounded-md border bg-background px-3 py-1.5">
+                <CalendarCheck className="h-4 w-4 text-primary" />
+                Aktualisiert: {DISPLAY_UPDATED_AT}
+              </span>
+              <span className="inline-flex items-center rounded-md border bg-background px-3 py-1.5">
+                Indikative Orientierung, keine Rechtsberatung
+              </span>
+            </div>
             <div className="flex flex-wrap gap-3">
               <Link href={wizardHref}>
                 <Button size="lg" className="gap-2">
@@ -211,7 +244,10 @@ export default function MerchantProblemPage() {
             </h2>
             <div className="grid sm:grid-cols-2 gap-3">
               {copy.evidence.map((item, i) => (
-                <div key={i} className="flex items-center gap-3 bg-background p-3 rounded-lg border">
+                <div
+                  key={i}
+                  className="flex items-center gap-3 bg-background p-3 rounded-lg border"
+                >
                   <div className="w-2 h-2 rounded-full bg-primary shrink-0" />
                   <span className="text-sm font-medium">{item}</span>
                 </div>
@@ -221,7 +257,9 @@ export default function MerchantProblemPage() {
 
           {/* Steps */}
           <section>
-            <h2 className="text-2xl font-bold mb-5 border-b pb-2">In 5 Schritten zum strukturierten Vorgehen</h2>
+            <h2 className="text-2xl font-bold mb-5 border-b pb-2">
+              In 5 Schritten zum strukturierten Vorgehen
+            </h2>
             <ol className="space-y-5">
               {copy.steps.map((step, i) => (
                 <li key={i} className="flex gap-4">
@@ -240,9 +278,9 @@ export default function MerchantProblemPage() {
               <Clock className="w-6 h-6 text-primary" /> Fristen im Überblick 2026
             </h2>
             <p className="text-sm text-muted-foreground mb-5">
-              Je nach Zahlungsart hast du unterschiedlich lange Zeit. Diese Tabelle zeigt, welche Frist
-              bei {merchant.name}-Fällen für dich relevant sein kann — prüfe möglichst früh, welche Frist
-              für deine Zahlungsart und deinen Fall tatsächlich gilt.
+              Je nach Zahlungsart hast du unterschiedlich lange Zeit. Diese Tabelle zeigt, welche
+              Frist bei {merchant.name}-Fällen für dich relevant sein kann — prüfe möglichst früh,
+              welche Frist für deine Zahlungsart und deinen Fall tatsächlich gilt.
             </p>
             <div className="space-y-3">
               {copy.deadlines.map((d, i) => (
@@ -273,12 +311,16 @@ export default function MerchantProblemPage() {
                 {copy.disputeCategory.code}
               </span>
             </div>
-            <p className="text-sm leading-relaxed text-foreground/85">{copy.disputeCategory.explainer}</p>
+            <p className="text-sm leading-relaxed text-foreground/85">
+              {copy.disputeCategory.explainer}
+            </p>
           </section>
 
           {/* Legal basis */}
           <section>
-            <h2 className="text-2xl font-bold mb-5 border-b pb-2">Rechtliche Grundlagen (kein Rechtsrat)</h2>
+            <h2 className="text-2xl font-bold mb-5 border-b pb-2">
+              Rechtliche Grundlagen (kein Rechtsrat)
+            </h2>
             <div className="space-y-5">
               {copy.legalBasis.map((lb, i) => (
                 <div key={i} className="border-l-4 border-primary/40 pl-4 py-1">
@@ -289,8 +331,8 @@ export default function MerchantProblemPage() {
             </div>
             <p className="text-xs text-muted-foreground mt-5 italic">
               Hinweis: Die genannten Paragraphen und Verordnungen sind allgemeine Information, keine
-              Rechtsberatung. Konkrete rechtliche Fragen besprich bitte mit der Verbraucherzentrale oder
-              einem Fachanwalt für Verbraucherrecht.
+              Rechtsberatung. Konkrete rechtliche Fragen besprich bitte mit der Verbraucherzentrale
+              oder einem Fachanwalt für Verbraucherrecht.
             </p>
           </section>
 
@@ -301,7 +343,10 @@ export default function MerchantProblemPage() {
             </h2>
             <ul className="space-y-3">
               {copy.mistakes.map((m, i) => (
-                <li key={i} className="bg-red-50 p-4 rounded-lg border border-red-100 text-red-900 text-sm">
+                <li
+                  key={i}
+                  className="bg-red-50 p-4 rounded-lg border border-red-100 text-red-900 text-sm"
+                >
                   {m}
                 </li>
               ))}
@@ -310,9 +355,11 @@ export default function MerchantProblemPage() {
 
           {/* Mid CTA */}
           <section className="bg-primary text-primary-foreground p-6 md:p-8 rounded-2xl text-center">
-              <h2 className="text-xl md:text-2xl font-bold mb-2">Lass die KI deinen {merchant.name}-Fall einordnen</h2>
+            <h2 className="text-xl md:text-2xl font-bold mb-2">
+              Lass die KI deinen {merchant.name}-Fall einordnen
+            </h2>
             <p className="text-primary-foreground/95 mb-5 text-sm md:text-base">
-                Kostenlose, indikative Einschätzung — Vorlagen für 0,99 € Endpreis freischalten.
+              Kostenlose, indikative Einschätzung — Vorlagen für 0,99 € Endpreis freischalten.
             </p>
             <Link href={wizardHref}>
               <Button size="lg" variant="secondary" className="gap-2">
@@ -322,6 +369,16 @@ export default function MerchantProblemPage() {
             </Link>
           </section>
 
+          <section className="rounded-lg border bg-background p-6 shadow-sm">
+            <h2 className="text-lg font-bold mb-3">Wie diese Orientierung entsteht</h2>
+            <p className="text-sm leading-relaxed text-muted-foreground">
+              Wir kombinieren Anbieterprofil, Problemtyp, Zahlungsart, typische Belegarten und
+              allgemeine Verfahrenshinweise zu einer strukturierten Einordnung. Entscheidungen
+              treffen {merchant.name}, Banken, PayPal, Klarna oder Kartennetzwerke im Einzelfall;
+              ChargebackPilot liefert dafür unverbindliche Formulierungs- und Sortierhilfe.
+            </p>
+          </section>
+
           {/* FAQ */}
           <section>
             <h2 className="text-2xl font-bold mb-5 border-b pb-2">Häufig gestellte Fragen</h2>
@@ -329,7 +386,9 @@ export default function MerchantProblemPage() {
               {copy.faq.map((f, i) => (
                 <AccordionItem key={i} value={`faq-${i}`}>
                   <AccordionTrigger className="text-left">{f.q}</AccordionTrigger>
-                  <AccordionContent className="text-muted-foreground leading-relaxed">{f.a}</AccordionContent>
+                  <AccordionContent className="text-muted-foreground leading-relaxed">
+                    {f.a}
+                  </AccordionContent>
                 </AccordionItem>
               ))}
             </Accordion>
@@ -344,7 +403,9 @@ export default function MerchantProblemPage() {
                   <Link key={p.slug} href={`/hilfe/${merchant.slug}/${p.slug}`}>
                     <Card className="hover:border-primary transition-colors cursor-pointer">
                       <CardContent className="p-4 flex items-center justify-between gap-3">
-                        <span className="font-medium text-sm">{merchant.name}: {p.label}</span>
+                        <span className="font-medium text-sm">
+                          {merchant.name}: {p.label}
+                        </span>
                         <ArrowRight className="w-4 h-4 text-muted-foreground shrink-0" />
                       </CardContent>
                     </Card>
@@ -376,10 +437,10 @@ export default function MerchantProblemPage() {
           {/* Disclaimer */}
           <section className="text-xs text-muted-foreground bg-muted/50 p-4 rounded-lg border border-border/50">
             <p>
-              <strong>Markenrechtlicher Hinweis:</strong> {merchant.name} ist ein eingetragenes Warenzeichen
-              des jeweiligen Eigentümers. ChargebackPilot steht in keiner Verbindung, Partnerschaft oder
-              Kooperation mit {merchant.name}. Die Nennung dient ausschließlich der Beschreibung des
-              Anwendungsbereichs unseres Text-Generators. Keine Rechtsberatung.
+              <strong>Markenrechtlicher Hinweis:</strong> {merchant.name} ist ein eingetragenes
+              Warenzeichen des jeweiligen Eigentümers. ChargebackPilot steht in keiner Verbindung,
+              Partnerschaft oder Kooperation mit {merchant.name}. Die Nennung dient ausschließlich
+              der Beschreibung des Anwendungsbereichs unseres Text-Generators. Keine Rechtsberatung.
             </p>
           </section>
         </div>

@@ -160,6 +160,86 @@ export const SEO_ROUTES: SeoRouteMeta[] = [
     section: "subscriptions",
   },
   {
+    path: "/chargeback-antrag-vorlage",
+    title: "Chargeback Antrag Vorlage für Bank & Kreditkarte | ChargebackPilot",
+    description:
+      "Chargeback Antrag Vorlage: sachlicher Mustertext für Bank, Visa, Mastercard und Amex mit Belegen, Fristenhinweisen und strukturierter Fallbeschreibung.",
+    changefreq: "monthly",
+    priority: 0.8,
+    type: "guide",
+    section: "templates",
+  },
+  {
+    path: "/paypal-kaeuferschutz-vorlage",
+    title: "PayPal Käuferschutz Vorlage: Fall richtig formulieren | ChargebackPilot",
+    description:
+      "PayPal Käuferschutz Vorlage für Ware nicht erhalten, abweichende Ware und Konflikt-Eskalation. Mit sachlicher Struktur und Beleg-Checkliste.",
+    changefreq: "monthly",
+    priority: 0.8,
+    type: "guide",
+    section: "templates",
+  },
+  {
+    path: "/klarna-reklamation-vorlage",
+    title: "Klarna Reklamation Vorlage: Problem melden | ChargebackPilot",
+    description:
+      "Klarna Reklamation Vorlage: Ware fehlt, Retoure nicht verbucht oder Rechnung klären. Sachlicher Textentwurf mit Belegen und nächsten Schritten.",
+    changefreq: "monthly",
+    priority: 0.8,
+    type: "guide",
+    section: "templates",
+  },
+  {
+    path: "/ware-nicht-erhalten-musterbrief",
+    title: "Ware nicht erhalten Musterbrief | ChargebackPilot",
+    description:
+      "Ware nicht erhalten? Musterbrief für Händler, PayPal, Klarna oder Bank mit Tracking, Zahlungsnachweis und strukturierter Fristsetzung.",
+    changefreq: "monthly",
+    priority: 0.8,
+    type: "guide",
+    section: "templates",
+  },
+  {
+    path: "/abo-falle-musterbrief",
+    title: "Abo-Falle Musterbrief: Abbuchung widersprechen | ChargebackPilot",
+    description:
+      "Abo-Falle Musterbrief für ungewollte Abbuchungen, Kündigungsnachweis und Rückbuchungsprüfung bei Bank, Kreditkarte oder PayPal.",
+    changefreq: "monthly",
+    priority: 0.8,
+    type: "guide",
+    section: "templates",
+  },
+  {
+    path: "/rueckerstattung-haendler-vorlage",
+    title: "Rückerstattung Händler Vorlage | ChargebackPilot",
+    description:
+      "Rückerstattung vom Händler sachlich fordern: Vorlage für Retoure, nicht erbrachte Leistung, Erstattungszusage und Zahlungsnachweis.",
+    changefreq: "monthly",
+    priority: 0.8,
+    type: "guide",
+    section: "templates",
+  },
+  {
+    path: "/visa-reason-code-13-1",
+    title: "Visa Reason Code 13.1: Ware nicht erhalten | ChargebackPilot",
+    description:
+      "Visa Reason Code 13.1 verständlich erklärt: Ware oder Leistung nicht erhalten, Belege ordnen und Chargeback-Anfrage bei der Bank vorbereiten.",
+    changefreq: "monthly",
+    priority: 0.7,
+    type: "guide",
+    section: "payments",
+  },
+  {
+    path: "/mastercard-chargeback-reason-code",
+    title: "Mastercard Chargeback Reason Codes | ChargebackPilot",
+    description:
+      "Mastercard Chargeback Reason Codes: typische Reklamationsgründe, Belege und sachliche Vorbereitung für die Bank.",
+    changefreq: "monthly",
+    priority: 0.7,
+    type: "guide",
+    section: "payments",
+  },
+  {
     path: "/scam-shops-2026",
     title: "Scam-Shops 2026 erkennen & Geld zurückholen | ChargebackPilot",
     description:

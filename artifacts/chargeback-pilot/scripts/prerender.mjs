@@ -27,6 +27,14 @@ const staticRoutes = [
   "/ware-nicht-erhalten",
   "/abo-falle-chargeback",
   "/scam-shops-2026",
+  "/chargeback-antrag-vorlage",
+  "/paypal-kaeuferschutz-vorlage",
+  "/klarna-reklamation-vorlage",
+  "/ware-nicht-erhalten-musterbrief",
+  "/abo-falle-musterbrief",
+  "/rueckerstattung-haendler-vorlage",
+  "/visa-reason-code-13-1",
+  "/mastercard-chargeback-reason-code",
   "/vergleich/paypal-vs-kreditkarte-vs-klarna",
   "/impressum",
   "/datenschutz",
@@ -39,6 +47,8 @@ const staticRoutes = [
 
 const merchantSectionMatch = merchantSource.match(/export const MERCHANTS:[\s\S]*?=\s*\[([\s\S]*?)\n\];/);
 const merchantSection = merchantSectionMatch?.[1] ?? "";
+const problemSectionMatch = merchantSource.match(/export const PROBLEMS:[\s\S]*?=\s*\[([\s\S]*?)\n\];/);
+const problemSection = problemSectionMatch?.[1] ?? "";
 const merchantBlocks = [...merchantSection.matchAll(/slug:\s*"([^"]+)"[\s\S]*?problems:\s*\[([^\]]*)\]/g)];
 const merchantRoutes = merchantBlocks.map(([, merchantSlug]) => `/hilfe/${merchantSlug}`);
 const merchantProblemRoutes = merchantBlocks.flatMap(([, merchantSlug, problemBlock]) => {
@@ -61,6 +71,23 @@ const staticRouteMeta = new Map(
   ),
 );
 
+const problemMeta = new Map(
+  [...problemSection.matchAll(/slug:\s*"([^"]+)"[\s\S]*?label:\s*"([^"]+)"[\s\S]*?searchPhrase:\s*"([^"]+)"/g)].map(
+    (match) => [
+      match[1],
+      {
+        label: match[2],
+        searchPhrase: match[3],
+      },
+    ],
+  ),
+);
+
+function getMerchantName(merchantSlug) {
+  const merchantNameMatch = merchantSection.match(new RegExp(`slug:\\s*"${merchantSlug}"[\\s\\S]*?name:\\s*"([^"]+)"`));
+  return merchantNameMatch?.[1] ?? null;
+}
+
 function getRouteMeta(route) {
   const staticMeta = staticRouteMeta.get(route);
   if (staticMeta) return staticMeta;
@@ -69,12 +96,14 @@ function getRouteMeta(route) {
   if (merchantProblemMatch) {
     const merchantSlug = merchantProblemMatch[1];
     const problemSlug = merchantProblemMatch[2];
-    const merchantNameMatch = merchantSection.match(new RegExp(`slug:\\s*"${merchantSlug}"[\\s\\S]*?name:\\s*"([^"]+)"`));
-    const merchantName = merchantNameMatch?.[1];
+    const merchantName = getMerchantName(merchantSlug);
+    const problem = problemMeta.get(problemSlug);
     if (!merchantName) return null;
+    const problemLabel = problem?.label ?? problemSlug.replace(/-/g, " ");
+    const searchPhrase = problem?.searchPhrase ?? problemLabel;
     return {
-      title: `${merchantName} ${problemSlug.replace(/-/g, " ")} — Reklamation strukturiert vorbereiten 2026 | ChargebackPilot`,
-      description: `Probleme mit ${merchantName}? Strukturierte Orientierung zu ${problemSlug.replace(/-/g, " ")} mit Belegen, Fristenhinweisen und unverbindlichen Textentwürfen.`,
+      title: `${merchantName}: ${problemLabel} - Reklamation & Käuferschutz vorbereiten 2026 | ChargebackPilot`,
+      description: `Probleme mit ${merchantName}? Strukturierte Orientierung zum Thema ${searchPhrase.toLowerCase()} mit Belegen, Fristenhinweisen und unverbindlichen Textentwürfen für Händler, Bank, PayPal oder Klarna.`,
       changefreq: "monthly",
       priority: 0.6,
     };
@@ -83,8 +112,7 @@ function getRouteMeta(route) {
   const merchantIndexMatch = route.match(/^\/hilfe\/([^/]+)$/);
   if (merchantIndexMatch) {
     const merchantSlug = merchantIndexMatch[1];
-    const merchantNameMatch = merchantSection.match(new RegExp(`slug:\\s*"${merchantSlug}"[\\s\\S]*?name:\\s*"([^"]+)"`));
-    const merchantName = merchantNameMatch?.[1];
+    const merchantName = getMerchantName(merchantSlug);
     if (!merchantName) return null;
     return {
       title: `${merchantName} Reklamation & Chargeback 2026 | ChargebackPilot`,

@@ -2,8 +2,10 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url><loc>https://chargebackpilot.de/</loc><changefreq>weekly</changefreq><priority>1.0</priority></url>
   <url><loc>https://chargebackpilot.de/abo-falle-chargeback</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://chargebackpilot.de/abo-falle-musterbrief</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
   <url><loc>https://chargebackpilot.de/agb</loc><changefreq>yearly</changefreq><priority>0.3</priority></url>
   <url><loc>https://chargebackpilot.de/amex-chargeback</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://chargebackpilot.de/chargeback-antrag-vorlage</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
   <url><loc>https://chargebackpilot.de/datenschutz</loc><changefreq>yearly</changefreq><priority>0.3</priority></url>
   <url><loc>https://chargebackpilot.de/disclaimer</loc><changefreq>yearly</changefreq><priority>0.3</priority></url>
   <url><loc>https://chargebackpilot.de/flug-chargeback</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
@@ -23,8 +25,21 @@
   <url><loc>https://chargebackpilot.de/hilfe/booking/hotel-anders-als-beschrieben</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
   <url><loc>https://chargebackpilot.de/hilfe/dazn</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
   <url><loc>https://chargebackpilot.de/hilfe/dazn/abbuchung-ohne-zustimmung</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://chargebackpilot.de/hilfe/dhl</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://chargebackpilot.de/hilfe/dhl/ware-nicht-erhalten</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://chargebackpilot.de/hilfe/ebay</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://chargebackpilot.de/hilfe/ebay/betrugsverdacht</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://chargebackpilot.de/hilfe/ebay/ware-defekt</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://chargebackpilot.de/hilfe/ebay/ware-nicht-erhalten</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://chargebackpilot.de/hilfe/etsy</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://chargebackpilot.de/hilfe/etsy/ware-defekt</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://chargebackpilot.de/hilfe/etsy/ware-nicht-erhalten</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
   <url><loc>https://chargebackpilot.de/hilfe/eurowings</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
   <url><loc>https://chargebackpilot.de/hilfe/eurowings/flug-storniert</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://chargebackpilot.de/hilfe/google-play</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://chargebackpilot.de/hilfe/google-play/abbuchung-ohne-zustimmung</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://chargebackpilot.de/hilfe/hermes</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://chargebackpilot.de/hilfe/hermes/ware-nicht-erhalten</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
   <url><loc>https://chargebackpilot.de/hilfe/kiwi</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
   <url><loc>https://chargebackpilot.de/hilfe/kiwi/abbuchung-ohne-zustimmung</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
   <url><loc>https://chargebackpilot.de/hilfe/kiwi/flug-storniert</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
@@ -36,6 +51,9 @@
   <url><loc>https://chargebackpilot.de/hilfe/lufthansa/flug-storniert</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
   <url><loc>https://chargebackpilot.de/hilfe/netflix</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
   <url><loc>https://chargebackpilot.de/hilfe/netflix/abbuchung-ohne-zustimmung</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://chargebackpilot.de/hilfe/otto</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://chargebackpilot.de/hilfe/otto/ware-defekt</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://chargebackpilot.de/hilfe/otto/ware-nicht-erhalten</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
   <url><loc>https://chargebackpilot.de/hilfe/ryanair</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
   <url><loc>https://chargebackpilot.de/hilfe/ryanair/flug-storniert</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
   <url><loc>https://chargebackpilot.de/hilfe/shein</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
@@ -52,6 +70,10 @@
   <url><loc>https://chargebackpilot.de/hilfe/uber-eats</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
   <url><loc>https://chargebackpilot.de/hilfe/uber-eats/lieferung-falsch</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
   <url><loc>https://chargebackpilot.de/hilfe/uber-eats/ware-nicht-erhalten</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://chargebackpilot.de/hilfe/vinted</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://chargebackpilot.de/hilfe/vinted/betrugsverdacht</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://chargebackpilot.de/hilfe/vinted/ware-defekt</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://chargebackpilot.de/hilfe/vinted/ware-nicht-erhalten</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
   <url><loc>https://chargebackpilot.de/hilfe/wish</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
   <url><loc>https://chargebackpilot.de/hilfe/wish/betrugsverdacht</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
   <url><loc>https://chargebackpilot.de/hilfe/wish/ware-defekt</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
@@ -59,19 +81,30 @@
   <url><loc>https://chargebackpilot.de/hilfe/wolt</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
   <url><loc>https://chargebackpilot.de/hilfe/wolt/lieferung-falsch</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
   <url><loc>https://chargebackpilot.de/hilfe/wolt/ware-nicht-erhalten</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://chargebackpilot.de/hilfe/zalando</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://chargebackpilot.de/hilfe/zalando/abbuchung-ohne-zustimmung</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://chargebackpilot.de/hilfe/zalando/ware-defekt</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://chargebackpilot.de/hilfe/zalando/ware-nicht-erhalten</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
   <url><loc>https://chargebackpilot.de/impressum</loc><changefreq>yearly</changefreq><priority>0.3</priority></url>
   <url><loc>https://chargebackpilot.de/kiwi-rueckerstattung</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
   <url><loc>https://chargebackpilot.de/klarna-reklamation</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://chargebackpilot.de/klarna-reklamation-vorlage</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
   <url><loc>https://chargebackpilot.de/lieferando-rueckerstattung</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://chargebackpilot.de/mastercard-chargeback-reason-code</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
   <url><loc>https://chargebackpilot.de/methodik</loc><changefreq>yearly</changefreq><priority>0.3</priority></url>
   <url><loc>https://chargebackpilot.de/paypal-chargeback</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://chargebackpilot.de/paypal-kaeuferschutz-vorlage</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
   <url><loc>https://chargebackpilot.de/ratgeber</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://chargebackpilot.de/rueckerstattung-haendler-vorlage</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
   <url><loc>https://chargebackpilot.de/scam-shops-2026</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
   <url><loc>https://chargebackpilot.de/ubereats-rueckerstattung</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
   <url><loc>https://chargebackpilot.de/ueber-uns</loc><changefreq>yearly</changefreq><priority>0.3</priority></url>
   <url><loc>https://chargebackpilot.de/vergleich/paypal-vs-kreditkarte-vs-klarna</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
   <url><loc>https://chargebackpilot.de/visa-mastercard-chargeback</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://chargebackpilot.de/visa-reason-code-13-1</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://chargebackpilot.de/vorlagen-generator</loc><changefreq>weekly</changefreq><priority>0.9</priority></url>
   <url><loc>https://chargebackpilot.de/ware-nicht-erhalten</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://chargebackpilot.de/ware-nicht-erhalten-musterbrief</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
   <url><loc>https://chargebackpilot.de/widerruf</loc><changefreq>yearly</changefreq><priority>0.3</priority></url>
   <url><loc>https://chargebackpilot.de/wolt-rueckerstattung</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
 </urlset>

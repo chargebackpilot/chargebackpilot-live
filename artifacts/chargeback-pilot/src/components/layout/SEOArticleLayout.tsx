@@ -1,7 +1,14 @@
 import { MainLayout } from "@/components/layout/MainLayout";
 import { Link, useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
-import { ArrowRight, CheckCircle2, AlertTriangle, ShieldCheck } from "lucide-react";
+import {
+  ArrowRight,
+  CheckCircle2,
+  AlertTriangle,
+  ShieldCheck,
+  CalendarCheck,
+  PenLine,
+} from "lucide-react";
 import {
   Accordion,
   AccordionContent,
@@ -23,6 +30,8 @@ interface SEOProps {
 }
 
 const SITE = "https://chargebackpilot.de";
+const DISPLAY_UPDATED_AT = "11. Juni 2026";
+const SCHEMA_UPDATED_AT = "2026-06-11";
 
 export function SEOArticleLayout({
   title,
@@ -79,7 +88,7 @@ export function SEOArticleLayout({
     },
     mainEntityOfPage: `${SITE}${canonicalPath}`,
     datePublished: "2026-01-15",
-    dateModified: "2026-05-20",
+    dateModified: SCHEMA_UPDATED_AT,
   };
 
   const relatedGuides = [
@@ -109,6 +118,19 @@ export function SEOArticleLayout({
               Erhalte eine strukturierte Orientierung zu {category}: typische Fristenhinweise,
               Belege und mögliche nächste Schritte.
             </p>
+            <div className="mb-8 flex flex-wrap items-center gap-2 text-sm text-muted-foreground">
+              <span className="inline-flex items-center gap-2 rounded-md border bg-background px-3 py-1.5">
+                <PenLine className="h-4 w-4 text-primary" />
+                ChargebackPilot Redaktion
+              </span>
+              <span className="inline-flex items-center gap-2 rounded-md border bg-background px-3 py-1.5">
+                <CalendarCheck className="h-4 w-4 text-primary" />
+                Aktualisiert: {DISPLAY_UPDATED_AT}
+              </span>
+              <span className="inline-flex items-center rounded-md border bg-background px-3 py-1.5">
+                Indikative Orientierung, keine Rechtsberatung
+              </span>
+            </div>
             <Link
               href="/vorlagen-generator?new=1"
               onClick={(e) => {
@@ -192,6 +214,16 @@ export function SEOArticleLayout({
                 </li>
               ))}
             </ul>
+          </section>
+
+          <section className="rounded-lg border bg-background p-6 shadow-sm">
+            <h2 className="text-lg font-bold mb-3">Wie diese Orientierung entsteht</h2>
+            <p className="text-sm leading-relaxed text-muted-foreground">
+              Wir strukturieren typische Anbieterregeln, Zahlungsarten, Belegarten und deine Angaben
+              zu einem nachvollziehbaren Ablauf. Entscheidungen treffen Banken, PayPal, Klarna,
+              Händler oder Kartennetzwerke immer im Einzelfall; ChargebackPilot liefert dafür
+              unverbindliche Formulierungs- und Sortierhilfe.
+            </p>
           </section>
 
           {/* FAQ */}

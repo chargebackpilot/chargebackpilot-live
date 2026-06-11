@@ -16,7 +16,16 @@ export interface MerchantDef {
   slug: string;
   name: string;
   /** Sector for grouping. */
-  sector: "marketplace" | "airline" | "travel" | "food_delivery" | "subscription" | "fashion" | "electronics";
+  sector:
+    | "marketplace"
+    | "airline"
+    | "travel"
+    | "food_delivery"
+    | "subscription"
+    | "fashion"
+    | "electronics"
+    | "logistics"
+    | "app_store";
   /** Country of incorporation — affects EU consumer-rights notes. */
   country: string;
   /** Trustworthiness signal: "trusted" | "mixed" | "risky" | "scam_reported". */
@@ -87,7 +96,8 @@ export const MERCHANTS: MerchantDef[] = [
     sector: "marketplace",
     country: "China",
     trustLevel: "mixed",
-    description: "Chinesischer Online-Marktplatz mit besonders niedrigen Preisen. Häufige Beschwerden betreffen Lieferzeiten, Produktqualität und Rückerstattungen.",
+    description:
+      "Chinesischer Online-Marktplatz mit besonders niedrigen Preisen. Häufige Beschwerden betreffen Lieferzeiten, Produktqualität und Rückerstattungen.",
     problems: ["ware-nicht-erhalten", "ware-defekt", "betrugsverdacht"],
   },
   {
@@ -96,7 +106,8 @@ export const MERCHANTS: MerchantDef[] = [
     sector: "fashion",
     country: "Singapur / China",
     trustLevel: "mixed",
-    description: "Fast-Fashion-Plattform mit Sitz in Singapur. Häufige Beschwerden zu Größen, Materialqualität und verspäteten Lieferungen.",
+    description:
+      "Fast-Fashion-Plattform mit Sitz in Singapur. Häufige Beschwerden zu Größen, Materialqualität und verspäteten Lieferungen.",
     problems: ["ware-nicht-erhalten", "ware-defekt"],
   },
   {
@@ -105,7 +116,8 @@ export const MERCHANTS: MerchantDef[] = [
     sector: "marketplace",
     country: "USA",
     trustLevel: "risky",
-    description: "US-Marktplatz mit Schwerpunkt auf chinesische Drittanbieter. Verbraucherzentralen warnen regelmäßig vor Produkt- und Lieferproblemen.",
+    description:
+      "US-Marktplatz mit Schwerpunkt auf chinesische Drittanbieter. Verbraucherzentralen warnen regelmäßig vor Produkt- und Lieferproblemen.",
     problems: ["ware-nicht-erhalten", "ware-defekt", "betrugsverdacht"],
   },
   {
@@ -114,7 +126,8 @@ export const MERCHANTS: MerchantDef[] = [
     sector: "marketplace",
     country: "China",
     trustLevel: "mixed",
-    description: "Chinesischer Marktplatz (Alibaba-Gruppe). Käuferschutz vorhanden, Bearbeitungszeit oft mehrere Wochen.",
+    description:
+      "Chinesischer Marktplatz (Alibaba-Gruppe). Käuferschutz vorhanden, Bearbeitungszeit oft mehrere Wochen.",
     problems: ["ware-nicht-erhalten", "ware-defekt"],
   },
   {
@@ -123,8 +136,59 @@ export const MERCHANTS: MerchantDef[] = [
     sector: "marketplace",
     country: "USA / Deutschland",
     trustLevel: "trusted",
-    description: "Größter Online-Händler in Deutschland. Eigener A-bis-Z--Schutz; bei Drittanbietern oft zusätzlicher Chargeback nötig.",
+    description:
+      "Größter Online-Händler in Deutschland. Eigener A-bis-Z--Schutz; bei Drittanbietern oft zusätzlicher Chargeback nötig.",
     problems: ["ware-nicht-erhalten", "ware-defekt", "abbuchung-ohne-zustimmung"],
+  },
+  {
+    slug: "zalando",
+    name: "Zalando",
+    sector: "fashion",
+    country: "Deutschland",
+    trustLevel: "trusted",
+    description:
+      "Deutscher Modehändler mit etabliertem Kundenservice. Typische Reklamationen betreffen Rücksendungen, fehlende Pakete oder fehlerhafte Artikel.",
+    problems: ["ware-nicht-erhalten", "ware-defekt", "abbuchung-ohne-zustimmung"],
+  },
+  {
+    slug: "otto",
+    name: "OTTO",
+    sector: "marketplace",
+    country: "Deutschland",
+    trustLevel: "trusted",
+    description:
+      "Deutscher Onlinehändler und Marktplatz. Bei Liefer- oder Qualitätsproblemen ist eine klare Trennung zwischen OTTO und Drittanbieter praktisch wichtig.",
+    problems: ["ware-nicht-erhalten", "ware-defekt"],
+  },
+  {
+    slug: "ebay",
+    name: "eBay",
+    sector: "marketplace",
+    country: "USA / Deutschland",
+    trustLevel: "mixed",
+    description:
+      "Internationaler Marktplatz mit privaten und gewerblichen Verkäufern. Bei Streitfällen sind Belege zum Artikelzustand, Versand und Verkäuferkontakt entscheidend.",
+    problems: ["ware-nicht-erhalten", "ware-defekt", "betrugsverdacht"],
+  },
+  {
+    slug: "vinted",
+    name: "Vinted",
+    sector: "marketplace",
+    country: "Litauen",
+    trustLevel: "mixed",
+    description:
+      "Secondhand-Marktplatz für private Verkäufe. Häufige Klärungspunkte sind Versandstatus, Artikelzustand und die Kommunikation im Plattform-Chat.",
+    problems: ["ware-nicht-erhalten", "ware-defekt", "betrugsverdacht"],
+  },
+  {
+    slug: "etsy",
+    name: "Etsy",
+    sector: "marketplace",
+    country: "USA / Irland",
+    trustLevel: "mixed",
+    description:
+      "Marktplatz für handgemachte, kreative und personalisierte Waren. Bei Problemen helfen klare Screenshots von Angebot, Lieferstatus und Verkäuferkontakt.",
+    problems: ["ware-nicht-erhalten", "ware-defekt"],
   },
 
   // ── Airlines ───────────────────────────────────────────────────
@@ -134,7 +198,8 @@ export const MERCHANTS: MerchantDef[] = [
     sector: "airline",
     country: "Irland",
     trustLevel: "mixed",
-    description: "Irischer Billigflieger. EU-Fluggastrechte (VO 261/2004) gelten; Erstattungen oft erst nach Mahnung oder Chargeback.",
+    description:
+      "Irischer Billigflieger. EU-Fluggastrechte (VO 261/2004) gelten; Erstattungen oft erst nach Mahnung oder Chargeback.",
     problems: ["flug-storniert"],
   },
   {
@@ -143,7 +208,8 @@ export const MERCHANTS: MerchantDef[] = [
     sector: "airline",
     country: "Deutschland",
     trustLevel: "trusted",
-    description: "Deutsche Premium-Airline. Erstattungsprozess seit 2020 deutlich verbessert, aber bei Stornierungen ist ein Chargeback weiterhin sinnvoll als Druckmittel.",
+    description:
+      "Deutsche Premium-Airline. Erstattungsprozess seit 2020 deutlich verbessert, aber bei Stornierungen ist ein Chargeback weiterhin sinnvoll als Druckmittel.",
     problems: ["flug-storniert"],
   },
   {
@@ -152,7 +218,8 @@ export const MERCHANTS: MerchantDef[] = [
     sector: "airline",
     country: "Deutschland",
     trustLevel: "trusted",
-    description: "Lufthansa-Tochter mit Fokus auf europäische Strecken. EU-Fluggastrechte gelten in vollem Umfang.",
+    description:
+      "Lufthansa-Tochter mit Fokus auf europäische Strecken. EU-Fluggastrechte gelten in vollem Umfang.",
     problems: ["flug-storniert"],
   },
 
@@ -163,7 +230,8 @@ export const MERCHANTS: MerchantDef[] = [
     sector: "travel",
     country: "Niederlande",
     trustLevel: "trusted",
-    description: "Weltweit größte Hotelbuchungsplattform. Vermittler-Rolle — bei Problemen vor Ort ist Eskalation an Booking + ggf. Chargeback der schnellste Weg.",
+    description:
+      "Weltweit größte Hotelbuchungsplattform. Vermittler-Rolle — bei Problemen vor Ort ist Eskalation an Booking + ggf. Chargeback der schnellste Weg.",
     problems: ["hotel-anders-als-beschrieben", "flug-storniert"],
   },
   {
@@ -172,7 +240,8 @@ export const MERCHANTS: MerchantDef[] = [
     sector: "travel",
     country: "USA / Irland",
     trustLevel: "trusted",
-    description: "Privatunterkunfts-Plattform mit eigenem AirCover-Schutz. Bei abgelehnten Beschwerden ist Chargeback über die Kreditkarte möglich.",
+    description:
+      "Privatunterkunfts-Plattform mit eigenem AirCover-Schutz. Bei abgelehnten Beschwerden ist Chargeback über die Kreditkarte möglich.",
     problems: ["hotel-anders-als-beschrieben"],
   },
 
@@ -183,7 +252,8 @@ export const MERCHANTS: MerchantDef[] = [
     sector: "food_delivery",
     country: "Niederlande / Deutschland",
     trustLevel: "trusted",
-    description: "Größter Lieferdienst in Deutschland. Häufige Gründe für Chargebacks sind unvollständige, kalte oder gar nicht gelieferte Bestellungen.",
+    description:
+      "Größter Lieferdienst in Deutschland. Häufige Gründe für Chargebacks sind unvollständige, kalte oder gar nicht gelieferte Bestellungen.",
     problems: ["lieferung-falsch", "ware-nicht-erhalten", "abbuchung-ohne-zustimmung"],
   },
   {
@@ -192,7 +262,8 @@ export const MERCHANTS: MerchantDef[] = [
     sector: "food_delivery",
     country: "Finnland",
     trustLevel: "trusted",
-    description: "Lebensmittel- und Essenslieferant. Erstattungen werden oft beim Support angefragt, wenn das Essen kalt ankommt oder fehlt.",
+    description:
+      "Lebensmittel- und Essenslieferant. Erstattungen werden oft beim Support angefragt, wenn das Essen kalt ankommt oder fehlt.",
     problems: ["lieferung-falsch", "ware-nicht-erhalten"],
   },
   {
@@ -201,16 +272,42 @@ export const MERCHANTS: MerchantDef[] = [
     sector: "food_delivery",
     country: "USA / Niederlande",
     trustLevel: "trusted",
-    description: "Internationaler Essenslieferdienst. Wenn Bestellungen storniert werden oder Fahrer den Umweg nehmen, kommt das Essen oft kalt an.",
+    description:
+      "Internationaler Essenslieferdienst. Wenn Bestellungen storniert werden oder Fahrer den Umweg nehmen, kommt das Essen oft kalt an.",
     problems: ["lieferung-falsch", "ware-nicht-erhalten"],
   },
+
+  // ── Logistics / parcel delivery ─────────────────────────────────
+  {
+    slug: "dhl",
+    name: "DHL",
+    sector: "logistics",
+    country: "Deutschland",
+    trustLevel: "trusted",
+    description:
+      "Paketdienstleister in Deutschland. Bei nicht zugestellten Sendungen ist zusätzlich zum Händlerkontakt oft der Tracking- und Zustellnachweis relevant.",
+    problems: ["ware-nicht-erhalten"],
+  },
+  {
+    slug: "hermes",
+    name: "Hermes",
+    sector: "logistics",
+    country: "Deutschland",
+    trustLevel: "mixed",
+    description:
+      "Paketdienstleister für Privat- und Händlerlieferungen. Für Reklamationen sind Sendungsnummer, Zustellstatus und Kontakt zum Vertragspartner wichtig.",
+    problems: ["ware-nicht-erhalten"],
+  },
+
+  // ── Travel aggregator ───────────────────────────────────────────
   {
     slug: "kiwi",
     name: "Kiwi.com",
     sector: "travel",
     country: "Tschechien",
     trustLevel: "mixed",
-    description: "Flugsuchmaschine und Buchungsportal. Verlangt oft hohe eigene Gebühren für die Erstattung von Steuern und Flughafengebühren.",
+    description:
+      "Flugsuchmaschine und Buchungsportal. Verlangt oft hohe eigene Gebühren für die Erstattung von Steuern und Flughafengebühren.",
     problems: ["flug-storniert", "abbuchung-ohne-zustimmung"],
   },
 
@@ -221,7 +318,8 @@ export const MERCHANTS: MerchantDef[] = [
     sector: "subscription",
     country: "Schweden",
     trustLevel: "trusted",
-    description: "Music-Streaming-Marktführer. Bei nicht erkannten Abbuchungen ist die SEPA-Lastschriftrückgabe der schnellste Weg.",
+    description:
+      "Music-Streaming-Marktführer. Bei nicht erkannten Abbuchungen ist die SEPA-Lastschriftrückgabe der schnellste Weg.",
     problems: ["abbuchung-ohne-zustimmung"],
   },
   {
@@ -230,7 +328,8 @@ export const MERCHANTS: MerchantDef[] = [
     sector: "subscription",
     country: "USA",
     trustLevel: "trusted",
-    description: "Streaming-Anbieter. Bei doppelten oder unautorisierten Abbuchungen kontaktiert man zuerst Netflix-Support; Chargeback als Notfallhebel.",
+    description:
+      "Streaming-Anbieter. Bei doppelten oder unautorisierten Abbuchungen kontaktiert man zuerst Netflix-Support; Chargeback als Notfallhebel.",
     problems: ["abbuchung-ohne-zustimmung"],
   },
   {
@@ -239,7 +338,8 @@ export const MERCHANTS: MerchantDef[] = [
     sector: "subscription",
     country: "Großbritannien",
     trustLevel: "mixed",
-    description: "Sport-Streaming-Dienst. Häufige Verbraucherbeschwerden zu Preisanpassungen und Kündigungsmöglichkeiten.",
+    description:
+      "Sport-Streaming-Dienst. Häufige Verbraucherbeschwerden zu Preisanpassungen und Kündigungsmöglichkeiten.",
     problems: ["abbuchung-ohne-zustimmung"],
   },
   {
@@ -248,7 +348,8 @@ export const MERCHANTS: MerchantDef[] = [
     sector: "subscription",
     country: "Deutschland",
     trustLevel: "mixed",
-    description: "Pay-TV- und Streaming-Anbieter. Häufige Themen sind nicht akzeptierte Kündigungen und automatische Vertragsverlängerungen.",
+    description:
+      "Pay-TV- und Streaming-Anbieter. Häufige Themen sind nicht akzeptierte Kündigungen und automatische Vertragsverlängerungen.",
     problems: ["abbuchung-ohne-zustimmung"],
   },
   {
@@ -257,7 +358,18 @@ export const MERCHANTS: MerchantDef[] = [
     sector: "subscription",
     country: "USA",
     trustLevel: "trusted",
-    description: "App-Store und Abo-Plattform. Für In-App-Käufe oder Abo-Abbuchungen ist Apples eigene Erstattung der erste Weg.",
+    description:
+      "App-Store und Abo-Plattform. Für In-App-Käufe oder Abo-Abbuchungen ist Apples eigene Erstattung der erste Weg.",
+    problems: ["abbuchung-ohne-zustimmung"],
+  },
+  {
+    slug: "google-play",
+    name: "Google Play",
+    sector: "app_store",
+    country: "USA / Irland",
+    trustLevel: "trusted",
+    description:
+      "App-Store und Zahlungsplattform für Android-Apps, In-App-Käufe und Abonnements. Bei unklaren Abbuchungen ist die Bestellnummer aus dem Google-Konto zentral.",
     problems: ["abbuchung-ohne-zustimmung"],
   },
 ];
@@ -306,7 +418,7 @@ export interface GeneratedCopy {
  */
 export function generateMerchantProblemCopy(
   merchant: MerchantDef,
-  problem: ProblemDef,
+  problem: ProblemDef
 ): GeneratedCopy {
   const m = merchant.name;
   const phrase = problem.searchPhrase;
@@ -343,28 +455,49 @@ export function generateMerchantProblemCopy(
 
 // ── Long-form intro paragraphs (primary SEO body) ─────────────────
 function introParagraphs(m: MerchantDef, p: ProblemDef, sector: string): string[] {
-  const para1 =
-    `Wenn du bei ${m.name} mit ${p.searchPhrase.toLowerCase()} konfrontiert bist, kommen 2026 je nach Zahlungsart und Einzelfall verschiedene Reklamationswege in Betracht. ${m.name} (${sector}, Sitz in ${m.country}) ist für deutsche Verbraucher grundsätzlich erreichbar — wichtig ist vor allem, den Sachverhalt nachvollziehbar zu dokumentieren und typische Fristen direkt beim jeweiligen Anbieter zu prüfen.`;
-  const para2 =
-    `Typische Anlaufstellen sind PayPal-Käuferschutz, Kreditkarten-Reklamation/Chargeback über die kartenausgebende Bank, SEPA-Lastschriftrückgabe oder Klarna-Käuferschutz. Welcher Weg bei dir sinnvoll ist, hängt davon ab, womit du bei ${m.name} bezahlt hast und welche Anbieterregeln gelten — die Hinweise weiter unten dienen als allgemeine Orientierung.`;
-  const para3 =
-    `Praktisch ist meist hilfreich, ${m.name} zunächst nachweisbar direkt zu kontaktieren und eine angemessene Rückmeldefrist zu setzen. ChargebackPilot unterstützt dich dabei mit unverbindlichen Textentwürfen — von der ersten Reklamation bis zu einer möglichen Nachricht an Bank oder Zahlungsdienstleister. Die KI-gestützte Strukturierung ist kostenlos; vollständige Entwürfe als PDF kosten einmalig 0,99 € Endpreis.`;
+  const para1 = `Wenn du bei ${m.name} mit ${p.searchPhrase.toLowerCase()} konfrontiert bist, kommen 2026 je nach Zahlungsart und Einzelfall verschiedene Reklamationswege in Betracht. ${m.name} (${sector}, Sitz in ${m.country}) ist für deutsche Verbraucher grundsätzlich erreichbar — wichtig ist vor allem, den Sachverhalt nachvollziehbar zu dokumentieren und typische Fristen direkt beim jeweiligen Anbieter zu prüfen.`;
+  const para2 = `Typische Anlaufstellen sind PayPal-Käuferschutz, Kreditkarten-Reklamation/Chargeback über die kartenausgebende Bank, SEPA-Lastschriftrückgabe oder Klarna-Käuferschutz. Welcher Weg bei dir sinnvoll ist, hängt davon ab, womit du bei ${m.name} bezahlt hast und welche Anbieterregeln gelten — die Hinweise weiter unten dienen als allgemeine Orientierung.`;
+  const para3 = `Praktisch ist meist hilfreich, ${m.name} zunächst nachweisbar direkt zu kontaktieren und eine angemessene Rückmeldefrist zu setzen. ChargebackPilot unterstützt dich dabei mit unverbindlichen Textentwürfen — von der ersten Reklamation bis zu einer möglichen Nachricht an Bank oder Zahlungsdienstleister. Die KI-gestützte Strukturierung ist kostenlos; vollständige Entwürfe als PDF kosten einmalig 0,99 € Endpreis.`;
   return [para1, para2, para3];
 }
 
 // ── Deadlines / timing matrix per problem ─────────────────────────
 function deadlinesForCombo(p: ProblemDef): { label: string; value: string; note: string }[] {
   const out: { label: string; value: string; note: string }[] = [
-    { label: "PayPal Käuferschutz", value: "häufig 180 Tage", note: "ab Zahlungsdatum — bitte konkrete Frist und Eskalationsregeln direkt bei PayPal prüfen" },
-    { label: "Kreditkarten-Reklamation", value: "oft 60–120 Tage", note: "Frist und Verfahren variieren je Bank und Kartennetzwerk; bitte direkt bei der kartenausgebenden Bank prüfen" },
-    { label: "Klarna-Käuferschutz", value: "zeitnah melden", note: "Problem im Klarna-Konto melden und mögliche Zahlungspause nach Anbieterregeln prüfen" },
-    { label: "SEPA-Lastschrift", value: "typisch 8 Wochen", note: "Rückgabemöglichkeiten hängen von Autorisierung und Einzelfall ab; bitte bei deiner Bank prüfen" },
+    {
+      label: "PayPal Käuferschutz",
+      value: "häufig 180 Tage",
+      note: "ab Zahlungsdatum — bitte konkrete Frist und Eskalationsregeln direkt bei PayPal prüfen",
+    },
+    {
+      label: "Kreditkarten-Reklamation",
+      value: "oft 60–120 Tage",
+      note: "Frist und Verfahren variieren je Bank und Kartennetzwerk; bitte direkt bei der kartenausgebenden Bank prüfen",
+    },
+    {
+      label: "Klarna-Käuferschutz",
+      value: "zeitnah melden",
+      note: "Problem im Klarna-Konto melden und mögliche Zahlungspause nach Anbieterregeln prüfen",
+    },
+    {
+      label: "SEPA-Lastschrift",
+      value: "typisch 8 Wochen",
+      note: "Rückgabemöglichkeiten hängen von Autorisierung und Einzelfall ab; bitte bei deiner Bank prüfen",
+    },
   ];
   if (p.slug === "flug-storniert") {
-    out.push({ label: "EU-Fluggastrechte", value: "oft mehrere Jahre", note: "mögliche Ansprüche und Verjährung hängen vom Einzelfall ab; Belege trotzdem früh sichern" });
+    out.push({
+      label: "EU-Fluggastrechte",
+      value: "oft mehrere Jahre",
+      note: "mögliche Ansprüche und Verjährung hängen vom Einzelfall ab; Belege trotzdem früh sichern",
+    });
   }
   if (p.slug === "abbuchung-ohne-zustimmung") {
-    out.push({ label: "Nicht autorisierte SEPA-Lastschrift", value: "bis zu 13 Monate möglich", note: "bei fehlender Autorisierung können längere Fristen gelten; bitte direkt bei der Bank prüfen" });
+    out.push({
+      label: "Nicht autorisierte SEPA-Lastschrift",
+      value: "bis zu 13 Monate möglich",
+      note: "bei fehlender Autorisierung können längere Fristen gelten; bitte direkt bei der Bank prüfen",
+    });
   }
   return out;
 }
@@ -401,60 +534,85 @@ function legalBasisForProblem(p: ProblemDef): { title: string; text: string }[] 
 }
 
 // ── Dispute category (Reason-Code) per problem ────────────────────
-function disputeCategoryForCombo(p: ProblemDef): { method: string; code: string; explainer: string } {
+function disputeCategoryForCombo(p: ProblemDef): {
+  method: string;
+  code: string;
+  explainer: string;
+} {
   const map: Record<string, { method: string; code: string; explainer: string }> = {
     "ware-nicht-erhalten": {
       method: "Visa / Mastercard",
       code: "13.1 Merchandise/Services Not Received",
-      explainer: "Diese Kategorie kann in Betracht kommen, wenn bezahlte Ware oder Dienstleistungen nicht angekommen sind. Hilfreich sind Bestellbestätigung, Lieferstatus und dokumentierte Kontaktversuche.",
+      explainer:
+        "Diese Kategorie kann in Betracht kommen, wenn bezahlte Ware oder Dienstleistungen nicht angekommen sind. Hilfreich sind Bestellbestätigung, Lieferstatus und dokumentierte Kontaktversuche.",
     },
     "ware-defekt": {
       method: "Visa / Mastercard",
       code: "13.3 Not as Described or Defective Merchandise/Services",
-      explainer: "Greift, wenn die Ware erheblich von der Beschreibung abweicht oder defekt ankommt. Beweislage: Fotos des Mangels, Original-Produktbeschreibung als Screenshot, Schriftwechsel mit dem Händler.",
+      explainer:
+        "Greift, wenn die Ware erheblich von der Beschreibung abweicht oder defekt ankommt. Beweislage: Fotos des Mangels, Original-Produktbeschreibung als Screenshot, Schriftwechsel mit dem Händler.",
     },
     "flug-storniert": {
       method: "Visa / Mastercard",
       code: "13.1 Services Not Received (Annullierung)",
-      explainer: "Bei gestrichenen Flügen kann je nach Zahlungsart eine Reklamation beim Zahlungsdienstleister zusätzlich zur direkten Erstattungsklärung geprüft werden. Bereits erhaltene Zahlungen sollten transparent angegeben werden.",
+      explainer:
+        "Bei gestrichenen Flügen kann je nach Zahlungsart eine Reklamation beim Zahlungsdienstleister zusätzlich zur direkten Erstattungsklärung geprüft werden. Bereits erhaltene Zahlungen sollten transparent angegeben werden.",
     },
     "hotel-anders-als-beschrieben": {
       method: "Visa / Mastercard",
       code: "13.3 Not as Described",
-      explainer: "Wenn eine Unterkunft erheblich von der Beschreibung abweicht, kann eine Reklamation beim Anbieter oder Zahlungsdienstleister in Betracht kommen. Fotos und eine zeitnahe Meldung vor Ort sind praktisch hilfreich.",
+      explainer:
+        "Wenn eine Unterkunft erheblich von der Beschreibung abweicht, kann eine Reklamation beim Anbieter oder Zahlungsdienstleister in Betracht kommen. Fotos und eine zeitnahe Meldung vor Ort sind praktisch hilfreich.",
     },
     "abbuchung-ohne-zustimmung": {
       method: "SEPA / Visa",
       code: "10.4 Other Fraud — Card Absent Environment",
-      explainer: "Bei möglicherweise unautorisierten Abbuchungen sollte zuerst geprüft werden, ob eine Autorisierung, ein vergessenes Abo oder ein Missbrauchsfall vorliegt. Die passende Kategorie hängt vom Ergebnis dieser Prüfung ab.",
+      explainer:
+        "Bei möglicherweise unautorisierten Abbuchungen sollte zuerst geprüft werden, ob eine Autorisierung, ein vergessenes Abo oder ein Missbrauchsfall vorliegt. Die passende Kategorie hängt vom Ergebnis dieser Prüfung ab.",
     },
     "lieferung-falsch": {
       method: "PayPal / Visa",
       code: "13.3 Not as Described — Falsche Lieferung",
-      explainer: "Lieferung kam komplett falsch oder unbrauchbar an. Bei PayPal eröffnest du den Käuferschutzfall mit Foto der erhaltenen Ware vs. bestellter Ware.",
+      explainer:
+        "Lieferung kam komplett falsch oder unbrauchbar an. Bei PayPal eröffnest du den Käuferschutzfall mit Foto der erhaltenen Ware vs. bestellter Ware.",
     },
-    "betrugsverdacht": {
+    betrugsverdacht: {
       method: "Visa / Mastercard / Amex",
       code: "10.4 Fraud — Card Absent",
-      explainer: "Bei Verdacht auf Fake-Shop sind Screenshots, Zahlungsnachweis, Kontaktversuche und ggf. eine Anzeige wichtige Dokumente. Ob eine Rückbuchung gelingt, entscheidet der Zahlungsdienstleister im Einzelfall.",
+      explainer:
+        "Bei Verdacht auf Fake-Shop sind Screenshots, Zahlungsnachweis, Kontaktversuche und ggf. eine Anzeige wichtige Dokumente. Ob eine Rückbuchung gelingt, entscheidet der Zahlungsdienstleister im Einzelfall.",
     },
   };
-  return map[p.slug] ?? {
-    method: "Visa / Mastercard",
-    code: "13.1 Services Not Received",
-    explainer: "Mögliche Kategorie für nicht erbrachte Leistungen. ChargebackPilot gibt hierzu nur eine unverbindliche Orientierung auf Basis deiner Angaben.",
-  };
+  return (
+    map[p.slug] ?? {
+      method: "Visa / Mastercard",
+      code: "13.1 Services Not Received",
+      explainer:
+        "Mögliche Kategorie für nicht erbrachte Leistungen. ChargebackPilot gibt hierzu nur eine unverbindliche Orientierung auf Basis deiner Angaben.",
+    }
+  );
 }
 
 function sectorLabel(s: MerchantDef["sector"]): string {
   switch (s) {
-    case "marketplace": return "Marktplatz";
-    case "airline": return "Airline";
-    case "travel": return "Reiseplattform";
-    case "food_delivery": return "Lieferdienst";
-    case "subscription": return "Abo-Anbieter";
-    case "fashion": return "Modeshop";
-    case "electronics": return "Elektronikhändler";
+    case "marketplace":
+      return "Marktplatz";
+    case "airline":
+      return "Airline";
+    case "travel":
+      return "Reiseplattform";
+    case "food_delivery":
+      return "Lieferdienst";
+    case "subscription":
+      return "Abo-Anbieter";
+    case "fashion":
+      return "Modeshop";
+    case "electronics":
+      return "Elektronikhändler";
+    case "logistics":
+      return "Paketdienstleister";
+    case "app_store":
+      return "App-Store";
   }
 }
 
@@ -490,7 +648,7 @@ function applicableScenarios(m: MerchantDef, p: ProblemDef): string[] {
       "Das Essen kam kalt, verschüttet oder mit den falschen Komponenten an.",
       `${m.name} verweigert über die App eine vollständige Erstattung.`,
     ],
-    "betrugsverdacht": [
+    betrugsverdacht: [
       `Du hast den begründeten Verdacht, dass es sich bei ${m.name} oder einem Drittanbieter um einen Fake-Shop handelt.`,
       "Die Website ist plötzlich offline oder du erhältst keine Antwort mehr.",
       "Du hast eine Anzeige bei der Polizei erstattet (empfohlen).",
@@ -500,25 +658,56 @@ function applicableScenarios(m: MerchantDef, p: ProblemDef): string[] {
 }
 
 function evidenceForProblem(p: ProblemDef): string[] {
-  const generic = ["Bestellbestätigung / Buchungsnummer", "Zahlungsnachweis (Kontoauszug, PayPal-Transaktion)"];
+  const generic = [
+    "Bestellbestätigung / Buchungsnummer",
+    "Zahlungsnachweis (Kontoauszug, PayPal-Transaktion)",
+  ];
   const specific: Record<string, string[]> = {
     "ware-nicht-erhalten": ["Tracking-Screenshot", "E-Mails an Händler", "Lieferadresse / -datum"],
-    "ware-defekt": ["Fotos des Mangels", "Produktbeschreibung als Screenshot", "Schriftwechsel mit Händler"],
-    "flug-storniert": ["Buchungscode / e-Ticket", "Stornierungsmail der Airline", "Boarding-Pass falls vorhanden", "Belege für entstandene Mehrkosten"],
-    "hotel-anders-als-beschrieben": ["Fotos vom Mangel", "Buchungsdetails / inseriertes Angebot", "Schriftliche Mängelrüge an der Rezeption"],
-    "abbuchung-ohne-zustimmung": ["Kontoauszug", "Kündigungsmail mit Datum", "AGB / Vertragsabschluss-Bestätigung"],
-    "lieferung-falsch": ["Foto der Lieferung", "Bestellbestätigung in der App", "Screenshot des Support-Chats"],
-    "betrugsverdacht": ["Screenshots der Website", "WHOIS-Auskunft (falls verfügbar)", "Polizei-Anzeigenbestätigung", "E-Mail-Verlauf"],
+    "ware-defekt": [
+      "Fotos des Mangels",
+      "Produktbeschreibung als Screenshot",
+      "Schriftwechsel mit Händler",
+    ],
+    "flug-storniert": [
+      "Buchungscode / e-Ticket",
+      "Stornierungsmail der Airline",
+      "Boarding-Pass falls vorhanden",
+      "Belege für entstandene Mehrkosten",
+    ],
+    "hotel-anders-als-beschrieben": [
+      "Fotos vom Mangel",
+      "Buchungsdetails / inseriertes Angebot",
+      "Schriftliche Mängelrüge an der Rezeption",
+    ],
+    "abbuchung-ohne-zustimmung": [
+      "Kontoauszug",
+      "Kündigungsmail mit Datum",
+      "AGB / Vertragsabschluss-Bestätigung",
+    ],
+    "lieferung-falsch": [
+      "Foto der Lieferung",
+      "Bestellbestätigung in der App",
+      "Screenshot des Support-Chats",
+    ],
+    betrugsverdacht: [
+      "Screenshots der Website",
+      "WHOIS-Auskunft (falls verfügbar)",
+      "Polizei-Anzeigenbestätigung",
+      "E-Mail-Verlauf",
+    ],
   };
   return [...generic, ...(specific[p.slug] ?? [])];
 }
 
 function stepsForCombo(m: MerchantDef, p: ProblemDef): string[] {
   const direct = `Kontaktiere ${m.name} zuerst über den offiziellen Support-Kanal (App, E-Mail, Hilfecenter) und setze eine schriftliche Frist von 14 Tagen.`;
-  const document = "Dokumentiere lückenlos: Datum, Uhrzeit, Gesprächspartner, Inhalt — am besten per E-Mail, weil schriftlich beweisbar.";
+  const document =
+    "Dokumentiere lückenlos: Datum, Uhrzeit, Gesprächspartner, Inhalt — am besten per E-Mail, weil schriftlich beweisbar.";
   const pay = paymentSpecificStep(p, m);
   const escalate = `Bei ausbleibender Reaktion: sende eine sachliche Erinnerung an ${m.name} und prüfe parallel die Reklamationswege deines Zahlungsdienstleisters.`;
-  const final = "Prüfe, ob ein Käuferschutz- oder Chargeback-Verfahren in Betracht kommt — ChargebackPilot erstellt dafür unverbindliche Formulierungsvorschläge.";
+  const final =
+    "Prüfe, ob ein Käuferschutz- oder Chargeback-Verfahren in Betracht kommt — ChargebackPilot erstellt dafür unverbindliche Formulierungsvorschläge.";
   return [direct, document, pay, escalate, final];
 }
 
@@ -542,10 +731,18 @@ function commonMistakes(p: ProblemDef): string[] {
     "Gutschein oder Teilangebot ungeprüft akzeptiert — dadurch kann die spätere Durchsetzung schwieriger werden.",
   ];
   const specific: Record<string, string[]> = {
-    "ware-nicht-erhalten": ["Nur den Versanddienstleister kontaktieren — häufig ist zusätzlich der Händler als Vertragspartner einzubeziehen."],
-    "ware-defekt": ["Die Ware ohne Rücksprache zurücksenden — ohne RMA-Nummer geht die Rückerstattung oft verloren."],
-    "flug-storniert": ["Eine Umbuchung akzeptieren und damit auf die Geldrückerstattung verzichten."],
-    "abbuchung-ohne-zustimmung": ["Mit der Klärung bis zur nächsten Abbuchung warten — Bank und Anbieter sollten zeitnah kontaktiert werden."],
+    "ware-nicht-erhalten": [
+      "Nur den Versanddienstleister kontaktieren — häufig ist zusätzlich der Händler als Vertragspartner einzubeziehen.",
+    ],
+    "ware-defekt": [
+      "Die Ware ohne Rücksprache zurücksenden — ohne RMA-Nummer geht die Rückerstattung oft verloren.",
+    ],
+    "flug-storniert": [
+      "Eine Umbuchung akzeptieren und damit auf die Geldrückerstattung verzichten.",
+    ],
+    "abbuchung-ohne-zustimmung": [
+      "Mit der Klärung bis zur nächsten Abbuchung warten — Bank und Anbieter sollten zeitnah kontaktiert werden.",
+    ],
   };
   return [...generic, ...(specific[p.slug] ?? [])];
 }

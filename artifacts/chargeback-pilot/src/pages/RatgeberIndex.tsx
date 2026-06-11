@@ -7,17 +7,101 @@ import { SeoHead } from "@/components/SeoHead";
 import { MERCHANTS } from "@/data/merchants";
 
 export const GUIDES = [
-  { path: "/paypal-chargeback", title: "PayPal Käuferschutz", desc: "Wie du dein Geld bei PayPal zurückholst." },
-  { path: "/amex-chargeback", title: "Amex Chargeback", desc: "American Express Reklamationen erfolgreich einreichen." },
-  { path: "/visa-mastercard-chargeback", title: "Visa & Mastercard Chargeback", desc: "Der Weg zur Rückerstattung bei Kreditkartenzahlungen." },
-  { path: "/klarna-reklamation", title: "Klarna Reklamation", desc: "Käuferschutz bei Klarna-Zahlungen nutzen." },
-  { path: "/flug-chargeback", title: "Flug Chargeback", desc: "Reiserückerstattung bei Ausfällen und Stornierungen." },
-  { path: "/kiwi-rueckerstattung", title: "Kiwi.com Erstattung", desc: "Steuern & Gebühren ohne 59€ Gebühr zurückholen." },
-  { path: "/lieferando-rueckerstattung", title: "Lieferando Rückerstattung", desc: "Geld zurück bei kaltem oder fehlendem Essen." },
-  { path: "/wolt-rueckerstattung", title: "Wolt Erstattung", desc: "Chargeback bei kalten Bestellungen oder Umwegen." },
-  { path: "/ubereats-rueckerstattung", title: "Uber Eats Chargeback", desc: "Essen nicht angekommen? So gibt's das Geld zurück." },
-  { path: "/ware-nicht-erhalten", title: "Ware nicht erhalten", desc: "Was tun, wenn das Paket nie ankommt?" },
-  { path: "/abo-falle-chargeback", title: "Abo-Falle", desc: "Ungewollte Abbuchungen stoppen und Geld zurückfordern." }
+  {
+    path: "/paypal-chargeback",
+    title: "PayPal Käuferschutz",
+    desc: "Wie du dein Geld bei PayPal zurückholst.",
+  },
+  {
+    path: "/amex-chargeback",
+    title: "Amex Chargeback",
+    desc: "American Express Reklamationen erfolgreich einreichen.",
+  },
+  {
+    path: "/visa-mastercard-chargeback",
+    title: "Visa & Mastercard Chargeback",
+    desc: "Der Weg zur Rückerstattung bei Kreditkartenzahlungen.",
+  },
+  {
+    path: "/klarna-reklamation",
+    title: "Klarna Reklamation",
+    desc: "Käuferschutz bei Klarna-Zahlungen nutzen.",
+  },
+  {
+    path: "/flug-chargeback",
+    title: "Flug Chargeback",
+    desc: "Reiserückerstattung bei Ausfällen und Stornierungen.",
+  },
+  {
+    path: "/kiwi-rueckerstattung",
+    title: "Kiwi.com Erstattung",
+    desc: "Steuern & Gebühren ohne 59€ Gebühr zurückholen.",
+  },
+  {
+    path: "/lieferando-rueckerstattung",
+    title: "Lieferando Rückerstattung",
+    desc: "Geld zurück bei kaltem oder fehlendem Essen.",
+  },
+  {
+    path: "/wolt-rueckerstattung",
+    title: "Wolt Erstattung",
+    desc: "Chargeback bei kalten Bestellungen oder Umwegen.",
+  },
+  {
+    path: "/ubereats-rueckerstattung",
+    title: "Uber Eats Chargeback",
+    desc: "Essen nicht angekommen? So gibt's das Geld zurück.",
+  },
+  {
+    path: "/ware-nicht-erhalten",
+    title: "Ware nicht erhalten",
+    desc: "Was tun, wenn das Paket nie ankommt?",
+  },
+  {
+    path: "/abo-falle-chargeback",
+    title: "Abo-Falle",
+    desc: "Ungewollte Abbuchungen stoppen und Geld zurückfordern.",
+  },
+  {
+    path: "/chargeback-antrag-vorlage",
+    title: "Chargeback Antrag Vorlage",
+    desc: "Mustertext für Bank und Kreditkartenreklamation.",
+  },
+  {
+    path: "/paypal-kaeuferschutz-vorlage",
+    title: "PayPal Käuferschutz Vorlage",
+    desc: "Sachlicher Text für Konfliktcenter und Eskalation.",
+  },
+  {
+    path: "/klarna-reklamation-vorlage",
+    title: "Klarna Reklamation Vorlage",
+    desc: "Problem melden, Rechnung klären und Belege ordnen.",
+  },
+  {
+    path: "/ware-nicht-erhalten-musterbrief",
+    title: "Ware nicht erhalten Musterbrief",
+    desc: "Vorlage für Händler, PayPal, Klarna oder Bank.",
+  },
+  {
+    path: "/abo-falle-musterbrief",
+    title: "Abo-Falle Musterbrief",
+    desc: "Ungewollter Abbuchung widersprechen.",
+  },
+  {
+    path: "/rueckerstattung-haendler-vorlage",
+    title: "Rückerstattung Händler Vorlage",
+    desc: "Geld sachlich vom Händler zurückfordern.",
+  },
+  {
+    path: "/visa-reason-code-13-1",
+    title: "Visa Reason Code 13.1",
+    desc: "Ware oder Leistung nicht erhalten verständlich einordnen.",
+  },
+  {
+    path: "/mastercard-chargeback-reason-code",
+    title: "Mastercard Reason Codes",
+    desc: "Chargeback-Gründe für die Bank sauber vorbereiten.",
+  },
 ];
 
 const HIGHLIGHTS = [
@@ -54,8 +138,13 @@ export default function RatgeberIndex() {
           </div>
           <h1 className="text-4xl font-bold mb-4">Ratgeber & Chargeback-Guides</h1>
           <p className="text-xl text-muted-foreground max-w-2xl mx-auto min-h-[3.5rem] [font-family:Inter,system-ui,-apple-system,Segoe_UI,Roboto,Helvetica,Arial,sans-serif]">
-            <span className="md:hidden">Praxis-Guides für schnelle Rückerstattung bei Zahlungsproblemen.</span>
-            <span className="hidden md:inline">Praxisnahe Informationen, Tipps und Schritt-für-Schritt-Anleitungen für typische Zahlungsprobleme.</span>
+            <span className="md:hidden">
+              Praxis-Guides für schnelle Rückerstattung bei Zahlungsproblemen.
+            </span>
+            <span className="hidden md:inline">
+              Praxisnahe Informationen, Tipps und Schritt-für-Schritt-Anleitungen für typische
+              Zahlungsprobleme.
+            </span>
           </p>
         </div>
 
@@ -73,13 +162,17 @@ export default function RatgeberIndex() {
                         <div className="w-10 h-10 rounded-lg bg-primary/10 text-primary flex items-center justify-center">
                           <Icon className="w-5 h-5" />
                         </div>
-                        <span className="text-[10px] font-bold uppercase tracking-wider bg-primary text-primary-foreground px-2 py-0.5 rounded">{h.tag}</span>
+                        <span className="text-[10px] font-bold uppercase tracking-wider bg-primary text-primary-foreground px-2 py-0.5 rounded">
+                          {h.tag}
+                        </span>
                       </div>
                       <CardTitle className="flex items-start justify-between gap-3">
                         <span>{h.title}</span>
                         <ArrowRight className="w-5 h-5 text-muted-foreground group-hover:text-primary transition-colors shrink-0" />
                       </CardTitle>
-                      <CardDescription className="mt-2 text-sm leading-relaxed">{h.desc}</CardDescription>
+                      <CardDescription className="mt-2 text-sm leading-relaxed">
+                        {h.desc}
+                      </CardDescription>
                     </CardHeader>
                   </Card>
                 </Link>
@@ -100,7 +193,9 @@ export default function RatgeberIndex() {
                       <span>{guide.title}</span>
                       <ArrowRight className="w-5 h-5 text-muted-foreground group-hover:text-primary transition-colors shrink-0" />
                     </CardTitle>
-                    <CardDescription className="mt-2 text-sm leading-relaxed">{guide.desc}</CardDescription>
+                    <CardDescription className="mt-2 text-sm leading-relaxed">
+                      {guide.desc}
+                    </CardDescription>
                   </CardHeader>
                 </Card>
               </Link>
