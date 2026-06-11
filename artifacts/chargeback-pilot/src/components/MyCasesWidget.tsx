@@ -9,11 +9,7 @@ import {
 } from "@/lib/case-persistence";
 import MyCasesMenuContent from "./MyCasesMenuContent";
 
-const STORAGE_EVENT_KEYS = new Set([
-  "cbp_case_list_v1",
-  "cbp_current_case_v2",
-  "cbp_flatrate_v1",
-]);
+const STORAGE_EVENT_KEYS = new Set(["cbp_case_list_v1", "cbp_current_case_v2", "cbp_flatrate_v1"]);
 
 const EMPTY_INITIAL_DATA = {
   cases: [] as PersistedCase[],
@@ -31,7 +27,7 @@ function readStoredData() {
 }
 
 export function MyCasesWidget() {
-  const initialData = useRef(readStoredData()).current;
+  const initialData = useRef(EMPTY_INITIAL_DATA).current;
   const [cases, setCases] = useState<PersistedCase[]>(initialData.cases);
   const [flatActive, setFlatActive] = useState(initialData.flatActive);
   const [flatExpiry, setFlatExpiry] = useState<Date | null>(initialData.flatExpiry);
@@ -91,7 +87,8 @@ export function MyCasesWidget() {
         )}
         {flatActive && (
           <span className="hidden md:inline-flex items-center gap-0.5 ml-1 text-[10px] font-bold uppercase tracking-wide text-emerald-700 bg-emerald-100 px-1.5 py-0.5 rounded">
-            <InfinityIcon className="w-3 h-3" />Flat
+            <InfinityIcon className="w-3 h-3" />
+            Flat
           </span>
         )}
       </button>

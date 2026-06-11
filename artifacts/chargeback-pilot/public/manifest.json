@@ -9,14 +9,14 @@
   "icons": [
     {
       "src": "/favicon.svg",
-      "sizes": "any",
+      "sizes": "16x16 32x32 48x48 64x64",
       "purpose": "any",
       "type": "image/svg+xml"
     },
     {
       "src": "/favicon.svg",
-      "sizes": "any",
-      "purpose": "maskable",
+      "sizes": "192x192 512x512",
+      "purpose": "maskable any",
       "type": "image/svg+xml"
     }
   ]
