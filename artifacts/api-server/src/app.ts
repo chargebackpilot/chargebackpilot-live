@@ -22,10 +22,16 @@ app.use(
     contentSecurityPolicy: {
       directives: {
         defaultSrc: ["'self'"],
-        scriptSrc: ["'self'", "'unsafe-inline'", "cdn.jsdelivr.net"],
+        scriptSrc: [
+          "'self'",
+          "'unsafe-inline'",
+          "cdn.jsdelivr.net",
+          "https://challenges.cloudflare.com",
+        ],
         styleSrc: ["'self'", "'unsafe-inline'"],
         imgSrc: ["'self'", "data:", "https:"],
-        connectSrc: ["'self'"],
+        connectSrc: ["'self'", "https://challenges.cloudflare.com"],
+        frameSrc: ["'self'", "https://challenges.cloudflare.com"],
       },
     },
     hsts: {
@@ -85,7 +91,7 @@ const apiLimiter = rateLimit({
   max: 100, // limit each IP to 100 requests per windowMs
   standardHeaders: true,
   legacyHeaders: false,
-  message: { 
+  message: {
     error: "Zu viele Anfragen. Bitte versuche es in einer Stunde erneut.",
     code: "RATE_LIMIT_EXCEEDED",
   },
@@ -111,37 +117,34 @@ interface ApiErrorResponse {
 /**
  * Global Error Handler - must be last middleware
  */
-app.use(
-  (err: unknown, _req: Request, res: Response, _next: NextFunction): void => {
-    const errorCode = err instanceof ApiError ? err.code : "INTERNAL_SERVER_ERROR";
-    const statusCode = err instanceof ApiError ? err.statusCode : 500;
-    const message =
-      err instanceof Error ? err.message : "Ein interner Serverfehler ist aufgetreten.";
+app.use((err: unknown, _req: Request, res: Response, _next: NextFunction): void => {
+  const errorCode = err instanceof ApiError ? err.code : "INTERNAL_SERVER_ERROR";
+  const statusCode = err instanceof ApiError ? err.statusCode : 500;
+  const message = err instanceof Error ? err.message : "Ein interner Serverfehler ist aufgetreten.";
 
-    logger.error(
-      {
-        error: err instanceof Error ? err : String(err),
-        code: errorCode,
-        statusCode,
-      },
-      "Unhandled error in API"
-    );
-
-    const response: ApiErrorResponse = {
+  logger.error(
+    {
+      error: err instanceof Error ? err : String(err),
       code: errorCode,
-      message,
-      timestamp: new Date().toISOString(),
+      statusCode,
+    },
+    "Unhandled error in API"
+  );
+
+  const response: ApiErrorResponse = {
+    code: errorCode,
+    message,
+    timestamp: new Date().toISOString(),
+  };
+
+  if (env.NODE_ENV === "development" && err instanceof Error) {
+    response.details = {
+      stack: err.stack,
     };
-
-    if (env.NODE_ENV === "development" && err instanceof Error) {
-      response.details = {
-        stack: err.stack,
-      };
-    }
-
-    res.status(statusCode).json(response);
   }
-);
+
+  res.status(statusCode).json(response);
+});
 
 /**
  * API 404 Handler
@@ -175,6 +178,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const staticDir = path.resolve(__dirname, "../..", "chargeback-pilot", "dist", "public");
 const indexPath = path.join(staticDir, "index.html");
+const appShellPath = path.join(staticDir, "app-shell.html");
 
 const escapeHtml = (value: string) =>
   value
@@ -184,81 +188,83 @@ const escapeHtml = (value: string) =>
     .replace(/"/g, "&quot;")
     .replace(/'/g, "&#39;");
 
-const metaByPath: Array<{ match: RegExp; title: string; description: string; noindex?: boolean }> = [
-  {
-    match: /^\/$/,
-    title: "ChargebackPilot · KI-Hilfe für Chargeback, PayPal-Käuferschutz & Reklamation 2026",
-    description:
-      "Ware nicht erhalten, Flug ausgefallen, doppelt belastet? ChargebackPilot prüft deinen Fall mit KI in 60 Sekunden und liefert dir 3 fertige Textvorlagen.",
-  },
-  {
-    match: /^\/vorlagen-generator$/,
-    title: "Vorlagen-Generator · ChargebackPilot",
-    description:
-      "Erstelle in wenigen Schritten professionelle Reklamationsvorlagen für Händler, Bank/PayPal/Klarna und Eskalation.",
-  },
-  {
-    match: /^\/ratgeber/,
-    title: "Ratgeber & Guides zu Chargeback, Käuferschutz und Rückerstattung · ChargebackPilot",
-    description:
-      "Praxisnahe Anleitungen für PayPal, Kreditkarten-Chargeback, Klarna-Reklamation und typische Problemfälle im Onlinekauf.",
-  },
-  {
-    match: /^\/404$/,
-    title: "Seite nicht gefunden (404) · ChargebackPilot",
-    description:
-      "Die angeforderte Seite existiert nicht oder wurde verschoben. Nutze unsere Startseite oder den Ratgeber, um schnell weiterzumachen.",
-    noindex: true,
-  },
-  {
-    match: /^\/impressum$/,
-    title: "Impressum · ChargebackPilot",
-    description:
-      "Impressum von ChargebackPilot gemäß den geltenden Informationspflichten für Online-Angebote in Deutschland.",
-  },
-  {
-    match: /^\/datenschutz$/,
-    title: "Datenschutzerklärung · ChargebackPilot",
-    description:
-      "Datenschutzerklärung von ChargebackPilot mit Informationen zur Datenverarbeitung, Rechtsgrundlagen und Betroffenenrechten.",
-  },
-  {
-    match: /^\/agb$/,
-    title: "Allgemeine Geschäftsbedingungen (AGB) · ChargebackPilot",
-    description:
-      "Allgemeine Geschäftsbedingungen von ChargebackPilot für Nutzung, Leistungsumfang, Vergütung und Haftung.",
-  },
-  {
-    match: /^\/widerruf$/,
-    title: "Widerrufsbelehrung · ChargebackPilot",
-    description:
-      "Widerrufsbelehrung von ChargebackPilot mit Fristen, Voraussetzungen und Musterinformationen für Verbraucher.",
-  },
-  {
-    match: /^\/(paypal-chargeback|amex-chargeback|visa-mastercard-chargeback|klarna-reklamation|flug-chargeback|kiwi-rueckerstattung|lieferando-rueckerstattung|wolt-rueckerstattung|ubereats-rueckerstattung|ware-nicht-erhalten|abo-falle-chargeback)$/,
-    title: "Chargeback-Ratgeber 2026 · ChargebackPilot",
-    description:
-      "Konkrete Schritt-für-Schritt-Hilfen für Rückerstattung, Chargeback und Käuferschutz je nach Zahlungsart und Problemfall.",
-  },
-  {
-    match: /^\/scam-shops-2026$/,
-    title: "Bekannte Scam-Muster & Fake-Shops 2026 — was du jetzt tun kannst | ChargebackPilot",
-    description:
-      "Verdacht auf Fake-Shop oder Internet-Betrug? Die wichtigsten Warnsignale 2026 plus strukturierte Anleitung zu Chargeback, PayPal-Käuferschutz und Lastschriftrückruf.",
-  },
-  {
-    match: /^\/hilfe\//,
-    title: "Händler-spezifische Hilfe bei Reklamationen · ChargebackPilot",
-    description:
-      "Konkrete Leitfäden zu typischen Problemen bei bekannten Händlern inklusive Beweis-Checkliste und Eskalationspfad.",
-  },
-  {
-    match: /^\/vergleich\//,
-    title: "Vergleich: PayPal vs Kreditkarte vs Klarna · ChargebackPilot",
-    description:
-      "Welcher Weg ist in deinem Fall am besten? Vergleich von Fristen, Erfolgschancen und Vorgehen bei Rückerstattungen.",
-  },
-];
+const metaByPath: Array<{ match: RegExp; title: string; description: string; noindex?: boolean }> =
+  [
+    {
+      match: /^\/$/,
+      title: "ChargebackPilot · KI-Hilfe für Chargeback, PayPal-Käuferschutz & Reklamation 2026",
+      description:
+        "Ware nicht erhalten, Flug ausgefallen, doppelt belastet? ChargebackPilot prüft deinen Fall mit KI in 60 Sekunden und liefert dir 3 fertige Textvorlagen.",
+    },
+    {
+      match: /^\/vorlagen-generator$/,
+      title: "Vorlagen-Generator · ChargebackPilot",
+      description:
+        "Erstelle in wenigen Schritten professionelle Reklamationsvorlagen für Händler, Bank/PayPal/Klarna und Eskalation.",
+    },
+    {
+      match: /^\/ratgeber/,
+      title: "Ratgeber & Guides zu Chargeback, Käuferschutz und Rückerstattung · ChargebackPilot",
+      description:
+        "Praxisnahe Anleitungen für PayPal, Kreditkarten-Chargeback, Klarna-Reklamation und typische Problemfälle im Onlinekauf.",
+    },
+    {
+      match: /^\/404$/,
+      title: "Seite nicht gefunden (404) · ChargebackPilot",
+      description:
+        "Die angeforderte Seite existiert nicht oder wurde verschoben. Nutze unsere Startseite oder den Ratgeber, um schnell weiterzumachen.",
+      noindex: true,
+    },
+    {
+      match: /^\/impressum$/,
+      title: "Impressum · ChargebackPilot",
+      description:
+        "Impressum von ChargebackPilot gemäß den geltenden Informationspflichten für Online-Angebote in Deutschland.",
+    },
+    {
+      match: /^\/datenschutz$/,
+      title: "Datenschutzerklärung · ChargebackPilot",
+      description:
+        "Datenschutzerklärung von ChargebackPilot mit Informationen zur Datenverarbeitung, Rechtsgrundlagen und Betroffenenrechten.",
+    },
+    {
+      match: /^\/agb$/,
+      title: "Allgemeine Geschäftsbedingungen (AGB) · ChargebackPilot",
+      description:
+        "Allgemeine Geschäftsbedingungen von ChargebackPilot für Nutzung, Leistungsumfang, Vergütung und Haftung.",
+    },
+    {
+      match: /^\/widerruf$/,
+      title: "Widerrufsbelehrung · ChargebackPilot",
+      description:
+        "Widerrufsbelehrung von ChargebackPilot mit Fristen, Voraussetzungen und Musterinformationen für Verbraucher.",
+    },
+    {
+      match:
+        /^\/(paypal-chargeback|amex-chargeback|visa-mastercard-chargeback|klarna-reklamation|flug-chargeback|kiwi-rueckerstattung|lieferando-rueckerstattung|wolt-rueckerstattung|ubereats-rueckerstattung|ware-nicht-erhalten|abo-falle-chargeback)$/,
+      title: "Chargeback-Ratgeber 2026 · ChargebackPilot",
+      description:
+        "Konkrete Schritt-für-Schritt-Hilfen für Rückerstattung, Chargeback und Käuferschutz je nach Zahlungsart und Problemfall.",
+    },
+    {
+      match: /^\/scam-shops-2026$/,
+      title: "Bekannte Scam-Muster & Fake-Shops 2026 — was du jetzt tun kannst | ChargebackPilot",
+      description:
+        "Verdacht auf Fake-Shop oder Internet-Betrug? Die wichtigsten Warnsignale 2026 plus strukturierte Anleitung zu Chargeback, PayPal-Käuferschutz und Lastschriftrückruf.",
+    },
+    {
+      match: /^\/hilfe\//,
+      title: "Händler-spezifische Hilfe bei Reklamationen · ChargebackPilot",
+      description:
+        "Konkrete Leitfäden zu typischen Problemen bei bekannten Händlern inklusive Beweis-Checkliste und Eskalationspfad.",
+    },
+    {
+      match: /^\/vergleich\//,
+      title: "Vergleich: PayPal vs Kreditkarte vs Klarna · ChargebackPilot",
+      description:
+        "Welcher Weg ist in deinem Fall am besten? Vergleich von Fristen, Erfolgschancen und Vorgehen bei Rückerstattungen.",
+    },
+  ];
 
 const defaultMeta = {
   title: "ChargebackPilot · Chargeback & Reklamationshilfe",
@@ -269,7 +275,10 @@ const defaultMeta = {
 const origin = "https://chargebackpilot.de";
 
 function renderSeoHtml(pathname: string) {
-  const raw = fs.readFileSync(indexPath, "utf-8");
+  const raw = fs.readFileSync(
+    pathname === "/" || !fs.existsSync(appShellPath) ? indexPath : appShellPath,
+    "utf-8"
+  );
   const current = metaByPath.find((m) => m.match.test(pathname));
   const effective = current ?? defaultMeta;
   const isKnownRoute = Boolean(current);
@@ -286,36 +295,64 @@ function renderSeoHtml(pathname: string) {
 
   const html = raw
     .replace(/<title>.*?<\/title>/i, `<title>${title}</title>`)
-    .replace(/<meta name="description" content=".*?"\s*\/>/i, `<meta name="description" content="${description}" />`)
-    .replace(/<meta name="robots" content=".*?"\s*\/>/i, `<meta name="robots" content="${robots}" />`)
-    .replace(/<meta name="googlebot" content=".*?"\s*\/>/i, `<meta name="googlebot" content="${googlebot}" />`)
-    .replace(/<meta property="og:title" content=".*?"\s*\/>/i, `<meta property="og:title" content="${title}" />`)
-    .replace(/<meta property="og:description" content=".*?"\s*\/>/i, `<meta property="og:description" content="${description}" />`)
-    .replace(/<meta property="og:url" content=".*?"\s*\/>/i, `<meta property="og:url" content="${canonical}" />`)
-    .replace(/<meta name="twitter:title" content=".*?"\s*\/>/i, `<meta name="twitter:title" content="${title}" />`)
-    .replace(/<meta name="twitter:description" content=".*?"\s*\/>/i, `<meta name="twitter:description" content="${description}" />`)
-    .replace(/<link rel="canonical" href=".*?"\s*\/>/i, `<link rel="canonical" href="${canonical}" />`);
+    .replace(
+      /<meta name="description" content=".*?"\s*\/>/i,
+      `<meta name="description" content="${description}" />`
+    )
+    .replace(
+      /<meta name="robots" content=".*?"\s*\/>/i,
+      `<meta name="robots" content="${robots}" />`
+    )
+    .replace(
+      /<meta name="googlebot" content=".*?"\s*\/>/i,
+      `<meta name="googlebot" content="${googlebot}" />`
+    )
+    .replace(
+      /<meta property="og:title" content=".*?"\s*\/>/i,
+      `<meta property="og:title" content="${title}" />`
+    )
+    .replace(
+      /<meta property="og:description" content=".*?"\s*\/>/i,
+      `<meta property="og:description" content="${description}" />`
+    )
+    .replace(
+      /<meta property="og:url" content=".*?"\s*\/>/i,
+      `<meta property="og:url" content="${canonical}" />`
+    )
+    .replace(
+      /<meta name="twitter:title" content=".*?"\s*\/>/i,
+      `<meta name="twitter:title" content="${title}" />`
+    )
+    .replace(
+      /<meta name="twitter:description" content=".*?"\s*\/>/i,
+      `<meta name="twitter:description" content="${description}" />`
+    )
+    .replace(
+      /<link rel="canonical" href=".*?"\s*\/>/i,
+      `<link rel="canonical" href="${canonical}" />`
+    );
 
   return { html, isKnownRoute };
 }
 
-app.use(express.static(staticDir, {
-  index: false,
-  redirect: false,
-  setHeaders: (res, filePath) => {
-    if (filePath.includes(`${path.sep}assets${path.sep}`)) {
-      res.setHeader("Cache-Control", "public, max-age=31536000, immutable");
-      return;
-    }
-    if (filePath.includes(`${path.sep}fonts${path.sep}inter${path.sep}`)) {
-      res.setHeader("Cache-Control", "public, max-age=31536000, immutable");
-    }
-  },
-}));
+app.use(
+  express.static(staticDir, {
+    index: false,
+    redirect: false,
+    setHeaders: (res, filePath) => {
+      if (filePath.includes(`${path.sep}assets${path.sep}`)) {
+        res.setHeader("Cache-Control", "public, max-age=31536000, immutable");
+        return;
+      }
+      if (filePath.includes(`${path.sep}fonts${path.sep}inter${path.sep}`)) {
+        res.setHeader("Cache-Control", "public, max-age=31536000, immutable");
+      }
+    },
+  })
+);
 app.get(/(.*)/, (req, res) => {
-  const prerenderedPath = req.path === "/"
-    ? indexPath
-    : path.join(staticDir, req.path, "index.html");
+  const prerenderedPath =
+    req.path === "/" ? indexPath : path.join(staticDir, req.path, "index.html");
   if (fs.existsSync(prerenderedPath)) {
     res.setHeader("Content-Type", "text/html; charset=utf-8");
     res.setHeader("Cache-Control", "public, max-age=300, stale-while-revalidate=86400");

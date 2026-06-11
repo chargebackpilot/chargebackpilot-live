@@ -7,6 +7,7 @@ const root = path.resolve(__dirname, "..");
 const dist = path.join(root, "dist", "public");
 const serverEntry = path.join(root, "dist", "server", "entry-server.js");
 const template = await fs.readFile(path.join(dist, "index.html"), "utf-8");
+await fs.writeFile(path.join(dist, "app-shell.html"), template);
 const { render } = await import(serverEntry);
 const seoRoutesSource = await fs.readFile(path.join(root, "src", "seo-routes.ts"), "utf-8");
 const merchantSource = await fs.readFile(path.join(root, "src", "data", "merchants.ts"), "utf-8");
