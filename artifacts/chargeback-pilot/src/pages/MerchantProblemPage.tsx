@@ -336,10 +336,10 @@ export default function MerchantProblemPage() {
             </p>
           </section>
 
-          {/* Legal basis */}
+          {/* Consumer/procedure notes */}
           <section>
             <h2 className="text-2xl font-bold mb-5 border-b pb-2">
-              Rechtliche Grundlagen (kein Rechtsrat)
+              Verbraucher- und Verfahrenshinweise (keine Rechtsberatung)
             </h2>
             <div className="space-y-5">
               {copy.legalBasis.map((lb, i) => (
@@ -351,8 +351,8 @@ export default function MerchantProblemPage() {
             </div>
             <p className="text-xs text-muted-foreground mt-5 italic">
               Hinweis: Die genannten Paragraphen und Verordnungen sind allgemeine Information, keine
-              Rechtsberatung. Konkrete rechtliche Fragen besprich bitte mit der Verbraucherzentrale
-              oder einem Fachanwalt für Verbraucherrecht.
+              Rechtsberatung und keine Prüfung deines Einzelfalls. Konkrete rechtliche Fragen
+              besprich bitte mit der Verbraucherzentrale oder einem Fachanwalt für Verbraucherrecht.
             </p>
           </section>
 

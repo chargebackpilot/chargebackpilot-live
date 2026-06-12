@@ -1407,7 +1407,7 @@ export default function Wizard() {
                               <div className="space-y-3">
                                 <LockedTeaser
                                   icon={<Scale className="w-4 h-4 text-primary" />}
-                                  title="Mögliche rechtliche Hinweise"
+                                  title="Verfahrensbezogene Hinweise"
                                   lines={3}
                                 />
                                 <LockedTeaser
@@ -1502,7 +1502,7 @@ export default function Wizard() {
                                 <div className="border rounded-xl p-5">
                                   <h3 className="font-bold text-base mb-3 flex items-center gap-2">
                                     <Scale className="w-4 h-4 text-primary" />
-                                    Mögliche rechtliche Hinweise
+                                    Verfahrensbezogene Hinweise
                                   </h3>
                                   <ul className="space-y-2">
                                     {analysis.legalBasis.map((basis, i) => (

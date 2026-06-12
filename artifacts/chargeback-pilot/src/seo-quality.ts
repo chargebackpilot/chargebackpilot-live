@@ -7,6 +7,7 @@ import {
   type MerchantDef,
   type ProblemDef,
 } from "@/data/merchants";
+import seoQualityConfig from "@/seo-quality-config.json";
 
 export type SeoQualityRecommendation =
   | "INDEX_READY"
@@ -25,89 +26,7 @@ export interface SeoQualityResult {
   override: "forceIndex" | "forceNoindex" | null;
 }
 
-export const SEO_QUALITY_CONFIG = {
-  threshold: 80,
-  lastmod: "2026-06-11",
-  forceIndex: [
-    "/hilfe/amazon/ware-nicht-erhalten",
-    "/hilfe/temu/ware-nicht-erhalten",
-    "/hilfe/zalando/ware-nicht-erhalten",
-    "/hilfe/otto/ware-nicht-erhalten",
-    "/hilfe/ebay/ware-nicht-erhalten",
-    "/hilfe/vinted/ware-nicht-erhalten",
-    "/hilfe/lieferando/lieferung-falsch",
-    "/hilfe/wolt/lieferung-falsch",
-    "/hilfe/uber-eats/lieferung-falsch",
-    "/hilfe/kiwi/flug-storniert",
-    "/hilfe/ryanair/flug-storniert",
-    "/hilfe/google-play/abbuchung-ohne-zustimmung",
-  ],
-  forceNoindex: [],
-  scheduledIndexing: {
-    enabled: true,
-    startDate: "2026-07-01",
-    intervalDays: 30,
-    batchSize: 6,
-    minScore: 70,
-    order: [
-      "/hilfe/temu/ware-defekt",
-      "/hilfe/shein/ware-nicht-erhalten",
-      "/hilfe/aliexpress/ware-nicht-erhalten",
-      "/hilfe/amazon/ware-defekt",
-      "/hilfe/zalando/ware-defekt",
-      "/hilfe/otto/ware-defekt",
-      "/hilfe/ebay/ware-defekt",
-      "/hilfe/vinted/ware-defekt",
-      "/hilfe/etsy/ware-nicht-erhalten",
-      "/hilfe/lufthansa/flug-storniert",
-      "/hilfe/eurowings/flug-storniert",
-      "/hilfe/booking/hotel-anders-als-beschrieben",
-      "/hilfe/airbnb/hotel-anders-als-beschrieben",
-      "/hilfe/lieferando/ware-nicht-erhalten",
-      "/hilfe/wolt/ware-nicht-erhalten",
-      "/hilfe/uber-eats/ware-nicht-erhalten",
-      "/hilfe/dhl/ware-nicht-erhalten",
-      "/hilfe/hermes/ware-nicht-erhalten",
-      "/hilfe/kiwi/abbuchung-ohne-zustimmung",
-      "/hilfe/apple/abbuchung-ohne-zustimmung",
-      "/hilfe/spotify/abbuchung-ohne-zustimmung",
-      "/hilfe/netflix/abbuchung-ohne-zustimmung",
-      "/hilfe/dazn/abbuchung-ohne-zustimmung",
-      "/hilfe/sky/abbuchung-ohne-zustimmung",
-      "/hilfe/booking/flug-storniert",
-      "/hilfe/amazon/abbuchung-ohne-zustimmung",
-      "/hilfe/zalando/abbuchung-ohne-zustimmung",
-      "/hilfe/lieferando/abbuchung-ohne-zustimmung",
-      "/hilfe/temu/betrugsverdacht",
-      "/hilfe/wish/ware-nicht-erhalten",
-      "/hilfe/wish/ware-defekt",
-      "/hilfe/wish/betrugsverdacht",
-      "/hilfe/aliexpress/ware-defekt",
-      "/hilfe/shein/ware-defekt",
-      "/hilfe/etsy/ware-defekt",
-      "/hilfe/ebay/betrugsverdacht",
-      "/hilfe/vinted/betrugsverdacht",
-    ],
-  },
-  weights: {
-    providerSpecificSection: 20,
-    problemSpecificEvidence: 20,
-    paymentSpecificNextStep: 15,
-    faqDepth: 15,
-    methodologySignal: 15,
-    noGenericPlaceholders: 15,
-  },
-  genericTextPatterns: [
-    "lorem ipsum",
-    "todo",
-    "platzhalter",
-    "example merchant",
-    "generic merchant",
-    "anbietername",
-    "problemtyp",
-    "allgemeine orientierung",
-  ],
-} as const;
+export const SEO_QUALITY_CONFIG = seoQualityConfig;
 
 const FORCE_INDEX = new Set<string>(SEO_QUALITY_CONFIG.forceIndex);
 const FORCE_NOINDEX = new Set<string>(SEO_QUALITY_CONFIG.forceNoindex);

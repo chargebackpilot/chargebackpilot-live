@@ -5,30 +5,20 @@ import { fileURLToPath } from "node:url";
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const root = path.resolve(__dirname, "..");
 const merchantSource = await fs.readFile(path.join(root, "src", "data", "merchants.ts"), "utf-8");
-const qualitySource = await fs.readFile(path.join(root, "src", "seo-quality.ts"), "utf-8");
+const qualityConfig = JSON.parse(
+  await fs.readFile(path.join(root, "src", "seo-quality-config.json"), "utf-8"),
+);
 
-const threshold = Number(qualitySource.match(/threshold:\s*(\d+)/)?.[1] ?? 80);
-const forceIndex = new Set(
-  [...(qualitySource.match(/forceIndex:\s*\[([\s\S]*?)\]/)?.[1] ?? "").matchAll(/"([^"]+)"/g)].map(
-    (m) => m[1],
-  ),
-);
-const forceNoindex = new Set(
-  [...(qualitySource.match(/forceNoindex:\s*\[([\s\S]*?)\]/)?.[1] ?? "").matchAll(/"([^"]+)"/g)].map(
-    (m) => m[1],
-  ),
-);
-const scheduledIndexingSource =
-  qualitySource.match(/scheduledIndexing:\s*\{([\s\S]*?)\n\s*\},\n\s*weights:/)?.[1] ?? "";
-const scheduledIndexing = {
-  enabled: scheduledIndexingSource.match(/enabled:\s*(true|false)/)?.[1] !== "false",
-  startDate: scheduledIndexingSource.match(/startDate:\s*"([^"]+)"/)?.[1] ?? "2099-01-01",
-  intervalDays: Number(scheduledIndexingSource.match(/intervalDays:\s*(\d+)/)?.[1] ?? 30),
-  batchSize: Number(scheduledIndexingSource.match(/batchSize:\s*(\d+)/)?.[1] ?? 6),
-  minScore: Number(scheduledIndexingSource.match(/minScore:\s*(\d+)/)?.[1] ?? threshold),
-  order: [
-    ...(scheduledIndexingSource.match(/order:\s*\[([\s\S]*?)\]/)?.[1] ?? "").matchAll(/"([^"]+)"/g),
-  ].map((m) => m[1]),
+const threshold = Number(qualityConfig.threshold ?? 80);
+const forceIndex = new Set(qualityConfig.forceIndex ?? []);
+const forceNoindex = new Set(qualityConfig.forceNoindex ?? []);
+const scheduledIndexing = qualityConfig.scheduledIndexing ?? {
+  enabled: false,
+  startDate: "2099-01-01",
+  intervalDays: 30,
+  batchSize: 6,
+  minScore: threshold,
+  order: [],
 };
 const scheduledIndexOrder = new Map(scheduledIndexing.order.map((url, index) => [url, index]));
 const today = process.env.SEO_RELEASE_DATE ?? new Date().toISOString().slice(0, 10);

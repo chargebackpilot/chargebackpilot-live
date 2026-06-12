@@ -11,6 +11,9 @@ await fs.writeFile(path.join(dist, "app-shell.html"), template);
 const { render } = await import(serverEntry);
 const seoRoutesSource = await fs.readFile(path.join(root, "src", "seo-routes.ts"), "utf-8");
 const merchantSource = await fs.readFile(path.join(root, "src", "data", "merchants.ts"), "utf-8");
+const seoQualityConfig = JSON.parse(
+  await fs.readFile(path.join(root, "src", "seo-quality-config.json"), "utf-8"),
+);
 const staticRoutes = [
   "/",
   "/vorlagen-generator",
@@ -49,26 +52,17 @@ const merchantSectionMatch = merchantSource.match(/export const MERCHANTS:[\s\S]
 const merchantSection = merchantSectionMatch?.[1] ?? "";
 const problemSectionMatch = merchantSource.match(/export const PROBLEMS:[\s\S]*?=\s*\[([\s\S]*?)\n\];/);
 const problemSection = problemSectionMatch?.[1] ?? "";
-const seoQualitySource = await fs.readFile(path.join(root, "src", "seo-quality.ts"), "utf-8");
-const lastmodMatch = seoQualitySource.match(/lastmod:\s*"([^"]+)"/);
-const sitemapLastmod = lastmodMatch?.[1] ?? new Date().toISOString().slice(0, 10);
-const thresholdMatch = seoQualitySource.match(/threshold:\s*(\d+)/);
-const qualityThreshold = Number(thresholdMatch?.[1] ?? 80);
-const forceIndexMatch = seoQualitySource.match(/forceIndex:\s*\[([\s\S]*?)\]/);
-const forceNoindexMatch = seoQualitySource.match(/forceNoindex:\s*\[([\s\S]*?)\]/);
-const forceIndexPaths = new Set([...(forceIndexMatch?.[1] ?? "").matchAll(/"([^"]+)"/g)].map((m) => m[1]));
-const forceNoindexPaths = new Set([...(forceNoindexMatch?.[1] ?? "").matchAll(/"([^"]+)"/g)].map((m) => m[1]));
-const scheduledIndexingMatch = seoQualitySource.match(/scheduledIndexing:\s*\{([\s\S]*?)\n\s*\},\n\s*weights:/);
-const scheduledIndexingSource = scheduledIndexingMatch?.[1] ?? "";
-const scheduledIndexing = {
-  enabled: scheduledIndexingSource.match(/enabled:\s*(true|false)/)?.[1] !== "false",
-  startDate: scheduledIndexingSource.match(/startDate:\s*"([^"]+)"/)?.[1] ?? "2099-01-01",
-  intervalDays: Number(scheduledIndexingSource.match(/intervalDays:\s*(\d+)/)?.[1] ?? 30),
-  batchSize: Number(scheduledIndexingSource.match(/batchSize:\s*(\d+)/)?.[1] ?? 6),
-  minScore: Number(scheduledIndexingSource.match(/minScore:\s*(\d+)/)?.[1] ?? qualityThreshold),
-  order: [
-    ...(scheduledIndexingSource.match(/order:\s*\[([\s\S]*?)\]/)?.[1] ?? "").matchAll(/"([^"]+)"/g),
-  ].map((m) => m[1]),
+const sitemapLastmod = seoQualityConfig.lastmod ?? new Date().toISOString().slice(0, 10);
+const qualityThreshold = Number(seoQualityConfig.threshold ?? 80);
+const forceIndexPaths = new Set(seoQualityConfig.forceIndex ?? []);
+const forceNoindexPaths = new Set(seoQualityConfig.forceNoindex ?? []);
+const scheduledIndexing = seoQualityConfig.scheduledIndexing ?? {
+  enabled: false,
+  startDate: "2099-01-01",
+  intervalDays: 30,
+  batchSize: 6,
+  minScore: qualityThreshold,
+  order: [],
 };
 const scheduledIndexOrder = new Map(scheduledIndexing.order.map((route, index) => [route, index]));
 const releaseToday = process.env.SEO_RELEASE_DATE ?? new Date().toISOString().slice(0, 10);

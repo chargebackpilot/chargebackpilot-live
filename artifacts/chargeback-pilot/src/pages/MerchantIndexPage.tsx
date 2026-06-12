@@ -78,6 +78,23 @@ export default function MerchantIndexPage() {
               </div>
             </section>
           )}
+          {indexedProblems.length === 0 && (
+            <section className="rounded-2xl border bg-card p-6 shadow-sm">
+              <h2 className="text-2xl font-bold mb-3">Hilfe zu {merchant.name}</h2>
+              <p className="text-sm text-muted-foreground leading-relaxed mb-5">
+                Für {merchant.name} werden die Detail-Guides gestaffelt freigegeben. Du kannst
+                deinen konkreten Fall trotzdem sofort im Generator strukturieren und erhältst eine
+                kostenlose Ersteinschätzung mit Beleg-Checkliste.
+              </p>
+              <div className="grid gap-2 sm:grid-cols-2">
+                {problems.map((p) => (
+                  <div key={p.slug} className="rounded-lg border bg-muted/30 px-3 py-2 text-sm">
+                    {p.label}
+                  </div>
+                ))}
+              </div>
+            </section>
+          )}
         </div>
       </article>
     </MainLayout>
