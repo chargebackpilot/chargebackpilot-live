@@ -25,3 +25,31 @@ server.on("error", (err) => {
   logger.error({ err }, "Error listening on port");
   process.exit(1);
 });
+
+let isShuttingDown = false;
+
+function shutdown(signal: NodeJS.Signals) {
+  if (isShuttingDown) return;
+  isShuttingDown = true;
+
+  logger.info({ signal }, "Received shutdown signal, closing server");
+
+  const forceExitTimer = setTimeout(() => {
+    logger.warn({ signal }, "Graceful shutdown timed out, exiting");
+    process.exit(0);
+  }, 25_000);
+  forceExitTimer.unref();
+
+  server.close((err) => {
+    clearTimeout(forceExitTimer);
+    if (err) {
+      logger.error({ err, signal }, "Error while closing server");
+      process.exit(1);
+    }
+    logger.info({ signal }, "Server closed cleanly");
+    process.exit(0);
+  });
+}
+
+process.once("SIGTERM", shutdown);
+process.once("SIGINT", shutdown);

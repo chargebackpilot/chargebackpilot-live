@@ -180,6 +180,10 @@ const staticDir = path.resolve(__dirname, "../..", "chargeback-pilot", "dist", "
 const indexPath = path.join(staticDir, "index.html");
 const appShellPath = path.join(staticDir, "app-shell.html");
 
+app.get("/favicon.ico", (_req, res) => {
+  res.redirect(301, "/favicon.svg");
+});
+
 const escapeHtml = (value: string) =>
   value
     .replace(/&/g, "&amp;")
