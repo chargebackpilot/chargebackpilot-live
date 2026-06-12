@@ -129,9 +129,6 @@ export default function MerchantProblemPage() {
   const indexedSiblings = siblings.filter((p) =>
     isIndexableMerchantProblemPath(`/hilfe/${merchant.slug}/${p.slug}`)
   );
-  const candidateSiblings = siblings.filter(
-    (p) => !isIndexableMerchantProblemPath(`/hilfe/${merchant.slug}/${p.slug}`)
-  );
 
   return (
     <MainLayout>
@@ -427,26 +424,6 @@ export default function MerchantProblemPage() {
                     <Card className="hover:border-primary transition-colors cursor-pointer">
                       <CardContent className="p-4 flex items-center justify-between gap-3">
                         <span className="font-medium text-sm">
-                          {merchant.name}: {p.label}
-                        </span>
-                        <ArrowRight className="w-4 h-4 text-muted-foreground shrink-0" />
-                      </CardContent>
-                    </Card>
-                  </Link>
-                ))}
-              </div>
-            </section>
-          )}
-
-          {candidateSiblings.length > 0 && (
-            <section>
-              <h2 className="text-lg font-bold mb-3">Weitere vorbereitete Themen</h2>
-              <div className="grid sm:grid-cols-2 gap-2.5">
-                {candidateSiblings.map((p) => (
-                  <Link key={p.slug} href={`/hilfe/${merchant.slug}/${p.slug}`}>
-                    <Card className="border-dashed hover:border-primary transition-colors cursor-pointer shadow-none">
-                      <CardContent className="p-4 flex items-center justify-between gap-3">
-                        <span className="font-medium text-sm text-muted-foreground">
                           {merchant.name}: {p.label}
                         </span>
                         <ArrowRight className="w-4 h-4 text-muted-foreground shrink-0" />
