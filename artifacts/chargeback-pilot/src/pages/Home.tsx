@@ -3,7 +3,6 @@ import { MainLayout } from "@/components/layout/MainLayout";
 import { SeoHead } from "@/components/SeoHead";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Checkbox } from "@/components/ui/checkbox";
 import { Link } from "wouter";
 import {
   Accordion,
@@ -256,8 +255,6 @@ export default function Home() {
   const [stats, setStats] = useState<CaseStats | null>(null);
   const [flatrateLoading, setFlatrateLoading] = useState(false);
   const [flatrateActive, setFlatrateActive] = useState(false);
-  const [flatrateImmediateAccessConsent, setFlatrateImmediateAccessConsent] = useState(false);
-  const [flatrateWithdrawalLossAccepted, setFlatrateWithdrawalLossAccepted] = useState(false);
   const [, startStatsTransition] = useTransition();
 
   const handleFreshWizardStart = () => {
@@ -330,10 +327,6 @@ export default function Home() {
       const res = await fetch("/api/stripe/flatrate-checkout", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          immediateAccessConsent: flatrateImmediateAccessConsent,
-          withdrawalLossAccepted: flatrateWithdrawalLossAccepted,
-        }),
       });
       const json = await res.json();
       if (json?.url) {
@@ -772,49 +765,15 @@ export default function Home() {
                     Flatrate aktiv
                   </Button>
                 ) : (
-                  <>
-                    <div className="space-y-2 rounded-xl border bg-slate-50/70 p-3">
-                      <label className="flex cursor-pointer items-start gap-3 text-xs leading-relaxed text-slate-700">
-                        <Checkbox
-                          checked={flatrateImmediateAccessConsent}
-                          onCheckedChange={(value) =>
-                            setFlatrateImmediateAccessConsent(Boolean(value))
-                          }
-                          className="mt-0.5"
-                        />
-                        <span>
-                          Ich verlange ausdrücklich die sofortige Bereitstellung der digitalen
-                          Inhalte.
-                        </span>
-                      </label>
-                      <label className="flex cursor-pointer items-start gap-3 text-xs leading-relaxed text-slate-700">
-                        <Checkbox
-                          checked={flatrateWithdrawalLossAccepted}
-                          onCheckedChange={(value) =>
-                            setFlatrateWithdrawalLossAccepted(Boolean(value))
-                          }
-                          className="mt-0.5"
-                        />
-                        <span>
-                          Mir ist bekannt, dass mein Widerrufsrecht bei vollständiger
-                          Vertragserfüllung vorzeitig erlöschen kann.
-                        </span>
-                      </label>
-                    </div>
-                    <Button
-                      className="w-full mt-2"
-                      variant="outline"
-                      onClick={handleFlatrateCheckout}
-                      disabled={
-                        flatrateLoading ||
-                        !flatrateImmediateAccessConsent ||
-                        !flatrateWithdrawalLossAccepted
-                      }
-                      data-testid="flatrate-checkout"
-                    >
-                      {flatrateLoading ? "Wird vorbereitet…" : "Flatrate für 9,99 € kaufen"}
-                    </Button>
-                  </>
+                  <Button
+                    className="w-full mt-2"
+                    variant="outline"
+                    onClick={handleFlatrateCheckout}
+                    disabled={flatrateLoading}
+                    data-testid="flatrate-checkout"
+                  >
+                    {flatrateLoading ? "Wird vorbereitet…" : "Flatrate für 9,99 € kaufen"}
+                  </Button>
                 )}
               </CardContent>
             </Card>

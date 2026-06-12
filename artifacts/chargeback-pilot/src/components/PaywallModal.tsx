@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Checkbox } from "@/components/ui/checkbox";
 import {
   Lock,
   Check,
@@ -144,8 +143,6 @@ export function PaywallModal({
 }: PaywallProps) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-  const [immediateAccessConsent, setImmediateAccessConsent] = useState(false);
-  const [withdrawalLossAccepted, setWithdrawalLossAccepted] = useState(false);
 
   const benefits = getBenefits(paymentMethod);
   const band = toStrategyBand(strategyLabel);
@@ -154,20 +151,11 @@ export function PaywallModal({
   const handleCheckout = async () => {
     setLoading(true);
     setError("");
-    if (!immediateAccessConsent || !withdrawalLossAccepted) {
-      setError("Bitte bestätige die Hinweise zu digitalen Inhalten und Widerruf.");
-      setLoading(false);
-      return;
-    }
     try {
       const res = await fetch("/api/stripe/checkout", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          caseId,
-          immediateAccessConsent,
-          withdrawalLossAccepted,
-        }),
+        body: JSON.stringify({ caseId }),
       });
       const json = await res.json();
       if (json.url) {
@@ -263,36 +251,11 @@ export function PaywallModal({
             </div>
           )}
 
-          <div className="space-y-2 rounded-xl border bg-slate-50/70 p-3">
-            <label className="flex cursor-pointer items-start gap-3 text-xs leading-relaxed text-slate-700">
-              <Checkbox
-                checked={immediateAccessConsent}
-                onCheckedChange={(value) => setImmediateAccessConsent(Boolean(value))}
-                className="mt-0.5"
-              />
-              <span>
-                Ich verlange ausdrücklich, dass ChargebackPilot vor Ablauf der Widerrufsfrist mit
-                der Bereitstellung der digitalen Inhalte für diesen Fall beginnt.
-              </span>
-            </label>
-            <label className="flex cursor-pointer items-start gap-3 text-xs leading-relaxed text-slate-700">
-              <Checkbox
-                checked={withdrawalLossAccepted}
-                onCheckedChange={(value) => setWithdrawalLossAccepted(Boolean(value))}
-                className="mt-0.5"
-              />
-              <span>
-                Mir ist bekannt, dass mein Widerrufsrecht bei vollständiger Vertragserfüllung
-                vorzeitig erlöschen kann. Die Widerrufshinweise habe ich gelesen.
-              </span>
-            </label>
-          </div>
-
           <Button
             size="lg"
             className="w-full min-h-[3.5rem] px-3 py-3 text-sm sm:text-base font-bold gap-2 shadow-lg shadow-primary/20"
             onClick={handleCheckout}
-            disabled={loading || isPaying || !immediateAccessConsent || !withdrawalLossAccepted}
+            disabled={loading || isPaying}
           >
             {loading || isPaying ? (
               <Loader2 className="w-5 h-5 animate-spin" />

@@ -37,22 +37,12 @@ function getBaseUrl(): string {
 // Single-case checkout (0,99 €)
 // ---------------------------------------------------------------------------
 router.post("/checkout", async (req, res) => {
-  const { caseId, immediateAccessConsent, withdrawalLossAccepted } = req.body as {
+  const { caseId } = req.body as {
     caseId?: string;
-    immediateAccessConsent?: boolean;
-    withdrawalLossAccepted?: boolean;
     agbVersion?: string;
     widerrufVersion?: string;
     datenschutzVersion?: string;
   };
-
-  if (!immediateAccessConsent || !withdrawalLossAccepted) {
-    res.status(400).json({
-      error:
-        "Bitte bestätige die Hinweise zum sofortigen Beginn und zum möglichen Erlöschen des Widerrufsrechts.",
-    });
-    return;
-  }
 
   if (!process.env.STRIPE_SECRET_KEY) {
     res
@@ -97,8 +87,7 @@ router.post("/checkout", async (req, res) => {
         agbVersion: "2026-06",
         widerrufVersion: "2026-06",
         datenschutzVersion: "2026-06",
-        immediateAccessConsent: "true",
-        withdrawalLossAccepted: "true",
+        consentCollection: "stripe_terms_of_service_required",
       },
       custom_text: {
         submit: {
@@ -138,19 +127,6 @@ router.post("/checkout", async (req, res) => {
 // Flatrate checkout — 9,99 € one-time, unlocks unlimited cases for 12 months
 // ---------------------------------------------------------------------------
 router.post("/flatrate-checkout", async (req, res) => {
-  const { immediateAccessConsent, withdrawalLossAccepted } = req.body as {
-    immediateAccessConsent?: boolean;
-    withdrawalLossAccepted?: boolean;
-  };
-
-  if (!immediateAccessConsent || !withdrawalLossAccepted) {
-    res.status(400).json({
-      error:
-        "Bitte bestätige die Hinweise zum sofortigen Beginn und zum möglichen Erlöschen des Widerrufsrechts.",
-    });
-    return;
-  }
-
   if (!process.env.STRIPE_SECRET_KEY) {
     res.status(503).json({ error: "Zahlung noch nicht konfiguriert." });
     return;
@@ -185,8 +161,7 @@ router.post("/flatrate-checkout", async (req, res) => {
         agbVersion: "2026-06",
         widerrufVersion: "2026-06",
         datenschutzVersion: "2026-06",
-        immediateAccessConsent: "true",
-        withdrawalLossAccepted: "true",
+        consentCollection: "stripe_terms_of_service_required",
       },
       custom_text: {
         submit: { message: "Einmalig 9,99 € · 12 Monate unbegrenzte Freischaltung · Kein Abo" },
