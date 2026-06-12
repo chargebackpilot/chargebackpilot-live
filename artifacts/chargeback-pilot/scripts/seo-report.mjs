@@ -18,6 +18,20 @@ const forceNoindex = new Set(
     (m) => m[1],
   ),
 );
+const scheduledIndexingSource =
+  qualitySource.match(/scheduledIndexing:\s*\{([\s\S]*?)\n\s*\},\n\s*weights:/)?.[1] ?? "";
+const scheduledIndexing = {
+  enabled: scheduledIndexingSource.match(/enabled:\s*(true|false)/)?.[1] !== "false",
+  startDate: scheduledIndexingSource.match(/startDate:\s*"([^"]+)"/)?.[1] ?? "2099-01-01",
+  intervalDays: Number(scheduledIndexingSource.match(/intervalDays:\s*(\d+)/)?.[1] ?? 30),
+  batchSize: Number(scheduledIndexingSource.match(/batchSize:\s*(\d+)/)?.[1] ?? 6),
+  minScore: Number(scheduledIndexingSource.match(/minScore:\s*(\d+)/)?.[1] ?? threshold),
+  order: [
+    ...(scheduledIndexingSource.match(/order:\s*\[([\s\S]*?)\]/)?.[1] ?? "").matchAll(/"([^"]+)"/g),
+  ].map((m) => m[1]),
+};
+const scheduledIndexOrder = new Map(scheduledIndexing.order.map((url, index) => [url, index]));
+const today = process.env.SEO_RELEASE_DATE ?? new Date().toISOString().slice(0, 10);
 
 const problemSection = merchantSource.match(/export const PROBLEMS:[\s\S]*?=\s*\[([\s\S]*?)\n\];/)?.[1] ?? "";
 const merchantSection = merchantSource.match(/export const MERCHANTS:[\s\S]*?=\s*\[([\s\S]*?)\n\];/)?.[1] ?? "";
@@ -36,14 +50,56 @@ function evaluate(url) {
   const score = checks.reduce((sum, check) => sum + (check.ok ? check.score : 0), 0);
   const missing = checks.filter((check) => !check.ok).map((check) => check.missing);
   const override = forceNoindex.has(url) ? "forceNoindex" : forceIndex.has(url) ? "forceIndex" : "";
+  const releaseDate = getScheduledReleaseDate(url, score);
+  const scheduledIsDue = !!releaseDate && releaseDate <= today;
   const status = forceNoindex.has(url)
     ? "noindex"
-    : forceIndex.has(url) || score >= threshold
+    : forceIndex.has(url) || score >= threshold || scheduledIsDue
       ? "index"
       : "noindex";
+  const gate = forceNoindex.has(url)
+    ? "forceNoindex"
+    : forceIndex.has(url)
+      ? "forceIndex"
+      : score >= threshold
+        ? "quality"
+        : scheduledIsDue
+          ? "scheduled"
+          : releaseDate
+            ? "future_tranche"
+            : "quality_missing";
   const firstMissing = checks.find((check) => !check.ok);
   const recommendation = status === "index" ? "INDEX_READY" : firstMissing?.recommendation ?? "KEEP_NOINDEX";
-  return { url, score, status: override ? `${status} (${override})` : status, missing, recommendation };
+  return {
+    url,
+    score,
+    status: override ? `${status} (${override})` : status,
+    releaseDate: releaseDate ?? "sofort",
+    gate,
+    missing,
+    recommendation,
+  };
+}
+
+function getScheduledReleaseDate(url, score) {
+  if (
+    !scheduledIndexing.enabled ||
+    score < scheduledIndexing.minScore ||
+    forceIndex.has(url) ||
+    forceNoindex.has(url)
+  ) {
+    return null;
+  }
+  const orderIndex = scheduledIndexOrder.get(url);
+  if (orderIndex === undefined) return null;
+  const batchIndex = Math.floor(orderIndex / scheduledIndexing.batchSize);
+  return addDays(scheduledIndexing.startDate, batchIndex * scheduledIndexing.intervalDays);
+}
+
+function addDays(date, days) {
+  const value = new Date(`${date}T00:00:00.000Z`);
+  value.setUTCDate(value.getUTCDate() + days);
+  return value.toISOString().slice(0, 10);
 }
 
 const rows = merchantBlocks.flatMap(([, merchantSlug, problemBlock]) => {
@@ -57,6 +113,8 @@ const widths = {
   url: Math.max("URL".length, ...rows.map((row) => row.url.length)),
   score: "Score".length,
   status: Math.max("Status".length, ...rows.map((row) => row.status.length)),
+  releaseDate: Math.max("Tranche".length, ...rows.map((row) => row.releaseDate.length)),
+  gate: Math.max("Gate".length, ...rows.map((row) => row.gate.length)),
   missing: Math.max("Missing items".length, ...rows.map((row) => row.missing.join(", ").length)),
   recommendation: Math.max("Empfehlung".length, ...rows.map((row) => row.recommendation.length)),
 };
@@ -66,19 +124,29 @@ const header = [
   pad("URL", widths.url),
   pad("Score", widths.score),
   pad("Status", widths.status),
+  pad("Tranche", widths.releaseDate),
+  pad("Gate", widths.gate),
   pad("Missing items", widths.missing),
   pad("Empfehlung", widths.recommendation),
 ].join(" | ");
 
-console.log(`SEO Quality Report · threshold ${threshold}/100 · ${new Date().toISOString().slice(0, 10)}`);
+console.log(
+  `SEO Quality Report · threshold ${threshold}/100 · scheduled ${scheduledIndexing.batchSize}/batch from ${scheduledIndexing.startDate} · ${today}`,
+);
 console.log(header);
 console.log("-".repeat(header.length));
-for (const row of rows.sort((a, b) => a.score - b.score || a.url.localeCompare(b.url))) {
+for (const row of rows.sort((a, b) => {
+  if (a.status !== b.status) return a.status.startsWith("noindex") ? -1 : 1;
+  if (a.releaseDate !== b.releaseDate) return a.releaseDate.localeCompare(b.releaseDate);
+  return a.url.localeCompare(b.url);
+})) {
   console.log(
     [
       pad(row.url, widths.url),
       pad(row.score, widths.score),
       pad(row.status, widths.status),
+      pad(row.releaseDate, widths.releaseDate),
+      pad(row.gate, widths.gate),
       pad(row.missing.join(", ") || "OK", widths.missing),
       pad(row.recommendation, widths.recommendation),
     ].join(" | "),

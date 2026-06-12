@@ -18,6 +18,8 @@ export interface SeoQualityResult {
   url: string;
   score: number;
   status: "index" | "noindex";
+  releaseDate: string | null;
+  gateReason: "quality" | "scheduled" | "future_tranche" | "forceIndex" | "forceNoindex";
   missing: string[];
   recommendation: SeoQualityRecommendation;
   override: "forceIndex" | "forceNoindex" | null;
@@ -41,6 +43,52 @@ export const SEO_QUALITY_CONFIG = {
     "/hilfe/google-play/abbuchung-ohne-zustimmung",
   ],
   forceNoindex: [],
+  scheduledIndexing: {
+    enabled: true,
+    startDate: "2026-07-01",
+    intervalDays: 30,
+    batchSize: 6,
+    minScore: 70,
+    order: [
+      "/hilfe/temu/ware-defekt",
+      "/hilfe/shein/ware-nicht-erhalten",
+      "/hilfe/aliexpress/ware-nicht-erhalten",
+      "/hilfe/amazon/ware-defekt",
+      "/hilfe/zalando/ware-defekt",
+      "/hilfe/otto/ware-defekt",
+      "/hilfe/ebay/ware-defekt",
+      "/hilfe/vinted/ware-defekt",
+      "/hilfe/etsy/ware-nicht-erhalten",
+      "/hilfe/lufthansa/flug-storniert",
+      "/hilfe/eurowings/flug-storniert",
+      "/hilfe/booking/hotel-anders-als-beschrieben",
+      "/hilfe/airbnb/hotel-anders-als-beschrieben",
+      "/hilfe/lieferando/ware-nicht-erhalten",
+      "/hilfe/wolt/ware-nicht-erhalten",
+      "/hilfe/uber-eats/ware-nicht-erhalten",
+      "/hilfe/dhl/ware-nicht-erhalten",
+      "/hilfe/hermes/ware-nicht-erhalten",
+      "/hilfe/kiwi/abbuchung-ohne-zustimmung",
+      "/hilfe/apple/abbuchung-ohne-zustimmung",
+      "/hilfe/spotify/abbuchung-ohne-zustimmung",
+      "/hilfe/netflix/abbuchung-ohne-zustimmung",
+      "/hilfe/dazn/abbuchung-ohne-zustimmung",
+      "/hilfe/sky/abbuchung-ohne-zustimmung",
+      "/hilfe/booking/flug-storniert",
+      "/hilfe/amazon/abbuchung-ohne-zustimmung",
+      "/hilfe/zalando/abbuchung-ohne-zustimmung",
+      "/hilfe/lieferando/abbuchung-ohne-zustimmung",
+      "/hilfe/temu/betrugsverdacht",
+      "/hilfe/wish/ware-nicht-erhalten",
+      "/hilfe/wish/ware-defekt",
+      "/hilfe/wish/betrugsverdacht",
+      "/hilfe/aliexpress/ware-defekt",
+      "/hilfe/shein/ware-defekt",
+      "/hilfe/etsy/ware-defekt",
+      "/hilfe/ebay/betrugsverdacht",
+      "/hilfe/vinted/betrugsverdacht",
+    ],
+  },
   weights: {
     providerSpecificSection: 20,
     problemSpecificEvidence: 20,
@@ -63,6 +111,9 @@ export const SEO_QUALITY_CONFIG = {
 
 const FORCE_INDEX = new Set<string>(SEO_QUALITY_CONFIG.forceIndex);
 const FORCE_NOINDEX = new Set<string>(SEO_QUALITY_CONFIG.forceNoindex);
+const SCHEDULED_INDEX_ORDER = new Map<string, number>(
+  SEO_QUALITY_CONFIG.scheduledIndexing.order.map((url, index) => [url, index])
+);
 
 export function getMerchantProblemUrl(merchantSlug: string, problemSlug: string) {
   return `/hilfe/${merchantSlug}/${problemSlug}`;
@@ -128,18 +179,24 @@ export function evaluateMerchantProblemSeoQuality(
     : FORCE_INDEX.has(url)
       ? "forceIndex"
       : null;
-  const status =
-    override === "forceNoindex"
-      ? "noindex"
-      : override === "forceIndex" || score >= SEO_QUALITY_CONFIG.threshold
-        ? "index"
-        : "noindex";
+  const scheduledReleaseDate = getScheduledReleaseDate(url, score);
+  const scheduledIsDue = scheduledReleaseDate ? isDateDue(scheduledReleaseDate) : false;
+  const qualityIndexable = score >= SEO_QUALITY_CONFIG.threshold;
+  const status = getIndexStatus(override, qualityIndexable, scheduledIsDue);
+  const gateReason = getGateReason(
+    override,
+    qualityIndexable,
+    scheduledReleaseDate,
+    scheduledIsDue
+  );
   const firstMissing = checks.find((check) => !check.ok);
 
   return {
     url,
     score,
     status,
+    releaseDate: scheduledReleaseDate,
+    gateReason,
     missing,
     recommendation:
       status === "index" ? "INDEX_READY" : (firstMissing?.recommendation ?? "KEEP_NOINDEX"),
@@ -215,4 +272,53 @@ function hasNoGenericPlaceholders(copy: GeneratedCopy) {
     .join(" ")
     .toLowerCase();
   return !SEO_QUALITY_CONFIG.genericTextPatterns.some((pattern) => haystack.includes(pattern));
+}
+
+function getIndexStatus(
+  override: SeoQualityResult["override"],
+  qualityIndexable: boolean,
+  scheduledIsDue: boolean
+): SeoQualityResult["status"] {
+  if (override === "forceNoindex") return "noindex";
+  if (override === "forceIndex" || qualityIndexable || scheduledIsDue) return "index";
+  return "noindex";
+}
+
+function getGateReason(
+  override: SeoQualityResult["override"],
+  qualityIndexable: boolean,
+  scheduledReleaseDate: string | null,
+  scheduledIsDue: boolean
+): SeoQualityResult["gateReason"] {
+  if (override === "forceNoindex") return "forceNoindex";
+  if (override === "forceIndex") return "forceIndex";
+  if (qualityIndexable) return "quality";
+  if (scheduledReleaseDate && scheduledIsDue) return "scheduled";
+  return "future_tranche";
+}
+
+function getScheduledReleaseDate(url: string, score: number): string | null {
+  const schedule = SEO_QUALITY_CONFIG.scheduledIndexing;
+  if (
+    !schedule.enabled ||
+    score < schedule.minScore ||
+    FORCE_INDEX.has(url) ||
+    FORCE_NOINDEX.has(url)
+  ) {
+    return null;
+  }
+  const orderIndex = SCHEDULED_INDEX_ORDER.get(url);
+  if (orderIndex === undefined) return null;
+  const batchIndex = Math.floor(orderIndex / schedule.batchSize);
+  return addDays(schedule.startDate, batchIndex * schedule.intervalDays);
+}
+
+function isDateDue(date: string) {
+  return date <= new Date().toISOString().slice(0, 10);
+}
+
+function addDays(date: string, days: number) {
+  const value = new Date(`${date}T00:00:00.000Z`);
+  value.setUTCDate(value.getUTCDate() + days);
+  return value.toISOString().slice(0, 10);
 }

@@ -58,6 +58,20 @@ const forceIndexMatch = seoQualitySource.match(/forceIndex:\s*\[([\s\S]*?)\]/);
 const forceNoindexMatch = seoQualitySource.match(/forceNoindex:\s*\[([\s\S]*?)\]/);
 const forceIndexPaths = new Set([...(forceIndexMatch?.[1] ?? "").matchAll(/"([^"]+)"/g)].map((m) => m[1]));
 const forceNoindexPaths = new Set([...(forceNoindexMatch?.[1] ?? "").matchAll(/"([^"]+)"/g)].map((m) => m[1]));
+const scheduledIndexingMatch = seoQualitySource.match(/scheduledIndexing:\s*\{([\s\S]*?)\n\s*\},\n\s*weights:/);
+const scheduledIndexingSource = scheduledIndexingMatch?.[1] ?? "";
+const scheduledIndexing = {
+  enabled: scheduledIndexingSource.match(/enabled:\s*(true|false)/)?.[1] !== "false",
+  startDate: scheduledIndexingSource.match(/startDate:\s*"([^"]+)"/)?.[1] ?? "2099-01-01",
+  intervalDays: Number(scheduledIndexingSource.match(/intervalDays:\s*(\d+)/)?.[1] ?? 30),
+  batchSize: Number(scheduledIndexingSource.match(/batchSize:\s*(\d+)/)?.[1] ?? 6),
+  minScore: Number(scheduledIndexingSource.match(/minScore:\s*(\d+)/)?.[1] ?? qualityThreshold),
+  order: [
+    ...(scheduledIndexingSource.match(/order:\s*\[([\s\S]*?)\]/)?.[1] ?? "").matchAll(/"([^"]+)"/g),
+  ].map((m) => m[1]),
+};
+const scheduledIndexOrder = new Map(scheduledIndexing.order.map((route, index) => [route, index]));
+const releaseToday = process.env.SEO_RELEASE_DATE ?? new Date().toISOString().slice(0, 10);
 const merchantBlocks = [...merchantSection.matchAll(/slug:\s*"([^"]+)"[\s\S]*?problems:\s*\[([^\]]*)\]/g)];
 const merchantRoutes = merchantBlocks.map(([, merchantSlug]) => `/hilfe/${merchantSlug}`);
 const merchantProblemRoutes = merchantBlocks.flatMap(([, merchantSlug, problemBlock]) => {
@@ -116,7 +130,31 @@ function getMerchantProblemScore(route) {
 function isIndexableMerchantProblemRoute(route) {
   if (forceNoindexPaths.has(route)) return false;
   if (forceIndexPaths.has(route)) return true;
-  return getMerchantProblemScore(route) >= qualityThreshold;
+  const score = getMerchantProblemScore(route);
+  if (score >= qualityThreshold) return true;
+  const releaseDate = getScheduledReleaseDate(route, score);
+  return !!releaseDate && releaseDate <= releaseToday;
+}
+
+function getScheduledReleaseDate(route, score) {
+  if (
+    !scheduledIndexing.enabled ||
+    score < scheduledIndexing.minScore ||
+    forceIndexPaths.has(route) ||
+    forceNoindexPaths.has(route)
+  ) {
+    return null;
+  }
+  const orderIndex = scheduledIndexOrder.get(route);
+  if (orderIndex === undefined) return null;
+  const batchIndex = Math.floor(orderIndex / scheduledIndexing.batchSize);
+  return addDays(scheduledIndexing.startDate, batchIndex * scheduledIndexing.intervalDays);
+}
+
+function addDays(date, days) {
+  const value = new Date(`${date}T00:00:00.000Z`);
+  value.setUTCDate(value.getUTCDate() + days);
+  return value.toISOString().slice(0, 10);
 }
 
 function getMerchantName(merchantSlug) {

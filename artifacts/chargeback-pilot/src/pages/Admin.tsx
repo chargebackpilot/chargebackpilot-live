@@ -272,7 +272,8 @@ function AdminDashboard({ onLogout }: { onLogout: () => void }) {
               title={`SEO Quality Gate · Threshold ${SEO_QUALITY_CONFIG.threshold}/100`}
               right={
                 <span className="text-xs font-semibold text-slate-500">
-                  {seoIndexable} index · {seoCandidates} candidate · Ø {averageSeoScore}
+                  {seoIndexable} index · {seoCandidates} candidate · Ø {averageSeoScore} ·{" "}
+                  {SEO_QUALITY_CONFIG.scheduledIndexing.batchSize}/Tranche
                 </span>
               }
             >
@@ -542,6 +543,8 @@ function SeoQualityTable({ rows }: { rows: ReturnType<typeof getAllSeoQualityRes
             <Th>URL</Th>
             <Th className="text-right">Score</Th>
             <Th>Status</Th>
+            <Th>Tranche</Th>
+            <Th>Gate</Th>
             <Th>Missing items</Th>
             <Th>Empfehlung</Th>
           </tr>
@@ -562,6 +565,18 @@ function SeoQualityTable({ rows }: { rows: ReturnType<typeof getAllSeoQualityRes
                   {row.override ? `${row.status} · ${row.override}` : row.status}
                 </span>
               </Td>
+              <Td className="whitespace-nowrap text-xs text-slate-600">
+                {row.releaseDate ? (
+                  row.releaseDate <= new Date().toISOString().slice(0, 10) ? (
+                    <span className="font-semibold text-emerald-700">seit {row.releaseDate}</span>
+                  ) : (
+                    <span>ab {row.releaseDate}</span>
+                  )
+                ) : (
+                  "sofort"
+                )}
+              </Td>
+              <Td className="text-xs text-slate-600">{labelSeoGate(row.gateReason)}</Td>
               <Td className="text-xs text-slate-600 max-w-sm">
                 {row.missing.length ? row.missing.join(", ") : "OK"}
               </Td>
@@ -572,6 +587,17 @@ function SeoQualityTable({ rows }: { rows: ReturnType<typeof getAllSeoQualityRes
       </table>
     </div>
   );
+}
+
+function labelSeoGate(gate: ReturnType<typeof getAllSeoQualityResults>[number]["gateReason"]) {
+  const labels = {
+    quality: "Score erreicht",
+    scheduled: "Tranche freigegeben",
+    future_tranche: "geplant",
+    forceIndex: "Override index",
+    forceNoindex: "Override noindex",
+  } as const;
+  return labels[gate];
 }
 
 function DailyChart({ series }: { series: { day: string; total: number; paid: number }[] }) {
