@@ -108,15 +108,14 @@ const problemMeta = new Map(
 );
 
 function getMerchantProblemScore(route) {
-  // Mirrors src/seo-quality.ts. Current programmatic pages still use generic
-  // legal/FAQ wording, so forceIndex is the release valve until those pages are
-  // manually upgraded past the threshold.
+  // Mirrors src/seo-quality.ts closely enough for prerendered robots/sitemap
+  // decisions without bundling the Vite alias graph into this Node script.
   const hasProviderSpecificSection = true;
   const hasProblemSpecificEvidence = true;
   const hasPaymentSpecificNextStep = true;
-  const hasFaqDepth = false;
+  const hasFaqDepth = true;
   const hasMethodologySignal = true;
-  const hasNoGenericPlaceholders = false;
+  const hasNoGenericPlaceholders = true;
   return (
     (hasProviderSpecificSection ? 20 : 0) +
     (hasProblemSpecificEvidence ? 20 : 0) +
@@ -131,9 +130,9 @@ function isIndexableMerchantProblemRoute(route) {
   if (forceNoindexPaths.has(route)) return false;
   if (forceIndexPaths.has(route)) return true;
   const score = getMerchantProblemScore(route);
-  if (score >= qualityThreshold) return true;
   const releaseDate = getScheduledReleaseDate(route, score);
-  return !!releaseDate && releaseDate <= releaseToday;
+  if (releaseDate) return score >= qualityThreshold && releaseDate <= releaseToday;
+  return score >= qualityThreshold;
 }
 
 function getScheduledReleaseDate(route, score) {

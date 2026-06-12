@@ -193,7 +193,7 @@ export default function MerchantProblemPage() {
               <div className="bg-background border rounded-lg p-3">
                 <Clock className="w-4 h-4 mx-auto text-primary mb-1" />
                 <div className="text-xs text-muted-foreground">Analyse</div>
-                <div className="font-semibold text-sm">60 Sek.</div>
+                <div className="font-semibold text-sm">ca. 1 Min.</div>
               </div>
               <div className="bg-background border rounded-lg p-3">
                 <FileText className="w-4 h-4 mx-auto text-primary mb-1" />
@@ -321,7 +321,7 @@ export default function MerchantProblemPage() {
           <section className="bg-blue-50/50 p-6 md:p-8 rounded-2xl border border-blue-100">
             <h2 className="text-xl font-bold mb-3 flex items-center gap-2">
               <FileText className="w-5 h-5 text-blue-700" />
-              Richtige Reason-Code-Kategorie
+              Mögliche Streitkategorie
             </h2>
             <div className="flex flex-wrap gap-2 mb-3">
               <span className="text-xs font-semibold px-2 py-1 rounded bg-blue-100 text-blue-800">

@@ -233,8 +233,9 @@ export function PaywallModal({
         <div className="flex items-center gap-2.5 bg-amber-50 border border-amber-200 rounded-xl px-3 py-2.5">
           <Sparkles className="w-4 h-4 text-amber-600 flex-shrink-0" />
           <span className="text-xs text-amber-900 leading-snug">
-            <strong>Hinweis:</strong> Ein klar formuliertes Anschreiben und ein passender Grund
-            (Reason Code) können die Nachvollziehbarkeit deines Antrags verbessern.
+            <strong>Hinweis:</strong> Ein klar formuliertes Anschreiben und eine passende
+            Streitkategorie können die Nachvollziehbarkeit deines Antrags verbessern. Die finale
+            Einordnung trifft dein Zahlungsdienstleister.
           </span>
         </div>
 

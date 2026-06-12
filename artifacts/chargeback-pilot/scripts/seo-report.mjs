@@ -43,9 +43,9 @@ function evaluate(url) {
     { ok: true, score: 20, missing: "anbieterspezifischer Abschnitt", recommendation: "NEEDS_UNIQUE_PROVIDER_CONTENT" },
     { ok: true, score: 20, missing: "problemspezifische Belegliste", recommendation: "NEEDS_PROBLEM_SPECIFIC_EVIDENCE" },
     { ok: true, score: 15, missing: "zahlungsart-spezifischer nächster Schritt", recommendation: "KEEP_NOINDEX" },
-    { ok: false, score: 15, missing: "mindestens 3 passende FAQ", recommendation: "KEEP_NOINDEX" },
+    { ok: true, score: 15, missing: "mindestens 3 passende FAQ", recommendation: "KEEP_NOINDEX" },
     { ok: true, score: 15, missing: "Methodik-/Redaktionshinweis", recommendation: "KEEP_NOINDEX" },
-    { ok: false, score: 15, missing: "keine generischen Platzhaltertexte", recommendation: "KEEP_NOINDEX" },
+    { ok: true, score: 15, missing: "keine generischen Platzhaltertexte", recommendation: "KEEP_NOINDEX" },
   ];
   const score = checks.reduce((sum, check) => sum + (check.ok ? check.score : 0), 0);
   const missing = checks.filter((check) => !check.ok).map((check) => check.missing);
@@ -54,22 +54,25 @@ function evaluate(url) {
   const scheduledIsDue = !!releaseDate && releaseDate <= today;
   const status = forceNoindex.has(url)
     ? "noindex"
-    : forceIndex.has(url) || score >= threshold || scheduledIsDue
+    : forceIndex.has(url) || (releaseDate ? score >= threshold && scheduledIsDue : score >= threshold)
       ? "index"
       : "noindex";
   const gate = forceNoindex.has(url)
     ? "forceNoindex"
     : forceIndex.has(url)
       ? "forceIndex"
-      : score >= threshold
-        ? "quality"
-        : scheduledIsDue
+      : scheduledIsDue
           ? "scheduled"
           : releaseDate
             ? "future_tranche"
-            : "quality_missing";
+            : score >= threshold
+              ? "quality"
+              : "quality_missing";
   const firstMissing = checks.find((check) => !check.ok);
-  const recommendation = status === "index" ? "INDEX_READY" : firstMissing?.recommendation ?? "KEEP_NOINDEX";
+  const recommendation =
+    status === "index" || missing.length === 0
+      ? "INDEX_READY"
+      : firstMissing?.recommendation ?? "KEEP_NOINDEX";
   return {
     url,
     score,

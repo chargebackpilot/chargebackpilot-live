@@ -182,7 +182,7 @@ export function evaluateMerchantProblemSeoQuality(
   const scheduledReleaseDate = getScheduledReleaseDate(url, score);
   const scheduledIsDue = scheduledReleaseDate ? isDateDue(scheduledReleaseDate) : false;
   const qualityIndexable = score >= SEO_QUALITY_CONFIG.threshold;
-  const status = getIndexStatus(override, qualityIndexable, scheduledIsDue);
+  const status = getIndexStatus(override, qualityIndexable, scheduledReleaseDate, scheduledIsDue);
   const gateReason = getGateReason(
     override,
     qualityIndexable,
@@ -199,7 +199,9 @@ export function evaluateMerchantProblemSeoQuality(
     gateReason,
     missing,
     recommendation:
-      status === "index" ? "INDEX_READY" : (firstMissing?.recommendation ?? "KEEP_NOINDEX"),
+      status === "index" || missing.length === 0
+        ? "INDEX_READY"
+        : (firstMissing?.recommendation ?? "KEEP_NOINDEX"),
     override,
   };
 }
@@ -277,10 +279,13 @@ function hasNoGenericPlaceholders(copy: GeneratedCopy) {
 function getIndexStatus(
   override: SeoQualityResult["override"],
   qualityIndexable: boolean,
+  scheduledReleaseDate: string | null,
   scheduledIsDue: boolean
 ): SeoQualityResult["status"] {
   if (override === "forceNoindex") return "noindex";
-  if (override === "forceIndex" || qualityIndexable || scheduledIsDue) return "index";
+  if (override === "forceIndex") return "index";
+  if (scheduledReleaseDate) return qualityIndexable && scheduledIsDue ? "index" : "noindex";
+  if (qualityIndexable) return "index";
   return "noindex";
 }
 
@@ -292,8 +297,9 @@ function getGateReason(
 ): SeoQualityResult["gateReason"] {
   if (override === "forceNoindex") return "forceNoindex";
   if (override === "forceIndex") return "forceIndex";
-  if (qualityIndexable) return "quality";
   if (scheduledReleaseDate && scheduledIsDue) return "scheduled";
+  if (scheduledReleaseDate) return "future_tranche";
+  if (qualityIndexable) return "quality";
   return "future_tranche";
 }
 

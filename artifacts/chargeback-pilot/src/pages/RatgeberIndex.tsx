@@ -11,12 +11,12 @@ export const GUIDES = [
   {
     path: "/paypal-chargeback",
     title: "PayPal Käuferschutz",
-    desc: "Wie du dein Geld bei PayPal zurückholst.",
+    desc: "Konflikt sachlich vorbereiten und PayPal-Fristen im Blick behalten.",
   },
   {
     path: "/amex-chargeback",
     title: "Amex Chargeback",
-    desc: "American Express Reklamationen erfolgreich einreichen.",
+    desc: "American-Express-Umsatzreklamationen strukturiert vorbereiten.",
   },
   {
     path: "/visa-mastercard-chargeback",
@@ -36,12 +36,12 @@ export const GUIDES = [
   {
     path: "/kiwi-rueckerstattung",
     title: "Kiwi.com Erstattung",
-    desc: "Steuern & Gebühren ohne 59€ Gebühr zurückholen.",
+    desc: "Steuern, Gebühren und Erstattungswege nachvollziehbar prüfen.",
   },
   {
     path: "/lieferando-rueckerstattung",
     title: "Lieferando Rückerstattung",
-    desc: "Geld zurück bei kaltem oder fehlendem Essen.",
+    desc: "Problem mit kaltem, falschem oder fehlendem Essen dokumentieren.",
   },
   {
     path: "/wolt-rueckerstattung",
@@ -51,7 +51,7 @@ export const GUIDES = [
   {
     path: "/ubereats-rueckerstattung",
     title: "Uber Eats Chargeback",
-    desc: "Essen nicht angekommen? So gibt's das Geld zurück.",
+    desc: "Nicht gelieferte oder falsche Bestellung sachlich aufbereiten.",
   },
   {
     path: "/ware-nicht-erhalten",
@@ -61,7 +61,7 @@ export const GUIDES = [
   {
     path: "/abo-falle-chargeback",
     title: "Abo-Falle",
-    desc: "Ungewollte Abbuchungen stoppen und Geld zurückfordern.",
+    desc: "Ungewollte Abbuchungen prüfen und Widerspruch vorbereiten.",
   },
   {
     path: "/chargeback-antrag-vorlage",
@@ -117,8 +117,38 @@ const HIGHLIGHTS = [
     path: "/scam-shops-2026",
     icon: AlertTriangle,
     title: "Scam-Shops & Fake-Anbieter 2026",
-    desc: "8 Warnsignale, 4 Scam-Kategorien und die strukturierte Orientierung, wie du dein Geld zurückholst.",
+    desc: "8 Warnsignale, 4 Scam-Kategorien und strukturierte nächste Schritte bei Fake-Shop-Verdacht.",
     tag: "Betrugsschutz",
+  },
+];
+
+const QUICK_PATHS = [
+  {
+    title: "Nach Zahlungsart starten",
+    desc: "PayPal, Kreditkarte, Amex oder Klarna: finde den passenden Ablauf.",
+    links: [
+      { label: "PayPal", href: "/paypal-chargeback" },
+      { label: "Kreditkarte", href: "/visa-mastercard-chargeback" },
+      { label: "Klarna", href: "/klarna-reklamation" },
+    ],
+  },
+  {
+    title: "Nach Problem suchen",
+    desc: "Nicht geliefert, Flug storniert, Abo-Falle oder Lieferdienst.",
+    links: [
+      { label: "Ware fehlt", href: "/ware-nicht-erhalten" },
+      { label: "Flug & Reise", href: "/flug-chargeback" },
+      { label: "Abo-Falle", href: "/abo-falle-chargeback" },
+    ],
+  },
+  {
+    title: "Direkt mit Vorlage arbeiten",
+    desc: "Mustertexte für Bank, Händler, PayPal oder Klarna vorbereiten.",
+    links: [
+      { label: "Chargeback-Antrag", href: "/chargeback-antrag-vorlage" },
+      { label: "PayPal-Vorlage", href: "/paypal-kaeuferschutz-vorlage" },
+      { label: "Musterbrief", href: "/ware-nicht-erhalten-musterbrief" },
+    ],
   },
 ];
 
@@ -163,6 +193,34 @@ export default function RatgeberIndex() {
             </span>
           </p>
         </div>
+
+        <section className="mb-16">
+          <h2 className="text-2xl font-bold mb-5">Schnell zum passenden Einstieg</h2>
+          <div className="grid md:grid-cols-3 gap-4">
+            {QUICK_PATHS.map((group) => (
+              <Card key={group.title} className="h-full">
+                <CardHeader>
+                  <CardTitle className="text-lg">{group.title}</CardTitle>
+                  <CardDescription className="text-sm leading-relaxed">
+                    {group.desc}
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="pt-0 flex flex-wrap gap-2">
+                  {group.links.map((link) => (
+                    <Link
+                      key={link.href}
+                      href={link.href}
+                      className="inline-flex items-center gap-1 rounded-md border px-2.5 py-1.5 text-xs font-semibold text-slate-700 hover:border-primary hover:text-primary transition-colors"
+                    >
+                      {link.label}
+                      <ArrowRight className="w-3 h-3" />
+                    </Link>
+                  ))}
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        </section>
 
         {/* Highlights */}
         <section className="mb-16">

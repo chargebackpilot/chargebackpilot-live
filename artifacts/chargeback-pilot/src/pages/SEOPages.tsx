@@ -3,7 +3,7 @@ import { SEOArticleLayout } from "@/components/layout/SEOArticleLayout";
 export function PayPalSEO() {
   return (
     <SEOArticleLayout
-      title="PayPal Chargeback / Käuferschutz erfolgreich nutzen"
+      title="PayPal Chargeback / Käuferschutz strukturiert vorbereiten"
       category="PayPal"
       whenApplies={[
         "Ware wurde nicht geliefert (Item Not Received)",
@@ -84,7 +84,7 @@ export function AmexSEO() {
 export function VisaMastercardSEO() {
   return (
     <SEOArticleLayout
-      title="Visa / Mastercard Chargeback: Geld zurück"
+      title="Visa / Mastercard Chargeback vorbereiten"
       category="Kreditkarte"
       whenApplies={[
         "Insolvenz der Fluggesellschaft oder des Reiseveranstalters",
@@ -221,7 +221,7 @@ export function LieferandoSEO() {
           a: "Bei Plattformbestellungen läuft die Erstattung häufig über den Plattform-Support. Maßgeblich sind die konkreten Vertragsbedingungen und der Einzelfall.",
         },
         {
-          q: "Essen war kalt, weil der Fahrer einen Umweg gemacht hat - Geld zurück?",
+          q: "Essen war kalt, weil der Fahrer einen Umweg gemacht hat - Erstattung möglich?",
           a: "Wenn das Essen dadurch nicht mehr vertragsgemäß nutzbar ist, kann eine (Teil-)Erstattung in Betracht kommen. Fotos, Zeitstempel und Supportverlauf helfen bei der Prüfung.",
         },
       ]}
@@ -251,7 +251,7 @@ export function WoltSEO() {
         "Wenn keine Einigung erreicht wird, prüfe zusätzlich die Reklamationsmöglichkeiten bei Bank oder PayPal.",
       ]}
       mistakes={[
-        "Wolt-Credits akzeptieren, wenn man eigentlich das Geld zurück will.",
+        "Wolt-Credits akzeptieren, obwohl du eine Erstattung auf das ursprüngliche Zahlungsmittel prüfen möchtest.",
         "Die Frist für eine Reklamation (meist 24h) verstreichen lassen.",
       ]}
       faq={[
@@ -301,7 +301,7 @@ export function UberEatsSEO() {
 export function KiwiSEO() {
   return (
     <SEOArticleLayout
-      title="Kiwi.com Steuern & Gebühren ohne 59€ Servicegebühr zurückholen"
+      title="Kiwi.com Steuern & Gebühren ohne 59€ Servicegebühr prüfen"
       category="Flug/Reise"
       whenApplies={[
         "Du hast den Flug selbst storniert (nicht-erstattbares Ticket)",
@@ -320,7 +320,7 @@ export function KiwiSEO() {
       ]}
       mistakes={[
         "Den geringen Restbetrag (nach Abzug der 59€) akzeptieren.",
-        "Glauben, dass man bei nicht-erstattbaren Tickets kein Geld zurückbekommt.",
+        "Annehmen, dass bei nicht erstattbaren Tickets nie eine Erstattung von Steuern oder Gebühren geprüft werden kann.",
       ]}
       faq={[
         {
@@ -398,7 +398,7 @@ export function AboFalleSEO() {
       ]}
       faq={[
         {
-          q: "Kann ich rückwirkend für Monate Geld zurückholen?",
+          q: "Kann ich rückwirkend für mehrere Monate eine Erstattung prüfen?",
           a: "Das hängt von Zahlungsart, Frist und Einzelfall ab. Prüfe die konkreten Möglichkeiten möglichst früh direkt bei Bank, PayPal oder Kartenausgeber.",
         },
       ]}
@@ -603,7 +603,7 @@ export function AboFalleMusterbriefSEO() {
 export function RueckerstattungHaendlerVorlageSEO() {
   return (
     <SEOArticleLayout
-      title="Rückerstattung Händler Vorlage: sachlich Geld zurückfordern"
+      title="Rückerstattung Händler Vorlage: sachlich Erstattung anfordern"
       category="Musterbrief"
       whenApplies={[
         "Der Händler hat eine Rückerstattung zugesagt, aber nicht gezahlt",

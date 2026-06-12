@@ -54,7 +54,7 @@ const SCENARIOS = [
     detail:
       "Du hast bei Lieferando, Wolt oder UberEats bestellt — und erhalten, was du nicht bestellt hast, oder die Bestellung kam komplett ungenießbar an.",
     brands: ["Lieferando", "Wolt", "UberEats", "Gorillas"],
-    recovery: "Erstattung kann möglich sein",
+    recovery: "Erstattung prüfen",
     href: "/vorlagen-generator?problem=food_delivery",
   },
   {
@@ -440,7 +440,9 @@ export default function Home() {
                 <div className="font-bold text-lg leading-none" aria-live="polite">
                   {stats?.strongCases ?? "—"}
                 </div>
-                <div className="text-muted-foreground text-xs">Starke Ausgangslage</div>
+                <div className="text-muted-foreground text-xs">
+                  Aussichtsreiche Ersteinschätzung
+                </div>
               </div>
             </div>
             <div className="flex items-center gap-2.5">

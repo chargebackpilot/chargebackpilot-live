@@ -140,6 +140,7 @@ function AdminDashboard({ onLogout }: { onLogout: () => void }) {
   const seoQualityRows = getAllSeoQualityResults();
   const seoIndexable = seoQualityRows.filter((row) => row.status === "index").length;
   const seoCandidates = seoQualityRows.length - seoIndexable;
+  const nextSeoRelease = getNextSeoRelease(seoQualityRows);
   const averageSeoScore =
     seoQualityRows.length > 0
       ? Math.round(seoQualityRows.reduce((sum, row) => sum + row.score, 0) / seoQualityRows.length)
@@ -405,6 +406,7 @@ function AdminDashboard({ onLogout }: { onLogout: () => void }) {
               indexable={seoIndexable}
               candidates={seoCandidates}
               averageScore={averageSeoScore}
+              nextRelease={nextSeoRelease}
             />
           </>
         ) : null}
@@ -499,11 +501,13 @@ function SeoQualityDisclosure({
   indexable,
   candidates,
   averageScore,
+  nextRelease,
 }: {
   rows: ReturnType<typeof getAllSeoQualityResults>;
   indexable: number;
   candidates: number;
   averageScore: number;
+  nextRelease: { date: string; count: number } | null;
 }) {
   return (
     <details className="group bg-white rounded-2xl border">
@@ -516,6 +520,11 @@ function SeoQualityDisclosure({
             {indexable} index · {candidates} candidate · Ø {averageScore} ·{" "}
             {SEO_QUALITY_CONFIG.scheduledIndexing.batchSize}/Tranche
           </p>
+          {nextRelease && (
+            <p className="mt-1 text-xs font-medium text-slate-600">
+              Nächste geplante Freigabe: {nextRelease.count} Seiten ab {nextRelease.date}
+            </p>
+          )}
         </div>
         <span className="rounded-lg border px-3 py-1.5 text-xs font-semibold text-slate-600 transition-colors group-open:bg-slate-50">
           <span className="group-open:hidden">Aufklappen</span>
@@ -527,6 +536,20 @@ function SeoQualityDisclosure({
       </div>
     </details>
   );
+}
+
+function getNextSeoRelease(rows: ReturnType<typeof getAllSeoQualityResults>) {
+  const today = new Date().toISOString().slice(0, 10);
+  const futureDates = rows
+    .map((row) => row.releaseDate)
+    .filter((date): date is string => !!date && date > today)
+    .sort((a, b) => a.localeCompare(b));
+  const date = futureDates[0];
+  if (!date) return null;
+  return {
+    date,
+    count: rows.filter((row) => row.releaseDate === date).length,
+  };
 }
 
 function Th({ children, className = "" }: { children: React.ReactNode; className?: string }) {

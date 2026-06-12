@@ -546,7 +546,7 @@ function paymentNextStepForCombo(p: ProblemDef, m: MerchantDef): { title: string
 // ── Long-form intro paragraphs (primary SEO body) ─────────────────
 function introParagraphs(m: MerchantDef, p: ProblemDef, sector: string): string[] {
   const para1 = `Wenn du bei ${m.name} mit ${p.searchPhrase.toLowerCase()} konfrontiert bist, kommen 2026 je nach Zahlungsart und Einzelfall verschiedene Reklamationswege in Betracht. ${m.name} (${sector}, Sitz in ${m.country}) ist für deutsche Verbraucher grundsätzlich erreichbar — wichtig ist vor allem, den Sachverhalt nachvollziehbar zu dokumentieren und typische Fristen direkt beim jeweiligen Anbieter zu prüfen.`;
-  const para2 = `Typische Anlaufstellen sind PayPal-Käuferschutz, Kreditkarten-Reklamation/Chargeback über die kartenausgebende Bank, SEPA-Lastschriftrückgabe oder Klarna-Käuferschutz. Welcher Weg bei dir sinnvoll ist, hängt davon ab, womit du bei ${m.name} bezahlt hast und welche Anbieterregeln gelten — die Hinweise weiter unten dienen als allgemeine Orientierung.`;
+  const para2 = `Typische Anlaufstellen sind PayPal-Käuferschutz, Kreditkarten-Reklamation/Chargeback über die kartenausgebende Bank, SEPA-Lastschriftrückgabe oder Klarna-Käuferschutz. Welcher Weg bei dir sinnvoll ist, hängt davon ab, womit du bei ${m.name} bezahlt hast und welche Anbieterregeln gelten — die Hinweise weiter unten helfen dir, die nächsten Schritte sachlich zu sortieren.`;
   const para3 = `Praktisch ist meist hilfreich, ${m.name} zunächst nachweisbar direkt zu kontaktieren und eine angemessene Rückmeldefrist zu setzen. ChargebackPilot unterstützt dich dabei mit unverbindlichen Textentwürfen — von der ersten Reklamation bis zu einer möglichen Nachricht an Bank oder Zahlungsdienstleister. Die KI-gestützte Strukturierung ist kostenlos; vollständige Entwürfe als PDF kosten einmalig 0,99 € Endpreis.`;
   return [para1, para2, para3];
 }
@@ -596,21 +596,21 @@ function deadlinesForCombo(p: ProblemDef): { label: string; value: string; note:
 function legalBasisForProblem(p: ProblemDef): { title: string; text: string }[] {
   const base: { title: string; text: string }[] = [
     {
-      title: "Allgemeine Orientierung: Vertragsrecht und Pflichtverletzungen",
+      title: "Vertragsrecht und Pflichtverletzungen",
       text: "Bei Nichtlieferung oder Schlechtleistung können je nach Einzelfall vertragliche Rechte in Betracht kommen. Eine nachvollziehbare schriftliche Dokumentation hilft, den Sachverhalt gegenüber Händler oder Zahlungsdienstleister verständlich darzustellen.",
     },
     {
-      title: "Allgemeine Orientierung: Kaufrechtliche Mängelrechte",
+      title: "Kaufrechtliche Mängelrechte",
       text: "Bei mangelhafter Ware können je nach Fall Nacherfüllung, Minderung oder Rückabwicklung eine Rolle spielen. Welche Rechte konkret bestehen, hängt vom Vertrag, Zeitpunkt und den Belegen ab.",
     },
     {
-      title: "Allgemeine Orientierung: nicht autorisierte Zahlungen",
+      title: "Nicht autorisierte Zahlungen",
       text: "Bei nicht autorisierten Zahlungen können besondere Regeln gegenüber der Bank gelten. Ob eine Zahlung autorisiert war und welche Frist gilt, sollte direkt mit der Bank geklärt werden.",
     },
   ];
   if (p.slug === "flug-storniert") {
     base.push({
-      title: "Allgemeine Orientierung: EU-Fluggastrechte",
+      title: "EU-Fluggastrechte",
       text: "Bei Annullierung, Nichtbeförderung oder erheblicher Verspätung können je nach Strecke, Ursache und Einzelfall Erstattungs- oder Ausgleichsansprüche in Betracht kommen. Belege und Kommunikation sollten früh gesichert werden.",
     });
   }
@@ -664,7 +664,7 @@ function disputeCategoryForCombo(p: ProblemDef): {
       method: "PayPal / Visa",
       code: "13.3 Not as Described — Falsche Lieferung",
       explainer:
-        "Lieferung kam komplett falsch oder unbrauchbar an. Bei PayPal eröffnest du den Käuferschutzfall mit Foto der erhaltenen Ware vs. bestellter Ware.",
+        "Wenn die Lieferung komplett falsch oder unbrauchbar ankam, können Fotos der erhaltenen Ware, Bestellübersicht und Supportverlauf bei der Einordnung helfen.",
     },
     betrugsverdacht: {
       method: "Visa / Mastercard / Amex",
@@ -803,10 +803,10 @@ function stepsForCombo(m: MerchantDef, p: ProblemDef): string[] {
 
 function paymentSpecificStep(p: ProblemDef, m: MerchantDef): string {
   if (p.paymentMethods.includes("paypal")) {
-    return `Wenn du mit PayPal gezahlt hast, öffne innerhalb von 180 Tagen einen Fall im PayPal-Konfliktcenter (Käuferschutz) — wichtig: vom Konflikt zum Antrag eskalieren innerhalb von 20 Tagen.`;
+    return `Wenn du mit PayPal gezahlt hast, prüfe zeitnah das PayPal-Konfliktcenter und die dort angezeigten Fristen. Häufig werden 180 Tage ab Zahlung genannt; Eskalationsregeln solltest du direkt im Konto prüfen.`;
   }
   if (p.paymentMethods.includes("kreditkarte")) {
-    return `Wenn du per Kreditkarte gezahlt hast, fordere bei deiner Bank den Chargeback mit Reason-Code "Goods/Services not received" bzw. "Not as described" an — meist innerhalb von 60–120 Tagen ab Kontoauszug.`;
+    return `Wenn du per Kreditkarte gezahlt hast, frage deine kartenausgebende Bank nach einer Umsatzreklamation. Mögliche Kategorien wie "Goods/Services not received" oder "Not as described" ordnet die Bank nach ihren Regeln ein.`;
   }
   if (p.paymentMethods.includes("klarna")) {
     return `Bei Klarna-Zahlung melde das Problem zeitnah im Klarna-Konto und prüfe, ob eine Zahlungspause nach den Klarna-Regeln möglich ist.`;
@@ -839,6 +839,16 @@ function commonMistakes(p: ProblemDef): string[] {
 
 function faqForCombo(m: MerchantDef, p: ProblemDef, sector: string): { q: string; a: string }[] {
   return [
+    {
+      q: `Welche Belege sind bei ${m.name} und "${p.label}" besonders wichtig?`,
+      a: `Bei ${p.searchPhrase.toLowerCase()} zählen vor allem fallnahe Nachweise: ${evidenceForProblem(
+        p
+      )
+        .slice(0, 4)
+        .join(
+          ", "
+        )}. Ergänze die Belege möglichst um eine kurze Chronologie und die Kommunikation mit ${m.name}.`,
+    },
     {
       q: `Wie schnell sollte ich bei ${m.name} reklamieren?`,
       a: `Möglichst zeitnah. Setze ${m.name} eine angemessene schriftliche Rückmeldefrist und prüfe parallel die konkreten Fristen bei PayPal, Bank, Klarna oder Kartenausgeber. Anbieterregeln können je nach Fall abweichen.`,

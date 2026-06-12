@@ -614,7 +614,7 @@ export default function Wizard() {
       !!formData.merchantName &&
       !!(formData.disputedAmount || formData.purchaseAmount) &&
       !!formData.paymentDate) ||
-    step === 4;
+    (step === 4 && formData.evidence.length > 0);
 
   useEffect(() => {
     if (scrollTarget === "paywall") return;
@@ -1116,7 +1116,8 @@ export default function Wizard() {
                       <div>
                         <h2 className="text-xl font-bold mb-1">Welche Beweise hast du?</h2>
                         <p className="text-sm text-muted-foreground">
-                          Mehr Beweise = stärkere Position. Wähle alle aus, die du hast.
+                          Wähle alle Belege aus, die du hast — oder markiere bewusst, dass aktuell
+                          keine Belege vorliegen.
                         </p>
                       </div>
 
@@ -1166,7 +1167,14 @@ export default function Wizard() {
                           {formData.evidence.filter((e) => e !== "none").length !== 1
                             ? "e"
                             : ""}{" "}
-                          ausgewählt — gute Ausgangslage.
+                          ausgewählt — die spätere Formulierung kann dadurch konkreter werden.
+                        </div>
+                      )}
+                      {formData.evidence.includes("none") && (
+                        <div className="flex items-center gap-2 text-sm text-amber-800 bg-amber-50 border border-amber-200 rounded-lg px-3 py-2">
+                          <AlertTriangle className="w-4 h-4 flex-shrink-0" />
+                          Keine Belege ausgewählt — die Analyse bleibt möglich, kann aber
+                          allgemeiner ausfallen.
                         </div>
                       )}
                     </div>
