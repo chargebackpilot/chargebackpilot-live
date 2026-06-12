@@ -352,23 +352,43 @@ app.use(
       }
       if (filePath.includes(`${path.sep}fonts${path.sep}inter${path.sep}`)) {
         res.setHeader("Cache-Control", "public, max-age=31536000, immutable");
+        return;
+      }
+      if (filePath.endsWith(".html") || filePath.endsWith("manifest.json")) {
+        res.setHeader("Cache-Control", "no-cache, must-revalidate");
       }
     },
   })
 );
+
+app.get(/^\/assets\/.*\.js$/, (_req, res) => {
+  res.setHeader("Content-Type", "application/javascript; charset=utf-8");
+  res.setHeader("Cache-Control", "no-store");
+  res.status(200).send(`
+const reloadKey = "chargebackpilot-missing-asset-reload";
+if (!sessionStorage.getItem(reloadKey)) {
+  sessionStorage.setItem(reloadKey, "1");
+  window.location.reload();
+} else {
+  console.error("ChargebackPilot asset is no longer available after a deployment. Please reload the page.");
+}
+export {};
+`);
+});
+
 app.get(/(.*)/, (req, res) => {
   const prerenderedPath =
     req.path === "/" ? indexPath : path.join(staticDir, req.path, "index.html");
   if (fs.existsSync(prerenderedPath)) {
     res.setHeader("Content-Type", "text/html; charset=utf-8");
-    res.setHeader("Cache-Control", "public, max-age=300, stale-while-revalidate=86400");
+    res.setHeader("Cache-Control", "no-cache, must-revalidate");
     res.status(200).send(fs.readFileSync(prerenderedPath, "utf-8"));
     return;
   }
 
   const { html, isKnownRoute } = renderSeoHtml(req.path || "/");
   res.setHeader("Content-Type", "text/html; charset=utf-8");
-  res.setHeader("Cache-Control", "public, max-age=60, stale-while-revalidate=3600");
+  res.setHeader("Cache-Control", "no-cache, must-revalidate");
   res.status(isKnownRoute ? 200 : 404).send(html);
 });
 
