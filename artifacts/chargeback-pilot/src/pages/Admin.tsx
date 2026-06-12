@@ -268,18 +268,6 @@ function AdminDashboard({ onLogout }: { onLogout: () => void }) {
               />
             </div>
 
-            <Card
-              title={`SEO Quality Gate · Threshold ${SEO_QUALITY_CONFIG.threshold}/100`}
-              right={
-                <span className="text-xs font-semibold text-slate-500">
-                  {seoIndexable} index · {seoCandidates} candidate · Ø {averageSeoScore} ·{" "}
-                  {SEO_QUALITY_CONFIG.scheduledIndexing.batchSize}/Tranche
-                </span>
-              }
-            >
-              <SeoQualityTable rows={seoQualityRows} />
-            </Card>
-
             {/* Daily chart */}
             <Card title="Tägliches Aufkommen (30 Tage)">
               <DailyChart series={stats.dailySeries} />
@@ -411,6 +399,13 @@ function AdminDashboard({ onLogout }: { onLogout: () => void }) {
                 </div>
               )}
             </Card>
+
+            <SeoQualityDisclosure
+              rows={seoQualityRows}
+              indexable={seoIndexable}
+              candidates={seoCandidates}
+              averageScore={averageSeoScore}
+            />
           </>
         ) : null}
       </main>
@@ -496,6 +491,41 @@ function Card({
       </div>
       {children}
     </section>
+  );
+}
+
+function SeoQualityDisclosure({
+  rows,
+  indexable,
+  candidates,
+  averageScore,
+}: {
+  rows: ReturnType<typeof getAllSeoQualityResults>;
+  indexable: number;
+  candidates: number;
+  averageScore: number;
+}) {
+  return (
+    <details className="group bg-white rounded-2xl border">
+      <summary className="flex cursor-pointer list-none items-center justify-between gap-4 p-5 marker:hidden">
+        <div>
+          <h2 className="font-bold text-sm uppercase tracking-wide text-slate-700">
+            SEO Quality Gate · Threshold {SEO_QUALITY_CONFIG.threshold}/100
+          </h2>
+          <p className="mt-1 text-xs text-slate-500">
+            {indexable} index · {candidates} candidate · Ø {averageScore} ·{" "}
+            {SEO_QUALITY_CONFIG.scheduledIndexing.batchSize}/Tranche
+          </p>
+        </div>
+        <span className="rounded-lg border px-3 py-1.5 text-xs font-semibold text-slate-600 transition-colors group-open:bg-slate-50">
+          <span className="group-open:hidden">Aufklappen</span>
+          <span className="hidden group-open:inline">Zuklappen</span>
+        </span>
+      </summary>
+      <div className="border-t px-5 pb-5 pt-4">
+        <SeoQualityTable rows={rows} />
+      </div>
+    </details>
   );
 }
 
