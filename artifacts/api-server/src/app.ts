@@ -203,6 +203,12 @@ const metaByPath: Array<{ match: RegExp; title: string; description: string; noi
         "Erstelle in wenigen Schritten professionelle Reklamationsvorlagen für Händler, Bank/PayPal/Klarna und Eskalation.",
     },
     {
+      match: /^\/admin(?:\/.*)?$/,
+      title: "Admin · ChargebackPilot",
+      description: "Interner Admin-Bereich von ChargebackPilot.",
+      noindex: true,
+    },
+    {
       match: /^\/ratgeber/,
       title: "Ratgeber & Guides zu Chargeback, Käuferschutz und Rückerstattung · ChargebackPilot",
       description:

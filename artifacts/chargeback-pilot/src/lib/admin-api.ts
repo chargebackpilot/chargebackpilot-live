@@ -1,6 +1,7 @@
-const STORAGE_KEY = "cbp_admin_pwd";
+const STORAGE_KEY = "cbp_admin_token";
+const LEGACY_PASSWORD_STORAGE_KEY = "cbp_admin_pwd";
 
-export function getAdminPassword(): string | null {
+export function getAdminToken(): string | null {
   try {
     return sessionStorage.getItem(STORAGE_KEY);
   } catch {
@@ -8,30 +9,35 @@ export function getAdminPassword(): string | null {
   }
 }
 
-export function setAdminPassword(pw: string) {
+export function setAdminToken(token: string) {
   try {
-    sessionStorage.setItem(STORAGE_KEY, pw);
+    sessionStorage.setItem(STORAGE_KEY, token);
+    sessionStorage.removeItem(LEGACY_PASSWORD_STORAGE_KEY);
   } catch {
     /* ignore */
   }
 }
 
-export function clearAdminPassword() {
+export function clearAdminToken() {
   try {
     sessionStorage.removeItem(STORAGE_KEY);
+    sessionStorage.removeItem(LEGACY_PASSWORD_STORAGE_KEY);
   } catch {
     /* ignore */
   }
 }
 
+export const getAdminPassword = getAdminToken;
+export const clearAdminPassword = clearAdminToken;
+
 async function adminFetch<T>(path: string, init: RequestInit = {}): Promise<T> {
-  const pw = getAdminPassword();
+  const token = getAdminToken();
   const headers = new Headers(init.headers);
-  if (pw) headers.set("x-admin-password", pw);
+  if (token) headers.set("Authorization", `Bearer ${token}`);
   headers.set("Content-Type", "application/json");
   const res = await fetch(`/api/admin${path}`, { ...init, headers });
   if (res.status === 401) {
-    clearAdminPassword();
+    clearAdminToken();
     throw new Error("Nicht autorisiert");
   }
   if (!res.ok) {
@@ -48,7 +54,9 @@ export async function adminLogin(password: string): Promise<boolean> {
     body: JSON.stringify({ password }),
   });
   if (res.ok) {
-    setAdminPassword(password);
+    const json = (await res.json()) as { token?: string };
+    if (!json.token) return false;
+    setAdminToken(json.token);
     return true;
   }
   return false;
@@ -87,4 +95,6 @@ export interface AdminCaseRow {
 
 export const getAdminStats = () => adminFetch<AdminStats>("/stats");
 export const getAdminCases = (onlyPaid = false, limit = 50) =>
-  adminFetch<{ cases: AdminCaseRow[]; count: number }>(`/cases?limit=${limit}${onlyPaid ? "&paid=1" : ""}`);
+  adminFetch<{ cases: AdminCaseRow[]; count: number }>(
+    `/cases?limit=${limit}${onlyPaid ? "&paid=1" : ""}`
+  );

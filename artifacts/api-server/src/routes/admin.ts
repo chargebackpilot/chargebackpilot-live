@@ -26,8 +26,10 @@ const loginLimiter = rateLimit({
   skip: (req) => req.method !== "POST",
 });
 
+const MIN_ADMIN_PASSWORD_LENGTH = 15;
+
 router.post("/login", loginLimiter, (req: any, res: Response): void => {
-  if (!env.ADMIN_PASSWORD || env.ADMIN_PASSWORD.length < 16) {
+  if (!env.ADMIN_PASSWORD || env.ADMIN_PASSWORD.length < MIN_ADMIN_PASSWORD_LENGTH) {
     logger.error("ADMIN_PASSWORD not configured");
     res.status(503).json({
       code: "ADMIN_NOT_CONFIGURED",
@@ -117,9 +119,18 @@ router.get("/stats", async (_req: any, res: Response): Promise<void> => {
     })
     .from(casesTable);
 
-  const [cases24h] = await db.select({ c: count() }).from(casesTable).where(gte(casesTable.createdAt, since24h));
-  const [cases7d] = await db.select({ c: count() }).from(casesTable).where(gte(casesTable.createdAt, since7d));
-  const [cases30d] = await db.select({ c: count() }).from(casesTable).where(gte(casesTable.createdAt, since30d));
+  const [cases24h] = await db
+    .select({ c: count() })
+    .from(casesTable)
+    .where(gte(casesTable.createdAt, since24h));
+  const [cases7d] = await db
+    .select({ c: count() })
+    .from(casesTable)
+    .where(gte(casesTable.createdAt, since7d));
+  const [cases30d] = await db
+    .select({ c: count() })
+    .from(casesTable)
+    .where(gte(casesTable.createdAt, since30d));
 
   const [paid24h] = await db
     .select({ c: count() })
@@ -169,10 +180,17 @@ router.get("/stats", async (_req: any, res: Response): Promise<void> => {
     cases7d: Number(cases7d.c),
     cases30d: Number(cases30d.c),
     paid24h: Number(paid24h.c),
-    byStrength: byStrength.map((r) => ({ strength: r.strength ?? "unbekannt", count: Number(r.c) })),
+    byStrength: byStrength.map((r) => ({
+      strength: r.strength ?? "unbekannt",
+      count: Number(r.c),
+    })),
     byPaymentMethod: byPaymentMethod.map((r) => ({ method: r.method, count: Number(r.c) })),
     byProblemType: byProblemType.map((r) => ({ type: r.type, count: Number(r.c) })),
-    dailySeries: dailyRaw.map((r) => ({ day: r.day, total: Number(r.total), paid: Number(r.paid) })),
+    dailySeries: dailyRaw.map((r) => ({
+      day: r.day,
+      total: Number(r.total),
+      paid: Number(r.paid),
+    })),
   });
 });
 
@@ -220,7 +238,12 @@ router.get("/cases/:id", async (req, res) => {
     res.status(404).json({ error: "Nicht gefunden" });
     return;
   }
-  res.json({ ...found, id: String(found.id), createdAt: found.createdAt.toISOString(), paidAt: found.paidAt?.toISOString() ?? null });
+  res.json({
+    ...found,
+    id: String(found.id),
+    createdAt: found.createdAt.toISOString(),
+    paidAt: found.paidAt?.toISOString() ?? null,
+  });
 });
 
 export default router;

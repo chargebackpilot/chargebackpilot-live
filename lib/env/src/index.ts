@@ -49,7 +49,7 @@ export type ApiServerEnv = z.infer<typeof apiServerEnvSchema>;
 export type ApiServerEnvWithPassword = ApiServerEnv & { ADMIN_PASSWORD: string };
 
 function isValidAdminPassword(value: string | undefined): value is string {
-  return typeof value === "string" && value.length >= 16;
+  return typeof value === "string" && value.length >= 15;
 }
 
 /**
@@ -91,7 +91,9 @@ export function getApiServerEnv(): ApiServerEnv {
   const env = parseEnv(apiServerEnvSchema);
 
   if (env.ADMIN_PASSWORD && !isValidAdminPassword(env.ADMIN_PASSWORD)) {
-    console.warn("⚠️  ADMIN_PASSWORD is set but shorter than 16 characters. Admin login is disabled until it is fixed.");
+    console.warn(
+      "⚠️  ADMIN_PASSWORD is set but shorter than 15 characters. Admin login is disabled until it is fixed."
+    );
     return {
       ...env,
       ADMIN_PASSWORD: undefined,
