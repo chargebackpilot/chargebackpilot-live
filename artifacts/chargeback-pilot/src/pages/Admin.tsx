@@ -16,6 +16,7 @@ import {
   Calendar,
   Activity,
 } from "lucide-react";
+import { getAllSeoQualityResults, SEO_QUALITY_CONFIG } from "@/seo-quality";
 import {
   adminLogin,
   clearAdminPassword,
@@ -136,6 +137,13 @@ function AdminDashboard({ onLogout }: { onLogout: () => void }) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [onlyPaid, setOnlyPaid] = useState(false);
+  const seoQualityRows = getAllSeoQualityResults();
+  const seoIndexable = seoQualityRows.filter((row) => row.status === "index").length;
+  const seoCandidates = seoQualityRows.length - seoIndexable;
+  const averageSeoScore =
+    seoQualityRows.length > 0
+      ? Math.round(seoQualityRows.reduce((sum, row) => sum + row.score, 0) / seoQualityRows.length)
+      : 0;
 
   const load = async () => {
     setLoading(true);
@@ -259,6 +267,17 @@ function AdminDashboard({ onLogout }: { onLogout: () => void }) {
                 icon={Calendar}
               />
             </div>
+
+            <Card
+              title={`SEO Quality Gate · Threshold ${SEO_QUALITY_CONFIG.threshold}/100`}
+              right={
+                <span className="text-xs font-semibold text-slate-500">
+                  {seoIndexable} index · {seoCandidates} candidate · Ø {averageSeoScore}
+                </span>
+              }
+            >
+              <SeoQualityTable rows={seoQualityRows} />
+            </Card>
 
             {/* Daily chart */}
             <Card title="Tägliches Aufkommen (30 Tage)">
@@ -505,6 +524,52 @@ function DistributionBars({ data }: { data: { label: string; count: number; colo
           </div>
         </div>
       ))}
+    </div>
+  );
+}
+
+function SeoQualityTable({ rows }: { rows: ReturnType<typeof getAllSeoQualityResults> }) {
+  const sortedRows = [...rows].sort((a, b) => {
+    if (a.status !== b.status) return a.status === "noindex" ? -1 : 1;
+    return a.score - b.score;
+  });
+
+  return (
+    <div className="overflow-x-auto -mx-5 sm:mx-0">
+      <table className="min-w-full text-sm">
+        <thead className="text-xs uppercase tracking-wide text-slate-500 border-b">
+          <tr>
+            <Th>URL</Th>
+            <Th className="text-right">Score</Th>
+            <Th>Status</Th>
+            <Th>Missing items</Th>
+            <Th>Empfehlung</Th>
+          </tr>
+        </thead>
+        <tbody className="divide-y">
+          {sortedRows.map((row) => (
+            <tr key={row.url} className="hover:bg-slate-50">
+              <Td className="font-mono text-xs text-slate-600">{row.url}</Td>
+              <Td className="text-right font-bold tabular-nums">{row.score}</Td>
+              <Td>
+                <span
+                  className={`inline-flex rounded-full px-2 py-0.5 text-xs font-bold ${
+                    row.status === "index"
+                      ? "bg-emerald-100 text-emerald-800"
+                      : "bg-slate-100 text-slate-700"
+                  }`}
+                >
+                  {row.override ? `${row.status} · ${row.override}` : row.status}
+                </span>
+              </Td>
+              <Td className="text-xs text-slate-600 max-w-sm">
+                {row.missing.length ? row.missing.join(", ") : "OK"}
+              </Td>
+              <Td className="text-xs font-semibold">{row.recommendation}</Td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
     </div>
   );
 }

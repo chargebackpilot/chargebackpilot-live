@@ -5,7 +5,7 @@ import { ArrowRight, BookOpen, AlertTriangle, GitCompare, Store } from "lucide-r
 import { Breadcrumbs } from "@/components/Breadcrumbs";
 import { SeoHead } from "@/components/SeoHead";
 import { getMerchant, getProblem, MERCHANTS } from "@/data/merchants";
-import { INDEXABLE_MERCHANT_PROBLEM_PATHS } from "@/seo-routes";
+import { getAllSeoQualityResults } from "@/seo-quality";
 
 export const GUIDES = [
   {
@@ -123,14 +123,15 @@ const HIGHLIGHTS = [
 ];
 
 export default function RatgeberIndex() {
-  const priorityMerchantProblems = INDEXABLE_MERCHANT_PROBLEM_PATHS.flatMap((path) => {
-    const [, , merchantSlug, problemSlug] = path.split("/");
+  const priorityMerchantProblems = getAllSeoQualityResults().flatMap((result) => {
+    if (result.status !== "index") return [];
+    const [, , merchantSlug, problemSlug] = result.url.split("/");
     const merchant = getMerchant(merchantSlug);
     const problem = getProblem(problemSlug);
     if (!merchant || !problem) return [];
     return [
       {
-        path,
+        path: result.url,
         title: `${merchant.name}: ${problem.label}`,
         desc: `${problem.searchPhrase} bei ${merchant.name} strukturiert vorbereiten.`,
       },

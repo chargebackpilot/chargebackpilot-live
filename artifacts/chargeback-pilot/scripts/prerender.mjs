@@ -49,14 +49,15 @@ const merchantSectionMatch = merchantSource.match(/export const MERCHANTS:[\s\S]
 const merchantSection = merchantSectionMatch?.[1] ?? "";
 const problemSectionMatch = merchantSource.match(/export const PROBLEMS:[\s\S]*?=\s*\[([\s\S]*?)\n\];/);
 const problemSection = problemSectionMatch?.[1] ?? "";
-const lastmodMatch = seoRoutesSource.match(/export const SEO_LASTMOD\s*=\s*"([^"]+)"/);
+const seoQualitySource = await fs.readFile(path.join(root, "src", "seo-quality.ts"), "utf-8");
+const lastmodMatch = seoQualitySource.match(/lastmod:\s*"([^"]+)"/);
 const sitemapLastmod = lastmodMatch?.[1] ?? new Date().toISOString().slice(0, 10);
-const indexableMerchantProblemSectionMatch = seoRoutesSource.match(
-  /export const INDEXABLE_MERCHANT_PROBLEM_PATHS\s*=\s*\[([\s\S]*?)\]\s*as const;/,
-);
-const indexableMerchantProblemPaths = new Set(
-  [...(indexableMerchantProblemSectionMatch?.[1] ?? "").matchAll(/"([^"]+)"/g)].map((m) => m[1]),
-);
+const thresholdMatch = seoQualitySource.match(/threshold:\s*(\d+)/);
+const qualityThreshold = Number(thresholdMatch?.[1] ?? 80);
+const forceIndexMatch = seoQualitySource.match(/forceIndex:\s*\[([\s\S]*?)\]/);
+const forceNoindexMatch = seoQualitySource.match(/forceNoindex:\s*\[([\s\S]*?)\]/);
+const forceIndexPaths = new Set([...(forceIndexMatch?.[1] ?? "").matchAll(/"([^"]+)"/g)].map((m) => m[1]));
+const forceNoindexPaths = new Set([...(forceNoindexMatch?.[1] ?? "").matchAll(/"([^"]+)"/g)].map((m) => m[1]));
 const merchantBlocks = [...merchantSection.matchAll(/slug:\s*"([^"]+)"[\s\S]*?problems:\s*\[([^\]]*)\]/g)];
 const merchantRoutes = merchantBlocks.map(([, merchantSlug]) => `/hilfe/${merchantSlug}`);
 const merchantProblemRoutes = merchantBlocks.flatMap(([, merchantSlug, problemBlock]) => {
@@ -92,6 +93,32 @@ const problemMeta = new Map(
   ),
 );
 
+function getMerchantProblemScore(route) {
+  // Mirrors src/seo-quality.ts. Current programmatic pages still use generic
+  // legal/FAQ wording, so forceIndex is the release valve until those pages are
+  // manually upgraded past the threshold.
+  const hasProviderSpecificSection = true;
+  const hasProblemSpecificEvidence = true;
+  const hasPaymentSpecificNextStep = true;
+  const hasFaqDepth = false;
+  const hasMethodologySignal = true;
+  const hasNoGenericPlaceholders = false;
+  return (
+    (hasProviderSpecificSection ? 20 : 0) +
+    (hasProblemSpecificEvidence ? 20 : 0) +
+    (hasPaymentSpecificNextStep ? 15 : 0) +
+    (hasFaqDepth ? 15 : 0) +
+    (hasMethodologySignal ? 15 : 0) +
+    (hasNoGenericPlaceholders ? 15 : 0)
+  );
+}
+
+function isIndexableMerchantProblemRoute(route) {
+  if (forceNoindexPaths.has(route)) return false;
+  if (forceIndexPaths.has(route)) return true;
+  return getMerchantProblemScore(route) >= qualityThreshold;
+}
+
 function getMerchantName(merchantSlug) {
   const merchantNameMatch = merchantSection.match(new RegExp(`slug:\\s*"${merchantSlug}"[\\s\\S]*?name:\\s*"([^"]+)"`));
   return merchantNameMatch?.[1] ?? null;
@@ -115,7 +142,7 @@ function getRouteMeta(route) {
       description: `Probleme mit ${merchantName}? Strukturierte Orientierung zum Thema ${searchPhrase.toLowerCase()} mit Belegen, Fristenhinweisen und unverbindlichen Textentwürfen für Händler, Bank, PayPal oder Klarna.`,
       changefreq: "monthly",
       priority: 0.6,
-      noindex: !indexableMerchantProblemPaths.has(route),
+      noindex: !isIndexableMerchantProblemRoute(route),
     };
   }
 

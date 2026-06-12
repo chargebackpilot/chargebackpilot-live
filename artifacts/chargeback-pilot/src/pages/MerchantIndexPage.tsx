@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { ArrowRight } from "lucide-react";
 import NotFound from "./not-found";
 import { getMerchant, getProblem } from "@/data/merchants";
-import { isIndexableMerchantProblemPath } from "@/seo-routes";
+import { isIndexableMerchantProblemPath } from "@/seo-quality";
 
 export default function MerchantIndexPage() {
   const [, params] = useRoute<{ merchantSlug: string }>("/hilfe/:merchantSlug");

@@ -23,7 +23,7 @@ import {
 } from "lucide-react";
 import NotFound from "./not-found";
 import { getMerchant, getProblem, generateMerchantProblemCopy, MERCHANTS } from "@/data/merchants";
-import { isIndexableMerchantProblemPath } from "@/seo-routes";
+import { isIndexableMerchantProblemPath } from "@/seo-quality";
 
 const SITE = "https://chargebackpilot.de";
 const DISPLAY_UPDATED_AT = "11. Juni 2026";
