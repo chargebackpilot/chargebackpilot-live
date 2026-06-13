@@ -46,6 +46,7 @@ const PROBLEM_TYPE_LABELS: Record<string, string> = {
   subscription_trap: "Abo-Falle",
   double_charge: "Doppelte Belastung",
   unauthorized: "Unbekannte Abbuchung",
+  fraud: "Scam-/Shop-Verdacht",
   other: "Sonstiges",
 };
 
@@ -276,7 +277,7 @@ function AdminDashboard({ onLogout }: { onLogout: () => void }) {
 
             {/* Distribution */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <Card title="Erfolgsbewertung">
+              <Card title="Dokumentationslage">
                 <DistributionBars
                   data={stats.byStrength.map((s) => ({
                     label:
@@ -350,7 +351,7 @@ function AdminDashboard({ onLogout }: { onLogout: () => void }) {
                         <Th>Problem</Th>
                         <Th>Zahlung</Th>
                         <Th className="text-right">Betrag</Th>
-                        <Th className="text-right">Erfolg</Th>
+                        <Th className="text-right">Score</Th>
                         <Th>Bezahlt</Th>
                       </tr>
                     </thead>

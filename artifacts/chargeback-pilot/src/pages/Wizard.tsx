@@ -1412,7 +1412,7 @@ export default function Wizard() {
                                 />
                                 <LockedTeaser
                                   icon={<Shield className="w-4 h-4 text-primary" />}
-                                  title="Gegenargumente entkräften"
+                                  title="Mögliche Einwände beantworten"
                                   lines={4}
                                 />
                                 <LockedTeaser
@@ -1488,7 +1488,7 @@ export default function Wizard() {
                                   <Shield className="w-5 h-5 text-primary flex-shrink-0 mt-0.5" />
                                   <div>
                                     <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground mb-0.5">
-                                      Empfohlene Streitkategorie
+                                      Mögliche Streitkategorie
                                     </p>
                                     <p className="font-bold text-sm">
                                       {analysis.recommendedCategory}
@@ -1521,7 +1521,7 @@ export default function Wizard() {
                                   <div className="border rounded-xl p-5">
                                     <h3 className="font-bold text-base mb-3 flex items-center gap-2">
                                       <Shield className="w-4 h-4 text-primary" />
-                                      Mögliche Gegenargumente — und wie du sie entkräftest
+                                      Mögliche Einwände — sachlich beantworten
                                     </h3>
                                     <ul className="space-y-3">
                                       {analysis.counterarguments.map((arg, i) => (

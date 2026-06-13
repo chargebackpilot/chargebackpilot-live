@@ -519,7 +519,7 @@ export default function Home() {
                   {stats?.strongCases ?? "—"}
                 </div>
                 <div className="text-muted-foreground text-xs">
-                  Aussichtsreiche Ersteinschätzung
+                  Gut dokumentierte Ersteinschätzung
                 </div>
               </div>
             </div>

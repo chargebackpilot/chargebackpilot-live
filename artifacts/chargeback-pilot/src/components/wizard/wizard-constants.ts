@@ -30,7 +30,7 @@ export const PROBLEM_TYPES = [
   { id: "service_not_rendered", label: "Dienstleistung nicht erbracht", icon: Building2 },
   { id: "flight_travel", label: "Flug / Reise / Hotel Problem", icon: Plane },
   { id: "subscription", label: "Abo / ungewollte Abbuchung", icon: Repeat2 },
-  { id: "fraud", label: "Betrugs-/Scam-Verdacht", icon: AlertTriangle },
+  { id: "fraud", label: "Scam-/Shop-Verdacht", icon: AlertTriangle },
   { id: "food_delivery", label: "Lieferdienst / Essen unbrauchbar", icon: UtensilsCrossed },
   { id: "refund_promised", label: "Rückerstattung zugesagt aber nicht erhalten", icon: RefreshCcw },
   { id: "other", label: "Sonstiges", icon: ChevronRight },
@@ -113,7 +113,7 @@ export const MERCHANT_RESPONSE_OPTIONS = [
     label: "Keine Antwort erhalten",
     sub: "Händler reagiert nicht auf Kontaktaufnahme",
   },
-  { id: "abgelehnt", label: "Händler hat abgelehnt", sub: "Erstattung wurde verweigert" },
+  { id: "abgelehnt", label: "Händler hat abgelehnt", sub: "Keine Lösung angeboten" },
   {
     id: "versprach_rueckerstattung",
     label: "Erstattung versprochen — aber nicht gezahlt",
@@ -356,7 +356,8 @@ export const STRUCTURED_QUESTIONS: Record<string, Question[]> = {
       id: "fraud_discovery",
       label: "Wie ist der Verdacht entstanden?",
       type: "textarea",
-      placeholder: "z.B. Fake-Shop, nie geliefertes Produkt, Phishing-Mail, gefälschte Website...",
+      placeholder:
+        "z.B. unbekannter Shop, nie geliefertes Produkt, Phishing-Mail, auffällige Website...",
       rows: 2,
       required: true,
     },

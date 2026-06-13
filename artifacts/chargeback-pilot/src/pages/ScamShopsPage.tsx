@@ -38,7 +38,7 @@ const RED_FLAGS: ScamSignal[] = [
   {
     title: "Brandneue Domain ohne Reviews",
     description:
-      "Eine WHOIS-Abfrage zeigt, wie alt die Domain wirklich ist. Unter 6 Monate + keine Trustpilot/Google-Bewertungen = hohes Risiko.",
+      "Eine WHOIS-Abfrage kann zeigen, wie alt die Domain ist. Sehr junge Domain + kaum auffindbare Bewertungen kann ein zusätzliches Warnsignal sein.",
   },
   {
     title: "Schlechtes Deutsch & Auto-Übersetzungen",

@@ -24,7 +24,7 @@ export function GeneratorLoader({ merchantName }: { merchantName: string }) {
     "Ein gut dokumentierter Fall ist für Händler, Bank oder Zahlungsdienstleister leichter nachvollziehbar.",
     "PayPal nennt häufig 180 Tage ab Zahlung; bei Kreditkarten variieren Fristen je Bank und Kartennetzwerk.",
     "Wusstest du? Auch bei Lieferproblemen mit Essensbestellungen kann eine strukturierte Reklamation hilfreich sein.",
-    "Flug gecancelt? Steuern und Flughafengebühren können je nach Konstellation erstattungsfähig sein, selbst wenn du das Ticket stornierst.",
+    "Flug nicht genutzt? Steuern und Flughafengebühren können je nach Konstellation gesondert zu prüfen sein.",
     "Mastercard und Visa nutzen interne Kategorien für Reklamationen. Die passende Kategorie hängt vom Einzelfall ab.",
     "Bei unklaren Abo-Abbuchungen helfen Kündigungsnachweis, Kontoauszug und eine klare Chronologie.",
     "Tipp: Eine sachliche, belegbare Reklamation wirkt meist besser als Druck oder Drohungen.",
@@ -127,7 +127,7 @@ export function StrategyIndicator({ label }: { label: string }) {
   const band =
     l === "hoch"
       ? {
-          name: "Aussichtsreich",
+          name: "Gut dokumentierbar",
           desc: "Gute Dokumentationslage. Mit klaren Belegen ist dein Anliegen für Händler oder Zahlungsdienstleister besser nachvollziehbar.",
           tone: {
             bg: "bg-emerald-50",
@@ -140,7 +140,7 @@ export function StrategyIndicator({ label }: { label: string }) {
       : l === "mittel"
         ? {
             name: "Solide Ausgangslage",
-            desc: "Mittlere Position. Fehlende Belege können deine Aussichten noch deutlich verbessern.",
+            desc: "Mittlere Dokumentationslage. Zusätzliche Belege können die Nachvollziehbarkeit verbessern.",
             tone: {
               bg: "bg-amber-50",
               border: "border-amber-200",

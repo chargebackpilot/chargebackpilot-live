@@ -119,7 +119,7 @@ const TRUST_SIGNALS = [
 /** Map raw analysis label to a softer, qualitative band shown to the user. */
 function toStrategyBand(label: string): { name: string; tone: string } {
   const l = (label ?? "").toLowerCase();
-  if (l === "hoch") return { name: "Aussichtsreich", tone: "emerald" };
+  if (l === "hoch") return { name: "Gut dokumentierbar", tone: "emerald" };
   if (l === "mittel") return { name: "Solide Ausgangslage", tone: "amber" };
   if (l === "niedrig") return { name: "Anspruchsvoll", tone: "rose" };
   return { name: "Wird analysiert", tone: "slate" };

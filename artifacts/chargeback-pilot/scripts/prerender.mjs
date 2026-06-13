@@ -90,16 +90,25 @@ const staticRouteMeta = new Map(
 );
 
 const problemMeta = new Map(
-  [...problemSection.matchAll(/slug:\s*"([^"]+)"[\s\S]*?label:\s*"([^"]+)"[\s\S]*?searchPhrase:\s*"([^"]+)"/g)].map(
+  [
+    ...problemSection.matchAll(
+      /slug:\s*"([^"]+)"[\s\S]*?label:\s*"([^"]+)"[\s\S]*?searchPhrase:\s*"([^"]+)"[\s\S]*?sentencePhrase:\s*"([^"]+)"/g,
+    ),
+  ].map(
     (match) => [
       match[1],
       {
         label: match[2],
         searchPhrase: match[3],
+        sentencePhrase: match[4],
       },
     ],
   ),
 );
+
+function lowerFirst(value) {
+  return value ? `${value.charAt(0).toLocaleLowerCase("de-DE")}${value.slice(1)}` : value;
+}
 
 function getMerchantProblemScore(route) {
   // Mirrors src/seo-quality.ts closely enough for prerendered robots/sitemap
@@ -168,9 +177,10 @@ function getRouteMeta(route) {
     if (!merchantName) return null;
     const problemLabel = problem?.label ?? problemSlug.replace(/-/g, " ");
     const searchPhrase = problem?.searchPhrase ?? problemLabel;
+    const sentencePhrase = problem?.sentencePhrase ?? lowerFirst(searchPhrase);
     return {
       title: `${merchantName}: ${problemLabel} - Reklamation & Käuferschutz vorbereiten 2026 | ChargebackPilot`,
-      description: `Probleme mit ${merchantName}? Strukturierte Orientierung zum Thema ${searchPhrase.toLowerCase()} mit Belegen, Fristenhinweisen und unverbindlichen Textentwürfen für Händler, Bank, PayPal oder Klarna.`,
+      description: `Probleme mit ${merchantName}? Strukturierte Orientierung bei ${sentencePhrase} mit Belegen, Fristenhinweisen und unverbindlichen Textentwürfen für Händler, Bank, PayPal oder Klarna.`,
       changefreq: "monthly",
       priority: 0.6,
       noindex: !isIndexableMerchantProblemRoute(route),

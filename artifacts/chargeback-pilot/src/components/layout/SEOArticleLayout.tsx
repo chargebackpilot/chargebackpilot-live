@@ -107,7 +107,7 @@ const MONEY_PAGE_PROFILES: Record<string, MoneyPageProfile> = {
     ],
     decisionSignals: [
       "Du hast mit Visa, Mastercard oder Amex gezahlt.",
-      "Der Händler reagiert nicht oder verweigert eine nachvollziehbare Lösung.",
+      "Der Händler reagiert nicht oder bietet keine nachvollziehbare Lösung an.",
       "Du willst keinen Rechtsstreit beginnen, sondern eine bankinterne Prüfung anstoßen.",
     ],
     nextAction:
@@ -462,7 +462,7 @@ function guideContext(title: string, category: string): GuideContext {
       notIdealWhen:
         "du freiwillig eine endgültige Alternativlösung akzeptiert hast und keine offene Forderung mehr dokumentiert ist",
       wordingHint:
-        "zwischen Ticketpreis, Steuern, Gebühren, Serviceentgelt und Gutschein sauber trennen",
+        "zwischen Ticketpreis, Steuern, Gebühren, Gutschein und bereits angebotenen Beträgen sauber trennen",
       parallelPath:
         "bei Kartenzahlung eine Umsatzreklamation prüfen; bei PayPal den Konfliktweg im Konto prüfen",
     };
@@ -867,8 +867,8 @@ function editorialInsight(title: string, category: string, ctx: GuideContext): E
     return {
       title: "Warum ein guter Musterbrief immer konkret angepasst werden muss",
       paragraphs: [
-        "Ein Musterbrief ist nur dann stark, wenn er nicht wie ein kopierter Standardtext wirkt. Zahlungsdienstleister und Händler müssen erkennen können, welcher Vorgang betroffen ist und welche Belege deine Darstellung stützen.",
-        "Nutze Vorlagen deshalb als Struktur: Betreff, kurzer Ablauf, konkrete Forderung, Anlagenliste und Frist. Die entscheidenden Details müssen aus deinem Fall kommen.",
+        "Ein Musterbrief ist nur dann stark, wenn er nicht wie ein kopierter Standardtext wirkt. Zahlungsdienstleister und Händler sollten erkennen können, welcher Vorgang betroffen ist und welche Belege deine Darstellung stützen.",
+        "Nutze Vorlagen deshalb als Struktur: Betreff, kurzer Ablauf, gewünschte Prüfung, Anlagenliste und Frist. Die entscheidenden Details sollten aus deinem Fall kommen.",
       ],
       checkpoints: [
         "Betreff, Betrag, Datum und Bestellnummer sind konkret ausgefüllt.",
@@ -965,7 +965,7 @@ function glossaryForGuide(title: string, category: string): GlossaryItem[] {
       {
         term: "App-Guthaben",
         definition:
-          "Von Plattformen angebotene Kulanzlösung. Prüfe, ob du stattdessen eine Erstattung auf den ursprünglichen Zahlungsweg verlangst.",
+          "Von Plattformen angebotene Kulanzlösung. Prüfe, ob du stattdessen eine Erstattung auf den ursprünglichen Zahlungsweg anfragen möchtest.",
       },
     ];
   }
@@ -1608,8 +1608,8 @@ export function SEOArticleLayout({
               <p>
                 Zahlungsdienstleister entscheiden selten nach einem einzelnen Satz. Entscheidend
                 ist, ob dein Ablauf prüfbar ist: Was wurde gekauft, wann wurde gezahlt, was ist
-                konkret schiefgelaufen, wie hat der Anbieter reagiert und welche Lösung verlangst
-                du?
+                konkret schiefgelaufen, wie hat der Anbieter reagiert und welche Lösung möchtest du
+                prüfen lassen?
               </p>
               <p>
                 Für diese Seite ist besonders wichtig: {context.evidenceFocus}. Ergänze dazu eine

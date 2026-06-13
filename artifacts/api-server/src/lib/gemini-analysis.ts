@@ -37,7 +37,7 @@ const PROBLEM_TYPE_LABELS: Record<string, string> = {
   service_not_rendered: "Dienstleistung nicht erbracht",
   flight_travel: "Flug / Reise / Hotel Problem",
   subscription: "Abo / ungewollte Abbuchung",
-  fraud: "Betrugs-/Scam-Verdacht",
+  fraud: "Scam-/Shop-Verdacht",
   food_delivery: "Lieferdienst / Essen unbrauchbar",
   refund_promised: "Rückerstattung zugesagt aber nicht erhalten",
   other: "Sonstiges",
@@ -91,10 +91,10 @@ Analysiere diesen Fall und antworte AUSSCHLIESSLICH mit einem validen JSON-Objek
     "<Möglicher Schritt 1 mit sachlicher Orientierung, typischen Fristenhinweisen und ggf. offiziellen Anlaufstellen>",
     ...mindestens 4 Schritte...
   ],
-  "recommendedCategory": "<Möglicherweise passende Chargeback-/Käuferschutz-Kategorie; falls unsicher, deutlich als Orientierung kennzeichnen>",
+  "recommendedCategory": "<Möglicherweise passende Prüf- oder Reklamationskategorie; falls unsicher, deutlich als Orientierung kennzeichnen>",
   "legalBasis": [
-    "<Allgemeiner rechtlicher Orientierungshinweis, z.B. mögliche Käuferrechte bei Sachmängeln; keine Anspruchsprüfung>",
-    ...mindestens 2 Rechtsgrundlagen...
+    "<Allgemeiner Verbraucher- oder Verfahrenshinweis; keine Anspruchsprüfung und keine verbindliche Rechtsgrundlage>",
+    ...mindestens 2 vorsichtige Orientierungshinweise...
   ],
   "counterarguments": [
     "<Mögliche Rückfrage oder Einwendung des Händlers/der Bank und sachlicher Antwortvorschlag>",
@@ -104,7 +104,7 @@ Analysiere diesen Fall und antworte AUSSCHLIESSLICH mit einem validen JSON-Objek
   "deadline": "<Vorsichtiger Fristenhinweis: z.B. 'PayPal nennt häufig 180 Tage ab Zahlung. Bitte konkrete Frist im Konto/bei PayPal prüfen.'>",
   "merchantTemplate": "<Sachlicher Textentwurf an den Händler auf Deutsch, formell, max 150 Wörter>",
   "bankTemplate": "<Sachlicher Textentwurf an Bank/PayPal/Klarna auf Deutsch, max 150 Wörter>",
-  "escalationTemplate": "<Sachlicher Eskalationsentwurf für Schlichtungsstelle oder Verbraucherzentrale, max 150 Wörter>",
+  "escalationTemplate": "<Sachlicher Entwurf für weitere Klärung beim Anbieter oder, falls passend, Verbraucherzentrale; max 150 Wörter>",
   "disclaimer": "Keine Rechtsberatung. ChargebackPilot bietet allgemeine Informationen und unverbindliche Textentwürfe. Die generierten Inhalte ersetzen keine anwaltliche Beratung und stellen keine Rechtsdienstleistung dar. Bitte vor Versand selbst prüfen."
 }
 
@@ -115,10 +115,46 @@ WICHTIGE RICHTLINIEN FÜR DIE ANALYSE:
 - Für Banküberweisung: weise vorsichtig darauf hin, dass direkte Händlerkommunikation oft wichtiger ist.
 - Die Textentwürfe müssen sachlich, vollständig und vom Nutzer vor Versand prüfbar sein.
 - Nutze keine verbindliche Anspruchsprüfung. Allgemeine Normen oder Anbieterregeln nur vorsichtig als Orientierung nennen.
+- Unterstelle keinen Betrug und keine Pflichtverletzung als Tatsache. Schreibe stattdessen 'Verdacht', 'unklar', 'aus meiner Sicht' oder 'bitte prüfen'.
 - Erwähne typische Fristen nur als allgemeine Hinweise und fordere immer zur Prüfung beim Anbieter/Zahlungsdienstleister auf.
 - Die Vorlagen sollen den spezifischen Sachverhalt (${input.merchantName}, ${input.amount.toFixed(2)} EUR, ${input.paymentDate}) konkret aufgreifen
 - Antworte IMMER auf Deutsch
 - KEIN Markdown in den Template-Feldern, nur plain text mit Zeilenumbrüchen`;
+}
+
+function softenGeneratedText(value: string): string {
+  return value
+    .replace(/\bgarantiert\b/gi, "nicht verbindlich")
+    .replace(/\brechtssicher\b/gi, "sorgfältig")
+    .replace(/\bdu hast Anspruch auf\b/gi, "du kannst prüfen lassen, ob")
+    .replace(/\bSie haben Anspruch auf\b/g, "Sie können prüfen lassen, ob")
+    .replace(/\bist verpflichtet\b/gi, "kann je nach Einzelfall verpflichtet sein")
+    .replace(/\bmuss erstatten\b/gi, "sollte die Erstattung prüfen")
+    .replace(/\bmuss zurückzahlen\b/gi, "sollte die Rückzahlung prüfen")
+    .replace(/\bBetrug\b/g, "Verdacht auf Missbrauch")
+    .replace(/\bbetrügerisch\b/gi, "auffällig")
+    .replace(/\bverweigert\b/gi, "bietet keine nachvollziehbare Lösung an")
+    .replace(/\bdefinitiv\b/gi, "nach aktueller Darstellung")
+    .replace(/\bauf jeden Fall\b/gi, "je nach Einzelfall");
+}
+
+function softenAnalysisCopy(analysis: CaseAnalysis): CaseAnalysis {
+  return {
+    ...analysis,
+    strengthLabel: softenGeneratedText(analysis.strengthLabel),
+    summary: softenGeneratedText(analysis.summary),
+    reasoning: softenGeneratedText(analysis.reasoning),
+    missingEvidence: analysis.missingEvidence.map(softenGeneratedText),
+    nextSteps: analysis.nextSteps.map(softenGeneratedText),
+    recommendedCategory: softenGeneratedText(analysis.recommendedCategory),
+    legalBasis: analysis.legalBasis.map(softenGeneratedText),
+    counterarguments: analysis.counterarguments.map(softenGeneratedText),
+    deadline: softenGeneratedText(analysis.deadline),
+    merchantTemplate: softenGeneratedText(analysis.merchantTemplate),
+    bankTemplate: softenGeneratedText(analysis.bankTemplate),
+    escalationTemplate: softenGeneratedText(analysis.escalationTemplate),
+    disclaimer: softenGeneratedText(analysis.disclaimer),
+  };
 }
 
 function isQuotaOrRateError(err: unknown): boolean {
@@ -168,7 +204,7 @@ export async function analyzeWithGemini(input: CaseInput): Promise<CaseAnalysis>
     try {
       const result = await callGemini(primaryAi, prompt);
       logger.info({ key: "primary" }, "Gemini analysis succeeded");
-      return result;
+      return softenAnalysisCopy(result);
     } catch (err) {
       const quotaErr = isQuotaOrRateError(err);
       logger.warn(
@@ -187,7 +223,7 @@ export async function analyzeWithGemini(input: CaseInput): Promise<CaseAnalysis>
     try {
       const result = await callGemini(fallbackAi, prompt);
       logger.info({ key: "fallback" }, "Gemini analysis succeeded via fallback key");
-      return result;
+      return softenAnalysisCopy(result);
     } catch (err) {
       logger.error(
         { err: err instanceof Error ? err.message : String(err) },
@@ -197,7 +233,7 @@ export async function analyzeWithGemini(input: CaseInput): Promise<CaseAnalysis>
   }
 
   logger.warn("No functional Gemini API keys available, using local fallback analysis");
-  return buildFallbackAnalysis(input);
+  return softenAnalysisCopy(buildFallbackAnalysis(input));
 }
 
 function buildFallbackAnalysis(input: CaseInput): CaseAnalysis {
@@ -250,8 +286,8 @@ function buildFallbackAnalysis(input: CaseInput): CaseAnalysis {
     ],
     recommendedCategory: "Mögliche Zahlungsreklamation prüfen",
     legalBasis: [
-      "§ 437 BGB – Rechte des Käufers bei Sachmängeln",
-      "EU-Zahlungsdiensterichtlinie (PSD2)",
+      "Allgemeine Verbraucherrechte können je nach Vertrag, Problemtyp und Belegen eine Rolle spielen.",
+      "Zahlungsdienstleister prüfen Reklamationen nach eigenen Regeln; maßgeblich sind Zahlungsweg, Frist und Dokumentation.",
     ],
     counterarguments: [
       "Händler könnte behaupten, die Ware sei zugestellt worden – daher Tracking-Dokumente sichern",

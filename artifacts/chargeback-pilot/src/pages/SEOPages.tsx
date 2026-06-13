@@ -90,7 +90,7 @@ export function VisaMastercardSEO() {
         "Insolvenz der Fluggesellschaft oder des Reiseveranstalters",
         "Abo-Fallen (ungewollte wiederkehrende Abbuchungen)",
         "Ware nicht geliefert",
-        "Betrug (Kreditkartenmissbrauch)",
+        "Möglicher Kartenmissbrauch",
       ]}
       evidence={[
         "Stornierungsbestätigung",
@@ -393,7 +393,7 @@ export function AboFalleSEO() {
         "Bitte um Prüfung der bereits abgebuchten Beiträge über den passenden Zahlungsweg.",
       ]}
       mistakes={[
-        "Nur die Karte sperren: Das kündigt das Abo nicht. Du musst auch beim Händler kündigen, sonst können Inkassoforderungen kommen.",
+        "Nur die Karte sperren: Das klärt ein mögliches Abo nicht. Du solltest zusätzlich den Anbieter schriftlich kontaktieren oder kündigen, damit spätere Forderungen nachvollziehbar beantwortet werden können.",
         "Kündigung nicht beweisen können: Nutze immer schriftliche Wege, niemals nur telefonisch.",
       ]}
       faq={[
@@ -643,7 +643,7 @@ export function VisaReasonCodeSEO() {
       category="Reason Codes"
       whenApplies={[
         "Du hast mit Visa bezahlt und Ware oder Leistung nicht erhalten",
-        "Der Händler reagiert nicht oder verweigert eine nachvollziehbare Lösung",
+        "Der Händler reagiert nicht oder bietet keine nachvollziehbare Lösung an",
         "Du willst den Fall für deine Bank verständlich vorbereiten",
       ]}
       evidence={[

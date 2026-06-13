@@ -37,7 +37,7 @@ const TRUST_LABEL: Record<string, { label: string; color: string }> = {
   mixed: { label: "Gemischte Erfahrungen", color: "bg-amber-100 text-amber-800 border-amber-300" },
   risky: { label: "Häufige Beschwerden", color: "bg-orange-100 text-orange-800 border-orange-300" },
   scam_reported: {
-    label: "Betrugsverdacht gemeldet",
+    label: "Verdacht dokumentiert",
     color: "bg-red-100 text-red-800 border-red-300",
   },
 };

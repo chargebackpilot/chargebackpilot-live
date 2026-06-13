@@ -32,7 +32,7 @@ const PROBLEM_LABELS: Record<string, string> = {
   service_not_rendered: "Dienstleistung nicht erbracht",
   flight_travel: "Flug / Reise / Hotel",
   subscription: "Abo / ungewollte Abbuchung",
-  fraud: "Betrug / Scam",
+  fraud: "Scam-/Shop-Verdacht",
   food_delivery: "Lieferdienst",
   refund_promised: "Rückerstattung zugesagt",
   other: "Sonstiges",
@@ -44,7 +44,7 @@ function addTextBlock(
   x: number,
   y: number,
   maxWidth: number,
-  lineHeight = 5,
+  lineHeight = 5
 ): number {
   const lines = doc.splitTextToSize(text, maxWidth);
   doc.text(lines, x, y);
@@ -57,7 +57,7 @@ function addSection(
   content: string,
   startY: number,
   pageW: number,
-  margin: number,
+  margin: number
 ): number {
   const usable = pageW - margin * 2;
 
@@ -119,11 +119,7 @@ export async function generatePdf(data: PdfData): Promise<void> {
 
   doc.setFontSize(8);
   doc.setTextColor(180, 200, 255);
-  doc.text(
-    "Keine Rechtsberatung. Textentwürfe vor Verwendung eigenständig prüfen.",
-    margin,
-    25,
-  );
+  doc.text("Keine Rechtsberatung. Textentwürfe vor Verwendung eigenständig prüfen.", margin, 25);
 
   // --- CASE OVERVIEW BOX ---
   let y = 38;
@@ -150,14 +146,18 @@ export async function generatePdf(data: PdfData): Promise<void> {
   doc.text(
     `Zahlungsart: ${PAYMENT_LABELS[data.paymentMethod] ?? data.paymentMethod}`,
     col2x,
-    y + 15,
+    y + 15
   );
   doc.text(
     `Problemtyp: ${PROBLEM_LABELS[data.problemType] ?? data.problemType}`,
     col2x,
-    y + 15 + lineH,
+    y + 15 + lineH
   );
-  doc.text(`Strategie-Einschätzung (indikativ): ${data.successProbabilityLabel}`, col2x, y + 15 + lineH * 2);
+  doc.text(
+    `Strategie-Einschätzung (indikativ): ${data.successProbabilityLabel}`,
+    col2x,
+    y + 15 + lineH * 2
+  );
 
   y += 40;
 
@@ -165,7 +165,7 @@ export async function generatePdf(data: PdfData): Promise<void> {
   const bandLabel = (data.successProbabilityLabel ?? "").toLowerCase();
   const band =
     bandLabel === "hoch"
-      ? { name: "Aussichtsreich", dots: 3, color: [16, 185, 129] }
+      ? { name: "Gut dokumentierbar", dots: 3, color: [16, 185, 129] }
       : bandLabel === "mittel"
         ? { name: "Solide Ausgangslage", dots: 2, color: [245, 158, 11] }
         : { name: "Anspruchsvoll", dots: 1, color: [244, 63, 94] };
@@ -202,9 +202,7 @@ export async function generatePdf(data: PdfData): Promise<void> {
 
   // --- NEXT STEPS ---
   if (data.nextSteps.length > 0) {
-    const stepsText = data.nextSteps
-      .map((s, i) => `${i + 1}. ${s}`)
-      .join("\n");
+    const stepsText = data.nextSteps.map((s, i) => `${i + 1}. ${s}`).join("\n");
     y = addSection(doc, "Empfohlene naechste Schritte", stepsText, y, pageW, margin);
   }
 
@@ -215,7 +213,7 @@ export async function generatePdf(data: PdfData): Promise<void> {
     data.merchantTemplate,
     y,
     pageW,
-    margin,
+    margin
   );
   y = addSection(
     doc,
@@ -223,16 +221,9 @@ export async function generatePdf(data: PdfData): Promise<void> {
     data.bankTemplate,
     y,
     pageW,
-    margin,
+    margin
   );
-  y = addSection(
-    doc,
-    "Vorlage 3: Eskalationsschreiben",
-    data.escalationTemplate,
-    y,
-    pageW,
-    margin,
-  );
+  y = addSection(doc, "Vorlage 3: Eskalationsschreiben", data.escalationTemplate, y, pageW, margin);
 
   // --- FOOTER on each page ---
   const totalPages = doc.getNumberOfPages();
@@ -244,7 +235,7 @@ export async function generatePdf(data: PdfData): Promise<void> {
     doc.text(
       "ChargebackPilot.de — Keine Rechtsberatung. Vorlagen eigenverantwortlich prüfen und anpassen.",
       margin,
-      290,
+      290
     );
     doc.text(`Seite ${i} / ${totalPages}`, pageW - margin, 290, {
       align: "right",

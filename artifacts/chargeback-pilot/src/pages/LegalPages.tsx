@@ -124,6 +124,16 @@ export function Datenschutz() {
             Datenschutzvereinbarungen, soweit der Anbieter als Auftragsverarbeiter tätig wird.
           </p>
 
+          <h2>4a. Bot-Schutz mit Cloudflare Turnstile</h2>
+          <p>
+            Zum Schutz vor automatisierten Masseneingaben kann ChargebackPilot Cloudflare Turnstile
+            einsetzen. Dabei können technische Daten wie IP-Adresse, Browserinformationen,
+            Interaktionsdaten und ein Prüf-Token an Cloudflare übermittelt werden. Die Verarbeitung
+            dient ausschließlich der Sicherheitsprüfung und Missbrauchsabwehr. Rechtsgrundlage ist
+            unser berechtigtes Interesse an einem sicheren und stabilen Betrieb (Art. 6 Abs. 1 lit.
+            f DSGVO).
+          </p>
+
           <h2>5. Erhobene Daten</h2>
           <p>
             Wir verarbeiten alle Daten, die Sie uns freiwillig im Formular übermitteln, z. B.
@@ -509,9 +519,8 @@ export function AGB() {
 
           <h2>3. Anbieterstatus und Preise</h2>
           <p>
-            Anbieter ist Till Pfeiffer als Privatperson/Einzelanbieter. Die Preise sind Endpreise.
-            Es wird die Kleinunternehmerregelung gemäß § 19 UStG angewendet; Umsatzsteuer wird nicht
-            ausgewiesen.
+            Anbieter ist Till Pfeiffer als Diensteanbieter und Kleinunternehmer im Sinne von § 19
+            UStG. Die Preise sind Endpreise; Umsatzsteuer wird nicht ausgewiesen.
           </p>
 
           <h2>4. Vertragsabschluss</h2>

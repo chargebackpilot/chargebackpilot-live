@@ -6,6 +6,8 @@ export interface ProblemDef {
   label: string;
   /** Search-friendly phrase for h1/title. */
   searchPhrase: string;
+  /** Grammatically fitted phrase for running sentences. */
+  sentencePhrase: string;
   /** Default payment methods that apply to this problem. */
   paymentMethods: ("paypal" | "kreditkarte" | "klarna" | "lastschrift" | "apple_pay")[];
   /** Wizard prefill key (matches Wizard PROBLEM_TYPES ids). */
@@ -41,6 +43,7 @@ export const PROBLEMS: ProblemDef[] = [
     slug: "ware-nicht-erhalten",
     label: "Ware nicht erhalten",
     searchPhrase: "Ware nicht erhalten",
+    sentencePhrase: "nicht erhaltener Ware",
     paymentMethods: ["paypal", "kreditkarte", "klarna"],
     wizardProblemId: "not_received",
   },
@@ -48,6 +51,7 @@ export const PROBLEMS: ProblemDef[] = [
     slug: "ware-defekt",
     label: "Ware defekt oder falsch geliefert",
     searchPhrase: "Ware defekt oder falsch beschrieben",
+    sentencePhrase: "defekter oder falsch beschriebener Ware",
     paymentMethods: ["paypal", "kreditkarte", "klarna"],
     wizardProblemId: "defective",
   },
@@ -55,6 +59,7 @@ export const PROBLEMS: ProblemDef[] = [
     slug: "flug-storniert",
     label: "Flug gestrichen oder verschoben",
     searchPhrase: "Flug gestrichen oder umgebucht",
+    sentencePhrase: "gestrichenem oder umgebuchtem Flug",
     paymentMethods: ["kreditkarte", "paypal"],
     wizardProblemId: "flight_travel",
   },
@@ -62,6 +67,7 @@ export const PROBLEMS: ProblemDef[] = [
     slug: "hotel-anders-als-beschrieben",
     label: "Hotel anders als beschrieben",
     searchPhrase: "Hotel oder Unterkunft mangelhaft",
+    sentencePhrase: "mangelhaftem Hotel oder mangelhafter Unterkunft",
     paymentMethods: ["kreditkarte", "paypal"],
     wizardProblemId: "flight_travel",
   },
@@ -69,6 +75,7 @@ export const PROBLEMS: ProblemDef[] = [
     slug: "abbuchung-ohne-zustimmung",
     label: "Unberechtigte Abbuchung / Abo-Falle",
     searchPhrase: "ungewollte Abbuchung oder Abo-Falle",
+    sentencePhrase: "ungewollter Abbuchung oder Abo-Falle",
     paymentMethods: ["lastschrift", "kreditkarte", "paypal"],
     wizardProblemId: "subscription",
   },
@@ -76,13 +83,15 @@ export const PROBLEMS: ProblemDef[] = [
     slug: "lieferung-falsch",
     label: "Lieferung falsch oder unbrauchbar",
     searchPhrase: "Essenslieferung falsch oder unbrauchbar",
+    sentencePhrase: "falscher oder unbrauchbarer Essenslieferung",
     paymentMethods: ["paypal", "kreditkarte"],
     wizardProblemId: "food_delivery",
   },
   {
     slug: "betrugsverdacht",
-    label: "Betrugs-/Fake-Shop-Verdacht",
-    searchPhrase: "Fake-Shop-Verdacht",
+    label: "Shop-/Drittanbieter-Verdacht",
+    searchPhrase: "Unklarer Shop- oder Drittanbieterfall",
+    sentencePhrase: "unklarem Shop- oder Drittanbieterfall",
     paymentMethods: ["kreditkarte", "paypal"],
     wizardProblemId: "fraud",
   },
@@ -423,11 +432,11 @@ export function generateMerchantProblemCopy(
   problem: ProblemDef
 ): GeneratedCopy {
   const m = merchant.name;
-  const phrase = problem.searchPhrase;
+  const sentencePhrase = problem.sentencePhrase;
   const sectorWord = sectorLabel(merchant.sector);
 
   const title = `${m} ${problem.label} — Reklamation strukturiert vorbereiten 2026`;
-  const metaDescription = `Du hast bei ${m} Probleme mit ${phrase.toLowerCase()}? Strukturierte Orientierung 2026: Belege, typische Fristenhinweise und unverbindliche Textentwürfe für Händler, Bank oder Zahlungsdienstleister.`;
+  const metaDescription = `Du hast bei ${m} Probleme mit ${sentencePhrase}? Strukturierte Orientierung 2026: Belege, typische Fristenhinweise und unverbindliche Textentwürfe für Händler, Bank oder Zahlungsdienstleister.`;
 
   const whenApplies = applicableScenarios(merchant, problem);
   const evidence = evidenceForProblem(problem);
@@ -545,7 +554,7 @@ function paymentNextStepForCombo(p: ProblemDef, m: MerchantDef): { title: string
 
 // ── Long-form intro paragraphs (primary SEO body) ─────────────────
 function introParagraphs(m: MerchantDef, p: ProblemDef, sector: string): string[] {
-  const para1 = `Wenn du bei ${m.name} mit ${p.searchPhrase.toLowerCase()} konfrontiert bist, kommen 2026 je nach Zahlungsart und Einzelfall verschiedene Reklamationswege in Betracht. ${m.name} (${sector}, Sitz in ${m.country}) ist für deutsche Verbraucher grundsätzlich erreichbar — wichtig ist vor allem, den Sachverhalt nachvollziehbar zu dokumentieren und typische Fristen direkt beim jeweiligen Anbieter zu prüfen.`;
+  const para1 = `Wenn du bei ${m.name} mit ${p.sentencePhrase} konfrontiert bist, kommen 2026 je nach Zahlungsart und Einzelfall verschiedene Reklamationswege in Betracht. ${m.name} (${sector}, Sitz in ${m.country}) ist für deutsche Verbraucher grundsätzlich erreichbar — wichtig ist vor allem, den Sachverhalt nachvollziehbar zu dokumentieren und typische Fristen direkt beim jeweiligen Anbieter zu prüfen.`;
   const para2 = `Typische Anlaufstellen sind PayPal-Käuferschutz, Kreditkarten-Reklamation/Chargeback über die kartenausgebende Bank, SEPA-Lastschriftrückgabe oder Klarna-Käuferschutz. Welcher Weg bei dir sinnvoll ist, hängt davon ab, womit du bei ${m.name} bezahlt hast und welche Anbieterregeln gelten — die Hinweise weiter unten helfen dir, die nächsten Schritte sachlich zu sortieren.`;
   const para3 = `Praktisch ist meist hilfreich, ${m.name} zunächst nachweisbar direkt zu kontaktieren und eine angemessene Rückmeldefrist zu setzen. ChargebackPilot unterstützt dich dabei mit unverbindlichen Textentwürfen — von der ersten Reklamation bis zu einer möglichen Nachricht an Bank oder Zahlungsdienstleister. Die KI-gestützte Strukturierung ist kostenlos; vollständige Entwürfe als PDF kosten einmalig 0,99 € Endpreis.`;
   return [para1, para2, para3];
@@ -668,9 +677,9 @@ function disputeCategoryForCombo(p: ProblemDef): {
     },
     betrugsverdacht: {
       method: "Visa / Mastercard / Amex",
-      code: "10.4 Fraud — Card Absent",
+      code: "abhängig von Bank und Kartensystem",
       explainer:
-        "Bei Verdacht auf Fake-Shop sind Screenshots, Zahlungsnachweis, Kontaktversuche und ggf. eine Anzeige wichtige Dokumente. Ob eine Rückbuchung gelingt, entscheidet der Zahlungsdienstleister im Einzelfall.",
+        "Bei unklarem Shop- oder Drittanbieterfall sind Screenshots, Zahlungsnachweis, Kontaktversuche und ggf. eine Anzeige wichtige Dokumente. Ob eine Rückbuchung gelingt, entscheidet der Zahlungsdienstleister im Einzelfall.",
     },
   };
   return (
@@ -716,7 +725,7 @@ function applicableScenarios(m: MerchantDef, p: ProblemDef): string[] {
     "ware-defekt": [
       `Die Lieferung von ${m.name} weicht erheblich von der Beschreibung ab oder ist defekt.`,
       "Die Ware wurde unvollständig oder beschädigt geliefert.",
-      `${m.name} verweigert nach Reklamation die Erstattung oder Nachlieferung.`,
+      `${m.name} bietet nach Reklamation keine nachvollziehbare Lösung an.`,
     ],
     "flug-storniert": [
       `${m.name} hat deinen Flug gestrichen oder erheblich verschoben.`,
@@ -726,7 +735,7 @@ function applicableScenarios(m: MerchantDef, p: ProblemDef): string[] {
     "hotel-anders-als-beschrieben": [
       `Die über ${m.name} gebuchte Unterkunft entspricht nicht der Beschreibung (Lage, Sauberkeit, Ausstattung).`,
       "Ein erheblicher Mangel wurde dokumentiert und vor Ort gerügt.",
-      `${m.name} oder der Anbieter verweigert eine angemessene Minderung oder Stornierung.`,
+      `${m.name} oder der Anbieter bietet keine nachvollziehbare Klärung zu Minderung oder Stornierung an.`,
     ],
     "abbuchung-ohne-zustimmung": [
       `${m.name} hat eine Zahlung abgebucht, der du nicht zugestimmt hast (z. B. nach Probemonat).`,
@@ -736,10 +745,10 @@ function applicableScenarios(m: MerchantDef, p: ProblemDef): string[] {
     "lieferung-falsch": [
       `${m.name} hat die Bestellung falsch, unvollständig oder unbrauchbar geliefert.`,
       "Das Essen kam kalt, verschüttet oder mit den falschen Komponenten an.",
-      `${m.name} verweigert über die App eine vollständige Erstattung.`,
+      `${m.name} bietet über die App keine nachvollziehbare Lösung für den betroffenen Betrag an.`,
     ],
     betrugsverdacht: [
-      `Du hast den begründeten Verdacht, dass es sich bei ${m.name} oder einem Drittanbieter um einen Fake-Shop handelt.`,
+      `Du hast den begründeten Verdacht, dass ein Shop, Verkäufer oder Drittanbieter im Zusammenhang mit ${m.name} unklar oder nicht erreichbar ist.`,
       "Die Website ist plötzlich offline oder du erhältst keine Antwort mehr.",
       "Du hast Belege gesichert und gegebenenfalls bereits eine Anzeige oder Meldung dokumentiert.",
     ],
@@ -783,7 +792,7 @@ function evidenceForProblem(p: ProblemDef): string[] {
     betrugsverdacht: [
       "Screenshots der Website",
       "WHOIS-Auskunft (falls verfügbar)",
-      "Polizei-Anzeigenbestätigung",
+      "Anzeigen- oder Meldungsbestätigung, falls vorhanden",
       "E-Mail-Verlauf",
     ],
   };
@@ -841,9 +850,7 @@ function faqForCombo(m: MerchantDef, p: ProblemDef, sector: string): { q: string
   return [
     {
       q: `Welche Belege sind bei ${m.name} und "${p.label}" besonders wichtig?`,
-      a: `Bei ${p.searchPhrase.toLowerCase()} zählen vor allem fallnahe Nachweise: ${evidenceForProblem(
-        p
-      )
+      a: `Bei ${p.sentencePhrase} zählen vor allem fallnahe Nachweise: ${evidenceForProblem(p)
         .slice(0, 4)
         .join(
           ", "

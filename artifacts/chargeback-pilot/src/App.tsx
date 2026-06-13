@@ -66,7 +66,7 @@ const LazyToaster = lazy(() =>
 );
 const WizardRoute = lazyWithPreload(loadWizardRoute);
 const Admin = lazyWithPreload(() => import("@/pages/Admin"));
-const AdminDemo = lazyWithPreload(() => import("@/pages/AdminDemo"));
+const AdminDemo = import.meta.env.DEV ? lazyWithPreload(() => import("@/pages/AdminDemo")) : null;
 
 const useIsomorphicLayoutEffect = typeof window === "undefined" ? useEffect : useLayoutEffect;
 
@@ -213,7 +213,7 @@ function Router() {
       </Route>
       <Route path="/ratgeber" component={RatgeberIndex} />
       <Route path="/admin" component={withAdminSuspense(Admin)} />
-      <Route path="/admin/demo" component={withAdminSuspense(AdminDemo)} />
+      {AdminDemo ? <Route path="/admin/demo" component={withAdminSuspense(AdminDemo)} /> : null}
 
       {/* Legal Pages */}
       <Route path="/impressum" component={Impressum} />
