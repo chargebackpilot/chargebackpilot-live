@@ -182,6 +182,59 @@ const ESCALATION_PATHS = [
   },
 ];
 
+const MONEY_GUIDE_LINKS = [
+  {
+    href: "/chargeback-antrag-vorlage",
+    keyword: "Chargeback Antrag Vorlage",
+    intent: "Bank oder Kreditkartenherausgeber sachlich um Prüfung bitten.",
+  },
+  {
+    href: "/paypal-kaeuferschutz-vorlage",
+    keyword: "PayPal Käuferschutz Vorlage",
+    intent: "Konfliktcenter und Eskalation klar formulieren.",
+  },
+  {
+    href: "/klarna-reklamation-vorlage",
+    keyword: "Klarna Reklamation Vorlage",
+    intent: "Rechnung, Retoure oder Lieferproblem strukturiert melden.",
+  },
+  {
+    href: "/ware-nicht-erhalten-musterbrief",
+    keyword: "Ware nicht erhalten Musterbrief",
+    intent: "Händler, PayPal, Klarna oder Bank nachvollziehbar anschreiben.",
+  },
+  {
+    href: "/visa-mastercard-chargeback",
+    keyword: "Visa & Mastercard Chargeback",
+    intent: "Kartenumsatz und Belege für die Bank sortieren.",
+  },
+  {
+    href: "/paypal-chargeback",
+    keyword: "PayPal Chargeback",
+    intent: "Käuferschutz, Konfliktcenter und Kartenweg sauber trennen.",
+  },
+  {
+    href: "/scam-shops-2026",
+    keyword: "Fake-Shop erkannt",
+    intent: "Warnsignale prüfen und Zahlungsweg zeitnah sichern.",
+  },
+  {
+    href: "/vergleich/paypal-vs-kreditkarte-vs-klarna",
+    keyword: "PayPal vs. Kreditkarte vs. Klarna",
+    intent: "Den passenden Käuferschutzweg nach Zahlungsart auswählen.",
+  },
+  {
+    href: "/lieferando-rueckerstattung",
+    keyword: "Lieferando Rückerstattung",
+    intent: "Kalte, falsche oder fehlende Lieferung dokumentieren.",
+  },
+  {
+    href: "/kiwi-rueckerstattung",
+    keyword: "Kiwi.com Rückerstattung",
+    intent: "Steuern, Gebühren und Zahlungsweg getrennt prüfen.",
+  },
+];
+
 export default function RatgeberIndex() {
   const priorityMerchantProblems = getAllSeoQualityResults().flatMap((result) => {
     if (result.status !== "index") return [];
@@ -223,6 +276,36 @@ export default function RatgeberIndex() {
             </span>
           </p>
         </div>
+
+        <section className="mb-16">
+          <div className="mb-5 flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
+            <div>
+              <p className="mb-1 text-xs font-bold uppercase tracking-wider text-primary">
+                Häufig gesucht
+              </p>
+              <h2 className="text-2xl font-bold">Direkt zu den wichtigsten Lösungen</h2>
+            </div>
+            <p className="max-w-xl text-sm leading-relaxed text-muted-foreground">
+              Die meistgesuchten Einstiegspunkte sind bewusst priorisiert: erst Vorlage oder
+              Zahlungsweg wählen, dann Belege und nächsten Schritt sauber vorbereiten.
+            </p>
+          </div>
+          <div className="grid gap-3 md:grid-cols-2">
+            {MONEY_GUIDE_LINKS.map((item) => (
+              <Link key={item.href} href={item.href}>
+                <Card className="h-full cursor-pointer transition-colors hover:border-primary">
+                  <CardContent className="flex items-start justify-between gap-4 p-4">
+                    <div>
+                      <h3 className="mb-1 font-semibold">{item.keyword}</h3>
+                      <p className="text-sm leading-relaxed text-muted-foreground">{item.intent}</p>
+                    </div>
+                    <ArrowRight className="mt-1 h-4 w-4 shrink-0 text-muted-foreground" />
+                  </CardContent>
+                </Card>
+              </Link>
+            ))}
+          </div>
+        </section>
 
         <section className="mb-16">
           <h2 className="text-2xl font-bold mb-5">Schnell zum passenden Einstieg</h2>

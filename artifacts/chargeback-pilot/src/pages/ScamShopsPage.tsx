@@ -10,7 +10,7 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
-import { AlertTriangle, ArrowRight, ShieldCheck, Search } from "lucide-react";
+import { AlertTriangle, ArrowRight, ShieldCheck, Search, Sparkles } from "lucide-react";
 import { useState } from "react";
 
 interface ScamSignal {
@@ -78,7 +78,7 @@ const SCAM_CATEGORIES = [
     name: "Abo-Fallen über Bauernfänger-Anzeigen",
     examples: "Gewinnspiele, kostenlose Proben, Promi-Diäten",
     action:
-      "SEPA-Rückgabemöglichkeit bei der Bank prüfen und den Anbieter schriftlich kontaktieren bzw. kündigen.",
+      "Mögliche Lastschrift-Rückgabe bei der Bank prüfen und den Anbieter schriftlich kontaktieren bzw. kündigen.",
   },
   {
     name: "Fake-Inkasso & Phishing",
@@ -125,7 +125,7 @@ export default function ScamShopsPage() {
   const title =
     "Bekannte Scam-Muster & Fake-Shops 2026 — was du jetzt tun kannst | ChargebackPilot";
   const description =
-    "Verdacht auf Fake-Shop oder Internet-Betrug? Die wichtigsten Warnsignale 2026 plus eine strukturierte Anleitung zu Chargeback, PayPal-Käuferschutz und Lastschriftrückruf.";
+    "Verdacht auf Fake-Shop oder Internet-Betrug? Die wichtigsten Warnsignale 2026 plus eine strukturierte Anleitung zu Chargeback, PayPal-Käuferschutz und möglicher Lastschrift-Rückgabe.";
 
   const articleSchema = {
     "@context": "https://schema.org",
@@ -142,6 +142,14 @@ export default function ScamShopsPage() {
     datePublished: "2026-01-15",
     dateModified: "2026-05-20",
     mainEntityOfPage: "https://chargebackpilot.de/scam-shops-2026",
+    keywords:
+      "fake shop erkennen, scam shop 2026, fake shop chargeback, paypal käuferschutz fake shop",
+    about: [
+      { "@type": "Thing", name: "Fake-Shop" },
+      { "@type": "Thing", name: "Scam-Shop" },
+      { "@type": "Thing", name: "Chargeback bei Fake-Shop" },
+      { "@type": "Thing", name: "PayPal Käuferschutz" },
+    ],
   };
   const faqSchema = {
     "@context": "https://schema.org",
@@ -190,6 +198,36 @@ export default function ScamShopsPage() {
         </header>
 
         <div className="container mx-auto max-w-3xl px-4 mt-10 space-y-14">
+          <section className="ai-summary-card rounded-2xl border border-red-200/80 bg-red-50 p-6 shadow-sm">
+            <div className="mb-3 flex flex-wrap items-center gap-2">
+              <span className="inline-flex items-center gap-1.5 rounded-full border border-red-200 bg-white/85 px-3 py-1 text-xs font-bold uppercase tracking-wider text-red-700 shadow-sm">
+                <Sparkles className="ai-summary-sparkle h-3.5 w-3.5" />
+                KI-Sofortcheck
+              </span>
+              <span className="text-xs text-muted-foreground">
+                Fake-Shop erkannt: erst Belege sichern, dann Zahlungsweg prüfen
+              </span>
+            </div>
+            <p className="ai-summary-text text-base leading-relaxed text-foreground/90">
+              Wenn du gerade einen Fake-Shop vermutest, zählt zuerst Beweissicherung: URL,
+              Impressum, Produktseite, Zahlungsbeleg, Bestellmail, Tracking und jede Antwort des
+              Shops. Danach hängt der nächste Schritt vom Zahlungsweg ab: PayPal-Konflikt,
+              Kreditkartenreklamation, Klarna-Problemmeldung, Bankkontakt oder Anzeige bei konkretem
+              Betrugsverdacht.
+            </p>
+            <div className="mt-5 grid gap-3 sm:grid-cols-3">
+              {[
+                "Shop-Seite und Impressum screenshotten",
+                "Zahlung und Bestellmail sichern",
+                "Fristen beim Zahlungsanbieter prüfen",
+              ].map((item) => (
+                <div key={item} className="rounded-xl border bg-white/80 p-3 text-sm font-medium">
+                  {item}
+                </div>
+              ))}
+            </div>
+          </section>
+
           {/* Red flags */}
           <section>
             <h2 className="text-2xl font-bold mb-5 border-b pb-2">Die 8 Warnsignale 2026</h2>

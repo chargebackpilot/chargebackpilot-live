@@ -71,12 +71,311 @@ interface WordingPreview {
   note: string;
 }
 
+interface MoneyPageProfile {
+  primaryKeyword: string;
+  headline: string;
+  metaDescription: string;
+  intent: string;
+  immediateAnswer: string;
+  proofPriority: string[];
+  decisionSignals: string[];
+  nextAction: string;
+  avoid: string;
+  keywords: string[];
+  nextLinks: { href: string; label: string }[];
+}
+
 const SITE = "https://chargebackpilot.de";
 const DISPLAY_UPDATED_AT = "11. Juni 2026";
 const SCHEMA_UPDATED_AT = "2026-06-11";
 
+const MONEY_PAGE_PROFILES: Record<string, MoneyPageProfile> = {
+  "/chargeback-antrag-vorlage": {
+    primaryKeyword: "Chargeback Antrag Vorlage",
+    headline: "Chargeback Antrag Vorlage: was diese Seite sofort klärt",
+    metaDescription:
+      "Chargeback Antrag Vorlage für Bank und Kreditkarte: Sachverhalt, Belege, Händlerkontakt und Umsatzreklamation strukturiert vorbereiten.",
+    intent:
+      "Du suchst vermutlich keinen langen Ratgeber, sondern einen prüfbaren Aufbau für deine Bank: Was ist passiert, welcher Kartenumsatz ist betroffen und welche Belege zeigen die Nichterfüllung?",
+    immediateAnswer:
+      "Der stärkste Einstieg ist eine kurze Umsatzreklamation mit Datum, Betrag, Händlername, Problemtyp, Kontaktversuch und Anlagenliste.",
+    proofPriority: [
+      "Kartenumsatz mit Datum, Betrag und Händlername",
+      "Bestell- oder Buchungsbestätigung",
+      "Nachweis zum Problem, z. B. Tracking, Stornierung, Fotos oder Erstattungszusage",
+    ],
+    decisionSignals: [
+      "Du hast mit Visa, Mastercard oder Amex gezahlt.",
+      "Der Händler reagiert nicht oder verweigert eine nachvollziehbare Lösung.",
+      "Du willst keinen Rechtsstreit beginnen, sondern eine bankinterne Prüfung anstoßen.",
+    ],
+    nextAction:
+      "Sortiere zuerst Belege und Chronologie, dann bereite den Antrag als sachliche Umsatzreklamation vor.",
+    avoid:
+      "Vermeide harte Rechtsbehauptungen oder interne Reason Codes als Garantie. Banken ordnen den Fall selbst ein.",
+    keywords: [
+      "chargeback antrag vorlage",
+      "kreditkarten chargeback muster",
+      "umsatzreklamation vorlage",
+      "chargeback bank anschreiben",
+    ],
+    nextLinks: [
+      { href: "/visa-mastercard-chargeback", label: "Visa & Mastercard Ablauf" },
+      { href: "/visa-reason-code-13-1", label: "Visa 13.1 einordnen" },
+      { href: "/ware-nicht-erhalten-musterbrief", label: "Ware fehlt Musterbrief" },
+    ],
+  },
+  "/paypal-kaeuferschutz-vorlage": {
+    primaryKeyword: "PayPal Käuferschutz Vorlage",
+    headline: "PayPal Käuferschutz Vorlage: schnell zum passenden Textaufbau",
+    metaDescription:
+      "PayPal Käuferschutz Vorlage: Konflikt sachlich formulieren, Belege ordnen und Eskalation im PayPal-Konto nachvollziehbar vorbereiten.",
+    intent:
+      "Du möchtest im PayPal-Konfliktcenter klar erklären, warum Ware fehlt oder deutlich abweicht, ohne dich in langen Beschwerdetexten zu verlieren.",
+    immediateAnswer:
+      "Nenne Transaktion, Artikel, Problem, bisherigen Händlerkontakt und gewünschte Lösung in genau dieser Reihenfolge.",
+    proofPriority: [
+      "PayPal-Transaktionsnummer und Zahlungsdatum",
+      "Artikelbeschreibung, Bestellbestätigung und Händlerchat",
+      "Tracking, Fotos oder sonstiger Nachweis zur Abweichung",
+    ],
+    decisionSignals: [
+      "Die Zahlung lief als käuferschutzfähige PayPal-Zahlung.",
+      "Der Händler hat nicht geliefert oder die Ware weicht erheblich ab.",
+      "Die Eskalationsfrist im PayPal-Konto ist noch nicht abgelaufen.",
+    ],
+    nextAction:
+      "Eröffne den Konflikt im PayPal-Konto und nutze eine knappe Chronologie statt pauschaler Vorwürfe.",
+    avoid:
+      "Freunde-und-Familie-Zahlungen und normale Händlerbeschwerden solltest du nicht wie Käuferschutzfälle darstellen.",
+    keywords: [
+      "paypal käuferschutz vorlage",
+      "paypal konflikt text",
+      "paypal käuferschutz formulierung",
+      "paypal fall eskalieren vorlage",
+    ],
+    nextLinks: [
+      { href: "/paypal-chargeback", label: "PayPal Käuferschutz Ablauf" },
+      { href: "/ware-nicht-erhalten", label: "Ware nicht erhalten" },
+      { href: "/vergleich/paypal-vs-kreditkarte-vs-klarna", label: "Zahlungswege vergleichen" },
+    ],
+  },
+  "/klarna-reklamation-vorlage": {
+    primaryKeyword: "Klarna Reklamation Vorlage",
+    headline: "Klarna Reklamation Vorlage: Forderung und Problem sauber trennen",
+    metaDescription:
+      "Klarna Reklamation Vorlage: Problem im Klarna-Konto melden, Rechnung oder Retoure klären und Händlerkommunikation strukturiert dokumentieren.",
+    intent:
+      "Du willst verhindern, dass eine strittige Rechnung ungeprüft weiterläuft, und brauchst dafür eine klare Meldung an Klarna und den Händler.",
+    immediateAnswer:
+      "Benenne Rechnungsnummer, Bestellung, Problemgrund, Beleglage und gewünschten Status der Forderung.",
+    proofPriority: [
+      "Klarna-Rechnungsnummer und Bestellnummer",
+      "Retourenbeleg, Tracking oder Fotos der mangelhaften Ware",
+      "Nachricht an den Händler und Antwortstand",
+    ],
+    decisionSignals: [
+      "Eine Klarna-Rechnung ist offen oder es droht Mahnprozess.",
+      "Ware wurde nicht geliefert, falsch geliefert oder retourniert.",
+      "Du kannst Belege der Retoure oder des Lieferproblems vorlegen.",
+    ],
+    nextAction:
+      "Melde das Problem im Klarna-Konto und kontaktiere den Händler parallel mit denselben Belegen.",
+    avoid:
+      "Ignoriere die Rechnung nicht. Ohne offizielle Problemmeldung wirkt der Fall später schwächer.",
+    keywords: [
+      "klarna reklamation vorlage",
+      "klarna problem melden text",
+      "klarna rechnung pausieren",
+      "klarna retoure nicht verbucht",
+    ],
+    nextLinks: [
+      { href: "/klarna-reklamation", label: "Klarna Ablauf" },
+      { href: "/ware-nicht-erhalten-musterbrief", label: "Ware fehlt Musterbrief" },
+      { href: "/vergleich/paypal-vs-kreditkarte-vs-klarna", label: "Käuferschutz vergleichen" },
+    ],
+  },
+  "/ware-nicht-erhalten-musterbrief": {
+    primaryKeyword: "Ware nicht erhalten Musterbrief",
+    headline: "Ware nicht erhalten Musterbrief: Händler, PayPal oder Bank richtig adressieren",
+    metaDescription:
+      "Ware nicht erhalten Musterbrief: Händlerkontakt, Tracking, Zahlungsnachweis und Käuferschutz oder Chargeback strukturiert vorbereiten.",
+    intent:
+      "Du brauchst einen sachlichen Text, weil ein Paket fehlt, nur angeblich zugestellt wurde oder der Händler dich an den Versanddienstleister verweist.",
+    immediateAnswer:
+      "Der Musterbrief sollte Bestellnummer, Lieferstatus, Zahlungsweg, bisherigen Kontakt und die gewünschte Klärung enthalten.",
+    proofPriority: [
+      "Bestellbestätigung und Zahlungsnachweis",
+      "Trackingverlauf inklusive Zustellstatus",
+      "Screenshots der Händlerantwort oder fehlenden Rückmeldung",
+    ],
+    decisionSignals: [
+      "Die Ware ist nicht angekommen oder wurde nur angeblich zugestellt.",
+      "Der Händler bietet keine nachvollziehbare Lösung an.",
+      "Du willst den Fall später bei PayPal, Klarna oder Bank belegen können.",
+    ],
+    nextAction:
+      "Fordere zuerst den Händler schriftlich zur Klärung auf und sichere danach die Fristen beim Zahlungsdienstleister.",
+    avoid: "Reklamiere nicht nur beim Paketdienst, wenn der Händler dein Vertragspartner ist.",
+    keywords: [
+      "ware nicht erhalten musterbrief",
+      "paket nicht angekommen vorlage",
+      "händler liefert nicht anschreiben",
+      "nicht gelieferte ware käuferschutz",
+    ],
+    nextLinks: [
+      { href: "/ware-nicht-erhalten", label: "Chargeback bei Ware fehlt" },
+      { href: "/paypal-kaeuferschutz-vorlage", label: "PayPal Text" },
+      { href: "/chargeback-antrag-vorlage", label: "Bank-Antrag" },
+    ],
+  },
+  "/visa-mastercard-chargeback": {
+    primaryKeyword: "Visa Mastercard Chargeback",
+    headline: "Visa & Mastercard Chargeback: wann der Kartenweg sinnvoll ist",
+    metaDescription:
+      "Visa und Mastercard Chargeback vorbereiten: Kartenumsatz, Händlerkontakt, Reason-Code-Einordnung und Belege für die Bank strukturieren.",
+    intent:
+      "Du willst wissen, ob eine Kreditkartenreklamation bei deiner Bank der richtige Weg ist und wie du sie nachvollziehbar vorbereitest.",
+    immediateAnswer:
+      "Relevant ist meist eine klare Umsatzreklamation über die kartenausgebende Bank, nicht eine direkte Nachricht an Visa oder Mastercard.",
+    proofPriority: [
+      "Kartenumsatz, Händlername und Zahlungsdatum",
+      "Nachweis der nicht erbrachten Leistung oder nicht erhaltenen Ware",
+      "Schriftlicher Händlerkontakt oder Erstattungszusage",
+    ],
+    decisionSignals: [
+      "Du hast direkt oder indirekt mit Kreditkarte gezahlt.",
+      "PayPal oder Klarna sind nicht der bessere primäre Konfliktweg.",
+      "Du kannst belegen, warum die Belastung geprüft werden soll.",
+    ],
+    nextAction:
+      "Bitte deine Bank schriftlich um Prüfung nach den geltenden Kartenregeln und hänge die Belege geordnet an.",
+    avoid:
+      "Visa oder Mastercard selbst sind für Verbraucher meist nicht der erste Ansprechpartner; zuständig ist die kartenausgebende Bank.",
+    keywords: [
+      "visa mastercard chargeback",
+      "kreditkarten chargeback",
+      "umsatzreklamation kreditkarte",
+      "chargeback kreditkarte frist",
+    ],
+    nextLinks: [
+      { href: "/chargeback-antrag-vorlage", label: "Antrag vorbereiten" },
+      { href: "/visa-reason-code-13-1", label: "Visa 13.1" },
+      { href: "/mastercard-chargeback-reason-code", label: "Mastercard Codes" },
+    ],
+  },
+  "/paypal-chargeback": {
+    primaryKeyword: "PayPal Chargeback",
+    headline: "PayPal Chargeback oder Käuferschutz: den richtigen Begriff wählen",
+    metaDescription:
+      "PayPal Chargeback und Käuferschutz verständlich erklärt: Konfliktcenter, Eskalation, Belege und mögliche Kreditkartenwege sauber unterscheiden.",
+    intent:
+      "Du suchst nach PayPal Chargeback, meinst aber häufig den PayPal-Käuferschutz oder eine Reklamation über die hinterlegte Karte.",
+    immediateAnswer:
+      "Starte in der Regel im PayPal-Konfliktcenter; prüfe den Kartenweg nur, wenn PayPal nicht der passende oder abschließende Kanal ist.",
+    proofPriority: [
+      "PayPal-Transaktion und Zahlungsquelle",
+      "Bestelldaten, Tracking und Artikelbeschreibung",
+      "Händlerkontakt und Stand des PayPal-Konflikts",
+    ],
+    decisionSignals: [
+      "Du hast mit PayPal gezahlt und Ware fehlt oder weicht erheblich ab.",
+      "Du willst Konfliktcenter, Eskalation und Kartenweg nicht vermischen.",
+      "Du kannst Fristen und Belege im PayPal-Konto prüfen.",
+    ],
+    nextAction:
+      "Dokumentiere den PayPal-Konflikt sauber und entscheide erst danach, ob ein weiterer Zahlungsweg überhaupt sinnvoll ist.",
+    avoid: "Nutze nicht gleichzeitig widersprüchliche Begründungen bei PayPal und Bank.",
+    keywords: [
+      "paypal chargeback",
+      "paypal käuferschutz",
+      "paypal konfliktcenter",
+      "paypal fall eskalieren",
+    ],
+    nextLinks: [
+      { href: "/paypal-kaeuferschutz-vorlage", label: "PayPal Vorlage" },
+      { href: "/vergleich/paypal-vs-kreditkarte-vs-klarna", label: "PayPal vs. Kreditkarte" },
+      { href: "/ware-nicht-erhalten", label: "Ware fehlt" },
+    ],
+  },
+  "/lieferando-rueckerstattung": {
+    primaryKeyword: "Lieferando Rückerstattung",
+    headline: "Lieferando Rückerstattung: schnell dokumentieren, bevor Belege schwach werden",
+    metaDescription:
+      "Lieferando Rückerstattung bei kaltem, falschem oder fehlendem Essen: Fotos, Zeitstempel, Supportverlauf und Zahlungsweg strukturiert vorbereiten.",
+    intent:
+      "Du möchtest wissen, wie du kaltes, falsches oder fehlendes Essen so dokumentierst, dass Support oder Zahlungsdienstleister den Fall prüfen können.",
+    immediateAnswer:
+      "Mache sofort Fotos, sichere Bestellstatus und Support-Chat und formuliere konkret, welche Position betroffen ist.",
+    proofPriority: [
+      "Fotos unmittelbar nach Lieferung",
+      "Bestellübersicht mit Uhrzeit und Preis",
+      "Supportverlauf in App oder E-Mail",
+    ],
+    decisionSignals: [
+      "Die Lieferung kam falsch, unvollständig, kalt oder gar nicht an.",
+      "Der Support bietet nur Guthaben oder lehnt pauschal ab.",
+      "Du willst den Zahlungsweg zusätzlich nachvollziehbar prüfen.",
+    ],
+    nextAction:
+      "Melde den Fall zuerst bei Lieferando und prüfe bei Ablehnung den genutzten Zahlungsweg.",
+    avoid:
+      "Warte nicht bis zum nächsten Tag und entsorge Belege nicht, bevor du Fotos gemacht hast.",
+    keywords: [
+      "lieferando rückerstattung",
+      "lieferando essen kalt",
+      "lieferando falsche lieferung",
+      "lieferando chargeback",
+    ],
+    nextLinks: [
+      { href: "/wolt-rueckerstattung", label: "Wolt Vergleich" },
+      { href: "/ubereats-rueckerstattung", label: "Uber Eats" },
+      { href: "/paypal-kaeuferschutz-vorlage", label: "PayPal Text" },
+    ],
+  },
+  "/kiwi-rueckerstattung": {
+    primaryKeyword: "Kiwi.com Rückerstattung",
+    headline: "Kiwi.com Rückerstattung: Steuern, Gebühren und Zahlungsweg trennen",
+    metaDescription:
+      "Kiwi.com Rückerstattung prüfen: Steuern, Gebühren, Serviceentgelt, Gutschein und Kreditkartenreklamation sauber auseinanderhalten.",
+    intent:
+      "Du willst verstehen, welche Beträge bei Kiwi.com noch offen sein könnten und wie du Gebührenabzüge nachvollziehbar hinterfragst.",
+    immediateAnswer:
+      "Stelle zuerst die Zahlung, Ticketbestandteile, Stornierung und bereits angebotene Erstattung nebeneinander.",
+    proofPriority: [
+      "Kiwi.com-Buchungsbestätigung und Zahlungsbeleg",
+      "Stornierungs- oder No-Show-Nachweis",
+      "Aufschlüsselung von Steuern, Gebühren, Gutschein und Serviceentgelt",
+    ],
+    decisionSignals: [
+      "Kiwi.com behält eine Gebühr ein oder zahlt nur einen Restbetrag aus.",
+      "Du willst keine pauschale Forderung, sondern eine nachvollziehbare Aufstellung.",
+      "Du hast per Karte oder PayPal gezahlt und willst den Zahlungsweg prüfen.",
+    ],
+    nextAction:
+      "Fordere eine transparente Aufstellung an und prüfe danach den passenden Zahlungsdienstleister.",
+    avoid:
+      "Vermische nicht Ticketpreis, Steuern, Gebühren, Serviceentgelt und Gutschein in einer einzigen Forderung.",
+    keywords: [
+      "kiwi rückerstattung",
+      "kiwi steuern gebühren",
+      "kiwi.com erstattung",
+      "kiwi chargeback",
+    ],
+    nextLinks: [
+      { href: "/flug-chargeback", label: "Flug Chargeback" },
+      { href: "/chargeback-antrag-vorlage", label: "Bank-Antrag" },
+      { href: "/visa-mastercard-chargeback", label: "Kreditkarte" },
+    ],
+  },
+};
+
 function textContainsAny(text: string, needles: string[]): boolean {
   return needles.some((needle) => text.includes(needle));
+}
+
+function moneyPageProfile(canonicalPath: string): MoneyPageProfile | null {
+  return MONEY_PAGE_PROFILES[canonicalPath] ?? null;
 }
 
 function guideContext(title: string, category: string): GuideContext {
@@ -994,8 +1293,11 @@ export function SEOArticleLayout({
   faq,
 }: SEOProps) {
   const [pathname] = useLocation();
-  const description = `${title}: typische Fristenhinweise, Belege und strukturierte Orientierung bei ${category}. Mit unverbindlichen Textentwürfen.`;
   const canonicalPath = pathname || "/ratgeber";
+  const moneyProfile = moneyPageProfile(canonicalPath);
+  const description =
+    moneyProfile?.metaDescription ??
+    `${title}: typische Fristenhinweise, Belege und strukturierte Orientierung bei ${category}. Mit unverbindlichen Textentwürfen.`;
   const context = guideContext(title, category);
   const enrichedFaq = enrichFaq(faq, title, category, context);
   const examples = guideExamples(category, title);
@@ -1038,6 +1340,15 @@ export function SEOArticleLayout({
     mainEntityOfPage: `${SITE}${canonicalPath}`,
     datePublished: "2026-01-15",
     dateModified: SCHEMA_UPDATED_AT,
+    ...(moneyProfile
+      ? {
+          keywords: moneyProfile.keywords.join(", "),
+          about: moneyProfile.keywords.map((keyword) => ({
+            "@type": "Thing",
+            name: keyword,
+          })),
+        }
+      : {}),
   };
   const faqSchema = {
     "@context": "https://schema.org",
@@ -1052,12 +1363,14 @@ export function SEOArticleLayout({
     })),
   };
 
-  const relatedGuides = [
-    { href: "/paypal-chargeback", label: "PayPal Käuferschutz" },
-    { href: "/visa-mastercard-chargeback", label: "Visa & Mastercard" },
-    { href: "/klarna-reklamation", label: "Klarna Reklamation" },
-    { href: "/vergleich/paypal-vs-kreditkarte-vs-klarna", label: "Vergleich Käuferschutz" },
-  ]
+  const relatedGuides = (
+    moneyProfile?.nextLinks ?? [
+      { href: "/paypal-chargeback", label: "PayPal Käuferschutz" },
+      { href: "/visa-mastercard-chargeback", label: "Visa & Mastercard" },
+      { href: "/klarna-reklamation", label: "Klarna Reklamation" },
+      { href: "/vergleich/paypal-vs-kreditkarte-vs-klarna", label: "Vergleich Käuferschutz" },
+    ]
+  )
     .filter((g) => g.href !== canonicalPath)
     .slice(0, 3);
 
@@ -1122,6 +1435,63 @@ export function SEOArticleLayout({
               {shortAnswer}
             </p>
           </section>
+
+          {moneyProfile && (
+            <section className="rounded-2xl border bg-background p-6 shadow-sm">
+              <div className="mb-5 flex flex-wrap items-center justify-between gap-3">
+                <div>
+                  <p className="mb-1 text-xs font-bold uppercase tracking-wider text-primary">
+                    Häufig gesucht
+                  </p>
+                  <h2 className="text-2xl font-bold">{moneyProfile.headline}</h2>
+                </div>
+                <span className="rounded-full bg-primary/10 px-3 py-1 text-xs font-semibold text-primary">
+                  {moneyProfile.primaryKeyword}
+                </span>
+              </div>
+
+              <div className="space-y-4 text-foreground/90 leading-relaxed">
+                <p>{moneyProfile.intent}</p>
+                <p className="rounded-xl border border-emerald-200 bg-emerald-50 p-4 text-sm text-emerald-950">
+                  <strong>Kurz gesagt:</strong> {moneyProfile.immediateAnswer}
+                </p>
+              </div>
+
+              <div className="mt-5 grid gap-4 md:grid-cols-3">
+                <div className="rounded-xl border bg-muted/30 p-4">
+                  <h3 className="mb-2 text-sm font-bold">Du bist hier richtig, wenn</h3>
+                  <ul className="space-y-2">
+                    {moneyProfile.decisionSignals.map((signal) => (
+                      <li key={signal} className="flex gap-2 text-sm text-muted-foreground">
+                        <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-emerald-600" />
+                        <span>{signal}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+                <div className="rounded-xl border bg-muted/30 p-4">
+                  <h3 className="mb-2 text-sm font-bold">Zuerst bereitlegen</h3>
+                  <ul className="space-y-2">
+                    {moneyProfile.proofPriority.map((proof) => (
+                      <li key={proof} className="flex gap-2 text-sm text-muted-foreground">
+                        <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-primary" />
+                        <span>{proof}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+                <div className="rounded-xl border bg-muted/30 p-4">
+                  <h3 className="mb-2 text-sm font-bold">Nächster sinnvoller Schritt</h3>
+                  <p className="mb-3 text-sm leading-relaxed text-muted-foreground">
+                    {moneyProfile.nextAction}
+                  </p>
+                  <p className="text-xs leading-relaxed text-amber-800">
+                    <strong>Nicht machen:</strong> {moneyProfile.avoid}
+                  </p>
+                </div>
+              </div>
+            </section>
+          )}
 
           {/* Wann greift es */}
           <section>

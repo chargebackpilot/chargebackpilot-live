@@ -248,6 +248,28 @@ export function UeberUns() {
             typischen Verbraucherproblemen wie nicht gelieferter Ware, stornierten Flügen, falschen
             Essenslieferungen oder ungewollten Abbuchungen.
           </p>
+          <h2>Was ChargebackPilot konkret verbessert</h2>
+          <p>
+            Viele Verbraucherfälle starten chaotisch: Screenshots liegen verstreut, Beträge sind
+            unklar, Fristen werden nur ungefähr erinnert und Nachrichten an Händler klingen schnell
+            emotional. ChargebackPilot hilft, diese Informationen in eine prüfbare Reihenfolge zu
+            bringen: Zahlung, Bestellung, Problem, Kontaktversuch, Belege und gewünschter nächster
+            Schritt.
+          </p>
+          <p>
+            Das Tool ist besonders dann nützlich, wenn du deinen Fall gegenüber Händler, Bank,
+            PayPal, Klarna oder einem anderen Zahlungsdienstleister sachlich erklären möchtest. Es
+            ersetzt keine Entscheidung dieser Stellen, kann aber die Verständlichkeit deiner
+            Unterlagen verbessern.
+          </p>
+          <h2>Unsere Leitlinien</h2>
+          <ul>
+            <li>Keine Erfolgsgarantien und keine erfundenen Quoten.</li>
+            <li>Keine Rechtsberatung und keine Vertretung gegenüber Dritten.</li>
+            <li>Klare Trennung zwischen Fakten, Vermutungen und gewünschter Prüfung.</li>
+            <li>Hinweise auf Belege, Fristen und Anbieterregeln immer als Orientierung.</li>
+            <li>Transparenter Umgang mit KI, Datenschutz und kostenpflichtigen Funktionen.</li>
+          </ul>
           <h2>Wofür ChargebackPilot nicht gedacht ist</h2>
           <p>
             ChargebackPilot ist keine Kanzlei, keine Schlichtungsstelle und kein Vertreter gegenüber
@@ -289,6 +311,34 @@ export function Methodik() {
             Schritte und Textentwürfe für Händler oder Zahlungsdienstleister erzeugt. Die Ausgaben
             sollen helfen, den eigenen Fall klarer aufzubereiten.
           </p>
+          <h2>Redaktionelle Qualitätslogik</h2>
+          <p>
+            Die Ratgeber und Vorlagen sind auf typische Such- und Nutzungssituationen ausgerichtet:
+            Ware nicht erhalten, PayPal-Käuferschutz, Kreditkarten-Chargeback, Klarna-Reklamation,
+            Lieferdienst-Probleme, Reiseerstattung und ungewollte Abbuchungen. Jede Seite soll
+            mindestens einen konkreten nächsten Schritt, eine Beleglogik und eine klare Grenze der
+            Einschätzung enthalten.
+          </p>
+          <p>
+            Programmatic-Seiten werden nicht pauschal für Google freigegeben. Sie erhalten nur dann
+            Indexierungspriorität, wenn sie genügend anbieter- und problembezogene Qualitätssignale
+            enthalten. Seiten ohne ausreichenden Mehrwert bleiben noindex und werden nicht aktiv in
+            der Sitemap priorisiert.
+          </p>
+          <h2>Wie KI-Kurzantworten verwendet werden</h2>
+          <p>
+            Die Kurzantworten auf Ratgeberseiten sind als schnelle Orientierung gedacht. Sie fassen
+            den Kern der Seite zusammen, ersetzen aber nicht die ausführlicheren Abschnitte,
+            Beleglisten und Hinweise darunter. Der Text steht serverseitig im HTML, damit Nutzer und
+            Suchmaschinen dieselbe sichtbare Information erhalten.
+          </p>
+          <h2>Was wir bewusst nicht machen</h2>
+          <ul>
+            <li>Wir behaupten nicht, dass ein Chargeback garantiert erfolgreich ist.</li>
+            <li>Wir geben keine festen Fristen als verbindliche Einzelfallprüfung aus.</li>
+            <li>Wir ersetzen keine Prüfung durch Bank, PayPal, Klarna, Händler oder Anwalt.</li>
+            <li>Wir verwenden keine versteckten SEO-Texte, die Nutzer nicht sehen.</li>
+          </ul>
           <h2>Wo liegen die Grenzen?</h2>
           <p>
             Die Einschätzung ist nicht verbindlich. Sie ersetzt keine anwaltliche Prüfung, keine

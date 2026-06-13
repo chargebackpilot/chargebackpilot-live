@@ -9,7 +9,7 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
-import { ArrowRight, Check, X, Minus } from "lucide-react";
+import { ArrowRight, Check, X, Minus, Sparkles } from "lucide-react";
 
 const ROWS: {
   label: string;
@@ -94,6 +94,13 @@ export default function ComparePage() {
     datePublished: "2026-01-15",
     dateModified: "2026-05-20",
     mainEntityOfPage: "https://chargebackpilot.de/vergleich/paypal-vs-kreditkarte-vs-klarna",
+    keywords:
+      "paypal vs kreditkarte vs klarna, käuferschutz vergleich, paypal käuferschutz kreditkarte chargeback klarna",
+    about: [
+      { "@type": "Thing", name: "PayPal Käuferschutz" },
+      { "@type": "Thing", name: "Kreditkarten-Chargeback" },
+      { "@type": "Thing", name: "Klarna Käuferschutz" },
+    ],
   };
   const faqSchema = {
     "@context": "https://schema.org",
@@ -136,6 +143,47 @@ export default function ComparePage() {
         </header>
 
         <div className="container mx-auto max-w-4xl px-4 mt-10 space-y-12">
+          <section className="ai-summary-card rounded-2xl border border-blue-200/70 bg-slate-50 p-6 shadow-sm">
+            <div className="mb-3 flex flex-wrap items-center gap-2">
+              <span className="inline-flex items-center gap-1.5 rounded-full border border-blue-200 bg-white/85 px-3 py-1 text-xs font-bold uppercase tracking-wider text-primary shadow-sm">
+                <Sparkles className="ai-summary-sparkle h-3.5 w-3.5" />
+                KI-Kurzvergleich
+              </span>
+              <span className="text-xs text-muted-foreground">
+                PayPal vs. Kreditkarte vs. Klarna auf den Punkt gebracht
+              </span>
+            </div>
+            <p className="ai-summary-text text-base leading-relaxed text-foreground/90">
+              Wenn Ware fehlt, eine Leistung nicht erbracht wurde oder eine Rechnung strittig ist,
+              entscheidet zuerst dein Zahlungsweg. PayPal ist oft stark im Konfliktcenter,
+              Kreditkarte bei Umsatzreklamation und nicht erbrachter Leistung, Klarna bei offenen
+              Rechnungen, Retouren und Zahlungspause.
+            </p>
+            <div className="mt-5 grid gap-3 md:grid-cols-3">
+              <div className="rounded-xl border bg-white/80 p-4">
+                <h2 className="mb-1 text-sm font-bold">PayPal</h2>
+                <p className="text-sm leading-relaxed text-muted-foreground">
+                  Schnell starten, wenn die Transaktion käuferschutzfähig ist und Belege im Konto
+                  hochgeladen werden können.
+                </p>
+              </div>
+              <div className="rounded-xl border bg-white/80 p-4">
+                <h2 className="mb-1 text-sm font-bold">Kreditkarte</h2>
+                <p className="text-sm leading-relaxed text-muted-foreground">
+                  Sinnvoll, wenn Kartenumsatz, Nichterfüllung und Händlerkontakt sauber belegbar
+                  sind.
+                </p>
+              </div>
+              <div className="rounded-xl border bg-white/80 p-4">
+                <h2 className="mb-1 text-sm font-bold">Klarna</h2>
+                <p className="text-sm leading-relaxed text-muted-foreground">
+                  Besonders wichtig, wenn eine Rechnung offen ist und ein Problem früh gemeldet
+                  werden sollte.
+                </p>
+              </div>
+            </div>
+          </section>
+
           {/* Comparison table */}
           <section>
             <div className="overflow-x-auto rounded-xl border bg-card">
