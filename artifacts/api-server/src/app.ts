@@ -180,6 +180,28 @@ const staticDir = path.resolve(__dirname, "../..", "chargeback-pilot", "dist", "
 const indexPath = path.join(staticDir, "index.html");
 const appShellPath = path.join(staticDir, "app-shell.html");
 
+function isInsideStaticDir(filePath: string) {
+  const relative = path.relative(staticDir, filePath);
+  return (
+    relative === "" || (relative !== "" && !relative.startsWith("..") && !path.isAbsolute(relative))
+  );
+}
+
+function getPrerenderedHtmlPath(requestPath: string) {
+  const pathname = requestPath === "/" ? "/" : requestPath.replace(/\/+$/, "");
+  if (pathname === "/") return fs.existsSync(indexPath) ? indexPath : null;
+
+  const relativePath = pathname.replace(/^\/+/, "");
+  const candidates = [
+    path.resolve(staticDir, relativePath, "index.html"),
+    path.resolve(staticDir, `${relativePath}.html`),
+  ];
+
+  return (
+    candidates.find((candidate) => isInsideStaticDir(candidate) && fs.existsSync(candidate)) ?? null
+  );
+}
+
 app.get("/favicon.ico", (_req, res) => {
   res.redirect(301, "/favicon.svg");
 });
@@ -381,9 +403,8 @@ export {};
 });
 
 app.get(/(.*)/, (req, res) => {
-  const prerenderedPath =
-    req.path === "/" ? indexPath : path.join(staticDir, req.path, "index.html");
-  if (fs.existsSync(prerenderedPath)) {
+  const prerenderedPath = getPrerenderedHtmlPath(req.path || "/");
+  if (prerenderedPath) {
     res.setHeader("Content-Type", "text/html; charset=utf-8");
     res.setHeader("Cache-Control", "no-cache, must-revalidate");
     res.status(200).send(fs.readFileSync(prerenderedPath, "utf-8"));

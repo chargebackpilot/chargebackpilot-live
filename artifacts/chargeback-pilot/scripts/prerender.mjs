@@ -241,14 +241,24 @@ function toSitemapEntry(route) {
   return `  <url><loc>https://chargebackpilot.de${route}</loc><lastmod>${sitemapLastmod}</lastmod><changefreq>${meta.changefreq}</changefreq><priority>${meta.priority.toFixed(1)}</priority></url>`;
 }
 
+function getHtmlOutputPaths(route) {
+  if (route === "/") return [path.join(dist, "index.html")];
+  const relativeRoute = route.slice(1);
+  return [
+    path.join(dist, relativeRoute, "index.html"),
+    path.join(dist, `${relativeRoute}.html`),
+  ];
+}
+
 for (const route of routes) {
   const meta = getRouteMeta(route);
   if (!meta) continue;
   const appHtml = await render(route);
   const html = injectMeta(template.replace('<div id="root"></div>', `<div id="root">${appHtml}</div>`), route, meta);
-  const file = route === "/" ? path.join(dist, "index.html") : path.join(dist, route.slice(1), "index.html");
-  await fs.mkdir(path.dirname(file), { recursive: true });
-  await fs.writeFile(file, html);
+  for (const file of getHtmlOutputPaths(route)) {
+    await fs.mkdir(path.dirname(file), { recursive: true });
+    await fs.writeFile(file, html);
+  }
   console.log(`prerendered ${route}`);
 }
 

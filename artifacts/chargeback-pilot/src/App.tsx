@@ -1,54 +1,26 @@
 import { Switch, Route, Router as WouterRouter, useLocation } from "wouter";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { useEffect, useLayoutEffect, useState, Suspense, lazy } from "react";
+import {
+  useEffect,
+  useLayoutEffect,
+  useState,
+  Suspense,
+  lazy,
+  type ComponentType,
+  type LazyExoticComponent,
+} from "react";
 import NotFound from "@/pages/not-found";
 import Home from "@/pages/Home";
-import RatgeberIndex from "@/pages/RatgeberIndex";
-import MerchantProblemPage from "@/pages/MerchantProblemPage";
-import MerchantIndexPage from "@/pages/MerchantIndexPage";
-import ScamShopsPage from "@/pages/ScamShopsPage";
-import ComparePage from "@/pages/ComparePage";
-import {
-  AGB,
-  Datenschutz,
-  Disclaimer,
-  Impressum,
-  Methodik,
-  UeberUns,
-  Widerruf,
-} from "@/pages/LegalPages";
-import {
-  AboFalleSEO,
-  AboFalleMusterbriefSEO,
-  AmexSEO,
-  ChargebackAntragVorlageSEO,
-  FlugSEO,
-  KlarnaSEO,
-  KlarnaReklamationVorlageSEO,
-  KiwiSEO,
-  LieferandoSEO,
-  MastercardReasonCodeSEO,
-  PayPalSEO,
-  PayPalKaeuferschutzVorlageSEO,
-  RueckerstattungHaendlerVorlageSEO,
-  UberEatsSEO,
-  VisaMastercardSEO,
-  VisaReasonCodeSEO,
-  WareNichtErhaltenSEO,
-  WareNichtErhaltenMusterbriefSEO,
-  WoltSEO,
-} from "@/pages/SEOPages";
 import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
 import { applyStandardSeoHead } from "@/components/SeoHead";
+import { ThemeProvider } from "@/components/theme/ThemeProvider";
 import { getRouteMeta } from "@/seo-routes";
 
 // Route chunks stay lazy for PageSpeed, but public routes no longer render skeleton fallbacks.
 // This keeps the first bundle small while avoiding visible skeleton loading on public pages.
-function lazyWithPreload<T extends React.ComponentType<any>>(
-  loader: () => Promise<{ default: T }>
-) {
-  const Component = lazy(loader) as React.LazyExoticComponent<T> & {
+function lazyWithPreload<T extends ComponentType<any>>(loader: () => Promise<{ default: T }>) {
+  const Component = lazy(loader) as LazyExoticComponent<T> & {
     preload: () => Promise<{ default: T }>;
   };
   Component.preload = loader;
@@ -56,9 +28,75 @@ function lazyWithPreload<T extends React.ComponentType<any>>(
 }
 
 const loadWizard = () => import("@/pages/Wizard");
+const loadSeoPages = () => import("@/pages/SEOPages");
 
 const LazyToaster = lazy(() =>
   import("@/components/ui/toaster").then((m) => ({ default: m.Toaster }))
+);
+const RatgeberIndex = lazyWithPreload(() => import("@/pages/RatgeberIndex"));
+const MerchantProblemPage = lazyWithPreload(() => import("@/pages/MerchantProblemPage"));
+const MerchantIndexPage = lazyWithPreload(() => import("@/pages/MerchantIndexPage"));
+const ScamShopsPage = lazyWithPreload(() => import("@/pages/ScamShopsPage"));
+const ComparePage = lazyWithPreload(() => import("@/pages/ComparePage"));
+const Impressum = lazyWithPreload(() =>
+  import("@/pages/LegalPages").then((m) => ({ default: m.Impressum }))
+);
+const Datenschutz = lazyWithPreload(() =>
+  import("@/pages/LegalPages").then((m) => ({ default: m.Datenschutz }))
+);
+const UeberUns = lazyWithPreload(() =>
+  import("@/pages/LegalPages").then((m) => ({ default: m.UeberUns }))
+);
+const Methodik = lazyWithPreload(() =>
+  import("@/pages/LegalPages").then((m) => ({ default: m.Methodik }))
+);
+const Disclaimer = lazyWithPreload(() =>
+  import("@/pages/LegalPages").then((m) => ({ default: m.Disclaimer }))
+);
+const AGB = lazyWithPreload(() => import("@/pages/LegalPages").then((m) => ({ default: m.AGB })));
+const Widerruf = lazyWithPreload(() =>
+  import("@/pages/LegalPages").then((m) => ({ default: m.Widerruf }))
+);
+const PayPalSEO = lazyWithPreload(() => loadSeoPages().then((m) => ({ default: m.PayPalSEO })));
+const AmexSEO = lazyWithPreload(() => loadSeoPages().then((m) => ({ default: m.AmexSEO })));
+const VisaMastercardSEO = lazyWithPreload(() =>
+  loadSeoPages().then((m) => ({ default: m.VisaMastercardSEO }))
+);
+const KlarnaSEO = lazyWithPreload(() => loadSeoPages().then((m) => ({ default: m.KlarnaSEO })));
+const FlugSEO = lazyWithPreload(() => loadSeoPages().then((m) => ({ default: m.FlugSEO })));
+const KiwiSEO = lazyWithPreload(() => loadSeoPages().then((m) => ({ default: m.KiwiSEO })));
+const LieferandoSEO = lazyWithPreload(() =>
+  loadSeoPages().then((m) => ({ default: m.LieferandoSEO }))
+);
+const WoltSEO = lazyWithPreload(() => loadSeoPages().then((m) => ({ default: m.WoltSEO })));
+const UberEatsSEO = lazyWithPreload(() => loadSeoPages().then((m) => ({ default: m.UberEatsSEO })));
+const WareNichtErhaltenSEO = lazyWithPreload(() =>
+  loadSeoPages().then((m) => ({ default: m.WareNichtErhaltenSEO }))
+);
+const AboFalleSEO = lazyWithPreload(() => loadSeoPages().then((m) => ({ default: m.AboFalleSEO })));
+const ChargebackAntragVorlageSEO = lazyWithPreload(() =>
+  loadSeoPages().then((m) => ({ default: m.ChargebackAntragVorlageSEO }))
+);
+const PayPalKaeuferschutzVorlageSEO = lazyWithPreload(() =>
+  loadSeoPages().then((m) => ({ default: m.PayPalKaeuferschutzVorlageSEO }))
+);
+const KlarnaReklamationVorlageSEO = lazyWithPreload(() =>
+  loadSeoPages().then((m) => ({ default: m.KlarnaReklamationVorlageSEO }))
+);
+const WareNichtErhaltenMusterbriefSEO = lazyWithPreload(() =>
+  loadSeoPages().then((m) => ({ default: m.WareNichtErhaltenMusterbriefSEO }))
+);
+const AboFalleMusterbriefSEO = lazyWithPreload(() =>
+  loadSeoPages().then((m) => ({ default: m.AboFalleMusterbriefSEO }))
+);
+const RueckerstattungHaendlerVorlageSEO = lazyWithPreload(() =>
+  loadSeoPages().then((m) => ({ default: m.RueckerstattungHaendlerVorlageSEO }))
+);
+const VisaReasonCodeSEO = lazyWithPreload(() =>
+  loadSeoPages().then((m) => ({ default: m.VisaReasonCodeSEO }))
+);
+const MastercardReasonCodeSEO = lazyWithPreload(() =>
+  loadSeoPages().then((m) => ({ default: m.MastercardReasonCodeSEO }))
 );
 const Wizard = lazyWithPreload(loadWizard);
 const Admin = lazyWithPreload(() => import("@/pages/Admin"));
@@ -339,18 +377,20 @@ interface AppProps {
 function App({ ssrPath }: AppProps) {
   return (
     <QueryClientProvider client={queryClient}>
-      <WouterRouter base={import.meta.env.BASE_URL.replace(/\/$/, "")} ssrPath={ssrPath}>
-        <div className="min-h-screen flex flex-col font-sans bg-background">
-          <RouteHeadSync />
-          <Navbar />
-          <main className="flex-1">
-            <ScrollToTop />
-            <Router />
-          </main>
-          <Footer />
-        </div>
-      </WouterRouter>
-      <IdleToaster />
+      <ThemeProvider>
+        <WouterRouter base={import.meta.env.BASE_URL.replace(/\/$/, "")} ssrPath={ssrPath}>
+          <div className="min-h-screen flex flex-col font-sans bg-background">
+            <RouteHeadSync />
+            <Navbar />
+            <main className="flex-1">
+              <ScrollToTop />
+              <Router />
+            </main>
+            <Footer />
+          </div>
+        </WouterRouter>
+        <IdleToaster />
+      </ThemeProvider>
     </QueryClientProvider>
   );
 }

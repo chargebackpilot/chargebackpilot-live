@@ -170,48 +170,22 @@ export function applyStandardSeoHead({
 
 /**
  * Sets per-route page <title>, meta description, canonical, OG + Twitter tags,
- * and injects optional JSON-LD <script> tags. Cleans up its own JSON-LD on unmount.
+ * and renders optional JSON-LD <script> tags consistently during SSR and hydration.
  */
 export function SeoHead({ title, description, canonical, noindex = false, jsonLd }: SeoHeadProps) {
-  const ssrCanonicalUrl = typeof window === "undefined" ? resolveCanonicalUrl(canonical) : "";
+  const canonicalUrl = resolveCanonicalUrl(canonical);
+  const allJsonLd = noindex
+    ? (jsonLd ?? [])
+    : [...buildBaseJsonLd(canonicalUrl), ...(jsonLd ?? [])];
 
   useIsomorphicLayoutEffect(() => {
     applyStandardSeoHead({ title, description, canonical, noindex });
+  }, [title, description, canonical, noindex]);
 
-    // JSON-LD Injection. Global schemas describe the product/site/organization;
-    // route-specific schemas must still describe visible page content only.
-    const injected: HTMLScriptElement[] = [];
-    const canonicalUrl = resolveCanonicalUrl(canonical);
-    const allJsonLd = noindex
-      ? (jsonLd ?? [])
-      : [...buildBaseJsonLd(canonicalUrl), ...(jsonLd ?? [])];
-    if (allJsonLd.length) {
-      for (const obj of allJsonLd) {
-        const s = document.createElement("script");
-        s.type = "application/ld+json";
-        s.dataset.cbpDynamic = "1";
-        s.textContent = JSON.stringify(obj);
-        document.head.appendChild(s);
-        injected.push(s);
-      }
-    }
-
-    return () => {
-      injected.forEach((s) => s.remove());
-    };
-  }, [title, description, canonical, noindex, jsonLd]);
-
-  const ssrJsonLd =
-    typeof window === "undefined"
-      ? noindex
-        ? (jsonLd ?? [])
-        : [...buildBaseJsonLd(ssrCanonicalUrl), ...(jsonLd ?? [])]
-      : [];
-
-  if (ssrJsonLd.length) {
+  if (allJsonLd.length) {
     return (
       <>
-        {ssrJsonLd.map((obj, index) => (
+        {allJsonLd.map((obj, index) => (
           <script
             key={index}
             type="application/ld+json"
