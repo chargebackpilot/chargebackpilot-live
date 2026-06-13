@@ -48,6 +48,10 @@ function buildBaseJsonLd(canonicalUrl: string): object[] {
         "@type": "Country",
         name: "Deutschland",
       },
+      sameAs: [
+        "https://www.provenexpert.com/de-de/chargebackpilot/",
+        "https://de.trustpilot.com/review/chargebackpilot.de",
+      ],
     },
     {
       "@context": "https://schema.org",

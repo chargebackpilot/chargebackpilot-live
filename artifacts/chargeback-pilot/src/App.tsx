@@ -1,5 +1,4 @@
 import { Switch, Route, Router as WouterRouter, useLocation } from "wouter";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import {
   useEffect,
   useLayoutEffect,
@@ -60,23 +59,15 @@ function lazyWithPreload<T extends ComponentType<any>>(loader: () => Promise<{ d
   return Component;
 }
 
-const loadWizard = () => import("@/pages/Wizard");
+const loadWizardRoute = () => import("@/pages/WizardRoute");
 
 const LazyToaster = lazy(() =>
   import("@/components/ui/toaster").then((m) => ({ default: m.Toaster }))
 );
-const Wizard = lazyWithPreload(loadWizard);
+const WizardRoute = lazyWithPreload(loadWizardRoute);
 const Admin = lazyWithPreload(() => import("@/pages/Admin"));
 const AdminDemo = lazyWithPreload(() => import("@/pages/AdminDemo"));
 
-const queryClient = new QueryClient({
-  defaultOptions: {
-    queries: {
-      retry: 1,
-      refetchOnWindowFocus: false,
-    },
-  },
-});
 const useIsomorphicLayoutEffect = typeof window === "undefined" ? useEffect : useLayoutEffect;
 
 function ScrollToTop() {
@@ -216,7 +207,7 @@ function Router() {
       <Route path="/vorlagen-generator">
         {() => (
           <Suspense fallback={<RouteShellFallback />}>
-            <Wizard key={location} />
+            <WizardRoute key={location} />
           </Suspense>
         )}
       </Route>
@@ -278,22 +269,20 @@ interface AppProps {
 
 function App({ ssrPath }: AppProps) {
   return (
-    <QueryClientProvider client={queryClient}>
-      <ThemeProvider>
-        <WouterRouter base={import.meta.env.BASE_URL.replace(/\/$/, "")} ssrPath={ssrPath}>
-          <div className="min-h-screen flex flex-col font-sans bg-background">
-            <RouteHeadSync />
-            <Navbar />
-            <main className="flex-1">
-              <ScrollToTop />
-              <Router />
-            </main>
-            <Footer />
-          </div>
-        </WouterRouter>
-        <IdleToaster />
-      </ThemeProvider>
-    </QueryClientProvider>
+    <ThemeProvider>
+      <WouterRouter base={import.meta.env.BASE_URL.replace(/\/$/, "")} ssrPath={ssrPath}>
+        <div className="min-h-screen flex flex-col font-sans bg-background">
+          <RouteHeadSync />
+          <Navbar />
+          <main className="flex-1">
+            <ScrollToTop />
+            <Router />
+          </main>
+          <Footer />
+        </div>
+      </WouterRouter>
+      <IdleToaster />
+    </ThemeProvider>
   );
 }
 
