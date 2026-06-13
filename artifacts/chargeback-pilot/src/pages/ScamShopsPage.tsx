@@ -14,12 +14,12 @@ import { AlertTriangle, ArrowRight, ShieldCheck, Search, Sparkles } from "lucide
 import { useState } from "react";
 import { getRouteMeta } from "@/seo-routes";
 
-interface ScamSignal {
+interface ShopWarningSignal {
   title: string;
   description: string;
 }
 
-const RED_FLAGS: ScamSignal[] = [
+const RED_FLAGS: ShopWarningSignal[] = [
   {
     title: "Unrealistisch niedrige Preise",
     description:
@@ -53,18 +53,18 @@ const RED_FLAGS: ScamSignal[] = [
   {
     title: "Drohende Mahnungen statt sauberer Rechnung",
     description:
-      "Inkasso-Anschreiben für Bestellungen, die du nie getätigt hast — klassisches Abo-Falle/Inkasso-Scam-Muster.",
+      "Inkasso-Anschreiben für Bestellungen, die du nie getätigt hast — ein auffälliges Abo-Falle- oder Inkasso-Muster.",
   },
   {
     title: "Social-Ads mit Promi-Fakes",
     description:
-      "Künstlich erzeugte Influencer- oder Promi-Testimonials in TikTok-/Instagram-Ads sind ein wachsendes Scam-Muster 2026.",
+      "Künstlich erzeugte Influencer- oder Promi-Testimonials in TikTok-/Instagram-Ads sind ein wachsendes Warnmuster 2026.",
   },
 ];
 
-const SCAM_CATEGORIES = [
+const SHOP_RISK_CATEGORIES = [
   {
-    name: "Fake-Marken-Shops",
+    name: "Auffällige Marken-Shops",
     examples: "Sneaker, Designer-Mode, Sonnenbrillen",
     action:
       "Zahlungsdienstleister zeitnah kontaktieren und prüfen, ob eine Reklamation wegen Fälschung oder abweichender Ware in Betracht kommt.",
@@ -82,7 +82,7 @@ const SCAM_CATEGORIES = [
       "Mögliche Lastschrift-Rückgabe bei der Bank prüfen und den Anbieter schriftlich kontaktieren bzw. kündigen.",
   },
   {
-    name: "Fake-Inkasso & Phishing",
+    name: "Unklare Inkasso-Mails & Phishing",
     examples: "Vermeintliche Mahnungen, Paket-SMS",
     action:
       "Links nicht ungeprüft anklicken, Forderung prüfen lassen und bei Verdacht Verbraucherzentrale oder Polizei kontaktieren.",
@@ -104,15 +104,15 @@ const FAQS = [
   },
   {
     q: "Was ist bei Überweisung an einen Fake-Shop möglich?",
-    a: "Bei Überweisung ist eine Rückholung oft schwieriger als bei Kreditkarte oder PayPal. Kontaktiere deine Bank trotzdem sofort, frage nach Rückrufmöglichkeiten und sichere alle Daten. Bei Betrugsverdacht kann zusätzlich eine Anzeige sinnvoll sein.",
+    a: "Bei Überweisung ist eine Rückholung oft schwieriger als bei Kreditkarte oder PayPal. Kontaktiere deine Bank trotzdem sofort, frage nach Rückrufmöglichkeiten und sichere alle Daten. Bei konkretem Verdacht auf Missbrauch kann zusätzlich eine Anzeige sinnvoll sein.",
   },
   {
     q: "Sollte ich eine Anzeige erstatten?",
-    a: "Bei konkretem Betrugsverdacht kann eine Anzeige sinnvoll sein, insbesondere wenn der Shop verschwunden ist, falsche Identitäten nutzt oder weitere Forderungen entstehen. Die Anzeigenbestätigung kann als Beleg gegenüber Bank oder Zahlungsdienstleister hilfreich sein.",
+    a: "Bei konkretem Verdacht auf Missbrauch kann eine Anzeige sinnvoll sein, insbesondere wenn der Shop verschwunden ist, falsche Identitäten nutzt oder weitere Forderungen entstehen. Die Anzeigenbestätigung kann als Beleg gegenüber Bank oder Zahlungsdienstleister hilfreich sein.",
   },
   {
     q: "Woran erkenne ich Dropshipping statt Fake-Shop?",
-    a: "Dropshipping ist nicht automatisch Betrug. Warnsignale sind aber stark abweichende Ware, verschleierte Lieferzeiten, fehlendes Impressum, keine erreichbare Kundenadresse oder Produktbilder, die massenhaft auf anderen Seiten auftauchen. Entscheidend ist, was konkret versprochen und geliefert wurde.",
+    a: "Dropshipping ist nicht automatisch problematisch oder rechtswidrig. Warnsignale sind aber stark abweichende Ware, verschleierte Lieferzeiten, fehlendes Impressum, keine erreichbare Kundenadresse oder Produktbilder, die massenhaft auf anderen Seiten auftauchen. Entscheidend ist, was konkret versprochen und geliefert wurde.",
   },
   {
     q: "Was mache ich, wenn bereits Inkasso-Mails kommen?",
@@ -125,16 +125,15 @@ export default function ScamShopsPage() {
 
   const routeMeta = getRouteMeta("/scam-shops-2026");
   const title =
-    routeMeta?.title ??
-    "Bekannte Scam-Muster & Fake-Shops 2026 — was du jetzt tun kannst | ChargebackPilot";
+    routeMeta?.title ?? "Fake-Shop-Verdacht & auffällige Online-Shops 2026 | ChargebackPilot";
   const description =
     routeMeta?.description ??
-    "Verdacht auf Fake-Shop oder Internet-Betrug? Die wichtigsten Warnsignale 2026 plus eine strukturierte Anleitung zu Chargeback, PayPal-Käuferschutz und möglicher Lastschrift-Rückgabe.";
+    "Verdacht auf Fake-Shop oder auffälligen Online-Shop? Die wichtigsten Warnsignale 2026 plus strukturierte Orientierung zu Chargeback, PayPal-Käuferschutz und möglicher Lastschrift-Rückgabe.";
 
   const articleSchema = {
     "@context": "https://schema.org",
     "@type": "Article",
-    headline: "Bekannte Scam-Muster & Fake-Shops 2026",
+    headline: "Fake-Shop-Verdacht und auffällige Online-Shops 2026",
     description,
     inLanguage: "de-DE",
     author: { "@type": "Organization", name: "ChargebackPilot" },
@@ -147,10 +146,10 @@ export default function ScamShopsPage() {
     dateModified: "2026-05-20",
     mainEntityOfPage: "https://chargebackpilot.de/scam-shops-2026",
     keywords:
-      "fake shop erkennen, scam shop 2026, fake shop chargeback, paypal käuferschutz fake shop",
+      "fake shop erkennen, fake shop chargeback, paypal käuferschutz fake shop, auffälliger online shop",
     about: [
       { "@type": "Thing", name: "Fake-Shop" },
-      { "@type": "Thing", name: "Scam-Shop" },
+      { "@type": "Thing", name: "Auffälliger Online-Shop" },
       { "@type": "Thing", name: "Chargeback bei Fake-Shop" },
       { "@type": "Thing", name: "PayPal Käuferschutz" },
     ],
@@ -174,7 +173,7 @@ export default function ScamShopsPage() {
         jsonLd={[articleSchema, faqSchema]}
       />
       <Breadcrumbs
-        items={[{ label: "Ratgeber", href: "/ratgeber" }, { label: "Scam-Shops 2026" }]}
+        items={[{ label: "Ratgeber", href: "/ratgeber" }, { label: "Shop-Warnsignale 2026" }]}
       />
 
       <article className="pb-20">
@@ -182,7 +181,7 @@ export default function ScamShopsPage() {
           <div className="container mx-auto max-w-3xl">
             <div className="inline-flex items-center gap-2 bg-red-100 text-red-800 text-xs font-bold uppercase tracking-wide px-2.5 py-1 rounded mb-4">
               <AlertTriangle className="w-3.5 h-3.5" />
-              Betrugsschutz 2026
+              Warnsignale 2026
             </div>
             <h1 className="text-3xl md:text-5xl font-bold mb-4 leading-tight">
               Fake-Shop-Verdacht? So gehst du strukturiert vor.
@@ -217,7 +216,7 @@ export default function ScamShopsPage() {
               Impressum, Produktseite, Zahlungsbeleg, Bestellmail, Tracking und jede Antwort des
               Shops. Danach hängt der nächste Schritt vom Zahlungsweg ab: PayPal-Konflikt,
               Kreditkartenreklamation, Klarna-Problemmeldung, Bankkontakt oder Anzeige bei konkretem
-              Betrugsverdacht.
+              Verdacht auf Missbrauch.
             </p>
             <div className="mt-5 grid gap-3 sm:grid-cols-3">
               {[
@@ -253,10 +252,10 @@ export default function ScamShopsPage() {
           {/* Categories */}
           <section>
             <h2 className="text-2xl font-bold mb-5 border-b pb-2">
-              4 Scam-Kategorien — und ein sinnvoller nächster Schritt
+              4 Warnmuster — und ein sinnvoller nächster Schritt
             </h2>
             <div className="grid gap-4">
-              {SCAM_CATEGORIES.map((c, i) => (
+              {SHOP_RISK_CATEGORIES.map((c, i) => (
                 <Card key={i}>
                   <CardContent className="p-5">
                     <div className="font-bold text-base mb-1">{c.name}</div>
@@ -328,7 +327,9 @@ export default function ScamShopsPage() {
           </section>
 
           <section>
-            <h2 className="text-2xl font-bold mb-5 border-b pb-2">Häufige Fragen zu Fake-Shops</h2>
+            <h2 className="text-2xl font-bold mb-5 border-b pb-2">
+              Häufige Fragen zu Fake-Shop-Verdacht
+            </h2>
             <Accordion type="single" collapsible className="w-full">
               {FAQS.map((faq, index) => (
                 <AccordionItem key={faq.q} value={`faq-${index}`}>

@@ -32,7 +32,7 @@ const PROBLEM_LABELS: Record<string, string> = {
   service_not_rendered: "Dienstleistung nicht erbracht",
   flight_travel: "Flug / Reise / Hotel",
   subscription: "Abo / ungewollte Abbuchung",
-  fraud: "Scam-/Shop-Verdacht",
+  fraud: "Shop-/Missbrauchsverdacht",
   food_delivery: "Lieferdienst",
   refund_promised: "Rückerstattung zugesagt",
   other: "Sonstiges",

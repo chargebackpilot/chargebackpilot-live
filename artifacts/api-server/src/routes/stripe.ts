@@ -1,6 +1,6 @@
 import express, { Router } from "express";
 import Stripe from "stripe";
-import { db, casesTable } from "@workspace/db";
+import { db, casesTable, consentsTable } from "@workspace/db";
 import { and, eq } from "drizzle-orm";
 import { createHash } from "crypto";
 
@@ -31,6 +31,41 @@ function getBaseUrl(): string {
     return `https://${first}`;
   }
   return "http://localhost:80";
+}
+
+async function recordStripeTermsConsent(session: Stripe.Checkout.Session): Promise<void> {
+  if (session.consent?.terms_of_service !== "accepted") return;
+
+  const consentType = "stripe_terms_of_service";
+  const existing = await db
+    .select({ id: consentsTable.id })
+    .from(consentsTable)
+    .where(
+      and(eq(consentsTable.stripeSessionId, session.id), eq(consentsTable.consentType, consentType))
+    )
+    .limit(1);
+
+  if (existing.length > 0) return;
+
+  const caseIdMeta = session.metadata?.caseId;
+  const caseIdNum = caseIdMeta ? parseInt(caseIdMeta, 10) : NaN;
+  const consentTimestamp = new Date(
+    typeof session.created === "number" ? session.created * 1000 : Date.now()
+  ).toISOString();
+
+  await db.insert(consentsTable).values({
+    caseId: !isNaN(caseIdNum) ? caseIdNum : null,
+    stripeSessionId: session.id,
+    consentType,
+    consentGiven: "accepted",
+    consentTimestamp,
+    agbVersion: session.metadata?.agbVersion ?? "2026-06",
+    widerrufVersion: session.metadata?.widerrufVersion ?? "2026-06",
+    datenschutzVersion: session.metadata?.datenschutzVersion ?? "2026-06",
+    ipHash: session.metadata?.ipHash ?? null,
+    userAgentHash: session.metadata?.userAgentHash ?? null,
+    source: "stripe_checkout",
+  });
 }
 
 // ---------------------------------------------------------------------------
@@ -88,6 +123,8 @@ router.post("/checkout", async (req, res) => {
         widerrufVersion: "2026-06",
         datenschutzVersion: "2026-06",
         consentCollection: "stripe_terms_of_service_required",
+        ...(ipHash ? { ipHash } : {}),
+        ...(userAgentHash ? { userAgentHash } : {}),
       },
       custom_text: {
         submit: {
@@ -102,9 +139,6 @@ router.post("/checkout", async (req, res) => {
         terms_of_service: "required",
       },
     });
-
-    void ipHash;
-    void userAgentHash;
 
     if (caseId && session.id) {
       if (!isNaN(caseIdNum)) {
@@ -124,7 +158,7 @@ router.post("/checkout", async (req, res) => {
 });
 
 // ---------------------------------------------------------------------------
-// Flatrate checkout — 9,99 € one-time, unlocks unlimited cases for 12 months
+// Flatrate checkout — 9,99 € one-time, unlocks multiple cases for 12 months
 // ---------------------------------------------------------------------------
 router.post("/flatrate-checkout", async (req, res) => {
   if (!process.env.STRIPE_SECRET_KEY) {
@@ -135,6 +169,11 @@ router.post("/flatrate-checkout", async (req, res) => {
   try {
     const stripe = getStripe();
     const baseUrl = getBaseUrl();
+    const ipRaw =
+      (req.headers["x-forwarded-for"] as string | undefined)?.split(",")[0]?.trim() || req.ip;
+    const uaRaw = req.headers["user-agent"];
+    const ipHash = hashValue(ipRaw ?? undefined);
+    const userAgentHash = hashValue(typeof uaRaw === "string" ? uaRaw : undefined);
 
     const session = await stripe.checkout.sessions.create({
       automatic_tax: { enabled: false },
@@ -145,7 +184,7 @@ router.post("/flatrate-checkout", async (req, res) => {
             product_data: {
               name: "ChargebackPilot Flatrate — 12 Monate",
               description:
-                "Digitale Formulierungshilfe für 12 Monate. Einmalzahlung, kein Abo, keine Rechtsberatung.",
+                "Digitale Formulierungshilfe für mehrere Fälle innerhalb von 12 Monaten. Einmalzahlung, kein Abo, keine Rechtsberatung.",
             },
             unit_amount: 999,
           },
@@ -162,9 +201,11 @@ router.post("/flatrate-checkout", async (req, res) => {
         widerrufVersion: "2026-06",
         datenschutzVersion: "2026-06",
         consentCollection: "stripe_terms_of_service_required",
+        ...(ipHash ? { ipHash } : {}),
+        ...(userAgentHash ? { userAgentHash } : {}),
       },
       custom_text: {
-        submit: { message: "Einmalig 9,99 € · 12 Monate unbegrenzte Freischaltung · Kein Abo" },
+        submit: { message: "Einmalig 9,99 € · mehrere Fälle für 12 Monate · Kein Abo" },
         terms_of_service_acceptance: {
           message:
             "Mit dem Kauf akzeptierst du unsere [AGB](https://chargebackpilot.de/agb). Du verlangst ausdrücklich, dass ChargebackPilot vor Ablauf der Widerrufsfrist mit der Ausführung des Vertrags beginnt. Du bestätigst, die [Widerrufshinweise](https://chargebackpilot.de/widerruf) für digitale Inhalte gelesen zu haben, und weißt, dass dein Widerrufsrecht bei vollständiger Vertragserfüllung vorzeitig erlöschen kann.",
@@ -214,6 +255,9 @@ router.get("/checkout/verify/:sessionId", async (req, res) => {
           .where(and(eq(casesTable.id, caseIdNum), eq(casesTable.stripeSessionId, session.id)));
       }
     }
+    if (paid) {
+      await recordStripeTermsConsent(session);
+    }
 
     res.json({ paid, mode, caseId: caseIdMeta ?? null });
   } catch (err) {
@@ -261,6 +305,11 @@ router.post("/webhook", express.raw({ type: "application/json" }), async (req, r
               .where(eq(casesTable.id, caseIdNum));
           }
         }
+        const consentSession =
+          session.consent?.terms_of_service === "accepted"
+            ? session
+            : await stripe.checkout.sessions.retrieve(session.id);
+        await recordStripeTermsConsent(consentSession);
         // Note: for flatrate mode, we just let the frontend know via session_id matching,
         // or we could store flatrate unlocks in a separate users table if auth is added later.
       }

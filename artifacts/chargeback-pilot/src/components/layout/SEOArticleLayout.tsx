@@ -397,7 +397,7 @@ function guideContext(title: string, category: string): GuideContext {
       notIdealWhen:
         "die Zahlung über Freunde und Familie lief oder du keine Transaktion im PayPal-Konto findest",
       wordingHint:
-        "kurz, chronologisch und belegorientiert formulieren, ohne Betrug zu unterstellen",
+        "kurz, chronologisch und belegorientiert formulieren, ohne unbelegte Vorwürfe zu erheben",
       parallelPath:
         "bei hinterlegter Kreditkarte zusätzlich prüfen, ob die kartenausgebende Bank einen Weg nennt",
     };
@@ -520,7 +520,7 @@ function guideContext(title: string, category: string): GuideContext {
       notIdealWhen:
         "du nur die Karte sperrst, aber gegenüber dem Anbieter keine Kündigung oder keinen Widerspruch dokumentierst",
       wordingHint:
-        "keine vorschnellen Betrugsvorwürfe, sondern Autorisierung und Vertragsgrundlage sachlich bestreiten",
+        "keine vorschnellen Vorwürfe, sondern Autorisierung und Vertragsgrundlage sachlich bestreiten",
       parallelPath:
         "Bank, Kreditkarte oder PayPal können je nach Zahlungsart unterschiedliche Rückgabewege haben",
     };
@@ -693,7 +693,7 @@ function guideExamples(category: string, title: string): GuideExample[] {
           "Händler schriftlich zur Klärung auffordern und Zahlungsdienstleister mit vollständiger Chronologie einbinden.",
       },
       {
-        title: "Fake-Shop nimmt Zahlung, liefert aber nicht",
+        title: "Auffälliger Shop nimmt Zahlung, liefert aber nicht",
         situation: "Nach Zahlung gibt es keine echte Versandbewegung oder der Shop verschwindet.",
         usefulProof:
           "Shop-Screenshots, Impressum, Zahlungsnachweis, Bestellmail und Kontaktversuche.",
@@ -819,7 +819,7 @@ function editorialInsight(title: string, category: string, ctx: GuideContext): E
       checkpoints: [
         "Du kannst zeigen, ob und wann du zugestimmt oder gekündigt hast.",
         "Weitere Abbuchungen sind mit Datum, Betrag und Empfänger sortiert.",
-        "Die Nachricht enthält keine vorschnellen Betrugsvorwürfe, sondern bestreitet konkret Autorisierung oder Vertragsgrundlage.",
+        "Die Nachricht enthält keine vorschnellen Vorwürfe, sondern bestreitet konkret Autorisierung oder Vertragsgrundlage.",
       ],
     };
   }
@@ -829,12 +829,12 @@ function editorialInsight(title: string, category: string, ctx: GuideContext): E
       title: "Warum Tracking allein den Fall selten vollständig erklärt",
       paragraphs: [
         "Bei nicht erhaltener Ware reicht ein einzelner Zustellstatus oft nicht aus. Entscheidend ist, ob Tracking, Bestellbestätigung, Lieferadresse, Händlerantwort und tatsächlicher Empfang zusammenpassen.",
-        "Besonders bei Fake-Shop-Verdacht solltest du zusätzlich die Shop-Seite sichern: Impressum, Produktseite, Bestellmail, Zahlungsdaten und Kontaktversuche. Diese Belege zeigen nicht nur, dass Ware fehlt, sondern auch, warum der Zahlungsdienstleister den Vorgang prüfen sollte.",
+        "Besonders bei auffälligen Online-Shops solltest du zusätzlich die Shop-Seite sichern: Impressum, Produktseite, Bestellmail, Zahlungsdaten und Kontaktversuche. Diese Belege zeigen nicht nur, dass Ware fehlt, sondern auch, warum der Zahlungsdienstleister den Vorgang prüfen sollte.",
       ],
       checkpoints: [
         "Trackingverlauf und Bestelladresse sind vollständig gesichert.",
         "Händlerantworten oder fehlende Antworten sind mit Datum dokumentiert.",
-        "Bei Fake-Shop-Verdacht liegen Screenshots von Shop, Impressum und Produktseite vor.",
+        "Bei auffälligen Online-Shops liegen Screenshots von Shop, Impressum und Produktseite vor.",
       ],
     };
   }
@@ -1033,7 +1033,7 @@ function glossaryForGuide(title: string, category: string): GlossaryItem[] {
           "Angabe, die zeigen soll, dass Ware übergeben wurde. Frage nach Details, wenn der Nachweis nicht zu deinem Ablauf passt.",
       },
       {
-        term: "Fake-Shop",
+        term: "Auffälliger Online-Shop",
         definition:
           "Shop mit Verdachtsmerkmalen wie fehlendem Impressum, kopierten Produktbildern, unrealistischen Preisen oder verschwundener Kontaktmöglichkeit.",
       },
@@ -1156,7 +1156,7 @@ function wordingPreview(title: string, category: string, ctx: GuideContext): Wor
         "Die Ware wurde bislang nicht erhalten; der Trackingstatus passt aus meiner Sicht nicht zum tatsächlichen Ablauf.",
         "Ich bitte um Prüfung und füge Bestellbestätigung, Tracking, Zahlungsnachweis und Händlerkontakt bei.",
       ],
-      note: "Bei Fake-Shop-Verdacht zusätzlich Shop-Screenshots und Impressum sichern.",
+      note: "Bei auffälligen Online-Shops zusätzlich Shop-Screenshots und Impressum sichern.",
     };
   }
 
@@ -1213,7 +1213,7 @@ function contextualLinks(
   } else if (lowerCategory.includes("online")) {
     links.push(
       { href: "/ware-nicht-erhalten-musterbrief", label: "Ware nicht erhalten Musterbrief" },
-      { href: "/scam-shops-2026", label: "Fake-Shops erkennen" },
+      { href: "/scam-shops-2026", label: "Shop-Warnsignale erkennen" },
       { href: "/paypal-chargeback", label: "PayPal Käuferschutz" }
     );
   } else if (lowerCategory.includes("abo")) {

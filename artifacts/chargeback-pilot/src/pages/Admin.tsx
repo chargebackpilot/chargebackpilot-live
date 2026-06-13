@@ -46,7 +46,7 @@ const PROBLEM_TYPE_LABELS: Record<string, string> = {
   subscription_trap: "Abo-Falle",
   double_charge: "Doppelte Belastung",
   unauthorized: "Unbekannte Abbuchung",
-  fraud: "Scam-/Shop-Verdacht",
+  fraud: "Shop-/Missbrauchsverdacht",
   other: "Sonstiges",
 };
 

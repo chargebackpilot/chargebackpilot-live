@@ -113,7 +113,7 @@ export function Footer() {
             </li>
             <li>
               <Link href="/scam-shops-2026" className="hover:text-foreground transition-colors">
-                Scam-Shops erkennen
+                Shop-Warnsignale erkennen
               </Link>
             </li>
           </ul>

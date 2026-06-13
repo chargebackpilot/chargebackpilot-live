@@ -342,7 +342,7 @@ export function WareNichtErhaltenSEO() {
       title="Chargeback: Ware nicht erhalten"
       category="Online-Shopping"
       whenApplies={[
-        "Fake-Shop-Verdacht oder unbekannter Shop",
+        "Auffälliger Online-Shop oder unbekannter Shop",
         "Paket ging auf dem Postweg verloren",
         "Händler liefert trotz Zahlung nicht",
       ]}
@@ -429,7 +429,7 @@ export function ChargebackAntragVorlageSEO() {
         "Bitte deine Bank um Prüfung nach den geltenden Kartenregeln und um schriftliche Rückmeldung.",
       ]}
       mistakes={[
-        "Zu emotional formulieren oder Betrug unterstellen, ohne Belege zu nennen.",
+        "Zu emotional formulieren oder unbelegte Vorwürfe erheben, ohne Belege zu nennen.",
         "Nur telefonisch reklamieren und keinen schriftlichen Nachweis behalten.",
         "Fristen bei Bank oder Kartenausgeber nicht direkt prüfen.",
       ]}

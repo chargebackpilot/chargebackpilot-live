@@ -878,7 +878,7 @@ function faqForCombo(m: MerchantDef, p: ProblemDef, sector: string): { q: string
     },
     {
       q: `Was kostet die Hilfe von ChargebackPilot?`,
-      a: `Die KI-Ersteinschätzung deines Falls ist komplett kostenlos. Wenn du die fertigen Textvorlagen (Händler-Anschreiben, Bank-Chargeback-Antrag, Eskalationsschreiben) freischalten willst, zahlst du einmalig 0,99 € Endpreis pro Fall. Eine Flatrate für unbegrenzte Fälle gibt es für 9,99 € Endpreis (12 Monate).`,
+      a: `Die KI-Ersteinschätzung deines Falls ist komplett kostenlos. Wenn du die fertigen Textvorlagen (Händler-Anschreiben, Bank-Chargeback-Antrag, Eskalationsschreiben) freischalten willst, zahlst du einmalig 0,99 € Endpreis pro Fall. Eine 12-Monats-Flatrate für mehrere Fälle gibt es für 9,99 € Endpreis.`,
     },
     {
       q: `Kann ich gegen ${m.name} auch klagen, wenn der Chargeback scheitert?`,

@@ -37,7 +37,7 @@ const PROBLEM_TYPE_LABELS: Record<string, string> = {
   service_not_rendered: "Dienstleistung nicht erbracht",
   flight_travel: "Flug / Reise / Hotel Problem",
   subscription: "Abo / ungewollte Abbuchung",
-  fraud: "Scam-/Shop-Verdacht",
+  fraud: "Shop-/Missbrauchsverdacht",
   food_delivery: "Lieferdienst / Essen unbrauchbar",
   refund_promised: "Rückerstattung zugesagt aber nicht erhalten",
   other: "Sonstiges",
@@ -115,7 +115,7 @@ WICHTIGE RICHTLINIEN FÜR DIE ANALYSE:
 - Für Banküberweisung: weise vorsichtig darauf hin, dass direkte Händlerkommunikation oft wichtiger ist.
 - Die Textentwürfe müssen sachlich, vollständig und vom Nutzer vor Versand prüfbar sein.
 - Nutze keine verbindliche Anspruchsprüfung. Allgemeine Normen oder Anbieterregeln nur vorsichtig als Orientierung nennen.
-- Unterstelle keinen Betrug und keine Pflichtverletzung als Tatsache. Schreibe stattdessen 'Verdacht', 'unklar', 'aus meiner Sicht' oder 'bitte prüfen'.
+- Unterstelle keinen Missbrauch und keine Pflichtverletzung als Tatsache. Schreibe stattdessen 'Verdacht', 'unklar', 'aus meiner Sicht' oder 'bitte prüfen'.
 - Erwähne typische Fristen nur als allgemeine Hinweise und fordere immer zur Prüfung beim Anbieter/Zahlungsdienstleister auf.
 - Die Vorlagen sollen den spezifischen Sachverhalt (${input.merchantName}, ${input.amount.toFixed(2)} EUR, ${input.paymentDate}) konkret aufgreifen
 - Antworte IMMER auf Deutsch

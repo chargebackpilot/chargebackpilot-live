@@ -30,7 +30,7 @@ export const PROBLEM_TYPES = [
   { id: "service_not_rendered", label: "Dienstleistung nicht erbracht", icon: Building2 },
   { id: "flight_travel", label: "Flug / Reise / Hotel Problem", icon: Plane },
   { id: "subscription", label: "Abo / ungewollte Abbuchung", icon: Repeat2 },
-  { id: "fraud", label: "Scam-/Shop-Verdacht", icon: AlertTriangle },
+  { id: "fraud", label: "Shop-/Missbrauchsverdacht", icon: AlertTriangle },
   { id: "food_delivery", label: "Lieferdienst / Essen unbrauchbar", icon: UtensilsCrossed },
   { id: "refund_promised", label: "Rückerstattung zugesagt aber nicht erhalten", icon: RefreshCcw },
   { id: "other", label: "Sonstiges", icon: ChevronRight },

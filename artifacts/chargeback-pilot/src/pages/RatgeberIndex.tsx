@@ -116,9 +116,9 @@ const HIGHLIGHTS = [
   {
     path: "/scam-shops-2026",
     icon: AlertTriangle,
-    title: "Scam-Shops & Fake-Anbieter 2026",
-    desc: "8 Warnsignale, 4 Scam-Kategorien und strukturierte nächste Schritte bei Fake-Shop-Verdacht.",
-    tag: "Betrugsschutz",
+    title: "Fake-Shop-Verdacht & Warnsignale 2026",
+    desc: "8 Warnsignale, 4 typische Muster und strukturierte nächste Schritte bei auffälligen Online-Shops.",
+    tag: "Warnsignale",
   },
 ];
 
@@ -173,9 +173,9 @@ const ESCALATION_PATHS = [
   },
   {
     title: "Sonderfälle einordnen",
-    desc: "Für Fälle mit höherem Erklärungsbedarf, etwa Scam-Shops, Reason Codes oder Reisevermittler.",
+    desc: "Für Fälle mit höherem Erklärungsbedarf, etwa auffällige Online-Shops, Reason Codes oder Reisevermittler.",
     links: [
-      { label: "Scam-Shops", href: "/scam-shops-2026" },
+      { label: "Shop-Warnsignale", href: "/scam-shops-2026" },
       { label: "Visa 13.1", href: "/visa-reason-code-13-1" },
       { label: "Kiwi.com", href: "/kiwi-rueckerstattung" },
     ],

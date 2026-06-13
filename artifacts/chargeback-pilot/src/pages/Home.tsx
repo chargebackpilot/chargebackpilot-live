@@ -169,7 +169,7 @@ const CHARGEBACK_SIGNALS = [
   {
     icon: Package,
     label: "Ware nicht geliefert",
-    text: "Paket angeblich zugestellt, Fake-Shop-Verdacht oder Tracking bleibt unklar.",
+    text: "Paket angeblich zugestellt, auffälliger Shop oder Tracking bleibt unklar.",
   },
   {
     icon: AlertTriangle,
@@ -313,7 +313,7 @@ const FAQS = [
   },
   {
     q: "Funktioniert das bei nicht gelieferter Ware oder Fake-Shop-Verdacht?",
-    a: "Gerade bei nicht gelieferter Ware, Fake-Shop-Verdacht oder falscher Lieferung können Belege wie Tracking, Zahlungsnachweis und Kontaktversuche wichtig sein. Ob eine Rückerstattung gelingt, entscheidet der Zahlungsdienstleister im Einzelfall.",
+    a: "Gerade bei nicht gelieferter Ware, auffälligen Online-Shops oder falscher Lieferung können Belege wie Tracking, Zahlungsnachweis und Kontaktversuche wichtig sein. Ob eine Rückerstattung gelingt, entscheidet der Zahlungsdienstleister im Einzelfall.",
   },
   {
     q: "Was passiert nach der kostenlosen Analyse?",
@@ -358,7 +358,7 @@ export default function Home() {
             setFlatrateActive(true);
             toast({
               title: "Flatrate aktiviert!",
-              description: "Alle Fälle für 12 Monate freigeschaltet.",
+              description: "Mehrere Fälle für 12 Monate freigeschaltet.",
             });
           }
         })
@@ -569,7 +569,7 @@ export default function Home() {
               <div className="space-y-4 text-muted-foreground leading-relaxed">
                 <p>
                   Egal ob <strong>kaltes Essen von Lieferando oder Wolt</strong>,{" "}
-                  <strong>nicht gelieferte Pakete</strong> bei Fake-Shop-Verdacht oder{" "}
+                  <strong>nicht gelieferte Pakete</strong> bei auffälligen Online-Shops oder{" "}
                   <strong>einbehaltene Steuern und Gebühren bei Flugstornierungen</strong>: In
                   vielen Fällen kannst du den Vorgang bei Händler, Bank, PayPal oder Klarna
                   nachvollziehbar prüfen lassen.
@@ -845,10 +845,10 @@ export default function Home() {
               <CardContent className="space-y-4">
                 <ul className="space-y-2.5 text-sm">
                   {[
-                    "Unbegrenzte Fall-Freischaltungen",
+                    "Mehrere Fall-Freischaltungen",
                     "Alle Premium-Features",
                     "Gültig 12 Monate ab Kauf",
-                    "Keine Abbuchung danach",
+                    "Einmalzahlung · keine Verlängerung",
                   ].map((f) => (
                     <li key={f} className="flex gap-2.5 items-center">
                       <CheckCircle2 className="w-4 h-4 text-emerald-500 flex-shrink-0" />

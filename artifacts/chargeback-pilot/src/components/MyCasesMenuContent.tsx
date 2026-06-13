@@ -101,7 +101,7 @@ export default function MyCasesMenuContent({
           <div className="mt-2 flex items-start gap-2 text-xs bg-emerald-50 border border-emerald-200 text-emerald-900 rounded-md px-2 py-1.5">
             <InfinityIcon className="w-3.5 h-3.5 mt-0.5 flex-shrink-0 text-emerald-700" />
             <span>
-              <strong>Flatrate aktiv</strong> — alle Fälle freigeschaltet bis{" "}
+              <strong>Flatrate aktiv</strong> — mehrere Fälle freigeschaltet bis{" "}
               <strong>{formatExpiry(flatExpiry)}</strong>.
             </span>
           </div>

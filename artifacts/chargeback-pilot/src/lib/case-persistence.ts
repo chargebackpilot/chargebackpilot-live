@@ -253,7 +253,7 @@ export function removeSavedCase(caseId: string): void {
 }
 
 // ---------------------------------------------------------------------------
-// Flatrate ("Pilot Flat") — unlimited cases for N months
+// Flatrate ("Pilot Flat") — multiple case unlocks for N months
 // ---------------------------------------------------------------------------
 interface FlatrateEntry {
   purchasedAt: string;

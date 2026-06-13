@@ -254,9 +254,9 @@ export const SEO_ROUTES: SeoRouteMeta[] = [
   },
   {
     path: "/scam-shops-2026",
-    title: "Bekannte Scam-Muster & Fake-Shops 2026 — was du jetzt tun kannst | ChargebackPilot",
+    title: "Fake-Shop-Verdacht & auffällige Online-Shops 2026 | ChargebackPilot",
     description:
-      "Verdacht auf Fake-Shop oder Internet-Betrug? Die wichtigsten Warnsignale 2026 plus eine strukturierte Anleitung zu Chargeback, PayPal-Käuferschutz und möglicher Lastschrift-Rückgabe.",
+      "Verdacht auf Fake-Shop oder auffälligen Online-Shop? Die wichtigsten Warnsignale 2026 plus strukturierte Orientierung zu Chargeback, PayPal-Käuferschutz und möglicher Lastschrift-Rückgabe.",
     changefreq: "weekly",
     priority: 0.8,
     type: "guide",
