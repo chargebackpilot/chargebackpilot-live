@@ -37,7 +37,7 @@ const PROBLEM_TYPE_LABELS: Record<string, string> = {
   service_not_rendered: "Dienstleistung nicht erbracht",
   flight_travel: "Flug / Reise / Hotel Problem",
   subscription: "Abo / ungewollte Abbuchung",
-  fraud: "Betrug / Scam Verdacht",
+  fraud: "Betrugs-/Scam-Verdacht",
   food_delivery: "Lieferdienst / Essen unbrauchbar",
   refund_promised: "Rückerstattung zugesagt aber nicht erhalten",
   other: "Sonstiges",
@@ -175,7 +175,7 @@ export async function analyzeWithGemini(input: CaseInput): Promise<CaseAnalysis>
         { err: err instanceof Error ? err.message : String(err), quotaErr },
         quotaErr
           ? "Primary Gemini key quota/rate-limited, trying fallback key"
-          : "Primary Gemini call failed, trying fallback key",
+          : "Primary Gemini call failed, trying fallback key"
       );
     }
   } else {
@@ -191,7 +191,7 @@ export async function analyzeWithGemini(input: CaseInput): Promise<CaseAnalysis>
     } catch (err) {
       logger.error(
         { err: err instanceof Error ? err.message : String(err) },
-        "Both Gemini keys failed, using local fallback analysis",
+        "Both Gemini keys failed, using local fallback analysis"
       );
     }
   }
@@ -235,17 +235,24 @@ function buildFallbackAnalysis(input: CaseInput): CaseAnalysis {
     successProbabilityLabel: probability >= 65 ? "Hoch" : probability >= 40 ? "Mittel" : "Niedrig",
     summary: `Ihr Fall (${problemLabel} bei ${input.merchantName} über ${input.amount.toFixed(2)} EUR via ${paymentLabel}) wurde analysiert. Die Ausgangslage ist ${strengthLabel.toLowerCase()}.`,
     reasoning: `Die Einschätzung basiert auf der Zahlungsmethode (${paymentLabel}), dem Problemtyp (${problemLabel}) sowie ${input.evidence.filter((e) => e !== "none").length} vorliegenden Beweismitteln. ${input.merchantContacted ? "Der Händler wurde bereits kontaktiert, was die Position stärkt." : "Der Händler sollte zunächst direkt kontaktiert werden."}`,
-    missingEvidence: input.evidence.includes("none") || input.evidence.length === 0
-      ? ["Zahlungsnachweis (Kontoauszug oder Screenshot der Abbuchung)", "Kommunikationsverlauf mit dem Händler"]
-      : [],
+    missingEvidence:
+      input.evidence.includes("none") || input.evidence.length === 0
+        ? [
+            "Zahlungsnachweis (Kontoauszug oder Screenshot der Abbuchung)",
+            "Kommunikationsverlauf mit dem Händler",
+          ]
+        : [],
     nextSteps: [
       `${input.merchantContacted ? "Händler erneut schriftlich kontaktieren und eine angemessene Antwortfrist vorschlagen" : "Händler schriftlich kontaktieren – nutze den generierten Textentwurf als Ausgangspunkt"}`,
       `Prüfe bei ${paymentLabel}, ob ein Käuferschutz- oder Reklamationsverfahren in Betracht kommt – nutze den Textentwurf nur nach eigener Prüfung`,
       "Alle Belege sicher aufbewahren (Screenshots, E-Mails, Quittungen)",
       "Typische Fristen direkt beim Zahlungsdienstleister prüfen und zeitnah handeln",
     ],
-    recommendedCategory: "Chargeback – Streitfall einleiten",
-    legalBasis: ["§ 437 BGB – Rechte des Käufers bei Sachmängeln", "EU-Zahlungsdiensterichtlinie (PSD2)"],
+    recommendedCategory: "Mögliche Zahlungsreklamation prüfen",
+    legalBasis: [
+      "§ 437 BGB – Rechte des Käufers bei Sachmängeln",
+      "EU-Zahlungsdiensterichtlinie (PSD2)",
+    ],
     counterarguments: [
       "Händler könnte behaupten, die Ware sei zugestellt worden – daher Tracking-Dokumente sichern",
       "Bank könnte auf eigene Handlung des Verbrauchers hinweisen – klare Dokumentation ist wichtig",
@@ -256,8 +263,8 @@ function buildFallbackAnalysis(input: CaseInput): CaseAnalysis {
         ? "PayPal nennt häufig 180 Tage ab Zahlung. Bitte die konkrete Frist direkt im PayPal-Konto prüfen."
         : "Fristen für Reklamationen/Chargeback variieren je nach Bank und Zahlungsart. Bitte die konkrete Frist direkt beim Zahlungsdienstleister prüfen.",
     merchantTemplate: `Betreff: Reklamation – Transaktion vom ${input.paymentDate} über ${input.amount.toFixed(2)} EUR\n\nSehr geehrte Damen und Herren,\n\nich wende mich an Sie bezüglich einer Transaktion vom ${input.paymentDate} in Höhe von ${input.amount.toFixed(2)} EUR bei Ihrem Unternehmen (${input.merchantName}).\n\n${input.description}\n\nBitte prüfen Sie den Vorgang und teilen Sie mir schriftlich mit, wie Sie die Angelegenheit lösen möchten. Ich bitte um Rückmeldung innerhalb einer angemessenen Frist.\n\nMit freundlichen Grüßen\n\n---\nFormulierungshilfe, keine Rechtsberatung. Vor Versand prüfen.`,
-    bankTemplate: `Betreff: Antrag auf Chargeback – ${input.merchantName} – ${input.amount.toFixed(2)} EUR – ${input.paymentDate}\n\nSehr geehrte Damen und Herren,\n\nIch beantrage die Einleitung eines Chargeback-Verfahrens für folgende Transaktion:\n• Händler: ${input.merchantName}\n• Betrag: ${input.amount.toFixed(2)} EUR\n• Datum: ${input.paymentDate}\n• Zahlungsmethode: ${paymentLabel}\n\n${input.description}\n\nMit freundlichen Grüßen\n\n---\nKeine Rechtsberatung. ChargebackPilot.de`,
-    escalationTemplate: `Betreff: Eskalation – Ungelöster Streitfall – ${input.merchantName} – ${input.amount.toFixed(2)} EUR\n\nSehr geehrte Damen und Herren,\n\nDer bisherige Chargeback-Antrag für obigen Fall blieb erfolglos. Ich wende mich daher an die zuständige Schlichtungsstelle und bitte um Überprüfung.\n\nMit freundlichen Grüßen\n\n---\nKeine Rechtsberatung. ChargebackPilot.de`,
+    bankTemplate: `Betreff: Bitte um Prüfung einer Zahlungsreklamation – ${input.merchantName} – ${input.amount.toFixed(2)} EUR – ${input.paymentDate}\n\nSehr geehrte Damen und Herren,\n\nich bitte um Prüfung, ob für folgende Transaktion eine Zahlungsreklamation bzw. ein Chargeback-Verfahren in Betracht kommt:\n• Händler: ${input.merchantName}\n• Betrag: ${input.amount.toFixed(2)} EUR\n• Datum: ${input.paymentDate}\n• Zahlungsmethode: ${paymentLabel}\n\n${input.description}\n\nMit freundlichen Grüßen\n\n---\nKeine Rechtsberatung. ChargebackPilot.de`,
+    escalationTemplate: `Betreff: Bitte um weitere Orientierung – ungelöster Streitfall – ${input.merchantName} – ${input.amount.toFixed(2)} EUR\n\nSehr geehrte Damen und Herren,\n\nfür den oben genannten Vorgang konnte bislang keine nachvollziehbare Klärung erreicht werden. Ich bitte um Orientierung, welche weiteren Schritte oder Unterlagen für eine Prüfung sinnvoll sein könnten.\n\nMit freundlichen Grüßen\n\n---\nKeine Rechtsberatung. ChargebackPilot.de`,
     disclaimer:
       "Keine Rechtsberatung. ChargebackPilot bietet allgemeine Informationen und Textvorlagen. Die generierten Texte ersetzen keine anwaltliche Beratung.",
   };

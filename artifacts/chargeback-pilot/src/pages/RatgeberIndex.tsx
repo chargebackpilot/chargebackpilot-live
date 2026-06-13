@@ -215,7 +215,7 @@ const MONEY_GUIDE_LINKS = [
   },
   {
     href: "/scam-shops-2026",
-    keyword: "Fake-Shop erkannt",
+    keyword: "Fake-Shop-Verdacht",
     intent: "Warnsignale prüfen und Zahlungsweg zeitnah sichern.",
   },
   {

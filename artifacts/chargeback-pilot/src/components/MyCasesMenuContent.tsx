@@ -25,7 +25,7 @@ const PROBLEM_LABELS: Record<string, string> = {
   service_not_rendered: "Leistung nicht erbracht",
   flight_travel: "Flug / Reise",
   subscription: "Abo / Abbuchung",
-  fraud: "Betrug",
+  fraud: "Verdacht",
   food_delivery: "Lieferdienst",
   other: "Sonstiges",
 };
@@ -48,7 +48,11 @@ function formatRelative(iso: string): string {
   if (h < 24) return `vor ${h} Std`;
   const d = Math.floor(h / 24);
   if (d < 7) return `vor ${d} Tg`;
-  return new Date(iso).toLocaleDateString("de-DE", { day: "2-digit", month: "2-digit", year: "numeric" });
+  return new Date(iso).toLocaleDateString("de-DE", {
+    day: "2-digit",
+    month: "2-digit",
+    year: "numeric",
+  });
 }
 
 function formatExpiry(d: Date): string {
@@ -97,7 +101,8 @@ export default function MyCasesMenuContent({
           <div className="mt-2 flex items-start gap-2 text-xs bg-emerald-50 border border-emerald-200 text-emerald-900 rounded-md px-2 py-1.5">
             <InfinityIcon className="w-3.5 h-3.5 mt-0.5 flex-shrink-0 text-emerald-700" />
             <span>
-              <strong>Flatrate aktiv</strong> — alle Fälle freigeschaltet bis <strong>{formatExpiry(flatExpiry)}</strong>.
+              <strong>Flatrate aktiv</strong> — alle Fälle freigeschaltet bis{" "}
+              <strong>{formatExpiry(flatExpiry)}</strong>.
             </span>
           </div>
         )}

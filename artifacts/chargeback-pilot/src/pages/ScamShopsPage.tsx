@@ -28,7 +28,7 @@ const RED_FLAGS: ScamSignal[] = [
   {
     title: "Nur Vorkasse oder Krypto",
     description:
-      "Seriöse Shops bieten PayPal, Klarna oder Kreditkarte. Wer ausschließlich Überweisung verlangt, schließt Käuferschutz aktiv aus.",
+      "Viele seriöse Shops bieten mehrere Zahlungsarten wie PayPal, Klarna oder Kreditkarte. Ausschließliche Vorkasse kann ein Warnsignal sein.",
   },
   {
     title: "Kein Impressum oder Fantasie-Anschrift",
@@ -95,7 +95,7 @@ const FAQS = [
     a: "Sichere sofort Belege: Bestellbestätigung, Zahlungsnachweis, Shop-URL, Screenshots der Produktseite, Impressum, E-Mails und Tracking. Klicke keine verdächtigen Links mehr an und prüfe danach den passenden Zahlungsweg: PayPal, Kreditkarte, Klarna, Lastschrift oder Banküberweisung.",
   },
   {
-    q: "Kann ich bei einem Fake-Shop ein Chargeback beantragen?",
+    q: "Kann ich bei Fake-Shop-Verdacht ein Chargeback prüfen lassen?",
     a: "Bei Kreditkartenzahlung kann eine Umsatzreklamation je nach Kartenregeln und Belegen in Betracht kommen, etwa bei nicht gelieferter oder deutlich abweichender Ware. Die Bank entscheidet im Einzelfall und kann Händlerkontakt oder weitere Nachweise verlangen.",
   },
   {
@@ -185,7 +185,7 @@ export default function ScamShopsPage() {
               Betrugsschutz 2026
             </div>
             <h1 className="text-3xl md:text-5xl font-bold mb-4 leading-tight">
-              Fake-Shop erkannt? So gehst du strukturiert vor.
+              Fake-Shop-Verdacht? So gehst du strukturiert vor.
             </h1>
             <p className="text-lg text-muted-foreground mb-6">
               Die 8 wichtigsten Warnsignale 2026 plus die strukturierte
@@ -209,7 +209,7 @@ export default function ScamShopsPage() {
                 Sofortcheck
               </span>
               <span className="text-xs text-muted-foreground">
-                Fake-Shop erkannt: erst Belege sichern, dann Zahlungsweg prüfen
+                Fake-Shop-Verdacht: erst Belege sichern, dann Zahlungsweg prüfen
               </span>
             </div>
             <p className="ai-summary-text text-base leading-relaxed text-foreground/90">

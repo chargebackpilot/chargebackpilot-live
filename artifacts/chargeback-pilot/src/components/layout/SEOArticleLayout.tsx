@@ -338,7 +338,7 @@ const MONEY_PAGE_PROFILES: Record<string, MoneyPageProfile> = {
     primaryKeyword: "Kiwi.com Rückerstattung",
     headline: "Kiwi.com Rückerstattung: Steuern, Gebühren und Zahlungsweg trennen",
     metaDescription:
-      "Kiwi.com Rückerstattung prüfen: Steuern, Gebühren, Serviceentgelt, Gutschein und Kreditkartenreklamation sauber auseinanderhalten.",
+      "Kiwi.com Rückerstattung prüfen: Steuern, Gebühren, Gutschein und möglichen Zahlungsweg sauber auseinanderhalten.",
     intent:
       "Du willst verstehen, welche Beträge bei Kiwi.com noch offen sein könnten und wie du Gebührenabzüge nachvollziehbar hinterfragst.",
     immediateAnswer:
@@ -346,17 +346,17 @@ const MONEY_PAGE_PROFILES: Record<string, MoneyPageProfile> = {
     proofPriority: [
       "Kiwi.com-Buchungsbestätigung und Zahlungsbeleg",
       "Stornierungs- oder No-Show-Nachweis",
-      "Aufschlüsselung von Steuern, Gebühren, Gutschein und Serviceentgelt",
+      "Aufschlüsselung von Steuern, Gebühren, Gutschein und bereits angebotenen Beträgen",
     ],
     decisionSignals: [
-      "Kiwi.com behält eine Gebühr ein oder zahlt nur einen Restbetrag aus.",
+      "In der Antwort wird ein Gebührenabzug oder Teilbetrag ausgewiesen.",
       "Du willst keine pauschale Forderung, sondern eine nachvollziehbare Aufstellung.",
       "Du hast per Karte oder PayPal gezahlt und willst den Zahlungsweg prüfen.",
     ],
     nextAction:
       "Fordere eine transparente Aufstellung an und prüfe danach den passenden Zahlungsdienstleister.",
     avoid:
-      "Vermische nicht Ticketpreis, Steuern, Gebühren, Serviceentgelt und Gutschein in einer einzigen Forderung.",
+      "Vermische nicht Ticketpreis, Steuern, Gebühren, Gutschein und bereits angebotene Beträge in einer einzigen Forderung.",
     keywords: [
       "kiwi rückerstattung",
       "kiwi steuern gebühren",
@@ -654,7 +654,7 @@ function guideExamples(category: string, title: string): GuideExample[] {
       {
         title: "Steuern und Gebühren werden gekürzt",
         situation:
-          "Bei nicht genutztem Flug werden Gebühren oder Serviceentgelte abgezogen, ohne dass die Berechnung klar ist.",
+          "Bei nicht genutztem Flug werden Beträge abgezogen, ohne dass die Berechnung für dich klar ist.",
         usefulProof:
           "Ticketpreis-Aufschlüsselung, AGB-Auszug, Antwort des Vermittlers und Zahlungsnachweis.",
         nextMove:
@@ -798,7 +798,7 @@ function editorialInsight(title: string, category: string, ctx: GuideContext): E
     return {
       title: "Warum Reise-Fälle eine saubere Betragsaufteilung brauchen",
       paragraphs: [
-        "Bei Flügen und Reisebuchungen ist der strittige Betrag häufig nicht nur ein einzelner Ticketpreis. Vermittlungsgebühren, Serviceentgelte, Steuern, Flughafengebühren, Gutscheine und Teilgutschriften können durcheinanderlaufen.",
+        "Bei Flügen und Reisebuchungen ist der strittige Betrag häufig nicht nur ein einzelner Ticketpreis. Vermittlungsgebühren, Steuern, Flughafengebühren, Gutscheine und Teilgutschriften können durcheinanderlaufen.",
         "Eine nachvollziehbare Aufstellung ist deshalb wichtiger als eine harte Behauptung. Zeige, was ursprünglich gezahlt wurde, welche Leistung weggefallen ist, was bereits angeboten oder erstattet wurde und welcher Restbetrag noch offen ist.",
       ],
       checkpoints: [

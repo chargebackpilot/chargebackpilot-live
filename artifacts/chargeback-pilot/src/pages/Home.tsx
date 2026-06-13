@@ -169,7 +169,7 @@ const CHARGEBACK_SIGNALS = [
   {
     icon: Package,
     label: "Ware nicht geliefert",
-    text: "Paket angeblich zugestellt, Fake-Shop reagiert nicht oder Tracking bleibt unklar.",
+    text: "Paket angeblich zugestellt, Fake-Shop-Verdacht oder Tracking bleibt unklar.",
   },
   {
     icon: AlertTriangle,
@@ -312,7 +312,7 @@ const FAQS = [
     a: "Kreditkartennetzwerke arbeiten intern mit Kategorien für Reklamationen, oft Reason Codes genannt. Für Verbraucher ist vor allem wichtig, den Sachverhalt klar zu beschreiben; die Bank ordnet den Antrag anschließend nach ihren Regeln ein.",
   },
   {
-    q: "Funktioniert das bei nicht gelieferter Ware oder Fake-Shops?",
+    q: "Funktioniert das bei nicht gelieferter Ware oder Fake-Shop-Verdacht?",
     a: "Gerade bei nicht gelieferter Ware, Fake-Shop-Verdacht oder falscher Lieferung können Belege wie Tracking, Zahlungsnachweis und Kontaktversuche wichtig sein. Ob eine Rückerstattung gelingt, entscheidet der Zahlungsdienstleister im Einzelfall.",
   },
   {
@@ -569,7 +569,7 @@ export default function Home() {
               <div className="space-y-4 text-muted-foreground leading-relaxed">
                 <p>
                   Egal ob <strong>kaltes Essen von Lieferando oder Wolt</strong>,{" "}
-                  <strong>nicht gelieferte Pakete</strong> von Fake-Shops oder{" "}
+                  <strong>nicht gelieferte Pakete</strong> bei Fake-Shop-Verdacht oder{" "}
                   <strong>einbehaltene Steuern und Gebühren bei Flugstornierungen</strong>: In
                   vielen Fällen kannst du den Vorgang bei Händler, Bank, PayPal oder Klarna
                   nachvollziehbar prüfen lassen.

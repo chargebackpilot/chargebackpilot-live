@@ -208,12 +208,12 @@ export function LieferandoSEO() {
       steps={[
         "Mache möglichst zeitnah Fotos von Fehlern oder dem kalten Essen.",
         "Kontaktiere den Lieferando-Support über die App oder Website.",
-        "Falls keine Einigung erfolgt oder man dir nur einen 5€ Gutschein anbietet: Kontaktiere PayPal oder dein Kreditkartenunternehmen für einen Chargeback.",
+        "Wenn keine nachvollziehbare Lösung angeboten wird, prüfe den genutzten Zahlungsweg bei PayPal oder deiner Bank.",
       ]}
       mistakes={[
-        "Keine Beweisfotos gemacht: Essen direkt weggeworfen oder aufgegessen – ohne Foto keine Erstattung.",
+        "Keine Beweisfotos gemacht: Essen direkt weggeworfen oder aufgegessen – ohne Foto wird die Prüfung häufig schwieriger.",
         "Zu lange gewartet: Reklamationen bei Lebensmitteln sollten möglichst zeitnah erfolgen.",
-        "Sich mit einem 3€ Gutschein abspeisen lassen, wenn das 30€ Essen kalt und ungenießbar war.",
+        "Ein Gutscheinangebot annehmen, ohne zu prüfen, ob du stattdessen eine Erstattung auf den ursprünglichen Zahlungsweg anfragen möchtest.",
       ]}
       faq={[
         {
@@ -257,7 +257,7 @@ export function WoltSEO() {
       faq={[
         {
           q: "Kann ich Chargeback machen, wenn Wolt mein Konto danach sperrt?",
-          a: "Ein Chargeback kann bei Nichterfüllung ein zulässiger Weg sein. Mögliche Folgen auf Kontenebene hängen vom Einzelfall und den Plattformbedingungen ab.",
+          a: "Eine Zahlungsreklamation kann je nach Belegen und Zahlungsart in Betracht kommen. Mögliche Folgen auf Kontenebene hängen vom Einzelfall und den Plattformbedingungen ab.",
         },
       ]}
     />
@@ -282,16 +282,16 @@ export function UberEatsSEO() {
       steps={[
         "Problem direkt in der Uber Eats App unter 'Hilfe' melden.",
         "Problem genau beschreiben (z.B. 'Bestellung nicht erhalten' oder 'Lebensmittelsicherheitsproblem').",
-        "Uber Eats Support entscheidet oft automatisiert. Wenn abgelehnt, prüfe zusätzlich die Reklamationsmöglichkeiten über den Zahlungsdienstleister.",
+        "Wenn keine nachvollziehbare Lösung angeboten wird, prüfe zusätzlich die Reklamationsmöglichkeiten über deinen Zahlungsdienstleister.",
       ]}
       mistakes={[
-        "Sich vom Bot-Support abspeisen lassen.",
+        "Nur eine kurze App-Antwort speichern und den Sachverhalt nicht zusätzlich mit Fotos, Zeitstempel und Bestelldaten dokumentieren.",
         "Die Lieferung nicht sofort bei Ankunft überprüfen.",
       ]}
       faq={[
         {
           q: "Uber Eats Support lehnt ab, was nun?",
-          a: "Der automatisierte Support lehnt oft erst einmal ab. Eskaliere den Fall über deinen Zahlungsdienstleister (PayPal Käuferschutz oder Kreditkarten-Chargeback).",
+          a: "Prüfe zuerst die Begründung der Antwort und sichere Bestelldaten, Fotos und Supportverlauf. Je nach Zahlungsart kann anschließend eine sachliche Prüfung bei PayPal oder deiner Bank in Betracht kommen.",
         },
       ]}
     />
@@ -301,7 +301,7 @@ export function UberEatsSEO() {
 export function KiwiSEO() {
   return (
     <SEOArticleLayout
-      title="Kiwi.com Steuern & Gebühren ohne 59€ Servicegebühr prüfen"
+      title="Kiwi.com Rückerstattung: Steuern, Gebühren & Zahlungsweg prüfen"
       category="Flug/Reise"
       whenApplies={[
         "Du hast den Flug selbst storniert (nicht-erstattbares Ticket)",
@@ -311,15 +311,15 @@ export function KiwiSEO() {
       evidence={[
         "Buchungsbestätigung",
         "Nachweis über Stornierung / No-Show",
-        "Kiwi.com AGB (die eine Bearbeitungsgebühr von 59€ fordern)",
+        "Kiwi.com AGB oder Gebührenhinweise, die im konkreten Fall angezeigt wurden",
       ]}
       steps={[
         "Fordere Kiwi.com formlos auf, dir die personenbezogenen Steuern und Gebühren nachvollziehbar zu erstatten.",
-        "Wenn Kiwi.com antwortet, dass sie eine Bearbeitungsgebühr (oft 59€) einbehalten: Widerspreche! Solche Gebühren können je nach anwendbarem Recht und Vertragslage angreifbar sein.",
-        "Reagiert Kiwi.com nicht oder verweigert die volle Auszahlung, prüfe eine Reklamation bei der Kreditkarte (z. B. wegen nicht verarbeiteter Gutschrift).",
+        "Wenn Gebühren abgezogen werden, bitte um eine nachvollziehbare Aufschlüsselung und prüfe die Vertragsgrundlage im Einzelfall.",
+        "Wenn keine Klärung gelingt, prüfe je nach Zahlungsart, ob eine Reklamation beim Zahlungsdienstleister in Betracht kommt.",
       ]}
       mistakes={[
-        "Den geringen Restbetrag (nach Abzug der 59€) akzeptieren.",
+        "Ein Teilangebot akzeptieren, ohne die Aufschlüsselung der Beträge und Gebühren zu speichern.",
         "Annehmen, dass bei nicht erstattbaren Tickets nie eine Erstattung von Steuern oder Gebühren geprüft werden kann.",
       ]}
       faq={[
@@ -328,7 +328,7 @@ export function KiwiSEO() {
           a: "Plattformen arbeiten teils mit Bearbeitungsgebühren. Ob und in welcher Höhe das im Einzelfall wirksam ist, hängt von den jeweiligen Vertragsbedingungen und der anwendbaren Rechtslage ab.",
         },
         {
-          q: "Wie hole ich mir die vollen Steuern zurück?",
+          q: "Wie prüfe ich die Erstattung von Steuern und Gebühren?",
           a: "Fordere die Positionen nachvollziehbar und schriftlich an. Falls keine Einigung erfolgt, kann je nach Zahlungsart eine Reklamation über den Zahlungsdienstleister geprüft werden.",
         },
       ]}
@@ -342,7 +342,7 @@ export function WareNichtErhaltenSEO() {
       title="Chargeback: Ware nicht erhalten"
       category="Online-Shopping"
       whenApplies={[
-        "Fake-Shops",
+        "Fake-Shop-Verdacht oder unbekannter Shop",
         "Paket ging auf dem Postweg verloren",
         "Händler liefert trotz Zahlung nicht",
       ]}
@@ -353,8 +353,8 @@ export function WareNichtErhaltenSEO() {
       ]}
       steps={[
         "Händler kontaktieren und um Nachforschung bitten.",
-        "Nach angemessener Wartezeit: Bei PayPal 'Käuferschutz' oder bei der Bank 'Chargeback' beantragen.",
-        "Als Grund 'Ware nicht erhalten' (Item Not Received) angeben.",
+        "Nach angemessener Wartezeit prüfen, ob PayPal-Käuferschutz oder eine Umsatzreklamation bei der Bank in Betracht kommt.",
+        "Den Sachverhalt als 'Ware nicht erhalten' bzw. 'Item Not Received' nachvollziehbar beschreiben.",
         "Kommunikationsverlauf beifügen.",
       ]}
       mistakes={[
@@ -390,7 +390,7 @@ export function AboFalleSEO() {
         "Kündige das Abo möglichst zeitnah schriftlich (E-Mail aufbewahren).",
         "Kontaktiere deine Bank oder PayPal und melde unautorisierte / ungewollte wiederkehrende Zahlungen.",
         "Prüfe mit Bank, Kartenausgeber oder PayPal, wie weitere Abbuchungen für diesen Anbieter verhindert werden können.",
-        "Beantrage eine Prüfung der bereits abgebuchten Beiträge über den passenden Zahlungsweg.",
+        "Bitte um Prüfung der bereits abgebuchten Beiträge über den passenden Zahlungsweg.",
       ]}
       mistakes={[
         "Nur die Karte sperren: Das kündigt das Abo nicht. Du musst auch beim Händler kündigen, sonst können Inkassoforderungen kommen.",

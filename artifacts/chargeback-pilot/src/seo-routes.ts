@@ -114,9 +114,9 @@ export const SEO_ROUTES: SeoRouteMeta[] = [
   },
   {
     path: "/kiwi-rueckerstattung",
-    title: "Kiwi.com Steuern & Gebühren ohne 59€ Servicegebühr prüfen | ChargebackPilot",
+    title: "Kiwi.com Rückerstattung: Steuern, Gebühren & Zahlungsweg prüfen | ChargebackPilot",
     description:
-      "Kiwi.com Rückerstattung prüfen: Steuern, Gebühren, Servicegebühr, Buchungsdaten und möglichen Zahlungsweg strukturiert vorbereiten.",
+      "Kiwi.com Rückerstattung prüfen: Steuern, Gebühren, Buchungsdaten und möglichen Zahlungsweg strukturiert vorbereiten.",
     changefreq: "monthly",
     priority: 0.7,
     type: "guide",

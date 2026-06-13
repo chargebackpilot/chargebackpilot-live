@@ -11,7 +11,7 @@ import {
   Receipt,
   Mail,
   Camera,
-  FileX
+  FileX,
 } from "lucide-react";
 
 export const PAYMENT_METHODS = [
@@ -30,7 +30,7 @@ export const PROBLEM_TYPES = [
   { id: "service_not_rendered", label: "Dienstleistung nicht erbracht", icon: Building2 },
   { id: "flight_travel", label: "Flug / Reise / Hotel Problem", icon: Plane },
   { id: "subscription", label: "Abo / ungewollte Abbuchung", icon: Repeat2 },
-  { id: "fraud", label: "Betrug / Scam Verdacht", icon: AlertTriangle },
+  { id: "fraud", label: "Betrugs-/Scam-Verdacht", icon: AlertTriangle },
   { id: "food_delivery", label: "Lieferdienst / Essen unbrauchbar", icon: UtensilsCrossed },
   { id: "refund_promised", label: "Rückerstattung zugesagt aber nicht erhalten", icon: RefreshCcw },
   { id: "other", label: "Sonstiges", icon: ChevronRight },
@@ -108,10 +108,22 @@ export const KNOWN_MERCHANTS: Record<string, Array<{ name: string; emoji: string
 };
 
 export const MERCHANT_RESPONSE_OPTIONS = [
-  { id: "keine_antwort", label: "Keine Antwort erhalten", sub: "Händler reagiert nicht auf Kontaktaufnahme" },
+  {
+    id: "keine_antwort",
+    label: "Keine Antwort erhalten",
+    sub: "Händler reagiert nicht auf Kontaktaufnahme",
+  },
   { id: "abgelehnt", label: "Händler hat abgelehnt", sub: "Erstattung wurde verweigert" },
-  { id: "versprach_rueckerstattung", label: "Erstattung versprochen — aber nicht gezahlt", sub: "Händler sagte Rückzahlung zu, nichts kam" },
-  { id: "teilerstattung", label: "Nur Teilerstattung angeboten", sub: "Händler zahlt weniger als der strittige Betrag" },
+  {
+    id: "versprach_rueckerstattung",
+    label: "Erstattung versprochen — aber nicht gezahlt",
+    sub: "Händler sagte Rückzahlung zu, nichts kam",
+  },
+  {
+    id: "teilerstattung",
+    label: "Nur Teilerstattung angeboten",
+    sub: "Händler zahlt weniger als der strittige Betrag",
+  },
   { id: "sonstiges", label: "Sonstiges", sub: "Andere Reaktion" },
 ];
 
@@ -147,14 +159,21 @@ export const EVIDENCE_GROUPS = [
     label: "Keine Beweise",
     icon: FileX,
     items: [
-      { id: "none", label: "Keine Beweise vorhanden", hint: "KI analysiert trotzdem die Rechtslage" },
+      {
+        id: "none",
+        label: "Keine Beweise vorhanden",
+        hint: "KI analysiert trotzdem die Rechtslage",
+      },
     ],
   },
 ];
 
 export type QuestionType = "textarea" | "radio" | "date" | "number" | "multiselect";
 
-export interface QuestionOption { value: string; label: string }
+export interface QuestionOption {
+  value: string;
+  label: string;
+}
 
 export interface Question {
   id: string;
@@ -183,7 +202,10 @@ export const STRUCTURED_QUESTIONS: Record<string, Question[]> = {
       options: [
         { value: "Kein Tracking vorhanden", label: "Kein Tracking vorhanden" },
         { value: "Seit Wochen ohne Update", label: "Seit Wochen ohne Update" },
-        { value: "Als zugestellt markiert – nicht erhalten", label: "Als zugestellt markiert, aber nicht erhalten" },
+        {
+          value: "Als zugestellt markiert – nicht erhalten",
+          label: "Als zugestellt markiert, aber nicht erhalten",
+        },
         { value: "Paket zurück an Händler gegangen", label: "Paket zurück an Händler gegangen" },
       ],
     },
@@ -217,8 +239,14 @@ export const STRUCTURED_QUESTIONS: Record<string, Question[]> = {
       type: "radio",
       required: true,
       options: [
-        { value: "Die Airline / der Reiseanbieter hat storniert", label: "Airline / Anbieter hat storniert" },
-        { value: "Ich musste stornieren (höhere Gewalt / außerordentlich)", label: "Ich – höhere Gewalt" },
+        {
+          value: "Die Airline / der Reiseanbieter hat storniert",
+          label: "Airline / Anbieter hat storniert",
+        },
+        {
+          value: "Ich musste stornieren (höhere Gewalt / außerordentlich)",
+          label: "Ich – höhere Gewalt",
+        },
         { value: "Ich habe freiwillig storniert", label: "Ich – freiwillig" },
       ],
     },
@@ -318,14 +346,15 @@ export const STRUCTURED_QUESTIONS: Record<string, Question[]> = {
       id: "expected_by",
       label: "Bis wann sollte die Erstattung kommen?",
       type: "textarea",
-      placeholder: 'z.B. "innerhalb 5–7 Werktage", "innerhalb 14 Tage", kein konkretes Datum genannt...',
+      placeholder:
+        'z.B. "innerhalb 5–7 Werktage", "innerhalb 14 Tage", kein konkretes Datum genannt...',
       rows: 1,
     },
   ],
   fraud: [
     {
       id: "fraud_discovery",
-      label: "Wie hast du den Betrug entdeckt?",
+      label: "Wie ist der Verdacht entstanden?",
       type: "textarea",
       placeholder: "z.B. Fake-Shop, nie geliefertes Produkt, Phishing-Mail, gefälschte Website...",
       rows: 2,
@@ -333,7 +362,7 @@ export const STRUCTURED_QUESTIONS: Record<string, Question[]> = {
     },
     {
       id: "fraud_timing",
-      label: "Wann hast du gemerkt, dass es Betrug ist?",
+      label: "Wann ist dir das Problem aufgefallen?",
       type: "radio",
       options: [
         { value: "Sofort / innerhalb 1 Woche", label: "Sofort / innerhalb 1 Woche" },
@@ -356,7 +385,8 @@ export const STRUCTURED_QUESTIONS: Record<string, Question[]> = {
       id: "service_description",
       label: "Welche Dienstleistung wurde nicht erbracht?",
       type: "textarea",
-      placeholder: "z.B. Online-Kurs nie freigeschaltet, Reparatur nicht durchgeführt, Termin nicht eingehalten...",
+      placeholder:
+        "z.B. Online-Kurs nie freigeschaltet, Reparatur nicht durchgeführt, Termin nicht eingehalten...",
       rows: 2,
       required: true,
     },
@@ -402,7 +432,13 @@ export const STRUCTURED_QUESTIONS: Record<string, Question[]> = {
   ],
 };
 
-export const STEP_TITLES = ["Zahlungsart", "Problemtyp", "Händlerdetails", "Beweislage", "Falldetails"];
+export const STEP_TITLES = [
+  "Zahlungsart",
+  "Problemtyp",
+  "Händlerdetails",
+  "Beweislage",
+  "Falldetails",
+];
 
 export const LOADING_STEPS = [
   "Falldetails strukturieren",

@@ -220,7 +220,7 @@ const metaByPath: Array<{ match: RegExp; title: string; description: string; noi
       match: /^\/$/,
       title: "ChargebackPilot · KI-Hilfe für Chargeback, PayPal-Käuferschutz & Reklamation 2026",
       description:
-        "Ware nicht erhalten, Flug ausgefallen, doppelt belastet? ChargebackPilot prüft deinen Fall mit KI in 60 Sekunden und liefert dir 3 fertige Textvorlagen.",
+        "Ware nicht erhalten, Flug ausgefallen, doppelt belastet? ChargebackPilot strukturiert deinen Fall mit KI und liefert unverbindliche Textentwürfe.",
     },
     {
       match: /^\/vorlagen-generator$/,
@@ -294,7 +294,7 @@ const metaByPath: Array<{ match: RegExp; title: string; description: string; noi
       match: /^\/vergleich\//,
       title: "Vergleich: PayPal vs Kreditkarte vs Klarna · ChargebackPilot",
       description:
-        "Welcher Weg ist in deinem Fall am besten? Vergleich von Fristen, Erfolgschancen und Vorgehen bei Rückerstattungen.",
+        "Welcher Weg passt zu deinem Fall? Vergleich von Fristen, Belegen und typischen Abläufen bei Rückerstattungen.",
     },
   ];
 

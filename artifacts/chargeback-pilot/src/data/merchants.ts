@@ -81,8 +81,8 @@ export const PROBLEMS: ProblemDef[] = [
   },
   {
     slug: "betrugsverdacht",
-    label: "Betrugsverdacht / Fake-Shop",
-    searchPhrase: "Fake-Shop oder Betrug",
+    label: "Betrugs-/Fake-Shop-Verdacht",
+    searchPhrase: "Fake-Shop-Verdacht",
     paymentMethods: ["kreditkarte", "paypal"],
     wizardProblemId: "fraud",
   },
@@ -117,7 +117,7 @@ export const MERCHANTS: MerchantDef[] = [
     country: "USA",
     trustLevel: "risky",
     description:
-      "US-Marktplatz mit Schwerpunkt auf chinesische Drittanbieter. Verbraucherzentralen warnen regelmäßig vor Produkt- und Lieferproblemen.",
+      "US-Marktplatz mit Schwerpunkt auf internationalen Drittanbietern. Bei Streitfällen sind Angebotsseite, Tracking und Verkäuferkontakt besonders wichtig.",
     problems: ["ware-nicht-erhalten", "ware-defekt", "betrugsverdacht"],
   },
   {
@@ -137,7 +137,7 @@ export const MERCHANTS: MerchantDef[] = [
     country: "USA / Deutschland",
     trustLevel: "trusted",
     description:
-      "Größter Online-Händler in Deutschland. Eigener A-bis-Z--Schutz; bei Drittanbietern oft zusätzlicher Chargeback nötig.",
+      "Größter Online-Händler in Deutschland. Neben dem A-bis-Z-Schutz kann bei Drittanbieterfällen der konkrete Zahlungsweg relevant sein.",
     problems: ["ware-nicht-erhalten", "ware-defekt", "abbuchung-ohne-zustimmung"],
   },
   {
@@ -199,7 +199,7 @@ export const MERCHANTS: MerchantDef[] = [
     country: "Irland",
     trustLevel: "mixed",
     description:
-      "Irischer Billigflieger. EU-Fluggastrechte (VO 261/2004) gelten; Erstattungen oft erst nach Mahnung oder Chargeback.",
+      "Irischer Billigflieger. Bei gestrichenen Flügen sind EU-Fluggastrechte, Anbieterkommunikation und Zahlungsweg sauber zu trennen.",
     problems: ["flug-storniert"],
   },
   {
@@ -209,7 +209,7 @@ export const MERCHANTS: MerchantDef[] = [
     country: "Deutschland",
     trustLevel: "trusted",
     description:
-      "Deutsche Premium-Airline. Erstattungsprozess seit 2020 deutlich verbessert, aber bei Stornierungen ist ein Chargeback weiterhin sinnvoll als Druckmittel.",
+      "Deutsche Premium-Airline. Bei Stornierungen helfen Buchungscode, Stornierungsnachricht und eine klare Dokumentation des Erstattungsstands.",
     problems: ["flug-storniert"],
   },
   {
@@ -241,7 +241,7 @@ export const MERCHANTS: MerchantDef[] = [
     country: "USA / Irland",
     trustLevel: "trusted",
     description:
-      "Privatunterkunfts-Plattform mit eigenem AirCover-Schutz. Bei abgelehnten Beschwerden ist Chargeback über die Kreditkarte möglich.",
+      "Privatunterkunfts-Plattform mit eigenem AirCover-Schutz. Bei abgelehnten Beschwerden kann je nach Zahlungsart eine weitere Prüfung in Betracht kommen.",
     problems: ["hotel-anders-als-beschrieben"],
   },
 
@@ -253,7 +253,7 @@ export const MERCHANTS: MerchantDef[] = [
     country: "Niederlande / Deutschland",
     trustLevel: "trusted",
     description:
-      "Größter Lieferdienst in Deutschland. Häufige Gründe für Chargebacks sind unvollständige, kalte oder gar nicht gelieferte Bestellungen.",
+      "Großer Lieferdienst in Deutschland. Typische Klärungspunkte sind unvollständige, kalte oder nicht gelieferte Bestellungen.",
     problems: ["lieferung-falsch", "ware-nicht-erhalten", "abbuchung-ohne-zustimmung"],
   },
   {
@@ -273,7 +273,7 @@ export const MERCHANTS: MerchantDef[] = [
     country: "USA / Niederlande",
     trustLevel: "trusted",
     description:
-      "Internationaler Essenslieferdienst. Wenn Bestellungen storniert werden oder Fahrer den Umweg nehmen, kommt das Essen oft kalt an.",
+      "Internationaler Essenslieferdienst. Bei Problemen zählen App-Status, Lieferzeit, Fotos und Supportverlauf besonders.",
     problems: ["lieferung-falsch", "ware-nicht-erhalten"],
   },
 
@@ -307,7 +307,7 @@ export const MERCHANTS: MerchantDef[] = [
     country: "Tschechien",
     trustLevel: "mixed",
     description:
-      "Flugsuchmaschine und Buchungsportal. Verlangt oft hohe eigene Gebühren für die Erstattung von Steuern und Flughafengebühren.",
+      "Flugsuchmaschine und Buchungsportal. Bei Erstattungsfragen sind Buchungsrolle, Gebührenaufstellung und Zahlungsweg besonders wichtig.",
     problems: ["flug-storniert", "abbuchung-ohne-zustimmung"],
   },
 
@@ -329,7 +329,7 @@ export const MERCHANTS: MerchantDef[] = [
     country: "USA",
     trustLevel: "trusted",
     description:
-      "Streaming-Anbieter. Bei doppelten oder unautorisierten Abbuchungen kontaktiert man zuerst Netflix-Support; Chargeback als Notfallhebel.",
+      "Streaming-Anbieter. Bei doppelten oder unautorisierten Abbuchungen sollten Supportkontakt, Kontoübersicht und Zahlungsweg zeitnah geprüft werden.",
     problems: ["abbuchung-ohne-zustimmung"],
   },
   {
@@ -741,7 +741,7 @@ function applicableScenarios(m: MerchantDef, p: ProblemDef): string[] {
     betrugsverdacht: [
       `Du hast den begründeten Verdacht, dass es sich bei ${m.name} oder einem Drittanbieter um einen Fake-Shop handelt.`,
       "Die Website ist plötzlich offline oder du erhältst keine Antwort mehr.",
-      "Du hast eine Anzeige bei der Polizei erstattet (empfohlen).",
+      "Du hast Belege gesichert und gegebenenfalls bereits eine Anzeige oder Meldung dokumentiert.",
     ],
   };
   return base[p.slug] ?? [];
