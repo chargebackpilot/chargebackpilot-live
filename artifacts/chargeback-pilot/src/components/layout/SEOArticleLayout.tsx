@@ -8,6 +8,7 @@ import {
   ShieldCheck,
   CalendarCheck,
   PenLine,
+  Sparkles,
 } from "lucide-react";
 import {
   Accordion,
@@ -1107,11 +1108,19 @@ export function SEOArticleLayout({
         </header>
 
         <div className="container mx-auto max-w-3xl px-4 mt-12 space-y-16">
-          <section className="rounded-2xl border bg-slate-50 p-6 shadow-sm">
-            <p className="mb-2 text-xs font-bold uppercase tracking-wider text-primary">
-              Kurzantwort
+          <section className="ai-summary-card rounded-2xl border border-blue-200/70 bg-slate-50 p-6 shadow-sm">
+            <div className="mb-3 flex flex-wrap items-center gap-2">
+              <span className="inline-flex items-center gap-1.5 rounded-full border border-blue-200 bg-white/85 px-3 py-1 text-xs font-bold uppercase tracking-wider text-primary shadow-sm">
+                <Sparkles className="ai-summary-sparkle h-3.5 w-3.5" />
+                KI-Kurzantwort
+              </span>
+              <span className="text-xs text-muted-foreground">
+                automatisch verdichtet, redaktionell eingebettet
+              </span>
+            </div>
+            <p className="ai-summary-text text-base leading-relaxed text-foreground/90">
+              {shortAnswer}
             </p>
-            <p className="text-base leading-relaxed text-foreground/90">{shortAnswer}</p>
           </section>
 
           {/* Wann greift es */}
