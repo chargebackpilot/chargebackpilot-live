@@ -4,6 +4,12 @@ import { Breadcrumbs } from "@/components/Breadcrumbs";
 import { SeoHead } from "@/components/SeoHead";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
 import { AlertTriangle, ArrowRight, ShieldCheck, Search } from "lucide-react";
 import { useState } from "react";
 
@@ -13,44 +19,113 @@ interface ScamSignal {
 }
 
 const RED_FLAGS: ScamSignal[] = [
-  { title: "Unrealistisch niedrige Preise", description: "Marken-Sneaker für 19 €, AirPods für 25 € — wenn ein Angebot zu gut wirkt, ist es das meist." },
-  { title: "Nur Vorkasse oder Krypto", description: "Seriöse Shops bieten PayPal, Klarna oder Kreditkarte. Wer ausschließlich Überweisung verlangt, schließt Käuferschutz aktiv aus." },
-  { title: "Kein Impressum oder Fantasie-Anschrift", description: "Pflicht in Deutschland: vollständiger Firmenname, Anschrift, Handelsregisternummer, USt-ID. Fehlt das, fehlt der Vertragspartner." },
-  { title: "Brandneue Domain ohne Reviews", description: "Eine WHOIS-Abfrage zeigt, wie alt die Domain wirklich ist. Unter 6 Monate + keine Trustpilot/Google-Bewertungen = hohes Risiko." },
-  { title: "Schlechtes Deutsch & Auto-Übersetzungen", description: "Wörtlich übersetzte Produktbeschreibungen sind ein klassisches Indiz für Dropshipping aus Drittländern." },
-  { title: "Kein Widerrufsrecht oder unklare AGB", description: "Unklare oder fehlende Verbraucherinformationen sind ein deutliches Warnsignal und können rechtlich problematisch sein." },
-  { title: "Drohende Mahnungen statt sauberer Rechnung", description: "Inkasso-Anschreiben für Bestellungen, die du nie getätigt hast — klassisches Abo-Falle/Inkasso-Scam-Muster." },
-  { title: "Social-Ads mit Promi-Fakes", description: "Künstlich erzeugte Influencer- oder Promi-Testimonials in TikTok-/Instagram-Ads sind ein wachsendes Scam-Muster 2026." },
+  {
+    title: "Unrealistisch niedrige Preise",
+    description:
+      "Marken-Sneaker für 19 €, AirPods für 25 € — wenn ein Angebot zu gut wirkt, ist es das meist.",
+  },
+  {
+    title: "Nur Vorkasse oder Krypto",
+    description:
+      "Seriöse Shops bieten PayPal, Klarna oder Kreditkarte. Wer ausschließlich Überweisung verlangt, schließt Käuferschutz aktiv aus.",
+  },
+  {
+    title: "Kein Impressum oder Fantasie-Anschrift",
+    description:
+      "Pflicht in Deutschland: vollständiger Firmenname, Anschrift, Handelsregisternummer, USt-ID. Fehlt das, fehlt der Vertragspartner.",
+  },
+  {
+    title: "Brandneue Domain ohne Reviews",
+    description:
+      "Eine WHOIS-Abfrage zeigt, wie alt die Domain wirklich ist. Unter 6 Monate + keine Trustpilot/Google-Bewertungen = hohes Risiko.",
+  },
+  {
+    title: "Schlechtes Deutsch & Auto-Übersetzungen",
+    description:
+      "Wörtlich übersetzte Produktbeschreibungen sind ein klassisches Indiz für Dropshipping aus Drittländern.",
+  },
+  {
+    title: "Kein Widerrufsrecht oder unklare AGB",
+    description:
+      "Unklare oder fehlende Verbraucherinformationen sind ein deutliches Warnsignal und können rechtlich problematisch sein.",
+  },
+  {
+    title: "Drohende Mahnungen statt sauberer Rechnung",
+    description:
+      "Inkasso-Anschreiben für Bestellungen, die du nie getätigt hast — klassisches Abo-Falle/Inkasso-Scam-Muster.",
+  },
+  {
+    title: "Social-Ads mit Promi-Fakes",
+    description:
+      "Künstlich erzeugte Influencer- oder Promi-Testimonials in TikTok-/Instagram-Ads sind ein wachsendes Scam-Muster 2026.",
+  },
 ];
 
 const SCAM_CATEGORIES = [
   {
     name: "Fake-Marken-Shops",
     examples: "Sneaker, Designer-Mode, Sonnenbrillen",
-    action: "Zahlungsdienstleister zeitnah kontaktieren und prüfen, ob eine Reklamation wegen Fälschung oder abweichender Ware in Betracht kommt.",
+    action:
+      "Zahlungsdienstleister zeitnah kontaktieren und prüfen, ob eine Reklamation wegen Fälschung oder abweichender Ware in Betracht kommt.",
   },
   {
     name: "Influencer-Dropshipping",
     examples: "Beauty-Tools, Fitness-Gadgets, AI-Devices",
-    action: "PayPal-Käuferschutz bzw. Kartenreklamation anhand deiner Belege prüfen; Fristen direkt beim Anbieter kontrollieren.",
+    action:
+      "PayPal-Käuferschutz bzw. Kartenreklamation anhand deiner Belege prüfen; Fristen direkt beim Anbieter kontrollieren.",
   },
   {
     name: "Abo-Fallen über Bauernfänger-Anzeigen",
     examples: "Gewinnspiele, kostenlose Proben, Promi-Diäten",
-    action: "SEPA-Rückgabemöglichkeit bei der Bank prüfen und den Anbieter schriftlich kontaktieren bzw. kündigen.",
+    action:
+      "SEPA-Rückgabemöglichkeit bei der Bank prüfen und den Anbieter schriftlich kontaktieren bzw. kündigen.",
   },
   {
     name: "Fake-Inkasso & Phishing",
     examples: "Vermeintliche Mahnungen, Paket-SMS",
-    action: "Links nicht ungeprüft anklicken, Forderung prüfen lassen und bei Verdacht Verbraucherzentrale oder Polizei kontaktieren.",
+    action:
+      "Links nicht ungeprüft anklicken, Forderung prüfen lassen und bei Verdacht Verbraucherzentrale oder Polizei kontaktieren.",
+  },
+];
+
+const FAQS = [
+  {
+    q: "Was sollte ich als Erstes tun, wenn ich einen Fake-Shop vermute?",
+    a: "Sichere sofort Belege: Bestellbestätigung, Zahlungsnachweis, Shop-URL, Screenshots der Produktseite, Impressum, E-Mails und Tracking. Klicke keine verdächtigen Links mehr an und prüfe danach den passenden Zahlungsweg: PayPal, Kreditkarte, Klarna, SEPA oder Banküberweisung.",
+  },
+  {
+    q: "Kann ich bei einem Fake-Shop ein Chargeback beantragen?",
+    a: "Bei Kreditkartenzahlung kann eine Umsatzreklamation je nach Kartenregeln und Belegen in Betracht kommen, etwa bei nicht gelieferter oder deutlich abweichender Ware. Die Bank entscheidet im Einzelfall und kann Händlerkontakt oder weitere Nachweise verlangen.",
+  },
+  {
+    q: "Hilft PayPal Käuferschutz bei Fake-Shops?",
+    a: "PayPal kann bei nicht gelieferter oder erheblich abweichender Ware relevant sein, wenn die Zahlung käuferschutzfähig war. Entscheidend sind Transaktion, Fristen im PayPal-Konto, Artikelbeschreibung, Tracking und deine Kommunikation mit dem Händler.",
+  },
+  {
+    q: "Was ist bei Überweisung an einen Fake-Shop möglich?",
+    a: "Bei Überweisung ist eine Rückholung oft schwieriger als bei Kreditkarte oder PayPal. Kontaktiere deine Bank trotzdem sofort, frage nach Rückrufmöglichkeiten und sichere alle Daten. Bei Betrugsverdacht kann zusätzlich eine Anzeige sinnvoll sein.",
+  },
+  {
+    q: "Sollte ich eine Anzeige erstatten?",
+    a: "Bei konkretem Betrugsverdacht kann eine Anzeige sinnvoll sein, insbesondere wenn der Shop verschwunden ist, falsche Identitäten nutzt oder weitere Forderungen entstehen. Die Anzeigenbestätigung kann als Beleg gegenüber Bank oder Zahlungsdienstleister hilfreich sein.",
+  },
+  {
+    q: "Woran erkenne ich Dropshipping statt Fake-Shop?",
+    a: "Dropshipping ist nicht automatisch Betrug. Warnsignale sind aber stark abweichende Ware, verschleierte Lieferzeiten, fehlendes Impressum, keine erreichbare Kundenadresse oder Produktbilder, die massenhaft auf anderen Seiten auftauchen. Entscheidend ist, was konkret versprochen und geliefert wurde.",
+  },
+  {
+    q: "Was mache ich, wenn bereits Inkasso-Mails kommen?",
+    a: "Nicht panisch zahlen. Prüfe, ob die Forderung zu einer echten Bestellung gehört, sichere alle Schreiben und widersprich unklaren Forderungen sachlich. Bei hohem Druck oder unklarer Rechtslage können Verbraucherzentrale oder anwaltliche Prüfung sinnvoll sein.",
   },
 ];
 
 export default function ScamShopsPage() {
   const [query, setQuery] = useState("");
 
-  const title = "Bekannte Scam-Muster & Fake-Shops 2026 — was du jetzt tun kannst | ChargebackPilot";
-  const description = "Verdacht auf Fake-Shop oder Internet-Betrug? Die wichtigsten Warnsignale 2026 plus eine strukturierte Anleitung zu Chargeback, PayPal-Käuferschutz und Lastschriftrückruf.";
+  const title =
+    "Bekannte Scam-Muster & Fake-Shops 2026 — was du jetzt tun kannst | ChargebackPilot";
+  const description =
+    "Verdacht auf Fake-Shop oder Internet-Betrug? Die wichtigsten Warnsignale 2026 plus eine strukturierte Anleitung zu Chargeback, PayPal-Käuferschutz und Lastschriftrückruf.";
 
   const articleSchema = {
     "@context": "https://schema.org",
@@ -68,11 +143,27 @@ export default function ScamShopsPage() {
     dateModified: "2026-05-20",
     mainEntityOfPage: "https://chargebackpilot.de/scam-shops-2026",
   };
+  const faqSchema = {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: FAQS.map((faq) => ({
+      "@type": "Question",
+      name: faq.q,
+      acceptedAnswer: { "@type": "Answer", text: faq.a },
+    })),
+  };
 
   return (
     <MainLayout>
-      <SeoHead title={title} description={description} canonical="/scam-shops-2026" jsonLd={[articleSchema]} />
-      <Breadcrumbs items={[{ label: "Ratgeber", href: "/ratgeber" }, { label: "Scam-Shops 2026" }]} />
+      <SeoHead
+        title={title}
+        description={description}
+        canonical="/scam-shops-2026"
+        jsonLd={[articleSchema, faqSchema]}
+      />
+      <Breadcrumbs
+        items={[{ label: "Ratgeber", href: "/ratgeber" }, { label: "Scam-Shops 2026" }]}
+      />
 
       <article className="pb-20">
         <header className="bg-gradient-to-b from-red-50 to-background py-12 px-4 border-b">
@@ -85,12 +176,13 @@ export default function ScamShopsPage() {
               Fake-Shop erkannt? So gehst du strukturiert vor.
             </h1>
             <p className="text-lg text-muted-foreground mb-6">
-              Die 8 wichtigsten Warnsignale 2026 plus die strukturierte Schritt-für-Schritt-Orientierung
-              für PayPal-Käuferschutz, Kreditkarten-Chargeback und SEPA-Lastschriftrückgabe.
+              Die 8 wichtigsten Warnsignale 2026 plus die strukturierte
+              Schritt-für-Schritt-Orientierung für PayPal-Käuferschutz, Kreditkarten-Chargeback und
+              SEPA-Lastschriftrückgabe.
             </p>
             <Link href="/vorlagen-generator?problem=fraud">
               <Button size="lg" className="gap-2">
-              Verdachtsfall jetzt einordnen
+                Verdachtsfall jetzt einordnen
                 <ArrowRight className="w-4 h-4" />
               </Button>
             </Link>
@@ -118,7 +210,9 @@ export default function ScamShopsPage() {
 
           {/* Categories */}
           <section>
-            <h2 className="text-2xl font-bold mb-5 border-b pb-2">4 Scam-Kategorien — und ein sinnvoller nächster Schritt</h2>
+            <h2 className="text-2xl font-bold mb-5 border-b pb-2">
+              4 Scam-Kategorien — und ein sinnvoller nächster Schritt
+            </h2>
             <div className="grid gap-4">
               {SCAM_CATEGORIES.map((c, i) => (
                 <Card key={i}>
@@ -135,6 +229,31 @@ export default function ScamShopsPage() {
             </div>
           </section>
 
+          <section>
+            <h2 className="text-2xl font-bold mb-5 border-b pb-2">
+              Beweise sichern, bevor der Shop verschwindet
+            </h2>
+            <div className="space-y-4 text-foreground/90 leading-relaxed">
+              <p>
+                Bei Fake-Shop-Verdacht zählt Geschwindigkeit. Viele Seiten ändern Produkttexte,
+                Impressum oder Lieferhinweise nachträglich oder gehen ganz offline. Sichere deshalb
+                Screenshots mit Datum, die komplette URL, Bestellnummer, Zahlungsbeleg und jede
+                Antwort des Shops.
+              </p>
+              <p>
+                Besonders wertvoll sind Belege, die das Versprechen des Shops und die Abweichung
+                zeigen: Produktseite, Lieferzeit, Preis, Versandstatus, erhaltene Ware oder
+                Nichtlieferung. Für Zahlungsdienstleister ist eine kurze Chronologie oft hilfreicher
+                als ein langer Fließtext.
+              </p>
+              <p>
+                Wenn du mit Kreditkarte, PayPal oder Klarna bezahlt hast, prüfe den jeweiligen
+                Konfliktweg früh. Bei Überweisung solltest du deine Bank sehr schnell kontaktieren,
+                weil Rückrufmöglichkeiten meist zeitkritisch sind.
+              </p>
+            </div>
+          </section>
+
           {/* Quick lookup */}
           <section className="bg-muted p-6 rounded-2xl">
             <h2 className="text-xl font-bold mb-3 flex items-center gap-2">
@@ -142,7 +261,8 @@ export default function ScamShopsPage() {
               Shop-Check in 30 Sekunden
             </h2>
             <p className="text-sm text-muted-foreground mb-4">
-              Gib hier den Shop-Namen oder die URL ein. Wir verlinken dir die passende Quick-Anleitung.
+              Gib hier den Shop-Namen oder die URL ein. Wir verlinken dir die passende
+              Quick-Anleitung.
             </p>
             <div className="flex gap-2">
               <input
@@ -153,21 +273,40 @@ export default function ScamShopsPage() {
                 className="flex-1 px-3 py-2 rounded-md border bg-background text-sm"
                 aria-label="Shop-Name oder URL"
               />
-              <Link href={`/vorlagen-generator?problem=fraud${query ? `&merchant=${encodeURIComponent(query)}` : ""}`}>
+              <Link
+                href={`/vorlagen-generator?problem=fraud${query ? `&merchant=${encodeURIComponent(query)}` : ""}`}
+              >
                 <Button>Fall starten</Button>
               </Link>
             </div>
             <p className="text-xs text-muted-foreground mt-3">
-              <strong>Wichtig:</strong> Wir prüfen den Shop nicht öffentlich — die Verdachtsmeldung bleibt anonym
-              in deiner Wizard-Eingabe.
+              <strong>Wichtig:</strong> Wir prüfen den Shop nicht öffentlich — die Verdachtsmeldung
+              bleibt anonym in deiner Wizard-Eingabe.
             </p>
+          </section>
+
+          <section>
+            <h2 className="text-2xl font-bold mb-5 border-b pb-2">Häufige Fragen zu Fake-Shops</h2>
+            <Accordion type="single" collapsible className="w-full">
+              {FAQS.map((faq, index) => (
+                <AccordionItem key={faq.q} value={`faq-${index}`}>
+                  <AccordionTrigger className="text-left">{faq.q}</AccordionTrigger>
+                  <AccordionContent className="text-muted-foreground leading-relaxed">
+                    {faq.a}
+                  </AccordionContent>
+                </AccordionItem>
+              ))}
+            </Accordion>
           </section>
 
           {/* CTA */}
           <section className="bg-primary text-primary-foreground p-6 md:p-8 rounded-2xl text-center">
-            <h2 className="text-xl md:text-2xl font-bold mb-2">Schon abgebucht? Handle möglichst zeitnah.</h2>
+            <h2 className="text-xl md:text-2xl font-bold mb-2">
+              Schon abgebucht? Handle möglichst zeitnah.
+            </h2>
             <p className="text-primary-foreground/95 mb-5 text-sm md:text-base">
-              Typische Fristen unterscheiden sich je nach Zahlungsart. Wir helfen dir, deine Unterlagen strukturiert vorzubereiten und die passenden Anbieterregeln zu prüfen.
+              Typische Fristen unterscheiden sich je nach Zahlungsart. Wir helfen dir, deine
+              Unterlagen strukturiert vorzubereiten und die passenden Anbieterregeln zu prüfen.
             </p>
             <Link href="/vorlagen-generator?problem=fraud">
               <Button size="lg" variant="secondary" className="gap-2">

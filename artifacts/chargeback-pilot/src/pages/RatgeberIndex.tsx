@@ -255,6 +255,38 @@ export default function RatgeberIndex() {
           </div>
         </section>
 
+        <section className="mb-16 rounded-2xl border bg-muted/30 p-6 md:p-8">
+          <h2 className="text-2xl font-bold mb-4">Wie du den passenden Guide auswählst</h2>
+          <div className="grid gap-5 md:grid-cols-3">
+            <div>
+              <h3 className="font-semibold mb-2">1. Zahlungsweg klären</h3>
+              <p className="text-sm leading-relaxed text-muted-foreground">
+                PayPal, Kreditkarte, Klarna, SEPA oder Überweisung haben unterschiedliche Regeln.
+                Starte deshalb nicht beim Händlernamen, sondern bei der tatsächlichen Zahlung.
+              </p>
+            </div>
+            <div>
+              <h3 className="font-semibold mb-2">2. Problemtyp eingrenzen</h3>
+              <p className="text-sm leading-relaxed text-muted-foreground">
+                Nicht geliefert, falsch geliefert, Flug storniert oder Abo-Falle: Der Problemtyp
+                entscheidet, welche Belege und Formulierungen am wichtigsten sind.
+              </p>
+            </div>
+            <div>
+              <h3 className="font-semibold mb-2">3. Belege sichern</h3>
+              <p className="text-sm leading-relaxed text-muted-foreground">
+                Screenshots, Zahlungsnachweis, Tracking und Händlerkommunikation machen aus einer
+                Beschwerde eine prüfbare Fallakte. Genau darauf sind die Guides ausgelegt.
+              </p>
+            </div>
+          </div>
+          <p className="mt-5 text-sm leading-relaxed text-muted-foreground">
+            Alle Ratgeber sind als praktische Orientierung für Verbraucher in Deutschland gedacht.
+            Sie ersetzen keine Rechtsberatung, vermeiden Erfolgsversprechen und nennen Fristen nur
+            als allgemeine Hinweise, die du beim jeweiligen Anbieter prüfen solltest.
+          </p>
+        </section>
+
         {/* Core guides */}
         <section className="mb-16">
           <h2 className="text-2xl font-bold mb-5">Nach Zahlungsart & Problemtyp</h2>
