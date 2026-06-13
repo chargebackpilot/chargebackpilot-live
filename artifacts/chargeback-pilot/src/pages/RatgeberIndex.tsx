@@ -152,6 +152,36 @@ const QUICK_PATHS = [
   },
 ];
 
+const ESCALATION_PATHS = [
+  {
+    title: "Erstkontakt vorbereiten",
+    desc: "Für Fälle, in denen der Händler noch reagieren könnte und du eine saubere schriftliche Grundlage brauchst.",
+    links: [
+      { label: "Händler-Vorlage", href: "/rueckerstattung-haendler-vorlage" },
+      { label: "Ware fehlt", href: "/ware-nicht-erhalten-musterbrief" },
+      { label: "Abo widersprechen", href: "/abo-falle-musterbrief" },
+    ],
+  },
+  {
+    title: "Zahlungsdienstleister einschalten",
+    desc: "Wenn der Händler nicht reagiert, eine Zahlung streitig ist oder eine Leistung nicht erbracht wurde.",
+    links: [
+      { label: "PayPal Käuferschutz", href: "/paypal-chargeback" },
+      { label: "Kreditkarte", href: "/visa-mastercard-chargeback" },
+      { label: "Klarna", href: "/klarna-reklamation" },
+    ],
+  },
+  {
+    title: "Sonderfälle einordnen",
+    desc: "Für Fälle mit höherem Erklärungsbedarf, etwa Scam-Shops, Reason Codes oder Reisevermittler.",
+    links: [
+      { label: "Scam-Shops", href: "/scam-shops-2026" },
+      { label: "Visa 13.1", href: "/visa-reason-code-13-1" },
+      { label: "Kiwi.com", href: "/kiwi-rueckerstattung" },
+    ],
+  },
+];
+
 export default function RatgeberIndex() {
   const priorityMerchantProblems = getAllSeoQualityResults().flatMap((result) => {
     if (result.status !== "index") return [];
@@ -285,6 +315,34 @@ export default function RatgeberIndex() {
             Sie ersetzen keine Rechtsberatung, vermeiden Erfolgsversprechen und nennen Fristen nur
             als allgemeine Hinweise, die du beim jeweiligen Anbieter prüfen solltest.
           </p>
+        </section>
+
+        <section className="mb-16">
+          <h2 className="text-2xl font-bold mb-5">Nach Eskalationsstufe</h2>
+          <div className="grid gap-4 md:grid-cols-3">
+            {ESCALATION_PATHS.map((group) => (
+              <Card key={group.title} className="h-full">
+                <CardHeader>
+                  <CardTitle className="text-lg">{group.title}</CardTitle>
+                  <CardDescription className="text-sm leading-relaxed">
+                    {group.desc}
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="pt-0 flex flex-wrap gap-2">
+                  {group.links.map((link) => (
+                    <Link
+                      key={link.href}
+                      href={link.href}
+                      className="inline-flex items-center gap-1 rounded-md border px-2.5 py-1.5 text-xs font-semibold text-slate-700 hover:border-primary hover:text-primary transition-colors"
+                    >
+                      {link.label}
+                      <ArrowRight className="w-3 h-3" />
+                    </Link>
+                  ))}
+                </CardContent>
+              </Card>
+            ))}
+          </div>
         </section>
 
         {/* Core guides */}

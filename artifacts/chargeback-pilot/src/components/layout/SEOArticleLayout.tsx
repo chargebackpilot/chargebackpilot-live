@@ -45,6 +45,13 @@ interface GuideContext {
   parallelPath: string;
 }
 
+interface GuideExample {
+  title: string;
+  situation: string;
+  usefulProof: string;
+  nextMove: string;
+}
+
 const SITE = "https://chargebackpilot.de";
 const DISPLAY_UPDATED_AT = "11. Juni 2026";
 const SCHEMA_UPDATED_AT = "2026-06-11";
@@ -231,6 +238,256 @@ function guideContext(title: string, category: string): GuideContext {
   };
 }
 
+function snippetAnswer(title: string, category: string, ctx: GuideContext): string {
+  return `${title} ist vor allem dann relevant, wenn dein Problem zu ${category} passt, du Zahlung und Sachverhalt belegen kannst und der Anbieter keine nachvollziehbare Lösung anbietet. Der stärkste nächste Schritt ist meist: ${ctx.primaryPath}. Entscheidend sind saubere Belege, eine kurze Chronologie und die Fristen deines Zahlungsdienstleisters.`;
+}
+
+function guideExamples(category: string, title: string): GuideExample[] {
+  const lowerTitle = title.toLowerCase();
+  const lowerCategory = category.toLowerCase();
+
+  if (lowerCategory.includes("paypal")) {
+    return [
+      {
+        title: "Ware nicht erhalten, Händler verweist nur auf Versand",
+        situation:
+          "Du hast per PayPal gezahlt, der Händler liefert nicht oder antwortet nur mit allgemeinen Versandhinweisen.",
+        usefulProof:
+          "PayPal-Transaktion, Bestellbestätigung, Trackingstatus und schriftliche Händlernachricht.",
+        nextMove:
+          "Konflikt im PayPal-Konto eröffnen und den Sachverhalt chronologisch mit Belegen darstellen.",
+      },
+      {
+        title: "Ware deutlich anders als beschrieben",
+        situation:
+          "Das gelieferte Produkt entspricht nicht der Artikelbeschreibung, etwa falsches Modell, Fälschung oder erheblicher Defekt.",
+        usefulProof:
+          "Artikelbeschreibung, Fotos der erhaltenen Ware, Verpackung, Chatverlauf und Zahlungsbeleg.",
+        nextMove:
+          "Abweichung konkret benennen und im Konfliktcenter nicht nur allgemein von schlechter Qualität sprechen.",
+      },
+    ];
+  }
+
+  if (
+    lowerCategory.includes("kreditkarte") ||
+    lowerCategory.includes("amex") ||
+    lowerCategory.includes("reason")
+  ) {
+    return [
+      {
+        title: "Leistung bezahlt, aber nicht erbracht",
+        situation:
+          "Du hast per Karte gezahlt, der Anbieter liefert nicht, storniert nicht sauber oder reagiert nicht mehr.",
+        usefulProof:
+          "Kartenumsatz, Vertrag oder Buchung, Kontaktversuche, Stornierungs- oder Nichterfüllungsnachweis.",
+        nextMove: "Bank oder Amex um Umsatzreklamation nach den geltenden Kartenregeln bitten.",
+      },
+      {
+        title: "Händler sagt Erstattung zu, zahlt aber nicht",
+        situation:
+          "Der Händler bestätigt schriftlich eine Rückerstattung, die Gutschrift taucht aber nicht auf.",
+        usefulProof:
+          "Erstattungszusage, ursprünglicher Umsatz, bisherige Nachrichten und Kontoauszug ohne Gutschrift.",
+        nextMove:
+          "Sachlich auf die ausbleibende Gutschrift hinweisen und die Bank um Prüfung bitten.",
+      },
+    ];
+  }
+
+  if (lowerCategory.includes("klarna")) {
+    return [
+      {
+        title: "Retoure wurde nicht verbucht",
+        situation:
+          "Du hast Ware zurückgesendet, aber die Klarna-Rechnung bleibt offen oder es kommen Mahnungen.",
+        usefulProof:
+          "Retourenlabel, Einlieferungsbeleg, Tracking, Bestellnummer und Händlerkommunikation.",
+        nextMove:
+          "Problem im Klarna-Konto melden und die Forderung mit Retourenbeleg sachlich klären.",
+      },
+      {
+        title: "Ware fehlt, Rechnung ist aber fällig",
+        situation:
+          "Die Bestellung ist nicht angekommen, Klarna erwartet aber Zahlung zum Fälligkeitsdatum.",
+        usefulProof: "Klarna-Rechnung, Tracking, Bestellbestätigung und Nachricht an den Händler.",
+        nextMove:
+          "Nicht ignorieren, sondern früh im Klarna-Konto melden und parallel den Händler kontaktieren.",
+      },
+    ];
+  }
+
+  if (lowerCategory.includes("flug") || lowerTitle.includes("kiwi")) {
+    return [
+      {
+        title: "Flug wurde gestrichen, Geld kommt nicht zurück",
+        situation:
+          "Airline oder Vermittler bestätigt Stornierung, bietet aber nur Gutschein oder reagiert nicht weiter.",
+        usefulProof:
+          "Buchungscode, Stornierungsmail, Zahlungsnachweis und bisherige Erstattungsaufforderung.",
+        nextMove:
+          "Erstattungsweg schriftlich klären und je nach Zahlung Kreditkarte oder PayPal prüfen.",
+      },
+      {
+        title: "Steuern und Gebühren werden gekürzt",
+        situation:
+          "Bei nicht genutztem Flug werden Gebühren oder Serviceentgelte abgezogen, ohne dass die Berechnung klar ist.",
+        usefulProof:
+          "Ticketpreis-Aufschlüsselung, AGB-Auszug, Antwort des Vermittlers und Zahlungsnachweis.",
+        nextMove:
+          "Nachvollziehbare Aufstellung verlangen und danach den Zahlungsweg sachlich prüfen.",
+      },
+    ];
+  }
+
+  if (lowerCategory.includes("lieferdienst")) {
+    return [
+      {
+        title: "Bestellung kommt kalt, falsch oder unvollständig an",
+        situation:
+          "Die App zeigt Lieferung an, aber die Ware ist ungenießbar, falsch oder zentrale Artikel fehlen.",
+        usefulProof: "Fotos direkt nach Lieferung, Bestellübersicht, Zeitstempel und Support-Chat.",
+        nextMove: "Problem sofort in der App melden und bei Ablehnung den Zahlungsweg prüfen.",
+      },
+      {
+        title: "Lieferung wird als zugestellt markiert, ist aber nicht da",
+        situation: "Der Status springt auf zugestellt, du hast die Bestellung aber nicht erhalten.",
+        usefulProof: "App-Status, Fahrerroute, Supportverlauf und Zahlungsnachweis.",
+        nextMove:
+          "Nicht nur neu bestellen, sondern den Fall zeitnah dokumentieren und Supportantwort sichern.",
+      },
+    ];
+  }
+
+  if (lowerCategory.includes("online")) {
+    return [
+      {
+        title: "Tracking sagt zugestellt, Paket fehlt",
+        situation: "Der Shop verweist auf einen Zustellscan, du hast die Ware aber nicht erhalten.",
+        usefulProof:
+          "Trackingverlauf, Bestellbestätigung, Nachbarschaftsnachfrage und Händlerkommunikation.",
+        nextMove:
+          "Händler schriftlich zur Klärung auffordern und Zahlungsdienstleister mit vollständiger Chronologie einbinden.",
+      },
+      {
+        title: "Fake-Shop nimmt Zahlung, liefert aber nicht",
+        situation: "Nach Zahlung gibt es keine echte Versandbewegung oder der Shop verschwindet.",
+        usefulProof:
+          "Shop-Screenshots, Impressum, Zahlungsnachweis, Bestellmail und Kontaktversuche.",
+        nextMove:
+          "Belege sichern und je nach Zahlung PayPal, Kreditkarte, Klarna oder Bank kontaktieren.",
+      },
+    ];
+  }
+
+  if (lowerCategory.includes("abo")) {
+    return [
+      {
+        title: "Kündigung wurde ignoriert",
+        situation:
+          "Du hast gekündigt, aber der Anbieter bucht weiter ab oder behauptet, keine Kündigung erhalten zu haben.",
+        usefulProof:
+          "Kündigungs-E-Mail, Eingangsbestätigung, weitere Abbuchungen und Vertragsdaten.",
+        nextMove:
+          "Abbuchung schriftlich widersprechen und Zahlungsdienstleister mit Kündigungsnachweis kontaktieren.",
+      },
+      {
+        title: "Testphase wird plötzlich kostenpflichtig",
+        situation:
+          "Eine Probephase oder Anmeldung führt zu wiederkehrenden Kosten, die beim Abschluss nicht klar waren.",
+        usefulProof: "Screenshot der Bestellseite, Vertragsmail, Umsatz und Anbieterkommunikation.",
+        nextMove:
+          "Vertragsgrundlage anfordern, vorsorglich kündigen und Rückgabemöglichkeiten prüfen.",
+      },
+    ];
+  }
+
+  return [
+    {
+      title: "Unklarer Fall mit mehreren Beteiligten",
+      situation:
+        "Händler, Zahlungsdienstleister und Plattform verweisen aufeinander, ohne eine Lösung anzubieten.",
+      usefulProof:
+        "Zahlungsnachweis, Bestellnummer, bisherige Antworten und eine kurze Chronologie.",
+      nextMove:
+        "Zuständigkeit sortieren, Hauptforderung klar benennen und den passenden Zahlungsweg prüfen.",
+    },
+    {
+      title: "Vorlage soll an Bank oder Händler gehen",
+      situation:
+        "Du brauchst keinen langen Streittext, sondern eine sachliche, prüfbare Zusammenfassung.",
+      usefulProof: "Datum, Betrag, Problem, Kontaktversuch, gewünschte Lösung und Anlagenliste.",
+      nextMove:
+        "Vorlage an Empfänger und Zahlungsart anpassen, nicht blind als Standardtext versenden.",
+    },
+  ];
+}
+
+function contextualLinks(
+  canonicalPath: string,
+  category: string
+): { href: string; label: string }[] {
+  const lowerCategory = category.toLowerCase();
+  const links = [
+    { href: "/vergleich/paypal-vs-kreditkarte-vs-klarna", label: "Käuferschutz-Vergleich" },
+  ];
+
+  if (lowerCategory.includes("paypal")) {
+    links.push(
+      { href: "/paypal-kaeuferschutz-vorlage", label: "PayPal Käuferschutz Vorlage" },
+      { href: "/ware-nicht-erhalten", label: "Ware nicht erhalten" }
+    );
+  } else if (
+    lowerCategory.includes("kreditkarte") ||
+    lowerCategory.includes("amex") ||
+    lowerCategory.includes("reason")
+  ) {
+    links.push(
+      { href: "/chargeback-antrag-vorlage", label: "Chargeback Antrag Vorlage" },
+      { href: "/visa-reason-code-13-1", label: "Visa Reason Code 13.1" },
+      { href: "/mastercard-chargeback-reason-code", label: "Mastercard Reason Codes" }
+    );
+  } else if (lowerCategory.includes("klarna")) {
+    links.push(
+      { href: "/klarna-reklamation-vorlage", label: "Klarna Reklamation Vorlage" },
+      { href: "/ware-nicht-erhalten-musterbrief", label: "Ware nicht erhalten Musterbrief" }
+    );
+  } else if (lowerCategory.includes("flug")) {
+    links.push(
+      { href: "/flug-chargeback", label: "Flug Chargeback" },
+      { href: "/kiwi-rueckerstattung", label: "Kiwi.com Erstattung" },
+      { href: "/chargeback-antrag-vorlage", label: "Chargeback Antrag Vorlage" }
+    );
+  } else if (lowerCategory.includes("lieferdienst")) {
+    links.push(
+      { href: "/lieferando-rueckerstattung", label: "Lieferando Rückerstattung" },
+      { href: "/wolt-rueckerstattung", label: "Wolt Erstattung" },
+      { href: "/ubereats-rueckerstattung", label: "Uber Eats Erstattung" }
+    );
+  } else if (lowerCategory.includes("online")) {
+    links.push(
+      { href: "/ware-nicht-erhalten-musterbrief", label: "Ware nicht erhalten Musterbrief" },
+      { href: "/scam-shops-2026", label: "Fake-Shops erkennen" },
+      { href: "/paypal-chargeback", label: "PayPal Käuferschutz" }
+    );
+  } else if (lowerCategory.includes("abo")) {
+    links.push(
+      { href: "/abo-falle-musterbrief", label: "Abo-Falle Musterbrief" },
+      { href: "/visa-mastercard-chargeback", label: "Kreditkarten-Chargeback" }
+    );
+  } else {
+    links.push(
+      { href: "/chargeback-antrag-vorlage", label: "Chargeback Antrag Vorlage" },
+      { href: "/ware-nicht-erhalten", label: "Ware nicht erhalten" }
+    );
+  }
+
+  return links.filter((link, index, all) => {
+    if (link.href === canonicalPath) return false;
+    return all.findIndex((other) => other.href === link.href) === index;
+  });
+}
+
 function enrichFaq(
   baseFaq: FaqItem[],
   title: string,
@@ -295,6 +552,9 @@ export function SEOArticleLayout({
   const canonicalPath = pathname || "/ratgeber";
   const context = guideContext(title, category);
   const enrichedFaq = enrichFaq(faq, title, category, context);
+  const examples = guideExamples(category, title);
+  const inlineLinks = contextualLinks(canonicalPath, category);
+  const shortAnswer = snippetAnswer(title, category, context);
 
   const handleNewCaseClick = () => {
     openNewWizardCase();
@@ -400,6 +660,13 @@ export function SEOArticleLayout({
         </header>
 
         <div className="container mx-auto max-w-3xl px-4 mt-12 space-y-16">
+          <section className="rounded-2xl border bg-slate-50 p-6 shadow-sm">
+            <p className="mb-2 text-xs font-bold uppercase tracking-wider text-primary">
+              Kurzantwort
+            </p>
+            <p className="text-base leading-relaxed text-foreground/90">{shortAnswer}</p>
+          </section>
+
           {/* Wann greift es */}
           <section>
             <h2 className="text-2xl font-bold mb-6 border-b pb-2">Wann greift der Schutz?</h2>
@@ -442,6 +709,40 @@ export function SEOArticleLayout({
                   Schwieriger wird es, wenn {context.notIdealWhen}.
                 </p>
               </div>
+            </div>
+          </section>
+
+          <section>
+            <h2 className="text-2xl font-bold mb-6 border-b pb-2">
+              Typische Konstellationen aus der Praxis
+            </h2>
+            <div className="grid gap-4">
+              {examples.map((example) => (
+                <div key={example.title} className="rounded-xl border bg-background p-5">
+                  <h3 className="mb-2 font-bold">{example.title}</h3>
+                  <p className="mb-3 text-sm leading-relaxed text-muted-foreground">
+                    {example.situation}
+                  </p>
+                  <div className="grid gap-3 sm:grid-cols-2">
+                    <div className="rounded-lg bg-muted/50 p-3">
+                      <p className="mb-1 text-xs font-bold uppercase tracking-wide text-slate-700">
+                        Hilfreiche Belege
+                      </p>
+                      <p className="text-sm leading-relaxed text-muted-foreground">
+                        {example.usefulProof}
+                      </p>
+                    </div>
+                    <div className="rounded-lg bg-primary/5 p-3">
+                      <p className="mb-1 text-xs font-bold uppercase tracking-wide text-primary">
+                        Nächster Schritt
+                      </p>
+                      <p className="text-sm leading-relaxed text-muted-foreground">
+                        {example.nextMove}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              ))}
             </div>
           </section>
 
@@ -551,6 +852,17 @@ export function SEOArticleLayout({
               Händler oder Kartennetzwerke immer im Einzelfall; ChargebackPilot liefert dafür
               unverbindliche Formulierungs- und Sortierhilfe.
             </p>
+            <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
+              Zuletzt redaktionell geprüft: {DISPLAY_UPDATED_AT}. Mehr zur Arbeitsweise findest du
+              in unserer{" "}
+              <Link
+                href="/methodik"
+                className="font-medium text-primary underline-offset-4 hover:underline"
+              >
+                Methodik
+              </Link>
+              .
+            </p>
           </section>
 
           {/* FAQ */}
@@ -583,6 +895,26 @@ export function SEOArticleLayout({
             >
               <Button size="lg">Kostenlosen Fall-Check starten</Button>
             </Link>
+          </section>
+
+          <section className="rounded-2xl border p-6">
+            <h2 className="mb-3 text-lg font-bold">Passende Vertiefungen</h2>
+            <p className="mb-4 text-sm leading-relaxed text-muted-foreground">
+              Wenn dein Fall in eine andere Richtung kippt, helfen diese ergänzenden Guides beim
+              Sortieren des richtigen Zahlungswegs.
+            </p>
+            <div className="flex flex-wrap gap-2">
+              {inlineLinks.map((link) => (
+                <Link
+                  key={link.href}
+                  href={link.href}
+                  className="inline-flex items-center gap-1 rounded-md border px-3 py-2 text-sm font-semibold text-slate-700 transition-colors hover:border-primary hover:text-primary"
+                >
+                  {link.label}
+                  <ArrowRight className="h-3.5 w-3.5" />
+                </Link>
+              ))}
+            </div>
           </section>
 
           <section className="border rounded-2xl p-6">
