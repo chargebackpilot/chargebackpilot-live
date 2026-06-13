@@ -19,6 +19,7 @@ import {
 import { Breadcrumbs } from "@/components/Breadcrumbs";
 import { SeoHead } from "@/components/SeoHead";
 import { openNewWizardCase } from "@/lib/case-persistence";
+import { getRouteMeta } from "@/seo-routes";
 
 interface SEOProps {
   title: string;
@@ -1295,7 +1296,10 @@ export function SEOArticleLayout({
   const [pathname] = useLocation();
   const canonicalPath = pathname || "/ratgeber";
   const moneyProfile = moneyPageProfile(canonicalPath);
+  const routeMeta = getRouteMeta(canonicalPath);
+  const metaTitle = routeMeta?.title ?? `${title} | ChargebackPilot`;
   const description =
+    routeMeta?.description ??
     moneyProfile?.metaDescription ??
     `${title}: typische Fristenhinweise, Belege und strukturierte Orientierung bei ${category}. Mit unverbindlichen Textentwürfen.`;
   const context = guideContext(title, category);
@@ -1373,11 +1377,19 @@ export function SEOArticleLayout({
   )
     .filter((g) => g.href !== canonicalPath)
     .slice(0, 3);
+  const seenFollowUpLinks = new Set<string>();
+  const followUpLinks = [...inlineLinks, ...relatedGuides]
+    .filter((link) => {
+      if (link.href === canonicalPath || seenFollowUpLinks.has(link.href)) return false;
+      seenFollowUpLinks.add(link.href);
+      return true;
+    })
+    .slice(0, 6);
 
   return (
     <MainLayout>
       <SeoHead
-        title={`${title} | ChargebackPilot`}
+        title={metaTitle}
         description={description}
         canonical={canonicalPath}
         jsonLd={[howToSchema, articleSchema, faqSchema]}
@@ -1425,10 +1437,7 @@ export function SEOArticleLayout({
             <div className="mb-3 flex flex-wrap items-center gap-2">
               <span className="inline-flex items-center gap-1.5 rounded-full border border-blue-200 bg-white/85 px-3 py-1 text-xs font-bold uppercase tracking-wider text-primary shadow-sm">
                 <Sparkles className="ai-summary-sparkle h-3.5 w-3.5" />
-                KI-Kurzantwort
-              </span>
-              <span className="text-xs text-muted-foreground">
-                automatisch verdichtet, redaktionell eingebettet
+                Kurzantwort
               </span>
             </div>
             <p className="ai-summary-text text-base leading-relaxed text-foreground/90">
@@ -1481,7 +1490,7 @@ export function SEOArticleLayout({
                   </ul>
                 </div>
                 <div className="rounded-xl border bg-muted/30 p-4">
-                  <h3 className="mb-2 text-sm font-bold">Nächster sinnvoller Schritt</h3>
+                  <h3 className="mb-2 text-sm font-bold">So gehst du weiter vor</h3>
                   <p className="mb-3 text-sm leading-relaxed text-muted-foreground">
                     {moneyProfile.nextAction}
                   </p>
@@ -1782,13 +1791,13 @@ export function SEOArticleLayout({
           </section>
 
           <section className="rounded-2xl border p-6">
-            <h2 className="mb-3 text-lg font-bold">Passende Vertiefungen</h2>
+            <h2 className="mb-3 text-lg font-bold">Auch interessant</h2>
             <p className="mb-4 text-sm leading-relaxed text-muted-foreground">
-              Wenn dein Fall in eine andere Richtung kippt, helfen diese ergänzenden Guides beim
-              Sortieren des richtigen Zahlungswegs.
+              Weitere Guides, die gut zu diesem Thema passen und beim Sortieren des nächsten
+              Zahlungswegs helfen.
             </p>
             <div className="flex flex-wrap gap-2">
-              {inlineLinks.map((link) => (
+              {followUpLinks.map((link) => (
                 <Link
                   key={link.href}
                   href={link.href}
@@ -1796,19 +1805,6 @@ export function SEOArticleLayout({
                 >
                   {link.label}
                   <ArrowRight className="h-3.5 w-3.5" />
-                </Link>
-              ))}
-            </div>
-          </section>
-
-          <section className="border rounded-2xl p-6">
-            <h2 className="text-lg font-bold mb-3">Nächster sinnvoller Schritt</h2>
-            <div className="grid sm:grid-cols-3 gap-2.5">
-              {relatedGuides.map((g) => (
-                <Link key={g.href} href={g.href}>
-                  <Button variant="outline" className="w-full justify-start text-left h-auto py-3">
-                    {g.label}
-                  </Button>
                 </Link>
               ))}
             </div>

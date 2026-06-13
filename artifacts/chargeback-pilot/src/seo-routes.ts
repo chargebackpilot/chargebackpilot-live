@@ -64,9 +64,9 @@ export const SEO_ROUTES: SeoRouteMeta[] = [
   },
   {
     path: "/paypal-chargeback",
-    title: "PayPal Chargeback / Käuferschutz erfolgreich nutzen | ChargebackPilot",
+    title: "PayPal Chargeback / Käuferschutz strukturiert vorbereiten | ChargebackPilot",
     description:
-      "PayPal Chargeback / Käuferschutz erfolgreich nutzen: typische Fristenhinweise, Belege und strukturierte Orientierung bei PayPal. Mit unverbindlichen Textentwürfen.",
+      "PayPal Chargeback und Käuferschutz sauber unterscheiden: Konfliktcenter, Eskalation, Belege und Zahlungsweg strukturiert vorbereiten.",
     changefreq: "monthly",
     priority: 0.8,
     type: "guide",
@@ -76,7 +76,7 @@ export const SEO_ROUTES: SeoRouteMeta[] = [
     path: "/amex-chargeback",
     title: "American Express Chargeback einleiten | ChargebackPilot",
     description:
-      "American Express Chargeback einleiten: typische Fristenhinweise, Belege und strukturierte Orientierung bei Amex. Mit unverbindlichen Textentwürfen.",
+      "American Express Chargeback vorbereiten: Umsatz, Händlerkontakt, Belege und Reklamationsgrund sachlich für Amex einordnen.",
     changefreq: "monthly",
     priority: 0.7,
     type: "guide",
@@ -84,9 +84,9 @@ export const SEO_ROUTES: SeoRouteMeta[] = [
   },
   {
     path: "/visa-mastercard-chargeback",
-    title: "Visa / Mastercard Chargeback: Geld zurück | ChargebackPilot",
+    title: "Visa / Mastercard Chargeback vorbereiten | ChargebackPilot",
     description:
-      "Visa / Mastercard Chargeback: Geld zurück: typische Fristenhinweise, Belege und strukturierte Orientierung bei Kreditkarte. Mit unverbindlichen Textentwürfen.",
+      "Visa und Mastercard Chargeback vorbereiten: Kartenumsatz, Händlerkontakt, Reason-Code-Einordnung und Belege für die Bank strukturieren.",
     changefreq: "monthly",
     priority: 0.7,
     type: "guide",
@@ -96,7 +96,7 @@ export const SEO_ROUTES: SeoRouteMeta[] = [
     path: "/klarna-reklamation",
     title: "Klarna Reklamation & Käuferschutz | ChargebackPilot",
     description:
-      "Klarna Reklamation & Käuferschutz: typische Fristenhinweise, Belege und strukturierte Orientierung bei Klarna. Mit unverbindlichen Textentwürfen.",
+      "Klarna Reklamation vorbereiten: Rechnung, Retoure, Problemmeldung und Händlerkommunikation strukturiert dokumentieren.",
     changefreq: "monthly",
     priority: 0.7,
     type: "guide",
@@ -106,7 +106,7 @@ export const SEO_ROUTES: SeoRouteMeta[] = [
     path: "/flug-chargeback",
     title: "Flug Chargeback / Reiserückerstattung | ChargebackPilot",
     description:
-      "Flug Chargeback / Reiserückerstattung: typische Fristenhinweise, Belege und strukturierte Orientierung bei Flug/Reise. Mit unverbindlichen Textentwürfen.",
+      "Flug Chargeback und Reiserückerstattung vorbereiten: Stornierung, Buchung, Händlerkontakt und Zahlungsweg nachvollziehbar sortieren.",
     changefreq: "monthly",
     priority: 0.7,
     type: "guide",
@@ -114,9 +114,9 @@ export const SEO_ROUTES: SeoRouteMeta[] = [
   },
   {
     path: "/kiwi-rueckerstattung",
-    title: "Kiwi.com Steuern & Gebühren ohne 59€ Servicegebühr zurückholen | ChargebackPilot",
+    title: "Kiwi.com Steuern & Gebühren ohne 59€ Servicegebühr prüfen | ChargebackPilot",
     description:
-      "Kiwi.com Steuern & Gebühren ohne 59€ Servicegebühr zurückholen: typische Fristenhinweise, Belege und strukturierte Orientierung bei Flug/Reise. Mit unverbindlichen Textentwürfen.",
+      "Kiwi.com Rückerstattung prüfen: Steuern, Gebühren, Servicegebühr, Buchungsdaten und möglichen Zahlungsweg strukturiert vorbereiten.",
     changefreq: "monthly",
     priority: 0.7,
     type: "guide",
@@ -126,7 +126,7 @@ export const SEO_ROUTES: SeoRouteMeta[] = [
     path: "/lieferando-rueckerstattung",
     title: "Lieferando / Essen Rückerstattung | ChargebackPilot",
     description:
-      "Lieferando / Essen Rückerstattung: typische Fristenhinweise, Belege und strukturierte Orientierung bei Lieferdienst. Mit unverbindlichen Textentwürfen.",
+      "Lieferando Rückerstattung bei kaltem, falschem oder fehlendem Essen: Fotos, Zeitstempel, Supportverlauf und Zahlungsweg strukturieren.",
     changefreq: "monthly",
     priority: 0.7,
     type: "guide",
@@ -136,7 +136,7 @@ export const SEO_ROUTES: SeoRouteMeta[] = [
     path: "/wolt-rueckerstattung",
     title: "Wolt Rückerstattung (Essen kalt / nicht geliefert) | ChargebackPilot",
     description:
-      "Wolt Rückerstattung (Essen kalt / nicht geliefert): typische Fristenhinweise, Belege und strukturierte Orientierung bei Lieferdienst. Mit unverbindlichen Textentwürfen.",
+      "Wolt Rückerstattung vorbereiten: fehlende, kalte oder falsche Lieferung dokumentieren und Supportverlauf samt Zahlungsweg sortieren.",
     changefreq: "monthly",
     priority: 0.7,
     type: "guide",
@@ -146,7 +146,7 @@ export const SEO_ROUTES: SeoRouteMeta[] = [
     path: "/ubereats-rueckerstattung",
     title: "Uber Eats Erstattung & Chargeback | ChargebackPilot",
     description:
-      "Uber Eats Erstattung & Chargeback: typische Fristenhinweise, Belege und strukturierte Orientierung bei Lieferdienst. Mit unverbindlichen Textentwürfen.",
+      "Uber Eats Erstattung und mögliche Zahlungsreklamation vorbereiten: App-Status, Fotos, Support-Tickets und Zahlungsweg strukturiert sammeln.",
     changefreq: "monthly",
     priority: 0.7,
     type: "guide",
@@ -156,7 +156,7 @@ export const SEO_ROUTES: SeoRouteMeta[] = [
     path: "/ware-nicht-erhalten",
     title: "Chargeback: Ware nicht erhalten | ChargebackPilot",
     description:
-      "Chargeback: Ware nicht erhalten: typische Fristenhinweise, Belege und strukturierte Orientierung bei Online-Shopping. Mit unverbindlichen Textentwürfen.",
+      "Ware nicht erhalten? Chargeback, PayPal Käuferschutz oder Klarna-Reklamation mit Tracking, Händlerkontakt und Zahlungsnachweis vorbereiten.",
     changefreq: "monthly",
     priority: 0.7,
     type: "guide",
@@ -166,7 +166,7 @@ export const SEO_ROUTES: SeoRouteMeta[] = [
     path: "/abo-falle-chargeback",
     title: "Abo-Falle Chargeback | ChargebackPilot",
     description:
-      "Abo-Falle Chargeback: typische Fristenhinweise, Belege und strukturierte Orientierung bei Abonnements. Mit unverbindlichen Textentwürfen.",
+      "Abo-Falle Chargeback vorbereiten: ungewollte Abbuchungen, Kündigungsnachweis, Vertragsgrundlage und Zahlungsweg sachlich prüfen.",
     changefreq: "monthly",
     priority: 0.7,
     type: "guide",
@@ -176,7 +176,7 @@ export const SEO_ROUTES: SeoRouteMeta[] = [
     path: "/chargeback-antrag-vorlage",
     title: "Chargeback Antrag Vorlage für Bank & Kreditkarte | ChargebackPilot",
     description:
-      "Chargeback Antrag Vorlage: sachlicher Mustertext für Bank, Visa, Mastercard und Amex mit Belegen, Fristenhinweisen und strukturierter Fallbeschreibung.",
+      "Chargeback Antrag Vorlage für Bank und Kreditkarte: Sachverhalt, Belege, Händlerkontakt und Umsatzreklamation strukturiert vorbereiten.",
     changefreq: "monthly",
     priority: 0.8,
     type: "guide",
@@ -184,9 +184,9 @@ export const SEO_ROUTES: SeoRouteMeta[] = [
   },
   {
     path: "/paypal-kaeuferschutz-vorlage",
-    title: "PayPal Käuferschutz Vorlage: Fall richtig formulieren | ChargebackPilot",
+    title: "PayPal Käuferschutz Vorlage: Fall sachlich formulieren | ChargebackPilot",
     description:
-      "PayPal Käuferschutz Vorlage für Ware nicht erhalten, abweichende Ware und Konflikt-Eskalation. Mit sachlicher Struktur und Beleg-Checkliste.",
+      "PayPal Käuferschutz Vorlage: Konflikt sachlich formulieren, Belege ordnen und Eskalation im PayPal-Konto nachvollziehbar vorbereiten.",
     changefreq: "monthly",
     priority: 0.8,
     type: "guide",
@@ -194,9 +194,9 @@ export const SEO_ROUTES: SeoRouteMeta[] = [
   },
   {
     path: "/klarna-reklamation-vorlage",
-    title: "Klarna Reklamation Vorlage: Problem melden | ChargebackPilot",
+    title: "Klarna Reklamation Vorlage: Problem melden & Zahlung klären | ChargebackPilot",
     description:
-      "Klarna Reklamation Vorlage: Ware fehlt, Retoure nicht verbucht oder Rechnung klären. Sachlicher Textentwurf mit Belegen und nächsten Schritten.",
+      "Klarna Reklamation Vorlage: Problem im Klarna-Konto melden, Rechnung oder Retoure klären und Händlerkommunikation strukturiert dokumentieren.",
     changefreq: "monthly",
     priority: 0.8,
     type: "guide",
@@ -204,9 +204,9 @@ export const SEO_ROUTES: SeoRouteMeta[] = [
   },
   {
     path: "/ware-nicht-erhalten-musterbrief",
-    title: "Ware nicht erhalten Musterbrief | ChargebackPilot",
+    title: "Ware nicht erhalten Musterbrief an Händler, PayPal oder Bank | ChargebackPilot",
     description:
-      "Ware nicht erhalten? Musterbrief für Händler, PayPal, Klarna oder Bank mit Tracking, Zahlungsnachweis und strukturierter Fristsetzung.",
+      "Ware nicht erhalten Musterbrief: Händlerkontakt, Tracking, Zahlungsnachweis und Käuferschutz oder Chargeback strukturiert vorbereiten.",
     changefreq: "monthly",
     priority: 0.8,
     type: "guide",
@@ -216,7 +216,7 @@ export const SEO_ROUTES: SeoRouteMeta[] = [
     path: "/abo-falle-musterbrief",
     title: "Abo-Falle Musterbrief: Abbuchung widersprechen | ChargebackPilot",
     description:
-      "Abo-Falle Musterbrief für ungewollte Abbuchungen, Kündigungsnachweis und Rückbuchungsprüfung bei Bank, Kreditkarte oder PayPal.",
+      "Abo-Falle Musterbrief für ungewollte Abbuchungen: Anbieter anschreiben, Kündigung dokumentieren und Zahlungsreklamation vorbereiten.",
     changefreq: "monthly",
     priority: 0.8,
     type: "guide",
@@ -224,9 +224,9 @@ export const SEO_ROUTES: SeoRouteMeta[] = [
   },
   {
     path: "/rueckerstattung-haendler-vorlage",
-    title: "Rückerstattung Händler Vorlage | ChargebackPilot",
+    title: "Rückerstattung Händler Vorlage: sachlich Erstattung anfordern | ChargebackPilot",
     description:
-      "Rückerstattung vom Händler sachlich fordern: Vorlage für Retoure, nicht erbrachte Leistung, Erstattungszusage und Zahlungsnachweis.",
+      "Rückerstattung Händler Vorlage: Retoure, nicht erbrachte Leistung, Erstattungszusage und Zahlungsnachweis sachlich zusammenfassen.",
     changefreq: "monthly",
     priority: 0.8,
     type: "guide",
@@ -234,7 +234,7 @@ export const SEO_ROUTES: SeoRouteMeta[] = [
   },
   {
     path: "/visa-reason-code-13-1",
-    title: "Visa Reason Code 13.1: Ware nicht erhalten | ChargebackPilot",
+    title: "Visa Reason Code 13.1: Ware oder Leistung nicht erhalten | ChargebackPilot",
     description:
       "Visa Reason Code 13.1 verständlich erklärt: Ware oder Leistung nicht erhalten, Belege ordnen und Chargeback-Anfrage bei der Bank vorbereiten.",
     changefreq: "monthly",
@@ -244,7 +244,7 @@ export const SEO_ROUTES: SeoRouteMeta[] = [
   },
   {
     path: "/mastercard-chargeback-reason-code",
-    title: "Mastercard Chargeback Reason Codes | ChargebackPilot",
+    title: "Mastercard Chargeback Reason Codes: Fall richtig einordnen | ChargebackPilot",
     description:
       "Mastercard Chargeback Reason Codes: typische Reklamationsgründe, Belege und sachliche Vorbereitung für die Bank.",
     changefreq: "monthly",
@@ -254,9 +254,9 @@ export const SEO_ROUTES: SeoRouteMeta[] = [
   },
   {
     path: "/scam-shops-2026",
-    title: "Scam-Shops 2026 erkennen & Geld zurückholen | ChargebackPilot",
+    title: "Bekannte Scam-Muster & Fake-Shops 2026 — was du jetzt tun kannst | ChargebackPilot",
     description:
-      "Scam-Shops 2026: Warnsignale, Belege und nächste Schritte bei Fake-Shops, Käuferschutz und Chargeback.",
+      "Verdacht auf Fake-Shop oder Internet-Betrug? Die wichtigsten Warnsignale 2026 plus eine strukturierte Anleitung zu Chargeback, PayPal-Käuferschutz und möglicher Lastschrift-Rückgabe.",
     changefreq: "weekly",
     priority: 0.8,
     type: "guide",
@@ -264,9 +264,10 @@ export const SEO_ROUTES: SeoRouteMeta[] = [
   },
   {
     path: "/vergleich/paypal-vs-kreditkarte-vs-klarna",
-    title: "PayPal vs Kreditkarte vs Klarna: Käuferschutz Vergleich 2026 | ChargebackPilot",
+    title:
+      "PayPal vs. Kreditkarte vs. Klarna — welcher Käuferschutz ist 2026 besser? | ChargebackPilot",
     description:
-      "Welcher Weg ist in deinem Fall am besten? Vergleich von Fristen, Erfolgschancen und Vorgehen bei Rückerstattungen.",
+      "Vergleich 2026: PayPal-Käuferschutz, Kreditkarten-Reklamation und Klarna-Käuferschutz im Überblick. Typische Fristen, Abläufe und Vor- und Nachteile — als unverbindliche Orientierung.",
     changefreq: "monthly",
     priority: 0.8,
     type: "compare",

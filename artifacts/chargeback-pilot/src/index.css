@@ -176,17 +176,6 @@
   .ai-summary-text {
     animation: ai-summary-reveal 900ms ease-out both;
   }
-
-  .ai-summary-text::after {
-    content: "";
-    display: inline-block;
-    width: 0.52em;
-    height: 1.05em;
-    margin-left: 0.18em;
-    border-right: 2px solid hsl(var(--primary));
-    transform: translateY(0.18em);
-    animation: ai-summary-caret 1s steps(2, jump-none) 5;
-  }
 }
 
 @keyframes ai-summary-reveal {
@@ -225,26 +214,10 @@
   }
 }
 
-@keyframes ai-summary-caret {
-  0%,
-  45% {
-    opacity: 1;
-  }
-  46%,
-  100% {
-    opacity: 0;
-  }
-}
-
 @media (prefers-reduced-motion: reduce) {
   .ai-summary-card::before,
   .ai-summary-sparkle,
-  .ai-summary-text,
-  .ai-summary-text::after {
+  .ai-summary-text {
     animation: none;
-  }
-
-  .ai-summary-text::after {
-    display: none;
   }
 }

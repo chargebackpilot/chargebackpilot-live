@@ -1,6 +1,6 @@
 import { Switch, Route, Router as WouterRouter, useLocation } from "wouter";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { useEffect, useState, Suspense, lazy } from "react";
+import { useEffect, useLayoutEffect, useState, Suspense, lazy } from "react";
 import NotFound from "@/pages/not-found";
 import Home from "@/pages/Home";
 import RatgeberIndex from "@/pages/RatgeberIndex";
@@ -40,6 +40,8 @@ import {
 } from "@/pages/SEOPages";
 import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
+import { applyStandardSeoHead } from "@/components/SeoHead";
+import { getRouteMeta } from "@/seo-routes";
 
 // Route chunks stay lazy for PageSpeed, but public routes no longer render skeleton fallbacks.
 // This keeps the first bundle small while avoiding visible skeleton loading on public pages.
@@ -70,6 +72,7 @@ const queryClient = new QueryClient({
     },
   },
 });
+const useIsomorphicLayoutEffect = typeof window === "undefined" ? useEffect : useLayoutEffect;
 
 function ScrollToTop() {
   const [pathname] = useLocation();
@@ -97,6 +100,24 @@ function IdleToaster() {
       <LazyToaster />
     </Suspense>
   );
+}
+
+function RouteHeadSync() {
+  const [pathname] = useLocation();
+
+  useIsomorphicLayoutEffect(() => {
+    const meta = getRouteMeta(pathname);
+    if (!meta) return;
+
+    applyStandardSeoHead({
+      title: meta.title,
+      description: meta.description,
+      canonical: meta.canonical ?? meta.path,
+      noindex: meta.noindex,
+    });
+  }, [pathname]);
+
+  return null;
 }
 
 function RouteShellFallback() {
@@ -320,6 +341,7 @@ function App({ ssrPath }: AppProps) {
     <QueryClientProvider client={queryClient}>
       <WouterRouter base={import.meta.env.BASE_URL.replace(/\/$/, "")} ssrPath={ssrPath}>
         <div className="min-h-screen flex flex-col font-sans bg-background">
+          <RouteHeadSync />
           <Navbar />
           <main className="flex-1">
             <ScrollToTop />

@@ -12,6 +12,7 @@ import {
 } from "@/components/ui/accordion";
 import { AlertTriangle, ArrowRight, ShieldCheck, Search, Sparkles } from "lucide-react";
 import { useState } from "react";
+import { getRouteMeta } from "@/seo-routes";
 
 interface ScamSignal {
   title: string;
@@ -122,9 +123,12 @@ const FAQS = [
 export default function ScamShopsPage() {
   const [query, setQuery] = useState("");
 
+  const routeMeta = getRouteMeta("/scam-shops-2026");
   const title =
+    routeMeta?.title ??
     "Bekannte Scam-Muster & Fake-Shops 2026 — was du jetzt tun kannst | ChargebackPilot";
   const description =
+    routeMeta?.description ??
     "Verdacht auf Fake-Shop oder Internet-Betrug? Die wichtigsten Warnsignale 2026 plus eine strukturierte Anleitung zu Chargeback, PayPal-Käuferschutz und möglicher Lastschrift-Rückgabe.";
 
   const articleSchema = {
@@ -202,7 +206,7 @@ export default function ScamShopsPage() {
             <div className="mb-3 flex flex-wrap items-center gap-2">
               <span className="inline-flex items-center gap-1.5 rounded-full border border-red-200 bg-white/85 px-3 py-1 text-xs font-bold uppercase tracking-wider text-red-700 shadow-sm">
                 <Sparkles className="ai-summary-sparkle h-3.5 w-3.5" />
-                KI-Sofortcheck
+                Sofortcheck
               </span>
               <span className="text-xs text-muted-foreground">
                 Fake-Shop erkannt: erst Belege sichern, dann Zahlungsweg prüfen

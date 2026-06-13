@@ -195,6 +195,25 @@ function getRouteMeta(route) {
 }
 
 const escapeAttr = (value) => value.replace(/&/g, "&amp;").replace(/"/g, "&quot;").replace(/</g, "&lt;");
+const escapeRegExp = (value) => value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+
+function replaceMetaTag(html, attrName, attrValue, content) {
+  const tagPattern = new RegExp(
+    `<meta\\b(?=[^>]*\\b${attrName}="${escapeRegExp(attrValue)}")[^>]*>`,
+    "i",
+  );
+  return html.replace(
+    tagPattern,
+    `<meta ${attrName}="${attrValue}" content="${escapeAttr(content)}" />`,
+  );
+}
+
+function replaceCanonicalTag(html, href) {
+  return html.replace(
+    /<link\b(?=[^>]*\brel="canonical")[^>]*>/i,
+    `<link rel="canonical" href="${href}" />`,
+  );
+}
 
 function injectMeta(html, route, meta) {
   const canonical = `https://chargebackpilot.de${route}`;
@@ -204,17 +223,16 @@ function injectMeta(html, route, meta) {
   const googlebot = meta.noindex
     ? "noindex, follow"
     : "index, follow, max-image-preview:large, max-snippet:-1";
-  return html
-    .replace(/<title>.*?<\/title>/i, `<title>${escapeAttr(meta.title)}</title>`)
-    .replace(/<meta name="description" content=".*?"\s*\/>/i, `<meta name="description" content="${escapeAttr(meta.description)}" />`)
-    .replace(/<meta name="robots" content=".*?"\s*\/>/i, `<meta name="robots" content="${robots}" />`)
-    .replace(/<meta name="googlebot" content=".*?"\s*\/>/i, `<meta name="googlebot" content="${googlebot}" />`)
-    .replace(/<meta property="og:title" content=".*?"\s*\/>/i, `<meta property="og:title" content="${escapeAttr(meta.title)}" />`)
-    .replace(/<meta property="og:description" content=".*?"\s*\/>/i, `<meta property="og:description" content="${escapeAttr(meta.description)}" />`)
-    .replace(/<meta property="og:url" content=".*?"\s*\/>/i, `<meta property="og:url" content="${canonical}" />`)
-    .replace(/<meta name="twitter:title" content=".*?"\s*\/>/i, `<meta name="twitter:title" content="${escapeAttr(meta.title)}" />`)
-    .replace(/<meta name="twitter:description" content=".*?"\s*\/>/i, `<meta name="twitter:description" content="${escapeAttr(meta.description)}" />`)
-    .replace(/<link rel="canonical" href=".*?"\s*\/>/i, `<link rel="canonical" href="${canonical}" />`);
+  let next = html.replace(/<title>.*?<\/title>/i, `<title>${escapeAttr(meta.title)}</title>`);
+  next = replaceMetaTag(next, "name", "description", meta.description);
+  next = replaceMetaTag(next, "name", "robots", robots);
+  next = replaceMetaTag(next, "name", "googlebot", googlebot);
+  next = replaceMetaTag(next, "property", "og:title", meta.title);
+  next = replaceMetaTag(next, "property", "og:description", meta.description);
+  next = replaceMetaTag(next, "property", "og:url", canonical);
+  next = replaceMetaTag(next, "name", "twitter:title", meta.title);
+  next = replaceMetaTag(next, "name", "twitter:description", meta.description);
+  return replaceCanonicalTag(next, canonical);
 }
 
 function toSitemapEntry(route) {

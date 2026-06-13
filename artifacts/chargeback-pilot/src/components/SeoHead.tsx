@@ -12,6 +12,22 @@ interface SeoHeadProps {
 const SITE_ORIGIN = "https://chargebackpilot.de";
 const useIsomorphicLayoutEffect = typeof window === "undefined" ? useEffect : useLayoutEffect;
 
+interface StandardSeoHeadInput {
+  title: string;
+  description: string;
+  canonical?: string;
+  noindex?: boolean;
+}
+
+export function resolveCanonicalUrl(canonical?: string) {
+  if (canonical) {
+    return canonical.startsWith("http") ? canonical : `${SITE_ORIGIN}${canonical}`;
+  }
+
+  const pathname = typeof window === "undefined" ? "/" : window.location.pathname;
+  return `${SITE_ORIGIN}${pathname}`;
+}
+
 function buildBaseJsonLd(canonicalUrl: string): object[] {
   const organizationId = `${SITE_ORIGIN}/#organization`;
   const websiteId = `${SITE_ORIGIN}/#website`;
@@ -97,74 +113,75 @@ function upsertLink(rel: string, href: string) {
   el.setAttribute("href", href);
 }
 
+export function applyStandardSeoHead({
+  title,
+  description,
+  canonical,
+  noindex = false,
+}: StandardSeoHeadInput) {
+  if (typeof document === "undefined") return;
+
+  if (document.title !== title) {
+    document.title = title;
+  }
+
+  const canonicalUrl = resolveCanonicalUrl(canonical);
+
+  // Standard Meta
+  upsertMeta('meta[name="description"]', "name", "description", description);
+  upsertMeta(
+    'meta[name="robots"]',
+    "name",
+    "robots",
+    noindex
+      ? "noindex, follow"
+      : "index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1"
+  );
+  upsertMeta(
+    'meta[name="googlebot"]',
+    "name",
+    "googlebot",
+    noindex ? "noindex, follow" : "index, follow, max-image-preview:large, max-snippet:-1"
+  );
+
+  // Open Graph (Facebook, LinkedIn, WhatsApp)
+  upsertMeta('meta[property="og:title"]', "property", "og:title", title);
+  upsertMeta('meta[property="og:description"]', "property", "og:description", description);
+  upsertMeta('meta[property="og:url"]', "property", "og:url", canonicalUrl);
+  upsertMeta('meta[property="og:type"]', "property", "og:type", "website");
+
+  // Fallback Image handling
+  // If a route wants a specific image, we could pass it via props.
+  // Here we ensure the base image is fully qualified for social crawlers.
+  const ogImage = `${SITE_ORIGIN}/opengraph.jpg`;
+  upsertMeta('meta[property="og:image"]', "property", "og:image", ogImage);
+  upsertMeta('meta[property="og:image:width"]', "property", "og:image:width", "1200");
+  upsertMeta('meta[property="og:image:height"]', "property", "og:image:height", "630");
+
+  // Twitter Card
+  upsertMeta('meta[name="twitter:card"]', "name", "twitter:card", "summary_large_image");
+  upsertMeta('meta[name="twitter:title"]', "name", "twitter:title", title);
+  upsertMeta('meta[name="twitter:description"]', "name", "twitter:description", description);
+  upsertMeta('meta[name="twitter:image"]', "name", "twitter:image", ogImage);
+
+  // Canonical
+  upsertLink("canonical", canonicalUrl);
+}
+
 /**
  * Sets per-route page <title>, meta description, canonical, OG + Twitter tags,
  * and injects optional JSON-LD <script> tags. Cleans up its own JSON-LD on unmount.
  */
 export function SeoHead({ title, description, canonical, noindex = false, jsonLd }: SeoHeadProps) {
-  const ssrCanonicalUrl =
-    typeof window === "undefined"
-      ? canonical
-        ? canonical.startsWith("http")
-          ? canonical
-          : `${SITE_ORIGIN}${canonical}`
-        : SITE_ORIGIN
-      : "";
+  const ssrCanonicalUrl = typeof window === "undefined" ? resolveCanonicalUrl(canonical) : "";
 
   useIsomorphicLayoutEffect(() => {
-    if (document.title !== title) {
-      document.title = title;
-    }
-
-    const canonicalUrl = canonical
-      ? canonical.startsWith("http")
-        ? canonical
-        : `${SITE_ORIGIN}${canonical}`
-      : `${SITE_ORIGIN}${window.location.pathname}`;
-
-    // Standard Meta
-    upsertMeta('meta[name="description"]', "name", "description", description);
-    upsertMeta(
-      'meta[name="robots"]',
-      "name",
-      "robots",
-      noindex
-        ? "noindex, follow"
-        : "index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1"
-    );
-    upsertMeta(
-      'meta[name="googlebot"]',
-      "name",
-      "googlebot",
-      noindex ? "noindex, follow" : "index, follow, max-image-preview:large, max-snippet:-1"
-    );
-
-    // Open Graph (Facebook, LinkedIn, WhatsApp)
-    upsertMeta('meta[property="og:title"]', "property", "og:title", title);
-    upsertMeta('meta[property="og:description"]', "property", "og:description", description);
-    upsertMeta('meta[property="og:url"]', "property", "og:url", canonicalUrl);
-    upsertMeta('meta[property="og:type"]', "property", "og:type", "website");
-
-    // Fallback Image handling
-    // If a route wants a specific image, we could pass it via props.
-    // Here we ensure the base image is fully qualified for social crawlers.
-    const ogImage = `${SITE_ORIGIN}/opengraph.jpg`;
-    upsertMeta('meta[property="og:image"]', "property", "og:image", ogImage);
-    upsertMeta('meta[property="og:image:width"]', "property", "og:image:width", "1200");
-    upsertMeta('meta[property="og:image:height"]', "property", "og:image:height", "630");
-
-    // Twitter Card
-    upsertMeta('meta[name="twitter:card"]', "name", "twitter:card", "summary_large_image");
-    upsertMeta('meta[name="twitter:title"]', "name", "twitter:title", title);
-    upsertMeta('meta[name="twitter:description"]', "name", "twitter:description", description);
-    upsertMeta('meta[name="twitter:image"]', "name", "twitter:image", ogImage);
-
-    // Canonical
-    upsertLink("canonical", canonicalUrl);
+    applyStandardSeoHead({ title, description, canonical, noindex });
 
     // JSON-LD Injection. Global schemas describe the product/site/organization;
     // route-specific schemas must still describe visible page content only.
     const injected: HTMLScriptElement[] = [];
+    const canonicalUrl = resolveCanonicalUrl(canonical);
     const allJsonLd = noindex
       ? (jsonLd ?? [])
       : [...buildBaseJsonLd(canonicalUrl), ...(jsonLd ?? [])];

@@ -10,6 +10,7 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 import { ArrowRight, Check, X, Minus, Sparkles } from "lucide-react";
+import { getRouteMeta } from "@/seo-routes";
 
 const ROWS: {
   label: string;
@@ -74,9 +75,12 @@ function Cell({ v }: { v: string | true | false }) {
 }
 
 export default function ComparePage() {
+  const routeMeta = getRouteMeta("/vergleich/paypal-vs-kreditkarte-vs-klarna");
   const title =
+    routeMeta?.title ??
     "PayPal vs. Kreditkarte vs. Klarna — welcher Käuferschutz ist 2026 besser? | ChargebackPilot";
   const description =
+    routeMeta?.description ??
     "Vergleich 2026: PayPal-Käuferschutz, Kreditkarten-Reklamation und Klarna-Käuferschutz im Überblick. Typische Fristen, Abläufe und Vor- und Nachteile — als unverbindliche Orientierung.";
 
   const articleSchema = {
@@ -147,7 +151,7 @@ export default function ComparePage() {
             <div className="mb-3 flex flex-wrap items-center gap-2">
               <span className="inline-flex items-center gap-1.5 rounded-full border border-blue-200 bg-white/85 px-3 py-1 text-xs font-bold uppercase tracking-wider text-primary shadow-sm">
                 <Sparkles className="ai-summary-sparkle h-3.5 w-3.5" />
-                KI-Kurzvergleich
+                Kurzvergleich
               </span>
               <span className="text-xs text-muted-foreground">
                 PayPal vs. Kreditkarte vs. Klarna auf den Punkt gebracht

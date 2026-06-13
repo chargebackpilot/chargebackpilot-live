@@ -325,7 +325,7 @@ export function Methodik() {
             enthalten. Seiten ohne ausreichenden Mehrwert bleiben noindex und werden nicht aktiv in
             der Sitemap priorisiert.
           </p>
-          <h2>Wie KI-Kurzantworten verwendet werden</h2>
+          <h2>Wie Kurzantworten verwendet werden</h2>
           <p>
             Die Kurzantworten auf Ratgeberseiten sind als schnelle Orientierung gedacht. Sie fassen
             den Kern der Seite zusammen, ersetzen aber nicht die ausführlicheren Abschnitte,
