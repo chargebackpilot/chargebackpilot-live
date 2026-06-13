@@ -1,4 +1,6 @@
 import { useEffect, useLayoutEffect } from "react";
+import reviewProfilesData from "@/data/review-profiles.generated.json";
+import { ACTIVE_SOCIAL_PROFILE_URLS } from "@/data/social-profiles";
 
 interface SeoHeadProps {
   title: string;
@@ -11,6 +13,10 @@ interface SeoHeadProps {
 
 const SITE_ORIGIN = "https://chargebackpilot.de";
 const useIsomorphicLayoutEffect = typeof window === "undefined" ? useEffect : useLayoutEffect;
+const REVIEW_PROFILE_URLS = [
+  reviewProfilesData.profiles.provenExpert.url,
+  reviewProfilesData.profiles.trustpilot.url,
+];
 
 interface StandardSeoHeadInput {
   title: string;
@@ -48,10 +54,7 @@ function buildBaseJsonLd(canonicalUrl: string): object[] {
         "@type": "Country",
         name: "Deutschland",
       },
-      sameAs: [
-        "https://www.provenexpert.com/de-de/chargebackpilot/",
-        "https://de.trustpilot.com/review/chargebackpilot.de",
-      ],
+      sameAs: [...REVIEW_PROFILE_URLS, ...ACTIVE_SOCIAL_PROFILE_URLS],
     },
     {
       "@context": "https://schema.org",

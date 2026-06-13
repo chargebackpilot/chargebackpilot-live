@@ -7,6 +7,9 @@
     "build": "pnpm run typecheck && pnpm run lint && pnpm -r --if-present run build",
     "build:render": "pnpm --filter @workspace/db run push && BASE_PATH=/ pnpm --filter @workspace/chargeback-pilot run build && pnpm --filter @workspace/api-server run build",
     "seo:report": "pnpm --filter @workspace/chargeback-pilot run seo:report",
+    "sync:reviews": "pnpm --filter @workspace/chargeback-pilot run sync:reviews",
+    "audit:lighthouse": "pnpm --filter @workspace/chargeback-pilot run audit:lighthouse",
+    "audit:unlighthouse": "pnpm --filter @workspace/chargeback-pilot run audit:unlighthouse",
     "start": "pnpm --filter @workspace/api-server run start",
     "typecheck:libs": "tsc --build",
     "typecheck": "pnpm run typecheck:libs && pnpm -r --filter \"./artifacts/**\" --filter \"./scripts\" --if-present run typecheck",
@@ -22,12 +25,15 @@
     "@types/node": "catalog:",
     "@typescript-eslint/eslint-plugin": "^8.17.0",
     "@typescript-eslint/parser": "^8.17.0",
+    "@unlighthouse/cli": "^0.17.10",
     "eslint": "^8.57.1",
     "eslint-import-resolver-typescript": "^3.8.0",
     "eslint-plugin-import": "^2.31.0",
     "husky": "^9.1.7",
+    "lighthouse": "^13.4.0",
     "lint-staged": "^15.2.12",
     "prettier": "^3.8.3",
+    "puppeteer": "^25.1.0",
     "typescript": "~5.9.3"
   }
 }

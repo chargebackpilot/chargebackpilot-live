@@ -51,7 +51,11 @@ Important frontend files:
 - `artifacts/chargeback-pilot/src/seo-routes.ts`: canonical static SEO route metadata
 - `artifacts/chargeback-pilot/src/seo-quality.ts`: programmatic SEO quality gate
 - `artifacts/chargeback-pilot/src/seo-quality-config.json`: index/noindex schedule and overrides
+- `artifacts/chargeback-pilot/src/data/review-profiles.generated.json`: deploy-synced external review profile data
+- `artifacts/chargeback-pilot/src/data/social-profiles.ts`: placeholder social profile URLs for footer and `sameAs`
 - `artifacts/chargeback-pilot/scripts/prerender.mjs`: prerender, sitemap and route HTML output
+- `artifacts/chargeback-pilot/scripts/sync-review-profiles.mjs`: review profile fetch before builds
+- `artifacts/chargeback-pilot/scripts/inline-build-css.mjs`: inline built CSS into prerendered HTML
 - `artifacts/chargeback-pilot/src/index.css`: design tokens, dark mode, global utility overrides
 - `artifacts/chargeback-pilot/src/components/theme/ThemeProvider.tsx`: light/dark/system theme state
 - `artifacts/chargeback-pilot/src/components/theme/ThemeToggle.tsx`: theme toggle
@@ -143,6 +147,11 @@ Current principles:
   etc. where appropriate.
 - FAQ schema must only represent FAQs visible on the page.
 - No same generic FAQ/schema dump on every page.
+- External review profiles are linked visibly and via Organization `sameAs`. Do not add
+  `AggregateRating` unless rating data is visible, current, policy-safe and sourced reliably.
+- Review display data comes from `review-profiles.generated.json`, refreshed by `pnpm sync:reviews`
+  and frontend `prebuild`. If a portal blocks fetches, keep the last safe fallback instead of
+  failing deploys or inventing ratings.
 - Candidate/noindex pages may exist but must not be pushed as SEO targets.
 - `sitemap.xml` must contain only indexable canonical URLs and include `lastmod`.
 
@@ -260,18 +269,21 @@ Goal: as close to 100 as practical without damaging design, typography or produc
 
 Recent PageSpeed-sensitive decisions:
 
-- public routes are lazy-loaded to keep the main bundle smaller
+- wizard/admin/heavy tooling stays lazy-loaded; public SEO/legal/guide routes are synchronous to
+  avoid visible content gaps during hydration and navigation
 - heavy PDF libraries must stay lazy and not load on first page view
 - `SeoHead` avoids hydration mismatch from SSR/client JSON-LD differences
 - AI summary animation avoids `filter: blur(...)`
 - dark mode uses a pre-paint inline script to avoid flash
 - route-specific prerendered HTML avoids title/canonical flicker on reload
+- built CSS is inlined into prerendered HTML by `scripts/inline-build-css.mjs` to remove the
+  render-blocking stylesheet request; keep CSP compatible if changing this
 - public Ratgeber, SEO, legal and `/hilfe/...` pages are intentionally imported synchronously in
   `App.tsx`. Do not lazy-load them again: visible content must not disappear between header and
   footer during navigation or hydration.
 
 Do not add large always-loaded dependencies to `App.tsx` or homepage without a strong reason.
-Use lazy chunks for admin, wizard, SEO page clusters, PDF generation and other non-critical code.
+Use lazy chunks for admin, wizard, PDF generation and other non-critical code.
 
 ## Backend And Security
 
@@ -313,6 +325,9 @@ pnpm --filter @workspace/chargeback-pilot run build
 pnpm --filter @workspace/api-server run typecheck
 pnpm --filter @workspace/api-server run build
 pnpm seo:report
+pnpm sync:reviews
+pnpm audit:lighthouse
+pnpm audit:unlighthouse
 pnpm run build:render
 pnpm start
 ```
@@ -324,6 +339,10 @@ pnpm --filter @workspace/chargeback-pilot run typecheck
 pnpm --filter @workspace/chargeback-pilot run build
 pnpm seo:report
 ```
+
+Lighthouse and Unlighthouse are installed at the workspace root. Local report folders
+`artifacts/lighthouse-report-local/` and `artifacts/unlighthouse-report-local/` are ignored and
+must not be committed.
 
 If backend changed:
 

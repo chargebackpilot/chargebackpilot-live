@@ -5,8 +5,12 @@
   "type": "module",
   "scripts": {
     "dev": "vite --config vite.config.ts --host 0.0.0.0",
-    "build": "vite build --config vite.config.ts && vite build --config vite.config.ts --ssr src/entry-server.tsx --outDir dist/server && node scripts/prerender.mjs",
+    "prebuild": "pnpm run sync:reviews",
+    "build": "vite build --config vite.config.ts && vite build --config vite.config.ts --ssr src/entry-server.tsx --outDir dist/server && node scripts/prerender.mjs && node scripts/inline-build-css.mjs",
     "serve": "vite preview --config vite.config.ts --host 0.0.0.0",
+    "sync:reviews": "node scripts/sync-review-profiles.mjs",
+    "audit:lighthouse": "node scripts/audit-lighthouse.mjs",
+    "audit:unlighthouse": "node scripts/audit-unlighthouse.mjs",
     "seo:report": "node scripts/seo-report.mjs",
     "typecheck": "tsc -p tsconfig.json --noEmit"
   },
