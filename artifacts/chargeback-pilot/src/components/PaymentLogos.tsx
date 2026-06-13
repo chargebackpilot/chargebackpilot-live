@@ -9,7 +9,7 @@ interface PLProps {
 export function VisaLogo({ className = "" }: PLProps) {
   return (
     <div
-      data-brand-logo
+      data-brand-logo="white"
       className={`inline-flex items-center justify-center bg-white border border-gray-200 rounded-md h-7 px-2 shadow-sm ${className}`}
       aria-label="Visa"
     >
@@ -21,7 +21,7 @@ export function VisaLogo({ className = "" }: PLProps) {
 export function MastercardLogo({ className = "" }: PLProps) {
   return (
     <div
-      data-brand-logo
+      data-brand-logo="white"
       className={`inline-flex items-center justify-center bg-white border border-gray-200 rounded-md h-7 px-1.5 shadow-sm ${className}`}
       aria-label="Mastercard"
     >
@@ -34,7 +34,7 @@ export function MastercardLogo({ className = "" }: PLProps) {
 export function AmexLogo({ className = "" }: PLProps) {
   return (
     <div
-      data-brand-logo
+      data-brand-logo="amex"
       className={`inline-flex items-center justify-center bg-[#2e77bb] border border-gray-200 rounded-md h-7 px-2 shadow-sm ${className}`}
       aria-label="American Express"
     >
@@ -48,7 +48,7 @@ export function AmexLogo({ className = "" }: PLProps) {
 export function PaypalLogo({ className = "" }: PLProps) {
   return (
     <div
-      data-brand-logo
+      data-brand-logo="white"
       className={`inline-flex items-center justify-center bg-white border border-gray-200 rounded-md h-7 px-2 shadow-sm ${className}`}
       aria-label="PayPal"
     >
@@ -61,7 +61,7 @@ export function PaypalLogo({ className = "" }: PLProps) {
 export function ApplePayLogo({ className = "" }: PLProps) {
   return (
     <div
-      data-brand-logo
+      data-brand-logo="apple-pay"
       className={`inline-flex items-center justify-center bg-black rounded-md h-7 px-2.5 shadow-sm ${className}`}
       aria-label="Apple Pay"
     >
@@ -76,7 +76,7 @@ export function ApplePayLogo({ className = "" }: PLProps) {
 export function GooglePayLogo({ className = "" }: PLProps) {
   return (
     <div
-      data-brand-logo
+      data-brand-logo="white"
       className={`inline-flex items-center justify-center bg-white border border-gray-200 rounded-md h-7 px-2 shadow-sm ${className}`}
       aria-label="Google Pay"
     >
@@ -94,7 +94,7 @@ export function GooglePayLogo({ className = "" }: PLProps) {
 export function KlarnaLogo({ className = "" }: PLProps) {
   return (
     <div
-      data-brand-logo
+      data-brand-logo="klarna"
       className={`inline-flex items-center justify-center bg-[#ffa8cd] rounded-md h-7 px-2.5 shadow-sm ${className}`}
       aria-label="Klarna"
     >
@@ -106,7 +106,7 @@ export function KlarnaLogo({ className = "" }: PLProps) {
 export function SepaLogo({ className = "" }: PLProps) {
   return (
     <div
-      data-brand-logo
+      data-brand-logo="sepa"
       className={`inline-flex items-center justify-center bg-[#00519E] rounded-md h-7 px-2 shadow-sm ${className}`}
       aria-label="SEPA Überweisung"
     >

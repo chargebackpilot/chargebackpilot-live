@@ -223,9 +223,26 @@
     background-color: hsl(var(--card));
   }
 
-  .dark [data-brand-logo] {
+  .dark [data-brand-logo="white"] {
     background-color: #ffffff;
     border-color: #e5e7eb;
+  }
+
+  .dark [data-brand-logo="amex"] {
+    background-color: #2e77bb;
+    border-color: #5fa4dc;
+  }
+
+  .dark [data-brand-logo="apple-pay"] {
+    background-color: #000000;
+  }
+
+  .dark [data-brand-logo="klarna"] {
+    background-color: #ffa8cd;
+  }
+
+  .dark [data-brand-logo="sepa"] {
+    background-color: #00519e;
   }
 
   .dark .bg-slate-50,

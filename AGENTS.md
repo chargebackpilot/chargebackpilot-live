@@ -266,6 +266,9 @@ Recent PageSpeed-sensitive decisions:
 - AI summary animation avoids `filter: blur(...)`
 - dark mode uses a pre-paint inline script to avoid flash
 - route-specific prerendered HTML avoids title/canonical flicker on reload
+- public Ratgeber, SEO, legal and `/hilfe/...` pages are intentionally imported synchronously in
+  `App.tsx`. Do not lazy-load them again: visible content must not disappear between header and
+  footer during navigation or hydration.
 
 Do not add large always-loaded dependencies to `App.tsx` or homepage without a strong reason.
 Use lazy chunks for admin, wizard, SEO page clusters, PDF generation and other non-critical code.
