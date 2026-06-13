@@ -91,7 +91,7 @@ const SCAM_CATEGORIES = [
 const FAQS = [
   {
     q: "Was sollte ich als Erstes tun, wenn ich einen Fake-Shop vermute?",
-    a: "Sichere sofort Belege: Bestellbestätigung, Zahlungsnachweis, Shop-URL, Screenshots der Produktseite, Impressum, E-Mails und Tracking. Klicke keine verdächtigen Links mehr an und prüfe danach den passenden Zahlungsweg: PayPal, Kreditkarte, Klarna, SEPA oder Banküberweisung.",
+    a: "Sichere sofort Belege: Bestellbestätigung, Zahlungsnachweis, Shop-URL, Screenshots der Produktseite, Impressum, E-Mails und Tracking. Klicke keine verdächtigen Links mehr an und prüfe danach den passenden Zahlungsweg: PayPal, Kreditkarte, Klarna, Lastschrift oder Banküberweisung.",
   },
   {
     q: "Kann ich bei einem Fake-Shop ein Chargeback beantragen?",
@@ -178,7 +178,7 @@ export default function ScamShopsPage() {
             <p className="text-lg text-muted-foreground mb-6">
               Die 8 wichtigsten Warnsignale 2026 plus die strukturierte
               Schritt-für-Schritt-Orientierung für PayPal-Käuferschutz, Kreditkarten-Chargeback und
-              SEPA-Lastschriftrückgabe.
+              mögliche Lastschrift-Rückgabe.
             </p>
             <Link href="/vorlagen-generator?problem=fraud">
               <Button size="lg" className="gap-2">

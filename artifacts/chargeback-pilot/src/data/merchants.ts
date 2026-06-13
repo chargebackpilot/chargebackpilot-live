@@ -231,7 +231,7 @@ export const MERCHANTS: MerchantDef[] = [
     country: "Niederlande",
     trustLevel: "trusted",
     description:
-      "Weltweit größte Hotelbuchungsplattform. Vermittler-Rolle — bei Problemen vor Ort ist Eskalation an Booking + ggf. Chargeback der schnellste Weg.",
+      "Weltweit große Hotelbuchungsplattform. Durch die Vermittler-Rolle ist oft zu prüfen, ob Booking, Unterkunft oder Zahlungsdienstleister zuständig sind.",
     problems: ["hotel-anders-als-beschrieben", "flug-storniert"],
   },
   {
@@ -319,7 +319,7 @@ export const MERCHANTS: MerchantDef[] = [
     country: "Schweden",
     trustLevel: "trusted",
     description:
-      "Music-Streaming-Marktführer. Bei nicht erkannten Abbuchungen ist die SEPA-Lastschriftrückgabe der schnellste Weg.",
+      "Music-Streaming-Anbieter. Bei nicht erkannten Abbuchungen sollten Vertragskonto, Zahlungsweg und mögliche Rückgaberegeln der Bank zeitnah geprüft werden.",
     problems: ["abbuchung-ohne-zustimmung"],
   },
   {
@@ -571,7 +571,7 @@ function deadlinesForCombo(p: ProblemDef): { label: string; value: string; note:
     },
     {
       label: "SEPA-Lastschrift",
-      value: "typisch 8 Wochen",
+      value: "Bankregeln prüfen",
       note: "Rückgabemöglichkeiten hängen von Autorisierung und Einzelfall ab; bitte bei deiner Bank prüfen",
     },
   ];
@@ -879,7 +879,7 @@ function faqForCombo(m: MerchantDef, p: ProblemDef, sector: string): { q: string
     },
     {
       q: `Ist ChargebackPilot eine Rechtsberatung?`,
-      a: `Nein. ChargebackPilot stellt keine Rechtsberatung und keine Rechtsdienstleistung im Sinne des RDG dar. Wir liefern KI-gestützte Formulierungshilfe und strukturierte Vorlagen für deinen Käuferschutz-Antrag. Bei komplexen Streitwerten empfehlen wir die Verbraucherzentrale oder einen Fachanwalt für Verbraucherrecht.`,
+      a: `Nein. ChargebackPilot stellt keine Rechtsberatung und keine Rechtsdienstleistung im Sinne des RDG dar. Wir liefern KI-gestützte Formulierungshilfe und strukturierte Vorlagen für deinen Käuferschutz-Antrag. Bei komplexen Streitwerten empfehlen wir die Verbraucherzentrale oder anwaltliche Beratung.`,
     },
   ];
 }

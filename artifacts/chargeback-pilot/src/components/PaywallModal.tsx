@@ -78,8 +78,8 @@ function getBenefits(paymentMethod: string): Benefit[] {
       case "sepa":
         return {
           icon: Building2,
-          title: "SEPA-Rückruf & Händler-Eskalation",
-          desc: "Allgemeine Hinweise zur SEPA-Rückgabe und sachlicher Eskalationsentwurf an den Händler.",
+          title: "Lastschrift & Händler-Eskalation",
+          desc: "Allgemeine Hinweise zu möglichen Rückgaberegeln und sachlicher Eskalationsentwurf an den Händler.",
         };
       default:
         return {

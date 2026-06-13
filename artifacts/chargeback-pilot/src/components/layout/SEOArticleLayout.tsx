@@ -52,9 +52,31 @@ interface GuideExample {
   nextMove: string;
 }
 
+interface EditorialInsight {
+  title: string;
+  paragraphs: string[];
+  checkpoints: string[];
+}
+
+interface GlossaryItem {
+  term: string;
+  definition: string;
+}
+
+interface WordingPreview {
+  title: string;
+  intro: string;
+  lines: string[];
+  note: string;
+}
+
 const SITE = "https://chargebackpilot.de";
 const DISPLAY_UPDATED_AT = "11. Juni 2026";
 const SCHEMA_UPDATED_AT = "2026-06-11";
+
+function textContainsAny(text: string, needles: string[]): boolean {
+  return needles.some((needle) => text.includes(needle));
+}
 
 function guideContext(title: string, category: string): GuideContext {
   const lowerTitle = title.toLowerCase();
@@ -423,6 +445,429 @@ function guideExamples(category: string, title: string): GuideExample[] {
   ];
 }
 
+function editorialInsight(title: string, category: string, ctx: GuideContext): EditorialInsight {
+  const lower = `${title} ${category}`.toLowerCase();
+
+  if (textContainsAny(lower, ["paypal"])) {
+    return {
+      title: "Worauf PayPal bei der Fallbeschreibung typischerweise achtet",
+      paragraphs: [
+        "Bei PayPal ist oft nicht die längste Beschwerde entscheidend, sondern eine klare Zuordnung: Ging es um nicht erhaltene Ware, deutlich abweichende Ware oder ein anderes Zahlungsproblem? Je sauberer du Transaktion, Artikel und bisherigen Händlerkontakt trennst, desto leichter lässt sich der Fall im Konfliktcenter nachvollziehen.",
+        "Praktisch wichtig ist auch die Eskalationslogik. Ein eröffneter Konflikt ist noch nicht dasselbe wie ein Käuferschutzantrag. Prüfe deshalb im Konto, welche Schritte PayPal konkret anzeigt und welche Frist für die Eskalation läuft.",
+      ],
+      checkpoints: [
+        "Transaktionsnummer, Zahlungsdatum und Händlername stimmen mit der Bestellung überein.",
+        "Der konkrete Mangel ist mit Fotos, Tracking oder Chatverlauf belegbar.",
+        "Die gewünschte Lösung ist eindeutig: Lieferung, Ersatz, Teilbetrag oder Erstattung.",
+      ],
+    };
+  }
+
+  if (textContainsAny(lower, ["klarna"])) {
+    return {
+      title: "Warum bei Klarna Forderung und Lieferproblem getrennt werden sollten",
+      paragraphs: [
+        "Klarna-Fälle werden schnell unübersichtlich, weil Lieferproblem, Rechnung, Mahnung und Händlerantwort parallel laufen können. Für eine starke Darstellung solltest du deshalb nicht nur schreiben, dass etwas falsch ist, sondern zeigen, welche Rechnung betroffen ist und warum die Forderung aus deiner Sicht gerade nicht ungeprüft weiterlaufen sollte.",
+        "Wenn Ware fehlt, retourniert wurde oder falsch geliefert wurde, hilft eine knappe Chronologie: Bestellung, Lieferstatus, Retoure oder Mangel, Meldung an Händler, Meldung in Klarna. Dadurch ist klarer, ob es um eine Zahlungspause, eine Korrektur der Forderung oder eine Prüfung durch den Händler geht.",
+      ],
+      checkpoints: [
+        "Rechnungsnummer und Bestellnummer sind eindeutig genannt.",
+        "Retouren- oder Lieferbelege sind dem richtigen Artikel zugeordnet.",
+        "Du hast das Problem nicht nur beim Händler, sondern auch im Klarna-Konto sichtbar gemacht.",
+      ],
+    };
+  }
+
+  if (textContainsAny(lower, ["lieferdienst", "lieferando", "wolt", "uber eats", "essen"])) {
+    return {
+      title: "Warum bei Lieferdiensten die ersten Minuten zählen",
+      paragraphs: [
+        "Bei Essenslieferungen ist der Beweiswert oft zeitabhängig. Ein Foto direkt nach Übergabe, ein Screenshot der Bestellübersicht und der Support-Chat aus der App sind deutlich hilfreicher als eine allgemeine Beschwerde am nächsten Tag.",
+        "Unterscheide außerdem zwischen falsch geliefert, unvollständig geliefert, gar nicht geliefert und qualitativ mangelhaft. Je konkreter du die Abweichung beschreibst, desto weniger wirkt der Antrag wie eine pauschale Unzufriedenheit.",
+      ],
+      checkpoints: [
+        "Fotos zeigen Zustand, fehlende Artikel oder falsche Lieferung unmittelbar nach Erhalt.",
+        "Der Supportverlauf enthält Datum, Uhrzeit und Antwort der Plattform.",
+        "Der Zahlungsweg ist klar: App-Guthaben, Karte, PayPal, Apple Pay, Google Pay oder Klarna.",
+      ],
+    };
+  }
+
+  if (textContainsAny(lower, ["flug", "reise", "kiwi", "ryanair"])) {
+    return {
+      title: "Warum Reise-Fälle eine saubere Betragsaufteilung brauchen",
+      paragraphs: [
+        "Bei Flügen und Reisebuchungen ist der strittige Betrag häufig nicht nur ein einzelner Ticketpreis. Vermittlungsgebühren, Serviceentgelte, Steuern, Flughafengebühren, Gutscheine und Teilgutschriften können durcheinanderlaufen.",
+        "Eine nachvollziehbare Aufstellung ist deshalb wichtiger als eine harte Behauptung. Zeige, was ursprünglich gezahlt wurde, welche Leistung weggefallen ist, was bereits angeboten oder erstattet wurde und welcher Restbetrag noch offen ist.",
+      ],
+      checkpoints: [
+        "Buchungscode, Ticketnummer und Zahlungsbeleg sind vorhanden.",
+        "Stornierung, Umbuchung oder Nichtbeförderung sind schriftlich dokumentiert.",
+        "Gutscheine, Teilgutschriften und Gebührenabzüge werden offen genannt.",
+      ],
+    };
+  }
+
+  if (textContainsAny(lower, ["abo", "abonnement", "abbuchung", "ungewollt"])) {
+    return {
+      title: "Warum Abo-Fälle nicht nur über die Karte gelöst werden sollten",
+      paragraphs: [
+        "Bei ungewollten Abbuchungen reicht es oft nicht, nur den Zahlungsweg zu sperren oder eine einzelne Zahlung zu reklamieren. Wenn ein Anbieter sich auf ein laufendes Vertragsverhältnis beruft, brauchst du zusätzlich eine klare Nachricht zur Vertragsgrundlage, Kündigung oder zum Widerspruch.",
+        "Sauber ist eine zweigleisige Struktur: gegenüber dem Anbieter klärst du Vertrag, Kündigung und weitere Forderungen; gegenüber Bank, Karte oder PayPal erklärst du die konkrete Zahlung und warum sie geprüft werden soll.",
+      ],
+      checkpoints: [
+        "Du kannst zeigen, ob und wann du zugestimmt oder gekündigt hast.",
+        "Weitere Abbuchungen sind mit Datum, Betrag und Empfänger sortiert.",
+        "Die Nachricht enthält keine vorschnellen Betrugsvorwürfe, sondern bestreitet konkret Autorisierung oder Vertragsgrundlage.",
+      ],
+    };
+  }
+
+  if (textContainsAny(lower, ["online-shopping", "ware nicht erhalten", "fake-shop"])) {
+    return {
+      title: "Warum Tracking allein den Fall selten vollständig erklärt",
+      paragraphs: [
+        "Bei nicht erhaltener Ware reicht ein einzelner Zustellstatus oft nicht aus. Entscheidend ist, ob Tracking, Bestellbestätigung, Lieferadresse, Händlerantwort und tatsächlicher Empfang zusammenpassen.",
+        "Besonders bei Fake-Shop-Verdacht solltest du zusätzlich die Shop-Seite sichern: Impressum, Produktseite, Bestellmail, Zahlungsdaten und Kontaktversuche. Diese Belege zeigen nicht nur, dass Ware fehlt, sondern auch, warum der Zahlungsdienstleister den Vorgang prüfen sollte.",
+      ],
+      checkpoints: [
+        "Trackingverlauf und Bestelladresse sind vollständig gesichert.",
+        "Händlerantworten oder fehlende Antworten sind mit Datum dokumentiert.",
+        "Bei Fake-Shop-Verdacht liegen Screenshots von Shop, Impressum und Produktseite vor.",
+      ],
+    };
+  }
+
+  if (
+    textContainsAny(lower, [
+      "kreditkarte",
+      "chargeback",
+      "amex",
+      "visa",
+      "mastercard",
+      "reason code",
+    ])
+  ) {
+    return {
+      title: "Warum Banken eine prüfbare Umsatzreklamation brauchen",
+      paragraphs: [
+        "Bei Kreditkartenfällen geht es nicht darum, möglichst viele juristische Begriffe zu verwenden. Banken brauchen eine belastbare Verbindung zwischen Kartenumsatz, Bestellung oder Buchung und dem konkreten Problem.",
+        "Reason Codes können bei der Einordnung helfen, sind für Verbraucher aber keine Erfolgsgarantie. Formuliere deshalb den Sachverhalt zuerst normal verständlich und überlasse die endgültige interne Kategorie der Bank oder dem Kartenausgeber.",
+      ],
+      checkpoints: [
+        "Kartenumsatz, Händlername, Datum und Betrag sind eindeutig genannt.",
+        "Nichterfüllung, Falschlieferung, Stornierung oder Erstattungszusage sind belegt.",
+        "Der vorherige Kontaktversuch beim Händler ist nachvollziehbar dokumentiert.",
+      ],
+    };
+  }
+
+  if (textContainsAny(lower, ["musterbrief", "vorlage"])) {
+    return {
+      title: "Warum ein guter Musterbrief immer konkret angepasst werden muss",
+      paragraphs: [
+        "Ein Musterbrief ist nur dann stark, wenn er nicht wie ein kopierter Standardtext wirkt. Zahlungsdienstleister und Händler müssen erkennen können, welcher Vorgang betroffen ist und welche Belege deine Darstellung stützen.",
+        "Nutze Vorlagen deshalb als Struktur: Betreff, kurzer Ablauf, konkrete Forderung, Anlagenliste und Frist. Die entscheidenden Details müssen aus deinem Fall kommen.",
+      ],
+      checkpoints: [
+        "Betreff, Betrag, Datum und Bestellnummer sind konkret ausgefüllt.",
+        "Die Forderung ist klar: Erstattung, Prüfung, Korrektur oder Zahlungspause.",
+        "Die Anlagenliste passt wirklich zu den erwähnten Tatsachen.",
+      ],
+    };
+  }
+
+  return {
+    title: "Warum Struktur wichtiger ist als ein langer Beschwerdetext",
+    paragraphs: [
+      "Viele Fälle scheitern nicht an fehlender Empörung, sondern an fehlender Ordnung. Wer Zahlung, Problem, Kontaktversuch und gewünschte Lösung sauber trennt, macht es dem zuständigen Anbieter leichter, den Vorgang zu prüfen.",
+      `Für diesen Ratgeber ist der sinnvollste Ausgangspunkt: ${ctx.primaryPath}. Danach kommt es darauf an, Belege vollständig und widerspruchsfrei vorzulegen.`,
+    ],
+    checkpoints: [
+      "Der Zahlungsweg ist eindeutig geklärt.",
+      "Die wichtigsten Belege sind vor der Eskalation gesichert.",
+      "Die Forderung ist konkret und nicht nur allgemein formuliert.",
+    ],
+  };
+}
+
+function glossaryForGuide(title: string, category: string): GlossaryItem[] {
+  const lower = `${title} ${category}`.toLowerCase();
+
+  if (textContainsAny(lower, ["paypal"])) {
+    return [
+      {
+        term: "Konflikt",
+        definition:
+          "Erste Problemmeldung im PayPal-Konto. Sie dient der Klärung mit dem Händler und ist noch nicht automatisch eine Entscheidung durch PayPal.",
+      },
+      {
+        term: "Eskalation",
+        definition:
+          "Schritt, mit dem PayPal stärker in die Prüfung einbezogen wird. Die konkrete Frist steht im jeweiligen Fall im PayPal-Konto.",
+      },
+      {
+        term: "Nicht erhalten",
+        definition:
+          "Fallgruppe, bei der du Zahlung und Bestellung belegen kannst, aber keine Ware oder Leistung erhalten hast.",
+      },
+      {
+        term: "Deutlich abweichend",
+        definition:
+          "Fallgruppe, bei der gelieferte Ware wesentlich von Beschreibung, Zustand oder zugesicherter Eigenschaft abweicht.",
+      },
+    ];
+  }
+
+  if (textContainsAny(lower, ["klarna"])) {
+    return [
+      {
+        term: "Zahlung pausieren",
+        definition:
+          "Möglicher Schritt im Klarna-Konto, damit eine strittige Rechnung nicht ungeprüft weiterläuft. Ob und wie das geht, zeigt Klarna im Einzelfall.",
+      },
+      {
+        term: "Forderung",
+        definition:
+          "Der Betrag, den Klarna oder der Händler verlangt. Bei Reklamationen sollte klar sein, welche Rechnung oder Rate betroffen ist.",
+      },
+      {
+        term: "Retoure",
+        definition:
+          "Rücksendung an den Händler. Wichtig sind Einlieferungsbeleg, Tracking und Zuordnung zur richtigen Bestellung.",
+      },
+      {
+        term: "Händlerklärung",
+        definition:
+          "Kommunikation mit dem Shop, weil Klarna viele Sachverhalte nur mit Händlerdaten abschließend prüfen kann.",
+      },
+    ];
+  }
+
+  if (textContainsAny(lower, ["lieferdienst", "lieferando", "wolt", "uber eats", "essen"])) {
+    return [
+      {
+        term: "Support-Ticket",
+        definition:
+          "Nachricht oder Vorgang in der Liefer-App. Sichere Screenshots, weil spätere Ansichten nicht immer den ursprünglichen Ablauf zeigen.",
+      },
+      {
+        term: "Zeitstempel",
+        definition:
+          "Uhrzeit von Bestellung, Lieferung, Foto und Supportmeldung. Bei Essen kann diese Reihenfolge entscheidend sein.",
+      },
+      {
+        term: "Teilbetrag",
+        definition:
+          "Manchmal geht es nicht um die ganze Bestellung, sondern um fehlende Artikel, falsche Positionen oder Liefergebühren.",
+      },
+      {
+        term: "App-Guthaben",
+        definition:
+          "Von Plattformen angebotene Kulanzlösung. Prüfe, ob du stattdessen eine Erstattung auf den ursprünglichen Zahlungsweg verlangst.",
+      },
+    ];
+  }
+
+  if (textContainsAny(lower, ["flug", "reise", "kiwi", "ryanair"])) {
+    return [
+      {
+        term: "Annullierung",
+        definition:
+          "Streichung des Fluges durch Airline oder Anbieter. Sichere die Benachrichtigung und jede angebotene Ersatzlösung.",
+      },
+      {
+        term: "Vermittler",
+        definition:
+          "Plattform, über die gebucht wurde. Bei Reiseportalen muss oft geklärt werden, wer Zahlung erhalten und wer Leistung geschuldet hat.",
+      },
+      {
+        term: "Steuern und Gebühren",
+        definition:
+          "Betragsbestandteile eines Tickets, die bei nicht genutzten Flügen gesondert diskutiert werden können.",
+      },
+      {
+        term: "Gutschein",
+        definition:
+          "Alternative zur Auszahlung. Dokumentiere, ob du ihn verlangt, angenommen oder nur angeboten bekommen hast.",
+      },
+    ];
+  }
+
+  if (textContainsAny(lower, ["abo", "abonnement", "abbuchung", "ungewollt"])) {
+    return [
+      {
+        term: "Autorisierung",
+        definition:
+          "Nachweisbare Zustimmung zur Zahlung oder zum Vertrag. Bei Streitfällen ist wichtig, was beim Abschluss sichtbar war.",
+      },
+      {
+        term: "Kündigungsnachweis",
+        definition:
+          "E-Mail, Formularbestätigung oder Einschreiben, das zeigt, wann und gegenüber wem du gekündigt hast.",
+      },
+      {
+        term: "Wiederkehrende Zahlung",
+        definition:
+          "Regelmäßige Abbuchung. Prüfe jede Abbuchung einzeln und dokumentiere Betrag, Datum und Empfänger.",
+      },
+      {
+        term: "Einzugsermächtigung",
+        definition:
+          "Erlaubnis für Abbuchungen, etwa per Lastschrift oder über einen Zahlungsdienstleister. Der Widerruf ersetzt nicht automatisch jede Vertragsklärung.",
+      },
+    ];
+  }
+
+  if (textContainsAny(lower, ["online-shopping", "ware nicht erhalten", "fake-shop"])) {
+    return [
+      {
+        term: "Tracking",
+        definition:
+          "Sendungsverlauf des Paketdienstes. Ein Zustellscan sollte mit Adresse, Zeit und tatsächlichem Empfang abgeglichen werden.",
+      },
+      {
+        term: "Zustellnachweis",
+        definition:
+          "Angabe, die zeigen soll, dass Ware übergeben wurde. Frage nach Details, wenn der Nachweis nicht zu deinem Ablauf passt.",
+      },
+      {
+        term: "Fake-Shop",
+        definition:
+          "Shop mit Verdachtsmerkmalen wie fehlendem Impressum, kopierten Produktbildern, unrealistischen Preisen oder verschwundener Kontaktmöglichkeit.",
+      },
+      {
+        term: "Händlerkontakt",
+        definition:
+          "Nachweisbare Anfrage an den Shop. Eine kurze, sachliche Fristsetzung kann für spätere Prüfungen hilfreich sein.",
+      },
+    ];
+  }
+
+  return [
+    {
+      term: "Chargeback",
+      definition:
+        "Umsatzreklamation über Kartenausgeber oder Bank. Ob sie möglich ist, hängt von Kartenregeln, Zahlungsweg und Belegen ab.",
+    },
+    {
+      term: "Reason Code",
+      definition:
+        "Interne Fallkategorie im Kartensystem. Verbraucher sollten den Sachverhalt sauber erklären; die genaue Zuordnung nimmt die Bank vor.",
+    },
+    {
+      term: "Anlagenliste",
+      definition:
+        "Kurze Liste der beigefügten Nachweise. Sie hilft, Fotos, Screenshots, Rechnungen und Nachrichten prüfbar zu machen.",
+    },
+    {
+      term: "Chronologie",
+      definition:
+        "Zeitliche Reihenfolge der wichtigsten Ereignisse: Zahlung, Bestellung, Problem, Kontaktversuch und aktueller Stand.",
+    },
+  ];
+}
+
+function wordingPreview(title: string, category: string, ctx: GuideContext): WordingPreview {
+  const lower = `${title} ${category}`.toLowerCase();
+  const baseLines = [
+    "Ich bitte um Prüfung der Zahlung vom [Datum] über [Betrag] EUR.",
+    "Der bisherige Ablauf ist aus den beigefügten Unterlagen nachvollziehbar.",
+    "Als Belege füge ich Zahlungsnachweis, Bestellunterlagen und bisherigen Schriftverkehr bei.",
+  ];
+
+  if (textContainsAny(lower, ["paypal"])) {
+    return {
+      title: "Beispiel für einen sachlichen PayPal-Einstieg",
+      intro:
+        "Ein guter Einstieg benennt Transaktion, Problem und gewünschte Lösung, ohne den Händler vorschnell zu beschuldigen.",
+      lines: [
+        "Zu der PayPal-Transaktion [ID] vom [Datum] habe ich die bestellte Ware bislang nicht erhalten.",
+        "Der Händler wurde am [Datum] kontaktiert; eine nachvollziehbare Lösung liegt bisher nicht vor.",
+        "Ich bitte um Prüfung im Rahmen der im Konto angezeigten Käuferschutzregeln.",
+      ],
+      note: "Passe diese Struktur an deinen tatsächlichen Fall und die Angaben im PayPal-Konto an.",
+    };
+  }
+
+  if (textContainsAny(lower, ["klarna"])) {
+    return {
+      title: "Beispiel für eine klare Klarna-Meldung",
+      intro:
+        "Bei Klarna sollte sofort erkennbar sein, welche Rechnung betroffen ist und warum die Forderung geprüft werden soll.",
+      lines: [
+        "Zur Klarna-Rechnung [Nummer] melde ich ein Problem mit der Bestellung [Bestellnummer].",
+        "Die Ware wurde [nicht geliefert / retourniert / falsch geliefert]; die Belege füge ich bei.",
+        "Ich bitte um Prüfung und, soweit möglich, um Pausierung der Forderung bis zur Klärung.",
+      ],
+      note: "Wichtig ist, dass du die tatsächliche Option im Klarna-Konto prüfst und keine Zahlung einfach ignorierst.",
+    };
+  }
+
+  if (textContainsAny(lower, ["lieferdienst", "lieferando", "wolt", "uber eats", "essen"])) {
+    return {
+      title: "Beispiel für eine Lieferdienst-Reklamation",
+      intro:
+        "Bei Lieferdiensten hilft eine sehr konkrete Beschreibung der Abweichung direkt nach Lieferung.",
+      lines: [
+        "Die Bestellung [Nummer] wurde am [Datum/Uhrzeit] geliefert, entsprach aber nicht der Bestellung.",
+        "Folgende Positionen waren betroffen: [fehlend/falsch/kalt/beschädigt]. Fotos und Supportverlauf liegen bei.",
+        "Ich bitte um Erstattung des betroffenen Betrags auf den ursprünglichen Zahlungsweg.",
+      ],
+      note: "Nutze konkrete Artikel, Zeiten und Fotos. Allgemeine Aussagen wie 'war schlecht' sind schwächer.",
+    };
+  }
+
+  if (textContainsAny(lower, ["flug", "reise", "kiwi", "ryanair"])) {
+    return {
+      title: "Beispiel für eine Reise-Erstattungsstruktur",
+      intro: "Bei Flügen sollte der offene Betrag nachvollziehbar aufgeschlüsselt werden.",
+      lines: [
+        "Zur Buchung [Code] wurde die vereinbarte Leistung am [Datum] nicht wie gebucht erbracht.",
+        "Gezahlt wurden [Betrag] EUR; bislang erstattet oder angeboten wurden [Betrag/Gutschein].",
+        "Ich bitte um nachvollziehbare Prüfung des offenen Erstattungsbetrags und der abgezogenen Gebühren.",
+      ],
+      note: "Trenne Ticketpreis, Steuern, Gebühren, Gutscheine und Teilgutschriften, soweit du sie belegen kannst.",
+    };
+  }
+
+  if (textContainsAny(lower, ["abo", "abonnement", "abbuchung", "ungewollt"])) {
+    return {
+      title: "Beispiel für eine ungewollte Abbuchung",
+      intro:
+        "Abo-Fälle werden klarer, wenn du Zahlung, Vertragsgrundlage und Kündigung getrennt formulierst.",
+      lines: [
+        "Ich widerspreche der Abbuchung vom [Datum] über [Betrag] EUR, da mir keine wirksame Grundlage bekannt ist.",
+        "Vorsorglich habe ich den Anbieter am [Datum] zur Klärung und Kündigungsbestätigung aufgefordert.",
+        "Ich bitte um Prüfung der Zahlung und füge Umsatz, Bestellseite sowie bisherigen Schriftverkehr bei.",
+      ],
+      note: "Das ersetzt keine individuelle Rechtsprüfung, hilft aber bei einer nachvollziehbaren Sortierung.",
+    };
+  }
+
+  if (textContainsAny(lower, ["online-shopping", "ware nicht erhalten", "fake-shop"])) {
+    return {
+      title: "Beispiel für nicht erhaltene Ware",
+      intro:
+        "Bei nicht erhaltener Ware sollte die Lücke zwischen Zahlung, Tracking und tatsächlichem Empfang sichtbar werden.",
+      lines: [
+        "Ich habe am [Datum] bei [Händler] bestellt und per [Zahlungsart] gezahlt.",
+        "Die Ware wurde bislang nicht erhalten; der Trackingstatus passt aus meiner Sicht nicht zum tatsächlichen Ablauf.",
+        "Ich bitte um Prüfung und füge Bestellbestätigung, Tracking, Zahlungsnachweis und Händlerkontakt bei.",
+      ],
+      note: "Bei Fake-Shop-Verdacht zusätzlich Shop-Screenshots und Impressum sichern.",
+    };
+  }
+
+  return {
+    title: "Beispiel für eine neutrale Grundstruktur",
+    intro:
+      "Diese Kurzstruktur zeigt, wie ein prüfbarer Einstieg aussehen kann. Der vollständige Entwurf sollte immer an den Fall angepasst werden.",
+    lines: [...baseLines, `Als nächsten Schritt bitte ich um: ${ctx.primaryPath}.`],
+    note: "Nutze keine Platzhalter im echten Schreiben; ersetze sie durch deine konkreten Daten und Belege.",
+  };
+}
+
 function contextualLinks(
   canonicalPath: string,
   category: string
@@ -555,6 +1000,9 @@ export function SEOArticleLayout({
   const examples = guideExamples(category, title);
   const inlineLinks = contextualLinks(canonicalPath, category);
   const shortAnswer = snippetAnswer(title, category, context);
+  const insight = editorialInsight(title, category, context);
+  const glossary = glossaryForGuide(title, category);
+  const preview = wordingPreview(title, category, context);
 
   const handleNewCaseClick = () => {
     openNewWizardCase();
@@ -566,7 +1014,6 @@ export function SEOArticleLayout({
     name: title,
     description,
     totalTime: "PT15M",
-    estimatedCost: { "@type": "MonetaryAmount", currency: "EUR", value: "0.99" },
     supply: evidence.map((e) => ({ "@type": "HowToSupply", name: e })),
     step: steps.map((s, i) => ({
       "@type": "HowToStep",
@@ -789,6 +1236,31 @@ export function SEOArticleLayout({
             </div>
           </section>
 
+          <section>
+            <h2 className="text-2xl font-bold mb-6 border-b pb-2">Redaktionelle Einordnung</h2>
+            <div className="grid gap-5 md:grid-cols-[1.4fr_1fr]">
+              <div className="space-y-4 text-foreground/90 leading-relaxed">
+                <h3 className="text-lg font-bold">{insight.title}</h3>
+                {insight.paragraphs.map((paragraph) => (
+                  <p key={paragraph}>{paragraph}</p>
+                ))}
+              </div>
+              <div className="rounded-xl border bg-muted/40 p-5">
+                <p className="mb-3 text-xs font-bold uppercase tracking-wide text-primary">
+                  Qualitätscheck vor dem Versand
+                </p>
+                <ul className="space-y-3">
+                  {insight.checkpoints.map((checkpoint) => (
+                    <li key={checkpoint} className="flex gap-2 text-sm text-muted-foreground">
+                      <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-emerald-600" />
+                      <span>{checkpoint}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+          </section>
+
           {/* Ablauf */}
           <section>
             <h2 className="text-2xl font-bold mb-6 border-b pb-2">
@@ -823,6 +1295,20 @@ export function SEOArticleLayout({
                 solltest du prüfen: {context.parallelPath}. Wichtig ist, keine widersprüchlichen
                 Angaben zu machen und bereits erhaltene Teilgutschriften offen zu nennen.
               </p>
+            </div>
+          </section>
+
+          <section>
+            <h2 className="text-2xl font-bold mb-6 border-b pb-2">Begriffe kurz erklärt</h2>
+            <div className="grid gap-3 sm:grid-cols-2">
+              {glossary.map((item) => (
+                <div key={item.term} className="rounded-xl border bg-background p-4">
+                  <h3 className="mb-2 text-sm font-bold uppercase tracking-wide text-slate-700">
+                    {item.term}
+                  </h3>
+                  <p className="text-sm leading-relaxed text-muted-foreground">{item.definition}</p>
+                </div>
+              ))}
             </div>
           </section>
 
@@ -863,6 +1349,25 @@ export function SEOArticleLayout({
               </Link>
               .
             </p>
+          </section>
+
+          <section className="rounded-2xl border bg-slate-950 p-6 text-white shadow-sm">
+            <p className="mb-2 text-xs font-bold uppercase tracking-wider text-emerald-300">
+              Formulierungs-Preview
+            </p>
+            <h2 className="mb-3 text-xl font-bold">{preview.title}</h2>
+            <p className="mb-5 text-sm leading-relaxed text-slate-300">{preview.intro}</p>
+            <div className="space-y-3">
+              {preview.lines.map((line) => (
+                <p
+                  key={line}
+                  className="rounded-lg border border-white/10 bg-white/5 px-4 py-3 text-sm leading-relaxed text-slate-100"
+                >
+                  {line}
+                </p>
+              ))}
+            </div>
+            <p className="mt-4 text-xs leading-relaxed text-slate-400">{preview.note}</p>
           </section>
 
           {/* FAQ */}

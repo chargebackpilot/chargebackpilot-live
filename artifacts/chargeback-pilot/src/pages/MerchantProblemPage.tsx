@@ -89,7 +89,6 @@ export default function MerchantProblemPage() {
     name: `${merchant.name} ${problem.label}: strukturiert vorgehen`,
     description: copy.metaDescription,
     totalTime: "PT15M",
-    estimatedCost: { "@type": "MonetaryAmount", currency: "EUR", value: "0.99" },
     supply: copy.evidence.map((e) => ({ "@type": "HowToSupply", name: e })),
     step: copy.steps.map((s, i) => ({
       "@type": "HowToStep",
@@ -352,7 +351,7 @@ export default function MerchantProblemPage() {
             <p className="text-xs text-muted-foreground mt-5 italic">
               Hinweis: Die genannten Paragraphen und Verordnungen sind allgemeine Information, keine
               Rechtsberatung und keine Prüfung deines Einzelfalls. Konkrete rechtliche Fragen
-              besprich bitte mit der Verbraucherzentrale oder einem Fachanwalt für Verbraucherrecht.
+              besprich bitte mit der Verbraucherzentrale oder anwaltlicher Beratung.
             </p>
           </section>
 

@@ -190,9 +190,10 @@ export default function ComparePage() {
               <div className="text-xs font-bold uppercase text-primary mb-2">Empfehlung</div>
               <div className="font-bold text-lg mb-2">Digitale & Abo</div>
               <p className="text-sm text-muted-foreground mb-3">
-                <strong>Kreditkarte</strong> oder <strong>SEPA-Lastschrift</strong>{" "}
-                (8-Wochen-Rückruf). PayPal-Käuferschutz kann bei digitalen Gütern von den jeweiligen
-                Richtlinien abhängen.
+                <strong>Kreditkarte</strong> oder <strong>SEPA-Lastschrift</strong> können je nach
+                Zahlungsweg relevant sein. Prüfe Rückgaberegeln und Fristen direkt bei deiner Bank;
+                PayPal-Käuferschutz kann bei digitalen Gütern von den jeweiligen Richtlinien
+                abhängen.
               </p>
             </div>
           </section>

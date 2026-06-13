@@ -252,7 +252,7 @@ export function UeberUns() {
           <p>
             ChargebackPilot ist keine Kanzlei, keine Schlichtungsstelle und kein Vertreter gegenüber
             Banken oder Händlern. Bei komplexen Sachverhalten, hohem Streitwert oder rechtlich
-            schwierigen Fällen sollte zusätzlich eine Verbraucherzentrale oder ein Fachanwalt
+            schwierigen Fällen sollte zusätzlich eine Verbraucherzentrale oder anwaltliche Beratung
             einbezogen werden.
           </p>
         </div>

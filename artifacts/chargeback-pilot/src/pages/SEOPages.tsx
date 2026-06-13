@@ -389,8 +389,8 @@ export function AboFalleSEO() {
       steps={[
         "Kündige das Abo möglichst zeitnah schriftlich (E-Mail aufbewahren).",
         "Kontaktiere deine Bank oder PayPal und melde unautorisierte / ungewollte wiederkehrende Zahlungen.",
-        "Lasse die Karte für diesen speziellen Händler sperren oder entziehe das SEPA-Mandat / die PayPal-Einzugsermächtigung.",
-        "Beantrage Chargeback für die bereits abgebuchten Beiträge.",
+        "Prüfe mit Bank, Kartenausgeber oder PayPal, wie weitere Abbuchungen für diesen Anbieter verhindert werden können.",
+        "Beantrage eine Prüfung der bereits abgebuchten Beiträge über den passenden Zahlungsweg.",
       ]}
       mistakes={[
         "Nur die Karte sperren: Das kündigt das Abo nicht. Du musst auch beim Händler kündigen, sonst können Inkassoforderungen kommen.",
