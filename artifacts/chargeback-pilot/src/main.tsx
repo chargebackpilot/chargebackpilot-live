@@ -1,5 +1,5 @@
 import { createRoot, hydrateRoot } from "react-dom/client";
-import App from "./App";
+import App, { preloadRouteForPath } from "./App";
 import "./index.css";
 import { AppErrorBoundary } from "@/components/AppErrorBoundary";
 import { applyStandardSeoHead } from "@/components/SeoHead";
@@ -17,14 +17,22 @@ if (initialRouteMeta) {
   });
 }
 
-const app = (
-  <AppErrorBoundary>
-    <App />
-  </AppErrorBoundary>
-);
+async function boot() {
+  if (root.hasChildNodes()) {
+    await preloadRouteForPath(window.location.pathname);
+  }
 
-if (root.hasChildNodes()) {
-  hydrateRoot(root, app);
-} else {
-  createRoot(root).render(app);
+  const app = (
+    <AppErrorBoundary>
+      <App />
+    </AppErrorBoundary>
+  );
+
+  if (root.hasChildNodes()) {
+    hydrateRoot(root, app);
+  } else {
+    createRoot(root).render(app);
+  }
 }
+
+void boot();

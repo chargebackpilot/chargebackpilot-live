@@ -15,7 +15,7 @@ interface ThemeContextValue {
   theme: ThemePreference;
   resolvedTheme: "light" | "dark";
   setTheme: (theme: ThemePreference) => void;
-  cycleTheme: () => void;
+  toggleTheme: () => void;
 }
 
 const THEME_STORAGE_KEY = "cbp-theme";
@@ -73,11 +73,10 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
     setResolvedTheme(applyThemePreference(nextTheme));
   }, []);
 
-  const cycleTheme = useCallback(() => {
-    const nextTheme: ThemePreference =
-      theme === "system" ? "dark" : theme === "dark" ? "light" : "system";
+  const toggleTheme = useCallback(() => {
+    const nextTheme: ThemePreference = resolvedTheme === "dark" ? "light" : "dark";
     setTheme(nextTheme);
-  }, [setTheme, theme]);
+  }, [resolvedTheme, setTheme]);
 
   useIsomorphicLayoutEffect(() => {
     const stored = readStoredTheme();
@@ -116,9 +115,9 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
       theme,
       resolvedTheme,
       setTheme,
-      cycleTheme,
+      toggleTheme,
     }),
-    [theme, resolvedTheme, setTheme, cycleTheme]
+    [theme, resolvedTheme, setTheme, toggleTheme]
   );
 
   return <ThemeContext.Provider value={value}>{children}</ThemeContext.Provider>;

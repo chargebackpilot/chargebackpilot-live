@@ -102,6 +102,68 @@ const Wizard = lazyWithPreload(loadWizard);
 const Admin = lazyWithPreload(() => import("@/pages/Admin"));
 const AdminDemo = lazyWithPreload(() => import("@/pages/AdminDemo"));
 
+type PreloadableRoute = ReturnType<typeof lazyWithPreload>;
+
+const seoRoutePreloads: Record<string, PreloadableRoute> = {
+  "/paypal-chargeback": PayPalSEO,
+  "/amex-chargeback": AmexSEO,
+  "/visa-mastercard-chargeback": VisaMastercardSEO,
+  "/klarna-reklamation": KlarnaSEO,
+  "/flug-chargeback": FlugSEO,
+  "/kiwi-rueckerstattung": KiwiSEO,
+  "/lieferando-rueckerstattung": LieferandoSEO,
+  "/wolt-rueckerstattung": WoltSEO,
+  "/ubereats-rueckerstattung": UberEatsSEO,
+  "/ware-nicht-erhalten": WareNichtErhaltenSEO,
+  "/abo-falle-chargeback": AboFalleSEO,
+  "/chargeback-antrag-vorlage": ChargebackAntragVorlageSEO,
+  "/paypal-kaeuferschutz-vorlage": PayPalKaeuferschutzVorlageSEO,
+  "/klarna-reklamation-vorlage": KlarnaReklamationVorlageSEO,
+  "/ware-nicht-erhalten-musterbrief": WareNichtErhaltenMusterbriefSEO,
+  "/abo-falle-musterbrief": AboFalleMusterbriefSEO,
+  "/rueckerstattung-haendler-vorlage": RueckerstattungHaendlerVorlageSEO,
+  "/visa-reason-code-13-1": VisaReasonCodeSEO,
+  "/mastercard-chargeback-reason-code": MastercardReasonCodeSEO,
+};
+
+const legalRoutePreloads: Record<string, PreloadableRoute> = {
+  "/impressum": Impressum,
+  "/datenschutz": Datenschutz,
+  "/ueber-uns": UeberUns,
+  "/methodik": Methodik,
+  "/disclaimer": Disclaimer,
+  "/agb": AGB,
+  "/widerruf": Widerruf,
+};
+
+function normalizeRoutePath(pathname: string) {
+  const cleanPath = pathname.split("?")[0].split("#")[0].replace(/\/+$/, "");
+  return cleanPath || "/";
+}
+
+function preloadComponent(component: PreloadableRoute) {
+  return component.preload().then(
+    () => undefined,
+    () => undefined
+  );
+}
+
+export function preloadRouteForPath(pathname: string) {
+  const route = normalizeRoutePath(pathname);
+  const exactRoute = seoRoutePreloads[route] ?? legalRoutePreloads[route];
+  if (exactRoute) return preloadComponent(exactRoute);
+  if (route === "/ratgeber") return preloadComponent(RatgeberIndex);
+  if (route === "/scam-shops-2026") return preloadComponent(ScamShopsPage);
+  if (route === "/vergleich/paypal-vs-kreditkarte-vs-klarna") return preloadComponent(ComparePage);
+  if (route === "/vorlagen-generator") return preloadComponent(Wizard);
+  if (route === "/admin") return preloadComponent(Admin);
+  if (route === "/admin/demo") return preloadComponent(AdminDemo);
+  if (route.startsWith("/hilfe/")) {
+    return preloadComponent(route.split("/").length >= 4 ? MerchantProblemPage : MerchantIndexPage);
+  }
+  return Promise.resolve();
+}
+
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
@@ -154,6 +216,43 @@ function RouteHeadSync() {
       noindex: meta.noindex,
     });
   }, [pathname]);
+
+  return null;
+}
+
+function RouteChunkPreloader() {
+  useEffect(() => {
+    const getInternalPath = (event: Event) => {
+      if (!(event.target instanceof Element)) return null;
+      const anchor = event.target.closest<HTMLAnchorElement>("a[href]");
+      const href = anchor?.getAttribute("href");
+      if (!href || href.startsWith("#") || href.startsWith("mailto:") || href.startsWith("tel:")) {
+        return null;
+      }
+
+      try {
+        const url = new URL(href, window.location.origin);
+        return url.origin === window.location.origin ? url.pathname : null;
+      } catch {
+        return null;
+      }
+    };
+
+    const preloadFromEvent = (event: Event) => {
+      const path = getInternalPath(event);
+      if (path) void preloadRouteForPath(path);
+    };
+
+    document.addEventListener("pointerover", preloadFromEvent, { capture: true, passive: true });
+    document.addEventListener("touchstart", preloadFromEvent, { capture: true, passive: true });
+    document.addEventListener("focusin", preloadFromEvent, { capture: true });
+
+    return () => {
+      document.removeEventListener("pointerover", preloadFromEvent, { capture: true });
+      document.removeEventListener("touchstart", preloadFromEvent, { capture: true });
+      document.removeEventListener("focusin", preloadFromEvent, { capture: true });
+    };
+  }, []);
 
   return null;
 }
@@ -381,6 +480,7 @@ function App({ ssrPath }: AppProps) {
         <WouterRouter base={import.meta.env.BASE_URL.replace(/\/$/, "")} ssrPath={ssrPath}>
           <div className="min-h-screen flex flex-col font-sans bg-background">
             <RouteHeadSync />
+            <RouteChunkPreloader />
             <Navbar />
             <main className="flex-1">
               <ScrollToTop />

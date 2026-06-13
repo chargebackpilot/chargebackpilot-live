@@ -11,7 +11,7 @@ export function Impressum() {
       />
       <div className="container mx-auto max-w-3xl py-16 px-4">
         <h1 className="text-3xl font-bold mb-8">Impressum</h1>
-        <div className="prose prose-slate max-w-none">
+        <div className="prose prose-slate dark:prose-invert max-w-none">
           <p>Angaben gemäß § 5 Digitale-Dienste-Gesetz (DDG)</p>
           <p>
             <strong>Till Pfeiffer</strong>
@@ -76,7 +76,7 @@ export function Datenschutz() {
       />
       <div className="container mx-auto max-w-3xl py-16 px-4">
         <h1 className="text-3xl font-bold mb-8">Datenschutzerklärung</h1>
-        <div className="prose prose-slate max-w-none">
+        <div className="prose prose-slate dark:prose-invert max-w-none">
           <h2>1. Datenschutz auf einen Blick</h2>
           <p>
             Diese Datenschutzerklärung informiert Sie darüber, welche personenbezogenen Daten wir
@@ -229,7 +229,7 @@ export function UeberUns() {
       />
       <div className="container mx-auto max-w-3xl py-16 px-4">
         <h1 className="text-3xl font-bold mb-8">Über ChargebackPilot</h1>
-        <div className="prose prose-slate max-w-none">
+        <div className="prose prose-slate dark:prose-invert max-w-none">
           <p>
             ChargebackPilot ist ein unabhängiges Software-Tool für Verbraucher, die bei
             Online-Käufen, Reisen, Lieferdiensten oder Abos strukturiert reklamieren möchten.
@@ -293,7 +293,7 @@ export function Methodik() {
       />
       <div className="container mx-auto max-w-3xl py-16 px-4">
         <h1 className="text-3xl font-bold mb-8">So funktioniert die Einschätzung</h1>
-        <div className="prose prose-slate max-w-none">
+        <div className="prose prose-slate dark:prose-invert max-w-none">
           <p>
             ChargebackPilot nutzt die von Nutzern eingegebenen Informationen — etwa Zahlungsart,
             Problemtyp, Händlername, Belege und Chronologie — um daraus eine strukturierte,
@@ -367,7 +367,7 @@ export function Disclaimer() {
       />
       <div className="container mx-auto max-w-3xl py-16 px-4">
         <h1 className="text-3xl font-bold mb-8">Disclaimer</h1>
-        <div className="prose prose-slate max-w-none">
+        <div className="prose prose-slate dark:prose-invert max-w-none">
           <h2>Keine Rechtsberatung</h2>
           <p>
             ChargebackPilot ist ein Software-Tool zur strukturierten Formulierungshilfe. Wir bieten
@@ -426,7 +426,7 @@ export function Widerruf() {
       />
       <div className="container mx-auto max-w-3xl py-16 px-4">
         <h1 className="text-3xl font-bold mb-8">Widerrufsbelehrung</h1>
-        <div className="prose prose-slate max-w-none">
+        <div className="prose prose-slate dark:prose-invert max-w-none">
           <h2>Widerrufsrecht</h2>
           <p>
             Sie haben das Recht, binnen vierzehn Tagen ohne Angabe von Gründen diesen Vertrag zu
@@ -486,7 +486,7 @@ export function AGB() {
       />
       <div className="container mx-auto max-w-3xl py-16 px-4">
         <h1 className="text-3xl font-bold mb-8">Allgemeine Nutzungsbedingungen (AGB)</h1>
-        <div className="prose prose-slate max-w-none">
+        <div className="prose prose-slate dark:prose-invert max-w-none">
           <h2>1. Geltungsbereich</h2>
           <p>
             Diese Allgemeinen Geschäftsbedingungen gelten für die Nutzung der von ChargebackPilot

@@ -294,7 +294,7 @@ export default function MerchantProblemPage() {
             <div className="space-y-3">
               {copy.deadlines.map((d, i) => (
                 <div key={i} className="bg-card border rounded-xl p-4 flex items-start gap-4">
-                  <div className="flex-shrink-0 bg-primary/15 text-primary font-bold text-sm px-3 py-2 rounded-lg min-w-[110px] text-center">
+                  <div className="flex-shrink-0 rounded-lg border border-primary/20 bg-primary/10 px-3 py-2 text-center text-sm font-bold text-blue-800 dark:bg-primary/20 dark:text-blue-100 min-w-[110px]">
                     {d.value}
                   </div>
                   <div className="flex-1 min-w-0">
