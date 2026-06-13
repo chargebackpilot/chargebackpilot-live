@@ -354,6 +354,8 @@ In this environment `rg` may not be installed. Use `find` and `grep` if needed.
 - Stage only files related to the task.
 - Do not use destructive commands such as `git reset --hard` or `git checkout --` unless explicitly requested.
 - Husky/lint-staged may format staged files during commit.
+- Product-owner preference: after completing a code or documentation change, commit and push the
+  finished work automatically unless the user explicitly says not to.
 - If the user asks to commit/push, commit to the current branch and push.
 
 ## Copy Rules
