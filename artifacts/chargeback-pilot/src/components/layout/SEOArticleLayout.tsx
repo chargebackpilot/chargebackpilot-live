@@ -183,7 +183,7 @@ const MONEY_PAGE_PROFILES: Record<string, MoneyPageProfile> = {
     nextAction:
       "Melde das Problem im Klarna-Konto und kontaktiere den Händler parallel mit denselben Belegen.",
     avoid:
-      "Ignoriere die Rechnung nicht. Ohne offizielle Problemmeldung wirkt der Fall später schwächer.",
+      "Ignoriere die Rechnung nicht. Ohne nachvollziehbare Problemmeldung im Klarna-Konto wirkt der Fall später schwächer.",
     keywords: [
       "klarna reklamation vorlage",
       "klarna problem melden text",
@@ -1250,7 +1250,7 @@ function enrichFaq(
       a: `Besonders wichtig sind ${ctx.evidenceFocus}. Lege die Belege am besten in einer kurzen Reihenfolge ab: Zahlung, Bestellung, Problem, Kontaktversuch, aktueller Stand.`,
     },
     {
-      q: `Muss ich den Händler vorher kontaktieren?`,
+      q: `Sollte ich den Händler vorher kontaktieren?`,
       a: `In vielen Fällen ist ein dokumentierter Kontaktversuch hilfreich oder wird vom Zahlungsdienstleister erwartet. Eine sachliche Nachricht mit Bestellnummer, Betrag, Problem und gewünschter Lösung verbessert die Nachvollziehbarkeit.`,
     },
     {

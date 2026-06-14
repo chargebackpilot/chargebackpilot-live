@@ -55,7 +55,7 @@ const SCENARIOS = [
     tagBg: "bg-orange-50 text-orange-700",
     headline: "Bestellung kalt, fehlt oder ungenießbar",
     detail:
-      "Du hast bei Lieferando, Wolt oder UberEats bestellt — und erhalten, was du nicht bestellt hast, oder die Bestellung kam komplett ungenießbar an.",
+      "Du hast bei Lieferando, Wolt oder UberEats bestellt — und erhalten, was du nicht bestellt hast, oder die Bestellung war aus deiner Sicht nicht nutzbar.",
     brands: ["Lieferando", "Wolt", "UberEats", "Gorillas"],
     recovery: "Erstattung prüfen",
     href: "/vorlagen-generator?problem=food_delivery",
@@ -69,9 +69,9 @@ const SCENARIOS = [
     tagBg: "bg-sky-50 text-sky-700",
     headline: "Flugsteuern & Gebühren nach Stornierung",
     detail:
-      "Dein Flug wurde gestrichen oder du hast ihn nicht genutzt — Steuern und Gebühren werden von Airlines wie Ryanair oder Easyjet oft nicht automatisch erstattet.",
+      "Dein Flug wurde gestrichen oder du hast ihn nicht genutzt — bei Airlines wie Ryanair oder Easyjet können Steuern, Gebühren und Erstattungswege im Einzelfall zu prüfen sein.",
     brands: ["Ryanair", "Easyjet", "Condor", "TUI Fly"],
-    recovery: "Steuern & Gebühren zurückfordern",
+    recovery: "Steuern & Gebühren prüfen",
     href: "/vorlagen-generator?problem=flight_travel",
   },
   {
@@ -111,7 +111,7 @@ const SCENARIOS = [
     tagBg: "bg-rose-50 text-rose-700",
     headline: "Rückerstattung versprochen — nie erhalten",
     detail:
-      "Der Händler hat dir schriftlich eine Rückerstattung zugesagt — aber das Geld ist nie auf deinem Konto angekommen. Das kann eine gute Dokumentationsgrundlage sein.",
+      "Der Händler hat dir schriftlich eine Rückerstattung zugesagt — aber der Betrag ist noch nicht auf deinem Konto angekommen. Das kann eine gute Dokumentationsgrundlage sein.",
     brands: ["Alle Händler", "Online-Shops", "Dienstleister"],
     recovery: "Häufig gute Dokumentationslage",
     href: "/vorlagen-generator?problem=refund_promised",

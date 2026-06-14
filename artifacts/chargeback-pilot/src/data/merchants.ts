@@ -106,7 +106,7 @@ export const MERCHANTS: MerchantDef[] = [
     country: "China",
     trustLevel: "mixed",
     description:
-      "Chinesischer Online-Marktplatz mit besonders niedrigen Preisen. Häufige Beschwerden betreffen Lieferzeiten, Produktqualität und Rückerstattungen.",
+      "Chinesischer Online-Marktplatz mit besonders niedrigen Preisen. Nutzerberichte betreffen häufig Lieferzeiten, Produktqualität und Rückerstattungsprozesse.",
     problems: ["ware-nicht-erhalten", "ware-defekt", "betrugsverdacht"],
   },
   {
@@ -116,7 +116,7 @@ export const MERCHANTS: MerchantDef[] = [
     country: "Singapur / China",
     trustLevel: "mixed",
     description:
-      "Fast-Fashion-Plattform mit Sitz in Singapur. Häufige Beschwerden zu Größen, Materialqualität und verspäteten Lieferungen.",
+      "Fast-Fashion-Plattform mit Sitz in Singapur. Nutzerberichte betreffen häufig Größen, Materialqualität und verspätete Lieferungen.",
     problems: ["ware-nicht-erhalten", "ware-defekt"],
   },
   {
@@ -738,14 +738,14 @@ function applicableScenarios(m: MerchantDef, p: ProblemDef): string[] {
       `${m.name} oder der Anbieter bietet keine nachvollziehbare Klärung zu Minderung oder Stornierung an.`,
     ],
     "abbuchung-ohne-zustimmung": [
-      `${m.name} hat eine Zahlung abgebucht, der du nicht zugestimmt hast (z. B. nach Probemonat).`,
-      "Eine Kündigung wurde nicht beachtet oder ein Vertrag heimlich verlängert.",
+      `Eine Zahlung von ${m.name} ist aus deiner Sicht nicht nachvollziehbar oder nicht autorisiert (z. B. nach Probemonat).`,
+      "Eine Kündigung wurde aus deiner Sicht nicht berücksichtigt oder eine Verlängerung ist unklar.",
       "Du erkennst die Abbuchung auf deinem Konto/Karte nicht wieder.",
     ],
     "lieferung-falsch": [
-      `${m.name} hat die Bestellung falsch, unvollständig oder unbrauchbar geliefert.`,
+      `Die Bestellung bei ${m.name} kam falsch, unvollständig oder aus deiner Sicht nicht nutzbar an.`,
       "Das Essen kam kalt, verschüttet oder mit den falschen Komponenten an.",
-      `${m.name} bietet über die App keine nachvollziehbare Lösung für den betroffenen Betrag an.`,
+      `Über die App liegt noch keine nachvollziehbare Klärung für den betroffenen Betrag vor.`,
     ],
     betrugsverdacht: [
       `Du hast den begründeten Verdacht, dass ein Shop, Verkäufer oder Drittanbieter im Zusammenhang mit ${m.name} unklar oder nicht erreichbar ist.`,
@@ -800,7 +800,7 @@ function evidenceForProblem(p: ProblemDef): string[] {
 }
 
 function stepsForCombo(m: MerchantDef, p: ProblemDef): string[] {
-  const direct = `Kontaktiere ${m.name} zuerst über den offiziellen Support-Kanal (App, E-Mail, Hilfecenter) und setze eine schriftliche Frist von 14 Tagen.`;
+  const direct = `Kontaktiere ${m.name} zuerst über den vom Anbieter vorgesehenen Support-Kanal (App, E-Mail, Hilfecenter) und bitte um schriftliche Rückmeldung innerhalb einer angemessenen Frist.`;
   const document =
     "Dokumentiere lückenlos: Datum, Uhrzeit, Gesprächspartner, Inhalt — am besten per E-Mail, weil schriftlich beweisbar.";
   const pay = paymentSpecificStep(p, m);
@@ -874,7 +874,7 @@ function faqForCombo(m: MerchantDef, p: ProblemDef, sector: string): { q: string
     },
     {
       q: `Welche Beweise sind im Chargeback-Verfahren am wichtigsten?`,
-      a: `Schriftliches schlägt mündliches. Die wertvollsten Beweise: Bestellbestätigung mit Datum, Kontoauszug/PayPal-Transaktion, E-Mail-Verlauf mit ${m.name} (besonders deren ablehnende Antwort oder Schweigen), Tracking-Screenshots und Fotos. Telefonate ohne schriftliche Bestätigung zählen im Zweifel nicht.`,
+      a: `Schriftliches ist meist besser nachvollziehbar als rein mündliche Angaben. Hilfreich sind Bestellbestätigung mit Datum, Kontoauszug/PayPal-Transaktion, E-Mail-Verlauf mit ${m.name}, Tracking-Screenshots und Fotos. Telefonate solltest du möglichst schriftlich bestätigen lassen.`,
     },
     {
       q: `Was kostet die Hilfe von ChargebackPilot?`,

@@ -718,9 +718,10 @@ export default function Wizard() {
                   </ol>
                   <div className="mt-6 rounded-xl border bg-muted/50 p-3 text-[11px] text-muted-foreground leading-relaxed">
                     <div className="flex items-center gap-1.5 mb-1 font-semibold text-foreground">
-                      <Shield className="w-3.5 h-3.5 text-primary" /> Sicher & DSGVO-konform
+                      <Shield className="w-3.5 h-3.5 text-primary" /> Datenschutz transparent
                     </div>
-                    Deine Angaben werden für die Textgenerierung genutzt.
+                    Deine Angaben werden für Fallanalyse, Textgenerierung und Bereitstellung
+                    genutzt.
                   </div>
                 </div>
               </aside>

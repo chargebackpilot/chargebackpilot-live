@@ -21,17 +21,17 @@ export const GUIDES = [
   {
     path: "/visa-mastercard-chargeback",
     title: "Visa & Mastercard Chargeback",
-    desc: "Der Weg zur Rückerstattung bei Kreditkartenzahlungen.",
+    desc: "Umsatzreklamationen bei Kreditkartenzahlungen strukturiert vorbereiten.",
   },
   {
     path: "/klarna-reklamation",
     title: "Klarna Reklamation",
-    desc: "Käuferschutz bei Klarna-Zahlungen nutzen.",
+    desc: "Probleme bei Klarna-Zahlungen sachlich melden und Belege ordnen.",
   },
   {
     path: "/flug-chargeback",
     title: "Flug Chargeback",
-    desc: "Reiserückerstattung bei Ausfällen und Stornierungen.",
+    desc: "Erstattungsfragen bei Ausfällen und Stornierungen nachvollziehbar prüfen.",
   },
   {
     path: "/kiwi-rueckerstattung",
@@ -46,7 +46,7 @@ export const GUIDES = [
   {
     path: "/wolt-rueckerstattung",
     title: "Wolt Erstattung",
-    desc: "Chargeback bei kalten Bestellungen oder Umwegen.",
+    desc: "Kalte, falsche oder fehlende Bestellungen belegorientiert einordnen.",
   },
   {
     path: "/ubereats-rueckerstattung",
@@ -91,7 +91,7 @@ export const GUIDES = [
   {
     path: "/rueckerstattung-haendler-vorlage",
     title: "Rückerstattung Händler Vorlage",
-    desc: "Geld sachlich vom Händler zurückfordern.",
+    desc: "Klärung und Zahlungsstand sachlich beim Händler anfragen.",
   },
   {
     path: "/visa-reason-code-13-1",

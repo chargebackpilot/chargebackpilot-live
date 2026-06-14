@@ -46,10 +46,10 @@ export function PayPalSEO() {
 export function AmexSEO() {
   return (
     <SEOArticleLayout
-      title="American Express Chargeback einleiten"
+      title="American Express Chargeback vorbereiten"
       category="Amex"
       whenApplies={[
-        "Betrügerische Abbuchungen",
+        "Verdächtige oder nicht autorisierte Abbuchungen",
         "Leistung nicht erbracht (z.B. Insolvenz des Anbieters)",
         "Ware nicht erhalten oder defekt",
         "Doppelte Abbuchung",
@@ -69,7 +69,7 @@ export function AmexSEO() {
       ]}
       mistakes={[
         "Warten auf Rückbuchung ohne zu reklamieren: Fristen sind oft knapp und sollten direkt bei Amex geprüft werden.",
-        "Zu wenig Beweise geliefert: Amex prüft streng. Ohne vorherigen Kontakt zum Händler wird oft direkt abgelehnt.",
+        "Zu wenig Belege geliefert: Ohne vorherigen Kontakt zum Händler kann die Prüfung schwieriger werden.",
       ]}
       faq={[
         {
@@ -217,8 +217,8 @@ export function LieferandoSEO() {
       ]}
       faq={[
         {
-          q: "Muss das Restaurant oder Lieferando erstatten?",
-          a: "Bei Plattformbestellungen läuft die Erstattung häufig über den Plattform-Support. Maßgeblich sind die konkreten Vertragsbedingungen und der Einzelfall.",
+          q: "Wann prüfen Restaurant oder Lieferando eine Erstattung?",
+          a: "Bei Plattformbestellungen läuft die Prüfung häufig über den Plattform-Support. Maßgeblich sind die konkreten Vertragsbedingungen, Belege und der Einzelfall.",
         },
         {
           q: "Essen war kalt, weil der Fahrer einen Umweg gemacht hat - Erstattung möglich?",
@@ -256,8 +256,8 @@ export function WoltSEO() {
       ]}
       faq={[
         {
-          q: "Kann ich Chargeback machen, wenn Wolt mein Konto danach sperrt?",
-          a: "Eine Zahlungsreklamation kann je nach Belegen und Zahlungsart in Betracht kommen. Mögliche Folgen auf Kontenebene hängen vom Einzelfall und den Plattformbedingungen ab.",
+          q: "Was beachten, wenn ich wegen einer Zahlungsreklamation Sorgen um mein Wolt-Konto habe?",
+          a: "Eine Zahlungsreklamation kann je nach Belegen und Zahlungsart in Betracht kommen. Prüfe vorher die Plattformbedingungen und dokumentiere den Supportverlauf, weil mögliche Kontofolgen vom Einzelfall abhängen.",
         },
       ]}
     />
@@ -290,7 +290,7 @@ export function UberEatsSEO() {
       ]}
       faq={[
         {
-          q: "Uber Eats Support lehnt ab, was nun?",
+          q: "Uber Eats Support bietet keine Lösung, was nun?",
           a: "Prüfe zuerst die Begründung der Antwort und sichere Bestelldaten, Fotos und Supportverlauf. Je nach Zahlungsart kann anschließend eine sachliche Prüfung bei PayPal oder deiner Bank in Betracht kommen.",
         },
       ]}
@@ -306,7 +306,7 @@ export function KiwiSEO() {
       whenApplies={[
         "Du hast den Flug selbst storniert (nicht-erstattbares Ticket)",
         "Flug wurde verpasst (No-Show)",
-        "Du willst Flughafensteuern und Gebühren zurückfordern",
+        "Du willst Flughafensteuern und Gebühren nachvollziehbar prüfen lassen",
       ]}
       evidence={[
         "Buchungsbestätigung",
@@ -314,7 +314,7 @@ export function KiwiSEO() {
         "Kiwi.com AGB oder Gebührenhinweise, die im konkreten Fall angezeigt wurden",
       ]}
       steps={[
-        "Fordere Kiwi.com formlos auf, dir die personenbezogenen Steuern und Gebühren nachvollziehbar zu erstatten.",
+        "Bitte Kiwi.com formlos um eine nachvollziehbare Prüfung der personenbezogenen Steuern und Gebühren.",
         "Wenn Gebühren abgezogen werden, bitte um eine nachvollziehbare Aufschlüsselung und prüfe die Vertragsgrundlage im Einzelfall.",
         "Wenn keine Klärung gelingt, prüfe je nach Zahlungsart, ob eine Reklamation beim Zahlungsdienstleister in Betracht kommt.",
       ]}
@@ -324,7 +324,7 @@ export function KiwiSEO() {
       ]}
       faq={[
         {
-          q: "Warum verlangt Kiwi.com 59€?",
+          q: "Warum kann bei Kiwi.com eine Servicegebühr auftauchen?",
           a: "Plattformen arbeiten teils mit Bearbeitungsgebühren. Ob und in welcher Höhe das im Einzelfall wirksam ist, hängt von den jeweiligen Vertragsbedingungen und der anwendbaren Rechtslage ab.",
         },
         {
@@ -439,7 +439,7 @@ export function ChargebackAntragVorlageSEO() {
           a: "Nein. Eine Vorlage ist eine Formulierungshilfe. Ob ein Chargeback geprüft oder akzeptiert wird, entscheidet die Bank bzw. der Kartenausgeber nach den jeweiligen Regeln.",
         },
         {
-          q: "Muss ich einen Reason Code selbst kennen?",
+          q: "Sollte ich einen Reason Code selbst kennen?",
           a: "In der Regel reicht eine klare Sachverhaltsschilderung. Die Bank ordnet den Fall intern ein; eine passende Kategorie kann aber die Nachvollziehbarkeit verbessern.",
         },
       ]}
@@ -510,7 +510,7 @@ export function KlarnaReklamationVorlageSEO() {
         "Dokumentiere parallel den Kontakt zum Händler.",
       ]}
       mistakes={[
-        "Die Rechnung ignorieren, statt das Problem offiziell zu melden.",
+        "Die Rechnung ignorieren, statt das Problem im Klarna-Konto nachvollziehbar zu melden.",
         "Retourenbelege nicht aufbewahren.",
         "Nur an den Händler schreiben und Klarna nicht informieren.",
       ]}
@@ -657,13 +657,13 @@ export function VisaReasonCodeSEO() {
         "Füge Belege und Kontaktversuche bei. Die genaue interne Einordnung nimmt die Bank vor.",
       ]}
       mistakes={[
-        "Den Reason Code als garantierten Anspruch verstehen.",
+        "Den Reason Code als verbindliche Entscheidung verstehen.",
         "Keinen vorherigen Händlerkontakt dokumentieren.",
         "Fristen nicht direkt bei der Bank prüfen.",
       ]}
       faq={[
         {
-          q: "Muss ich Visa Reason Code 13.1 selbst angeben?",
+          q: "Sollte ich Visa Reason Code 13.1 selbst angeben?",
           a: "Nicht zwingend. Verbraucher beschreiben meist den Sachverhalt; die Bank ordnet den Fall nach den Kartenregeln ein.",
         },
       ]}
