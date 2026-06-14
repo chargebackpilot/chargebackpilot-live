@@ -88,8 +88,6 @@ function parseProvenExpert(html) {
   const ratingMatch = text.match(/(\d,\d{2})\s+von\s+5/);
   const countMatch = text.match(/(\d+)\s+Bewertungen/);
   const sourceUpdatedMatch = text.match(/Letzte Aktualisierung:\s*(\d{2}\.\d{2}\.\d{4})/);
-  const statusMatch = text.match(/\b(Sehr Gut|Gut|Befriedigend|Ausreichend|Mangelhaft)\b/);
-
   if (!ratingMatch || !countMatch) {
     throw new Error("ProvenExpert rating data not found");
   }
@@ -104,7 +102,6 @@ function parseProvenExpert(html) {
     ratingLabel: numberLabel(rating),
     reviewCount,
     reviewLabel: `${reviewCount} ${reviewCount === 1 ? "Bewertung" : "Bewertungen"}`,
-    statusLabel: statusMatch?.[1] ?? null,
     sourceUpdatedLabel: sourceUpdatedMatch?.[1] ?? null,
   };
 }
@@ -127,9 +124,18 @@ function parseTrustpilot(html) {
       reviewCount > 0
         ? `${reviewCount} ${reviewCount === 1 ? "Bewertung" : "Bewertungen"}`
         : "Noch keine Bewertungen",
-    statusLabel: reviewCount > 0 ? "TrustScore" : "Profil ansehen",
     sourceUpdatedLabel: null,
   };
+}
+
+function removeDisplayOnlyStatusLabels(profiles) {
+  return Object.fromEntries(
+    Object.entries(profiles).map(([key, profile]) => {
+      if (!profile || typeof profile !== "object") return [key, profile];
+      const { statusLabel: _statusLabel, ...rest } = profile;
+      return [key, rest];
+    })
+  );
 }
 
 async function readExisting() {
@@ -170,6 +176,8 @@ async function main() {
       console.warn(`review sync: ${key} kept fallback (${error.message})`);
     }
   }
+
+  next.profiles = removeDisplayOnlyStatusLabels(next.profiles);
 
   await fs.writeFile(outputPath, `${JSON.stringify(next, null, 2)}\n`);
 }

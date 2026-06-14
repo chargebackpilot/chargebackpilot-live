@@ -37,7 +37,6 @@ import {
   CreditCard,
   TrendingUp,
   Star,
-  ExternalLink,
 } from "lucide-react";
 
 interface CaseStats {
@@ -225,24 +224,22 @@ function ReviewProfileBadge({
   const roundedRating = Math.round(profile.rating);
 
   return (
-    <div className="flex min-w-0 flex-1 items-center gap-3 rounded-xl border border-slate-200 bg-white/90 px-3.5 py-3 text-left shadow-sm dark:border-slate-700 dark:bg-slate-900/90">
+    <a
+      href={profile.url}
+      target="_blank"
+      rel="noopener noreferrer"
+      className="group flex min-w-0 items-center gap-3 rounded-xl border border-slate-200/80 bg-white/80 px-3.5 py-3 text-left shadow-sm transition hover:-translate-y-0.5 hover:border-primary/30 hover:bg-white hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring dark:border-slate-700 dark:bg-slate-900/80 dark:hover:border-primary/40 dark:hover:bg-slate-900"
+    >
       <span
-        className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-xs font-black tracking-wide text-white ${markClassName}`}
+        className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-lg text-xs font-black tracking-wide text-white shadow-sm ${markClassName}`}
         aria-hidden="true"
       >
         {mark}
       </span>
       <div className="min-w-0 flex-1">
-        <div className="flex min-w-0 flex-wrap items-center gap-x-2 gap-y-1">
-          <span className="truncate text-xs font-semibold text-slate-900 dark:text-slate-100">
-            {profile.name}
-          </span>
-          {profile.statusLabel ? (
-            <span className="rounded-full bg-slate-100 px-2 py-0.5 text-[10px] font-semibold text-slate-600 dark:bg-slate-800 dark:text-slate-300">
-              {profile.statusLabel}
-            </span>
-          ) : null}
-        </div>
+        <span className="block truncate text-xs font-semibold text-slate-900 dark:text-slate-100">
+          {profile.name}
+        </span>
         <div className="mt-1 flex flex-wrap items-center gap-x-1.5 gap-y-0.5 text-xs text-muted-foreground">
           {hasPublicRating ? (
             <>
@@ -262,23 +259,12 @@ function ReviewProfileBadge({
               <span className="font-medium text-slate-700 dark:text-slate-200">
                 {profile.ratingLabel}/5
               </span>
-              <span aria-hidden="true">·</span>
             </>
           ) : null}
           <span>{profile.reviewLabel}</span>
         </div>
       </div>
-      <a
-        href={profile.url}
-        target="_blank"
-        rel="noopener noreferrer"
-        className="inline-flex shrink-0 items-center gap-1 rounded-full border border-slate-200 px-2.5 py-1 text-[11px] font-semibold text-slate-700 transition hover:border-primary/40 hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring dark:border-slate-700 dark:text-slate-200"
-        aria-label={`${profile.name} Profil ansehen`}
-      >
-        Profil
-        <ExternalLink className="h-3 w-3" aria-hidden="true" />
-      </a>
-    </div>
+    </a>
   );
 }
 
@@ -380,11 +366,24 @@ export default function Home() {
   }, [toast]);
 
   useEffect(() => {
+    if (["localhost", "127.0.0.1"].includes(window.location.hostname)) {
+      return;
+    }
+
     const controller = new AbortController();
+    let timeoutId: number | undefined;
 
     const loadStats = () => {
-      fetch("/api/cases/stats", { signal: controller.signal })
-        .then((res) => (res.ok ? res.json() : null))
+      fetch("/api/cases/stats", {
+        signal: controller.signal,
+        headers: { accept: "application/json" },
+      })
+        .then((res) => {
+          if (!res.ok || !res.headers.get("content-type")?.includes("application/json")) {
+            return null;
+          }
+          return res.json();
+        })
         .then((data) => {
           if (data) startStatsTransition(() => setStats(data));
         })
@@ -393,9 +392,19 @@ export default function Home() {
         });
     };
 
-    loadStats();
+    const scheduleLoadStats = () => {
+      timeoutId = window.setTimeout(loadStats, 2500);
+    };
+
+    if (document.readyState === "complete") {
+      scheduleLoadStats();
+    } else {
+      window.addEventListener("load", scheduleLoadStats, { once: true });
+    }
 
     return () => {
+      window.removeEventListener("load", scheduleLoadStats);
+      if (timeoutId) window.clearTimeout(timeoutId);
       controller.abort();
     };
   }, []);
@@ -535,7 +544,7 @@ export default function Home() {
           </div>
 
           <div className="mt-6 flex justify-center" aria-label="Externe Bewertungsprofile">
-            <div className="grid w-full max-w-2xl gap-2 rounded-2xl border border-slate-200/80 bg-white/70 p-2 shadow-sm backdrop-blur sm:grid-cols-2 dark:border-slate-700 dark:bg-slate-950/40">
+            <div className="grid w-full max-w-xl gap-2 sm:grid-cols-2">
               <ReviewProfileBadge
                 profile={REVIEW_PROFILES.provenExpert}
                 mark="PE"

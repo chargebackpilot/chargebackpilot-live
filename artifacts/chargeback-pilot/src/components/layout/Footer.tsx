@@ -1,19 +1,29 @@
 import { Link } from "wouter";
 import { LogoLockup } from "../ui/Logo";
-import { Facebook, Instagram, Linkedin, Twitter, type LucideIcon } from "lucide-react";
+import { Facebook, Instagram, Linkedin, type LucideIcon } from "lucide-react";
 import { SOCIAL_PROFILES } from "@/data/social-profiles";
 import { openNewWizardCase } from "@/lib/case-persistence";
 
 const SOCIAL_LINKS: {
   label: string;
   href: string;
-  icon: LucideIcon;
+  icon?: LucideIcon;
 }[] = [
   { label: "LinkedIn", href: SOCIAL_PROFILES.linkedin, icon: Linkedin },
-  { label: "X/Twitter", href: SOCIAL_PROFILES.x, icon: Twitter },
+  { label: "X", href: SOCIAL_PROFILES.x },
   { label: "Facebook", href: SOCIAL_PROFILES.facebook, icon: Facebook },
   { label: "Instagram", href: SOCIAL_PROFILES.instagram, icon: Instagram },
 ];
+
+function SocialMark({ Icon }: { Icon?: LucideIcon }) {
+  if (Icon) return <Icon className="h-3.5 w-3.5" aria-hidden="true" />;
+
+  return (
+    <span className="text-[13px] font-black leading-none" aria-hidden="true">
+      X
+    </span>
+  );
+}
 
 function SocialProfileIcon({
   label,
@@ -22,7 +32,7 @@ function SocialProfileIcon({
 }: {
   label: string;
   href: string;
-  icon: LucideIcon;
+  icon?: LucideIcon;
 }) {
   const className =
     "inline-flex h-8 w-8 items-center justify-center rounded-full border border-slate-200 bg-background text-slate-500 transition hover:border-primary/35 hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring dark:border-slate-700 dark:text-slate-400";
@@ -35,7 +45,7 @@ function SocialProfileIcon({
         aria-label={`${label} Profil noch nicht hinterlegt`}
         title={`${label} Profil noch nicht hinterlegt`}
       >
-        <Icon className="h-3.5 w-3.5" aria-hidden="true" />
+        <SocialMark Icon={Icon} />
       </span>
     );
   }
@@ -49,7 +59,7 @@ function SocialProfileIcon({
       aria-label={`${label} Profil öffnen`}
       title={`${label} Profil öffnen`}
     >
-      <Icon className="h-3.5 w-3.5" aria-hidden="true" />
+      <SocialMark Icon={Icon} />
     </a>
   );
 }
