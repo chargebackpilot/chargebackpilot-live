@@ -226,7 +226,7 @@ const metaByPath: Array<{ match: RegExp; title: string; description: string; noi
       match: /^\/vorlagen-generator$/,
       title: "Vorlagen-Generator · ChargebackPilot",
       description:
-        "Erstelle in wenigen Schritten professionelle Reklamationsvorlagen für Händler, Bank/PayPal/Klarna und Eskalation.",
+        "Erstelle in wenigen Schritten sachliche Entwürfe für Händler, Bank/PayPal/Klarna und Eskalation.",
     },
     {
       match: /^\/admin(?:\/.*)?$/,

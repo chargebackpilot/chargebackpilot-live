@@ -26,9 +26,10 @@ const PAYPAL_STEPS: Step[] = [
   },
   {
     n: 3,
-    title: "Kategorie wählen: Artikel erhalten, aber Beschreibung stimmt nicht — ODER — Artikel nicht erhalten",
+    title:
+      "Kategorie wählen: Artikel erhalten, aber Beschreibung stimmt nicht — ODER — Artikel nicht erhalten",
     detail:
-      'Wähle die passende Kategorie:\n• "Ich habe den Artikel nicht erhalten" — für nicht gelieferte Ware\n• "Ich habe einen Artikel erhalten, der erheblich von der Beschreibung abweicht" — für falsche/defekte Ware\n\nDiese Unterscheidung ist entscheidend für die Bearbeitungszeit.',
+      'Wähle die passende Kategorie:\n• "Ich habe den Artikel nicht erhalten" — für nicht gelieferte Ware\n• "Ich habe einen Artikel erhalten, der erheblich von der Beschreibung abweicht" — für falsche/defekte Ware\n\nDiese Unterscheidung kann die Nachvollziehbarkeit im Konfliktcenter verbessern.',
     value: "Artikel nicht erhalten / Erheblich von Beschreibung abweichend",
     tip: 'Wähle NIE "Nicht autorisierte Transaktion" wenn du die Zahlung selbst gemacht hast — das gilt als Missbrauch und kann zur Sperrung führen.',
   },
@@ -37,13 +38,13 @@ const PAYPAL_STEPS: Step[] = [
     title: "Streitfall eröffnen — Betrag und Beschreibung eingeben",
     detail:
       'Trage den streitigen Betrag ein (kann der volle oder ein Teilbetrag sein). Kopiere in das Textfeld die Vorlage aus dem "Chargeback-Antrag" oben — sie ist speziell für PayPal formuliert.',
-    tip: "Je konkreter und sachlicher die Beschreibung, desto schneller wird entschieden.",
+    tip: "Je konkreter und sachlicher die Beschreibung, desto leichter ist der Vorgang nachvollziehbar.",
   },
   {
     n: 5,
     title: "Beweise hochladen",
     detail:
-      'Lade alle vorhandenen Belege hoch:\n• Bestellbestätigung (E-Mail / Screenshot)\n• Kommunikation mit dem Händler\n• Fotos defekter Ware\n• Tracking-Nachweis falls vorhanden\n\nDateiformate: JPG, PNG, PDF. Maximal 10 MB pro Datei.',
+      "Lade alle vorhandenen Belege hoch:\n• Bestellbestätigung (E-Mail / Screenshot)\n• Kommunikation mit dem Händler\n• Fotos defekter Ware\n• Tracking-Nachweis falls vorhanden\n\nDateiformate: JPG, PNG, PDF. Maximal 10 MB pro Datei.",
     tip: "Mehrere nachvollziehbare Belege erleichtern PayPal die Prüfung des Falls.",
   },
   {
@@ -57,7 +58,7 @@ const PAYPAL_STEPS: Step[] = [
     n: 7,
     title: "Falls keine Einigung: In Antrag auf Rückbuchung umwandeln",
     detail:
-      'Wenn der Händler nicht reagiert oder ablehnt: Gehe in den offenen Streitfall und klicke auf "In Antrag auf Rückbuchung umwandeln". PayPal entscheidet dann endgültig — meist innerhalb 30 Tage.',
+      'Wenn keine Einigung gelingt: Gehe in den offenen Streitfall und klicke auf "In Antrag auf Rückbuchung umwandeln". PayPal prüft dann den Antrag nach den eigenen Regeln; Dauer und Ergebnis hängen vom Einzelfall ab.',
     value: "In Antrag auf Rückbuchung umwandeln",
     tip: "Prüfe die von PayPal angezeigte Eskalationsfrist direkt im Fall und reagiere möglichst rechtzeitig.",
   },
@@ -173,8 +174,8 @@ export function PaypalGuide({ problemType, merchantName, amount }: PaypalGuidePr
             <span className="font-bold flex-shrink-0">Wichtig:</span>
             <span>
               PayPal nennt häufig <strong>180 Tage</strong> ab Zahlung für die Eröffnung eines
-              Käuferschutzfalls. Prüfe zusätzlich direkt im offenen Fall, welche Frist
-              PayPal für eine mögliche Eskalation anzeigt.
+              Käuferschutzfalls. Prüfe zusätzlich direkt im offenen Fall, welche Frist PayPal für
+              eine mögliche Eskalation anzeigt.
             </span>
           </div>
 
@@ -191,15 +192,15 @@ export function PaypalGuide({ problemType, merchantName, amount }: PaypalGuidePr
                 >
                   <div
                     className={`w-7 h-7 rounded-full flex items-center justify-center flex-shrink-0 text-sm font-black transition-all ${
-                      checked
-                        ? "bg-emerald-500 text-white"
-                        : "bg-[#003087]/10 text-[#003087]"
+                      checked ? "bg-emerald-500 text-white" : "bg-[#003087]/10 text-[#003087]"
                     }`}
                   >
                     {checked ? <Check className="w-4 h-4 stroke-[3]" /> : step.n}
                   </div>
                   <div className="flex-1 min-w-0">
-                    <p className={`font-semibold text-sm leading-snug ${checked ? "line-through text-muted-foreground" : ""}`}>
+                    <p
+                      className={`font-semibold text-sm leading-snug ${checked ? "line-through text-muted-foreground" : ""}`}
+                    >
                       {step.title}
                     </p>
                     {!checked && (
@@ -242,9 +243,7 @@ export function PaypalGuide({ problemType, merchantName, amount }: PaypalGuidePr
             variant="outline"
             size="sm"
             className="w-full gap-2 text-[#003087] border-[#003087]/30 hover:bg-[#003087]/5"
-            onClick={() =>
-              window.open("https://www.paypal.com/disputes", "_blank")
-            }
+            onClick={() => window.open("https://www.paypal.com/disputes", "_blank")}
           >
             <ExternalLink className="w-3.5 h-3.5" />
             Direkt zu PayPal Streitfällen

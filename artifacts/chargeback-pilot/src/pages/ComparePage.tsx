@@ -292,11 +292,11 @@ export default function ComparePage() {
           {/* CTA */}
           <section className="bg-primary text-primary-foreground p-6 md:p-8 rounded-2xl text-center">
             <h2 className="text-xl md:text-2xl font-bold mb-2">
-              Unsicher, welcher Weg in deinem Fall der richtige ist?
+              Unsicher, welcher Weg in deinem Fall sinnvoll sein kann?
             </h2>
             <p className="text-primary-foreground/95 mb-5 text-sm md:text-base">
-              Unsere KI bewertet deinen Fall indikativ und zeigt dir einen passenden nächsten Kanal
-              auf.
+              Unsere KI strukturiert deine Angaben indikativ und nennt mögliche Anlaufstellen, die
+              du selbst prüfen kannst.
             </p>
             <Link href="/vorlagen-generator">
               <Button size="lg" variant="secondary" className="gap-2">

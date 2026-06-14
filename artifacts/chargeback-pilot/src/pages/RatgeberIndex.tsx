@@ -268,7 +268,7 @@ export default function RatgeberIndex() {
           <h1 className="text-4xl font-bold mb-4">Ratgeber & Chargeback-Guides</h1>
           <p className="text-xl text-muted-foreground max-w-2xl mx-auto min-h-[3.5rem] [font-family:Inter,system-ui,-apple-system,Segoe_UI,Roboto,Helvetica,Arial,sans-serif]">
             <span className="md:hidden">
-              Praxis-Guides für schnelle Rückerstattung bei Zahlungsproblemen.
+              Praxis-Guides zur schnellen Orientierung bei Zahlungsproblemen.
             </span>
             <span className="hidden md:inline">
               Praxisnahe Informationen, Tipps und Schritt-für-Schritt-Anleitungen für typische
@@ -308,7 +308,7 @@ export default function RatgeberIndex() {
         </section>
 
         <section className="mb-16">
-          <h2 className="text-2xl font-bold mb-5">Schnell zum passenden Einstieg</h2>
+          <h2 className="text-2xl font-bold mb-5">Direkt zum passenden Einstieg</h2>
           <div className="grid md:grid-cols-3 gap-4">
             {QUICK_PATHS.map((group) => (
               <Card key={group.title} className="h-full">
@@ -382,7 +382,7 @@ export default function RatgeberIndex() {
               <h3 className="font-semibold mb-2">2. Problemtyp eingrenzen</h3>
               <p className="text-sm leading-relaxed text-muted-foreground">
                 Nicht geliefert, falsch geliefert, Flug storniert oder Abo-Falle: Der Problemtyp
-                entscheidet, welche Belege und Formulierungen am wichtigsten sind.
+                prägt, welche Belege und Formulierungen besonders wichtig sind.
               </p>
             </div>
             <div>

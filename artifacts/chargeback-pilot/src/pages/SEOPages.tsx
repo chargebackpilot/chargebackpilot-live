@@ -167,17 +167,17 @@ export function FlugSEO() {
       evidence={[
         "Buchungsbestätigung",
         "Nachweis über die Annullierung (z.B. E-Mail der Airline)",
-        "Schriftliche Aufforderung zur Erstattung mit Fristsetzung (meist 7-14 Tage)",
+        "Schriftliche Anfrage mit angemessener Rückmeldefrist",
       ]}
       steps={[
-        "Fordere die Airline schriftlich zur Rückmeldung bzw. Rückzahlung auf und setze eine angemessene Frist.",
+        "Bitte die Airline schriftlich um Rückmeldung bzw. Prüfung der Rückzahlung und setze eine angemessene Frist.",
         "Nach Fristablauf: Kontaktiere deine Bank oder deinen Kreditkartenherausgeber.",
         "Fülle das Reklamationsformular aus (Grund: 'Leistung nicht erbracht').",
         "Hänge die Flugtickets und den E-Mail-Verlauf an.",
       ]}
       mistakes={[
         "Gutschein akzeptieren: Wenn du einen Voucher akzeptierst, kann ein Chargeback schwieriger werden.",
-        "Selbst stornieren: Wenn DU stornierst (nicht die Airline), greift das Chargeback-Recht in der Regel nicht.",
+        "Selbst stornieren: Wenn du selbst stornierst, ist der Kartenweg oft schwieriger. Prüfe dann besonders genau, welche Grundlage in deinem Fall passt.",
       ]}
       faq={[
         {
@@ -606,7 +606,7 @@ export function RueckerstattungHaendlerVorlageSEO() {
       title="Rückerstattung Händler Vorlage: sachlich Erstattung anfordern"
       category="Musterbrief"
       whenApplies={[
-        "Der Händler hat eine Rückerstattung zugesagt, aber nicht gezahlt",
+        "Der Händler hat eine Rückerstattung zugesagt, aber noch nicht gutgeschrieben",
         "Eine Retoure wurde nicht verbucht",
         "Eine Leistung wurde nicht oder nur mangelhaft erbracht",
       ]}
@@ -617,7 +617,7 @@ export function RueckerstattungHaendlerVorlageSEO() {
         "Bisherige Händlerkommunikation",
       ]}
       steps={[
-        "Formuliere, welche Zahlung du wann geleistet hast und warum eine Rückerstattung erwartet wird.",
+        "Formuliere, welche Zahlung du wann geleistet hast und warum du eine Rückerstattung prüfen lassen möchtest.",
         "Verweise auf konkrete Belege und bisherige Zusagen.",
         "Setze eine angemessene Rückmeldefrist und kündige sachlich weitere Prüfung über Zahlungsdienstleister an.",
       ]}

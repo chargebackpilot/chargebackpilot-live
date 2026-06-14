@@ -93,7 +93,7 @@ function getBenefits(paymentMethod: string): Benefit[] {
   return [
     {
       icon: FileText,
-      title: "3 professionelle Textvorlagen",
+      title: "3 strukturierte Textvorlagen",
       desc: "Händler-Anschreiben, Antrag an Zahlungsdienstleister und Eskalationsentwurf — vor Versand selbst prüfen.",
     },
     {

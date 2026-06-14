@@ -56,7 +56,7 @@ export const SEO_ROUTES: SeoRouteMeta[] = [
     path: "/vorlagen-generator",
     title: "Vorlagen-Generator · ChargebackPilot",
     description:
-      "Erstelle in wenigen Schritten professionelle Reklamationsvorlagen für Händler, Bank/PayPal/Klarna und Eskalation.",
+      "Erstelle in wenigen Schritten sachliche Entwürfe für Händler, Bank/PayPal/Klarna und Eskalation.",
     changefreq: "weekly",
     priority: 0.9,
     type: "landing",

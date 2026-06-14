@@ -680,7 +680,7 @@ export default function Wizard() {
     <MainLayout>
       <SeoHead
         title="Vorlagen-Generator · ChargebackPilot"
-        description="Erstelle in wenigen Schritten professionelle Reklamationsvorlagen für Händler, Bank/PayPal/Klarna und Eskalation."
+        description="Erstelle in wenigen Schritten sachliche Entwürfe für Händler, Bank/PayPal/Klarna und Eskalation."
         canonical="/vorlagen-generator"
       />
       <ErrorBoundary>
@@ -1542,7 +1542,7 @@ export default function Wizard() {
                               <div className="space-y-4">
                                 <div className="flex items-center justify-between border-b pb-3">
                                   <h3 className="text-lg font-bold">
-                                    Deine professionellen Textvorlagen
+                                    Deine strukturierten Textvorlagen
                                   </h3>
                                   <Button
                                     size="sm"

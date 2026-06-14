@@ -753,7 +753,7 @@ function editorialInsight(title: string, category: string, ctx: GuideContext): E
     return {
       title: "Worauf PayPal bei der Fallbeschreibung typischerweise achtet",
       paragraphs: [
-        "Bei PayPal ist oft nicht die längste Beschwerde entscheidend, sondern eine klare Zuordnung: Ging es um nicht erhaltene Ware, deutlich abweichende Ware oder ein anderes Zahlungsproblem? Je sauberer du Transaktion, Artikel und bisherigen Händlerkontakt trennst, desto leichter lässt sich der Fall im Konfliktcenter nachvollziehen.",
+        "Bei PayPal ist oft nicht die längste Beschwerde besonders hilfreich, sondern eine klare Zuordnung: Ging es um nicht erhaltene Ware, deutlich abweichende Ware oder ein anderes Zahlungsproblem? Je sauberer du Transaktion, Artikel und bisherigen Händlerkontakt trennst, desto leichter lässt sich der Fall im Konfliktcenter nachvollziehen.",
         "Praktisch wichtig ist auch die Eskalationslogik. Ein eröffneter Konflikt ist noch nicht dasselbe wie ein Käuferschutzantrag. Prüfe deshalb im Konto, welche Schritte PayPal konkret anzeigt und welche Frist für die Eskalation läuft.",
       ],
       checkpoints: [
@@ -868,7 +868,7 @@ function editorialInsight(title: string, category: string, ctx: GuideContext): E
       title: "Warum ein guter Musterbrief immer konkret angepasst werden muss",
       paragraphs: [
         "Ein Musterbrief ist nur dann stark, wenn er nicht wie ein kopierter Standardtext wirkt. Zahlungsdienstleister und Händler sollten erkennen können, welcher Vorgang betroffen ist und welche Belege deine Darstellung stützen.",
-        "Nutze Vorlagen deshalb als Struktur: Betreff, kurzer Ablauf, gewünschte Prüfung, Anlagenliste und Frist. Die entscheidenden Details sollten aus deinem Fall kommen.",
+        "Nutze Vorlagen deshalb als Struktur: Betreff, kurzer Ablauf, gewünschte Prüfung, Anlagenliste und Frist. Die wichtigsten Details sollten aus deinem Fall kommen.",
       ],
       checkpoints: [
         "Betreff, Betrag, Datum und Bestellnummer sind konkret ausgefüllt.",
@@ -955,7 +955,7 @@ function glossaryForGuide(title: string, category: string): GlossaryItem[] {
       {
         term: "Zeitstempel",
         definition:
-          "Uhrzeit von Bestellung, Lieferung, Foto und Supportmeldung. Bei Essen kann diese Reihenfolge entscheidend sein.",
+          "Uhrzeit von Bestellung, Lieferung, Foto und Supportmeldung. Bei Essen kann diese Reihenfolge besonders wichtig sein.",
       },
       {
         term: "Teilbetrag",
@@ -1502,9 +1502,11 @@ export function SEOArticleLayout({
             </section>
           )}
 
-          {/* Wann greift es */}
+          {/* Beleglage */}
           <section>
-            <h2 className="text-2xl font-bold mb-6 border-b pb-2">Wann greift der Schutz?</h2>
+            <h2 className="text-2xl font-bold mb-6 border-b pb-2">
+              Wann kann eine Prüfung sinnvoll sein?
+            </h2>
             <ul className="space-y-3">
               {whenApplies.map((item, i) => (
                 <li key={i} className="flex items-start gap-3">
@@ -1606,10 +1608,10 @@ export function SEOArticleLayout({
             </h2>
             <div className="space-y-4 text-foreground/90 leading-relaxed">
               <p>
-                Zahlungsdienstleister entscheiden selten nach einem einzelnen Satz. Entscheidend
-                ist, ob dein Ablauf prüfbar ist: Was wurde gekauft, wann wurde gezahlt, was ist
-                konkret schiefgelaufen, wie hat der Anbieter reagiert und welche Lösung möchtest du
-                prüfen lassen?
+                Zahlungsdienstleister prüfen selten nur einen einzelnen Satz. Wichtig ist, dass dein
+                Ablauf prüfbar ist: Was wurde gekauft, wann wurde gezahlt, was ist konkret
+                schiefgelaufen, wie hat der Anbieter reagiert und welche Lösung möchtest du prüfen
+                lassen?
               </p>
               <p>
                 Für diese Seite ist besonders wichtig: {context.evidenceFocus}. Ergänze dazu eine
@@ -1674,7 +1676,7 @@ export function SEOArticleLayout({
             </h2>
             <div className="space-y-4 text-foreground/90 leading-relaxed">
               <p>
-                Der richtige nächste Schritt hängt stark davon ab, wie du bezahlt hast. PayPal,
+                Der sinnvolle nächste Schritt hängt stark davon ab, wie du bezahlt hast. PayPal,
                 Klarna, Kreditkarte, Apple Pay, Google Pay oder eine direkte Händlerzahlung können
                 unterschiedliche Zuständigkeiten, Fristen und Beleganforderungen haben.
               </p>
@@ -1814,11 +1816,10 @@ export function SEOArticleLayout({
           <section className="mt-16 text-xs text-muted-foreground bg-muted/50 p-4 rounded-lg border border-border/50 text-center">
             <p>
               <strong>Markenrechtlicher Hinweis:</strong> Genannte Markenbezeichnungen (wie z.B.
-              PayPal, Klarna, Visa, Mastercard, American Express, Ryanair, Lieferando etc.) sind
-              eingetragene Warenzeichen der jeweiligen Eigentümer. ChargebackPilot steht in
-              keinerlei Verbindung, Partnerschaft oder Kooperation mit diesen Unternehmen. Die
-              Nennung dient ausschließlich der Beschreibung des Anwendungsbereichs unseres
-              Text-Generators.
+              PayPal, Klarna, Visa, Mastercard, American Express, Ryanair, Lieferando etc.) gehören
+              den jeweiligen Rechteinhabern. ChargebackPilot steht in keinerlei Verbindung,
+              Partnerschaft oder Kooperation mit diesen Unternehmen. Die Nennung dient
+              ausschließlich der Beschreibung des Anwendungsbereichs unseres Text-Generators.
             </p>
           </section>
         </div>

@@ -176,7 +176,7 @@ export const MERCHANTS: MerchantDef[] = [
     country: "USA / Deutschland",
     trustLevel: "mixed",
     description:
-      "Internationaler Marktplatz mit privaten und gewerblichen Verkäufern. Bei Streitfällen sind Belege zum Artikelzustand, Versand und Verkäuferkontakt entscheidend.",
+      "Internationaler Marktplatz mit privaten und gewerblichen Verkäufern. Bei Streitfällen sind Belege zum Artikelzustand, Versand und Verkäuferkontakt besonders wichtig.",
     problems: ["ware-nicht-erhalten", "ware-defekt", "betrugsverdacht"],
   },
   {

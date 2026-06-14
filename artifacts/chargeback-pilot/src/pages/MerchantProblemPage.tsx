@@ -218,9 +218,11 @@ export default function MerchantProblemPage() {
             ))}
           </section>
 
-          {/* Wann greift es */}
+          {/* Beleglage */}
           <section>
-            <h2 className="text-2xl font-bold mb-5 border-b pb-2">Wann hast du gute Karten?</h2>
+            <h2 className="text-2xl font-bold mb-5 border-b pb-2">
+              Wann ist die Beleglage oft besser?
+            </h2>
             <ul className="space-y-3">
               {copy.whenApplies.map((item, i) => (
                 <li key={i} className="flex items-start gap-3">
@@ -456,8 +458,8 @@ export default function MerchantProblemPage() {
           {/* Disclaimer */}
           <section className="text-xs text-muted-foreground bg-muted/50 p-4 rounded-lg border border-border/50">
             <p>
-              <strong>Markenrechtlicher Hinweis:</strong> {merchant.name} ist ein eingetragenes
-              Warenzeichen des jeweiligen Eigentümers. ChargebackPilot steht in keiner Verbindung,
+              <strong>Markenrechtlicher Hinweis:</strong> {merchant.name} ist eine Markenbezeichnung
+              des jeweiligen Rechteinhabers. ChargebackPilot steht in keiner Verbindung,
               Partnerschaft oder Kooperation mit {merchant.name}. Die Nennung dient ausschließlich
               der Beschreibung des Anwendungsbereichs unseres Text-Generators. Keine Rechtsberatung.
             </p>

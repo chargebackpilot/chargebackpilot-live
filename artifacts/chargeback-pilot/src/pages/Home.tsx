@@ -141,7 +141,7 @@ const FEATURES = [
   {
     icon: CheckCircle2,
     title: "Beweis-Checkliste",
-    desc: "Welche Dokumente für deinen spezifischen Fall entscheidend sind — und was du noch beschaffen solltest.",
+    desc: "Welche Unterlagen in ähnlichen Fällen häufig hilfreich sein können — und was du noch beschaffen solltest.",
   },
   {
     icon: FileSignature,
@@ -687,7 +687,7 @@ export default function Home() {
           <div className="text-center mb-14">
             <h2 className="text-3xl font-bold mb-3">Was du bekommst</h2>
             <p className="text-muted-foreground max-w-xl mx-auto">
-              Alles, was du für eine professionelle Reklamation brauchst — an einem Ort.
+              Hilfen, um deine Reklamation strukturierter vorzubereiten — an einem Ort.
             </p>
           </div>
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -886,7 +886,7 @@ export default function Home() {
               Wann ein Antrag sinnvoll sein kann
             </span>
             <h2 className="text-3xl font-bold mb-3">
-              Wann greift ein Chargeback oder Käuferschutz?
+              Wann kann ein Chargeback oder Käuferschutz sinnvoll sein?
             </h2>
             <p className="text-muted-foreground max-w-2xl mx-auto">
               Ein Chargeback- oder Käuferschutzverfahren kann je nach Zahlungsart eine Option sein,
