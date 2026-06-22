@@ -148,6 +148,7 @@ function hasProviderSpecificSection(copy: GeneratedCopy, merchant: MerchantDef) 
   return (
     copy.merchantFocus.length >= 3 &&
     copy.merchantFocus.some((item) => item.includes(merchant.name)) &&
+    copy.merchantFocus.some((item) => item.includes(merchant.description)) &&
     copy.merchantFocus.every((item) => item.length >= 60)
   );
 }

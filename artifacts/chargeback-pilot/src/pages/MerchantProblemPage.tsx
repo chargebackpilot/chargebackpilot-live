@@ -26,18 +26,24 @@ import { getMerchant, getProblem, generateMerchantProblemCopy, MERCHANTS } from 
 import { isIndexableMerchantProblemPath } from "@/seo-quality";
 
 const SITE = "https://chargebackpilot.de";
-const DISPLAY_UPDATED_AT = "11. Juni 2026";
-const SCHEMA_UPDATED_AT = "2026-06-11";
+const DISPLAY_UPDATED_AT = "22. Juni 2026";
+const SCHEMA_UPDATED_AT = "2026-06-22";
 
 const TRUST_LABEL: Record<string, { label: string; color: string }> = {
   trusted: {
-    label: "Etablierter Anbieter",
+    label: "Bekannter Anbieter",
     color: "bg-emerald-100 text-emerald-800 border-emerald-300",
   },
-  mixed: { label: "Gemischte Erfahrungen", color: "bg-amber-100 text-amber-800 border-amber-300" },
-  risky: { label: "Häufige Beschwerden", color: "bg-orange-100 text-orange-800 border-orange-300" },
+  mixed: {
+    label: "Einzelfall genau dokumentieren",
+    color: "bg-amber-100 text-amber-800 border-amber-300",
+  },
+  risky: {
+    label: "Sorgfältige Belege sinnvoll",
+    color: "bg-orange-100 text-orange-800 border-orange-300",
+  },
   scam_reported: {
-    label: "Verdacht dokumentiert",
+    label: "Drittanbieter genau prüfen",
     color: "bg-red-100 text-red-800 border-red-300",
   },
 };

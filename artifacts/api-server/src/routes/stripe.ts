@@ -152,7 +152,7 @@ router.post("/checkout", async (req, res) => {
     res.json({ url: session.url, sessionId: session.id });
   } catch (err) {
     const msg = err instanceof Error ? err.message : "Unbekannter Fehler";
-    req.log.error({ err }, "Stripe checkout failed");
+    req.log.error({ error: msg }, "Stripe checkout failed");
     res.status(500).json({ error: msg });
   }
 });
@@ -219,7 +219,7 @@ router.post("/flatrate-checkout", async (req, res) => {
     res.json({ url: session.url, sessionId: session.id });
   } catch (err) {
     const msg = err instanceof Error ? err.message : "Unbekannter Fehler";
-    req.log.error({ err }, "Stripe flatrate checkout failed");
+    req.log.error({ error: msg }, "Stripe flatrate checkout failed");
     res.status(500).json({ error: msg });
   }
 });
@@ -261,7 +261,10 @@ router.get("/checkout/verify/:sessionId", async (req, res) => {
 
     res.json({ paid, mode, caseId: caseIdMeta ?? null });
   } catch (err) {
-    req.log.error({ err }, "Stripe verify failed");
+    req.log.error(
+      { error: err instanceof Error ? err.message : String(err) },
+      "Stripe verify failed"
+    );
     res.status(400).json({ paid: false });
   }
 });
@@ -280,6 +283,10 @@ router.post("/webhook", express.raw({ type: "application/json" }), async (req, r
 
   try {
     const stripe = getStripe();
+    if (!Buffer.isBuffer(req.body)) {
+      res.status(400).send("Webhook Error: Invalid raw body");
+      return;
+    }
     const event = stripe.webhooks.constructEvent(req.body, sig, endpointSecret);
 
     if (event.type === "checkout.session.completed") {
@@ -317,7 +324,10 @@ router.post("/webhook", express.raw({ type: "application/json" }), async (req, r
 
     res.json({ received: true });
   } catch (err) {
-    req.log.error({ err }, "Stripe webhook signature verification failed");
+    req.log.error(
+      { error: err instanceof Error ? err.message : String(err) },
+      "Stripe webhook signature verification failed"
+    );
     res.status(400).send(`Webhook Error: ${err instanceof Error ? err.message : "Unknown error"}`);
   }
 });

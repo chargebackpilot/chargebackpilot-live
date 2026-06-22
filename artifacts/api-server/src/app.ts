@@ -53,7 +53,6 @@ app.use(
           id: req.id,
           method: req.method,
           url: req.url?.split("?")[0],
-          remoteAddress: req.ip,
         };
       },
       res(res) {
@@ -82,8 +81,26 @@ app.use(
 );
 
 // Request body parsing with size limits (prevent abuse)
-app.use(express.json({ limit: "1mb" }));
-app.use(express.urlencoded({ extended: true, limit: "1mb" }));
+function isStripeWebhookRequest(req: Request) {
+  return req.method === "POST" && req.originalUrl?.split("?")[0] === "/api/stripe/webhook";
+}
+
+app.use(
+  express.json({
+    limit: "1mb",
+    type: (req) =>
+      !isStripeWebhookRequest(req as Request) && Boolean((req as Request).is("application/json")),
+  })
+);
+app.use(
+  express.urlencoded({
+    extended: true,
+    limit: "1mb",
+    type: (req) =>
+      !isStripeWebhookRequest(req as Request) &&
+      Boolean((req as Request).is("application/x-www-form-urlencoded")),
+  })
+);
 
 // Rate Limiting (DDoS & API Cost Protection)
 const apiLimiter = rateLimit({
@@ -96,8 +113,8 @@ const apiLimiter = rateLimit({
     code: "RATE_LIMIT_EXCEEDED",
   },
   skip: (req) => {
-    // Don't rate limit health checks
-    return req.path === "/healthz";
+    // Don't rate limit health checks or Stripe's signed webhook delivery.
+    return req.path === "/healthz" || req.path === "/stripe/webhook";
   },
 });
 
@@ -179,6 +196,64 @@ const __dirname = path.dirname(__filename);
 const staticDir = path.resolve(__dirname, "../..", "chargeback-pilot", "dist", "public");
 const indexPath = path.join(staticDir, "index.html");
 const appShellPath = path.join(staticDir, "app-shell.html");
+const seoReleaseManifestPath = path.resolve(staticDir, "..", "seo-release-manifest.json");
+
+interface SeoReleaseRoute {
+  path: string;
+  changefreq: string;
+  priority: number;
+  indexable: boolean;
+  releaseDate: string | null;
+  forceNoindex: boolean;
+}
+
+interface SeoReleaseManifest {
+  lastmod: string;
+  routes: SeoReleaseRoute[];
+}
+
+let seoReleaseManifestCache: SeoReleaseManifest | null | undefined;
+
+function getSeoReleaseManifest() {
+  if (seoReleaseManifestCache !== undefined) return seoReleaseManifestCache;
+  try {
+    seoReleaseManifestCache = JSON.parse(
+      fs.readFileSync(seoReleaseManifestPath, "utf-8")
+    ) as SeoReleaseManifest;
+  } catch (error) {
+    logger.warn({ error }, "SEO release manifest unavailable; using prerendered SEO state");
+    seoReleaseManifestCache = null;
+  }
+  return seoReleaseManifestCache;
+}
+
+function isSeoRouteIndexable(
+  route: SeoReleaseRoute,
+  today = process.env.SEO_RELEASE_DATE ?? new Date().toISOString().slice(0, 10)
+) {
+  if (route.forceNoindex) return false;
+  return route.indexable || Boolean(route.releaseDate && route.releaseDate <= today);
+}
+
+function applyDynamicRobots(html: string, pathname: string) {
+  const route = getSeoReleaseManifest()?.routes.find((entry) => entry.path === pathname);
+  if (!route) return html;
+
+  const indexable = isSeoRouteIndexable(route);
+  const robots = indexable
+    ? "index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1"
+    : "noindex, follow";
+  const googlebot = indexable
+    ? "index, follow, max-image-preview:large, max-snippet:-1"
+    : "noindex, follow";
+
+  return html
+    .replace(/<meta\b(?=[^>]*\bname="robots")[^>]*>/i, `<meta name="robots" content="${robots}" />`)
+    .replace(
+      /<meta\b(?=[^>]*\bname="googlebot")[^>]*>/i,
+      `<meta name="googlebot" content="${googlebot}" />`
+    );
+}
 
 function isInsideStaticDir(filePath: string) {
   const relative = path.relative(staticDir, filePath);
@@ -367,6 +442,32 @@ function renderSeoHtml(pathname: string) {
   return { html, isKnownRoute };
 }
 
+app.get("/sitemap.xml", (_req, res, next) => {
+  const manifest = getSeoReleaseManifest();
+  if (!manifest) {
+    next();
+    return;
+  }
+
+  const entries = manifest.routes
+    .filter((route) => isSeoRouteIndexable(route))
+    .sort((a, b) => a.path.localeCompare(b.path))
+    .map(
+      (route) =>
+        `  <url><loc>${origin}${escapeHtml(route.path)}</loc><lastmod>${escapeHtml(
+          manifest.lastmod
+        )}</lastmod><changefreq>${escapeHtml(route.changefreq)}</changefreq><priority>${route.priority.toFixed(
+          1
+        )}</priority></url>`
+    )
+    .join("\n");
+  const xml = `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${entries}\n</urlset>\n`;
+
+  res.setHeader("Content-Type", "application/xml; charset=utf-8");
+  res.setHeader("Cache-Control", "public, max-age=300");
+  res.status(200).send(xml);
+});
+
 app.use(
   express.static(staticDir, {
     index: false,
@@ -407,14 +508,15 @@ app.get(/(.*)/, (req, res) => {
   if (prerenderedPath) {
     res.setHeader("Content-Type", "text/html; charset=utf-8");
     res.setHeader("Cache-Control", "no-cache, must-revalidate");
-    res.status(200).send(fs.readFileSync(prerenderedPath, "utf-8"));
+    const html = applyDynamicRobots(fs.readFileSync(prerenderedPath, "utf-8"), req.path || "/");
+    res.status(200).send(html);
     return;
   }
 
   const { html, isKnownRoute } = renderSeoHtml(req.path || "/");
   res.setHeader("Content-Type", "text/html; charset=utf-8");
   res.setHeader("Cache-Control", "no-cache, must-revalidate");
-  res.status(isKnownRoute ? 200 : 404).send(html);
+  res.status(isKnownRoute ? 200 : 404).send(applyDynamicRobots(html, req.path || "/"));
 });
 
 export default app;

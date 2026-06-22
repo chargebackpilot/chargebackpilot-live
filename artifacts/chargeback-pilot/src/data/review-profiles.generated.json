@@ -1,15 +1,15 @@
 {
-  "checkedAt": "2026-06-14",
-  "checkedAtLabel": "14.06.2026",
+  "checkedAt": "2026-06-22",
+  "checkedAtLabel": "22.06.2026",
   "profiles": {
     "provenExpert": {
       "name": "ProvenExpert",
       "url": "https://www.provenexpert.com/de-de/chargebackpilot/",
-      "rating": 4.8,
-      "ratingLabel": "4,80",
-      "reviewCount": 2,
-      "reviewLabel": "2 Bewertungen",
-      "sourceUpdatedLabel": "13.06.2026"
+      "rating": 4.4,
+      "ratingLabel": "4,40",
+      "reviewCount": 3,
+      "reviewLabel": "3 Bewertungen",
+      "sourceUpdatedLabel": "19.06.2026"
     },
     "trustpilot": {
       "name": "Trustpilot",

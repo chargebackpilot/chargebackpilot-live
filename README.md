@@ -136,7 +136,7 @@ Admin-Endpunkte sind geschützt und nutzen Bearer-Token-Sessions.
 - Render/Hosting-Secrets nur als Environment-Variablen setzen.
 - Wenn eine echte DB-URL oder ein API-Key versehentlich committed wurde: Credential sofort rotieren.
 - `DATABASE_URL` muss SSL nutzen, z. B. mit `sslmode=require`.
-- `ADMIN_PASSWORD` mindestens 16 Zeichen.
+- `ADMIN_PASSWORD` mindestens 15 Zeichen.
 - `STRIPE_SECRET_KEY`, `GEMINI_API_KEY`, `TURNSTILE_SECRET_KEY` wie Passwörter behandeln.
 - User input immer validieren.
 - Keine PII ungefiltert loggen.

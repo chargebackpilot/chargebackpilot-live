@@ -23,7 +23,7 @@ const RED_FLAGS: ShopWarningSignal[] = [
   {
     title: "Unrealistisch niedrige Preise",
     description:
-      "Marken-Sneaker für 19 €, AirPods für 25 € — wenn ein Angebot zu gut wirkt, ist es das meist.",
+      "Marken-Sneaker für 19 €, AirPods für 25 € — wenn ein Angebot deutlich zu gut wirkt, kann das ein Warnsignal sein.",
   },
   {
     title: "Nur Vorkasse oder Krypto",
@@ -31,9 +31,9 @@ const RED_FLAGS: ShopWarningSignal[] = [
       "Viele seriöse Shops bieten mehrere Zahlungsarten wie PayPal, Klarna oder Kreditkarte. Ausschließliche Vorkasse kann ein Warnsignal sein.",
   },
   {
-    title: "Kein Impressum oder Fantasie-Anschrift",
+    title: "Kein Impressum oder unklare Anschrift",
     description:
-      "Pflicht in Deutschland: vollständiger Firmenname, Anschrift, Handelsregisternummer, USt-ID. Fehlt das, fehlt der Vertragspartner.",
+      "Fehlen nachvollziehbare Anbieterangaben, kann das die Zuordnung des Vertragspartners und spätere Klärung erschweren.",
   },
   {
     title: "Brandneue Domain ohne Reviews",
@@ -43,7 +43,7 @@ const RED_FLAGS: ShopWarningSignal[] = [
   {
     title: "Schlechtes Deutsch & Auto-Übersetzungen",
     description:
-      "Wörtlich übersetzte Produktbeschreibungen sind ein klassisches Indiz für Dropshipping aus Drittländern.",
+      "Wörtlich übersetzte Produktbeschreibungen können ein Hinweis auf unklare Lieferwege oder Dropshipping-Strukturen sein.",
   },
   {
     title: "Kein Widerrufsrecht oder unklare AGB",
@@ -143,7 +143,7 @@ export default function ScamShopsPage() {
       logo: { "@type": "ImageObject", url: "https://chargebackpilot.de/favicon.svg" },
     },
     datePublished: "2026-01-15",
-    dateModified: "2026-05-20",
+    dateModified: "2026-06-22",
     mainEntityOfPage: "https://chargebackpilot.de/scam-shops-2026",
     keywords:
       "fake shop erkennen, fake shop chargeback, paypal käuferschutz fake shop, auffälliger online shop",

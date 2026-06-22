@@ -6,7 +6,6 @@
  * OpenAPI spec version: 0.1.0
  */
 
-export type CaseStatsTopPaymentMethodsItem = {
-  method: string;
-  count: number;
+export type GetCaseParams = {
+  readToken: string;
 };

@@ -1555,8 +1555,8 @@ export default function Wizard() {
                                   </Button>
                                 </div>
                                 <p className="text-sm text-muted-foreground">
-                                  KI-generiert für {result.merchantName || "deinen Fall"} — bitte
-                                  vor dem Versenden prüfen und ggf. anpassen.
+                                  Für {result.merchantName || "deinen Fall"} erstellt — bitte vor
+                                  dem Versenden prüfen und ggf. anpassen.
                                 </p>
                                 {analysis?.merchantTemplate && (
                                   <div className="space-y-3">

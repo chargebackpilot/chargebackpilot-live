@@ -1,6 +1,6 @@
 {
   "threshold": 80,
-  "lastmod": "2026-06-11",
+  "lastmod": "2026-06-22",
   "forceIndex": [
     "/hilfe/amazon/ware-nicht-erhalten",
     "/hilfe/temu/ware-nicht-erhalten",
@@ -11,6 +11,7 @@
     "/hilfe/lieferando/lieferung-falsch",
     "/hilfe/wolt/lieferung-falsch",
     "/hilfe/uber-eats/lieferung-falsch",
+    "/hilfe/uber-eats/ware-nicht-erhalten",
     "/hilfe/kiwi/flug-storniert",
     "/hilfe/ryanair/flug-storniert",
     "/hilfe/google-play/abbuchung-ohne-zustimmung"
@@ -38,7 +39,6 @@
       "/hilfe/airbnb/hotel-anders-als-beschrieben",
       "/hilfe/lieferando/ware-nicht-erhalten",
       "/hilfe/wolt/ware-nicht-erhalten",
-      "/hilfe/uber-eats/ware-nicht-erhalten",
       "/hilfe/dhl/ware-nicht-erhalten",
       "/hilfe/hermes/ware-nicht-erhalten",
       "/hilfe/kiwi/abbuchung-ohne-zustimmung",

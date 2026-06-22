@@ -1,2 +1,10 @@
 export * from "./generated/api";
-export * from "./generated/types";
+export type {
+  Case,
+  CaseAnalysis,
+  CaseInput,
+  CaseStats,
+  CaseStatsTopPaymentMethodsItem,
+  CaseStatsTopProblemTypesItem,
+  HealthStatus,
+} from "./generated/types";

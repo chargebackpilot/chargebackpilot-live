@@ -52,10 +52,16 @@ paths:
     get:
       operationId: getCase
       tags: [cases]
-      summary: Get a case by ID
+      summary: Get a case by ID and read token
+      description: Returns case details only when the non-guessable read token from case creation is provided.
       parameters:
         - name: id
           in: path
+          required: true
+          schema:
+            type: string
+        - name: readToken
+          in: query
           required: true
           schema:
             type: string
@@ -155,7 +161,7 @@ components:
           type: string
         successProbability:
           type: integer
-          description: "0-100 success probability score"
+          description: "0-100 internal orientation score, not a binding success forecast"
         successProbabilityLabel:
           type: string
           description: "Hoch, Mittel, Niedrig"
@@ -177,7 +183,7 @@ components:
           type: array
           items:
             type: string
-          description: "Relevant German/EU legal references"
+          description: "General consumer or procedure notes, not legal advice"
         counterarguments:
           type: array
           items:
@@ -216,6 +222,9 @@ components:
       properties:
         id:
           type: string
+        readToken:
+          type: string
+          description: "Returned only when creating a case; use it to read this case later."
         paymentMethod:
           type: string
         problemType:

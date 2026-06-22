@@ -406,7 +406,7 @@ export function Disclaimer() {
             Anforderungen direkt beim jeweiligen Anbieter zu prüfen und einzuhalten.
           </p>
 
-          <h2>KI-generierte Inhalte</h2>
+          <h2>KI-gestützte Inhalte</h2>
           <p>
             Die Textentwürfe werden mithilfe künstlicher Intelligenz erstellt. Sie können
             unvollständig, ungenau oder im Einzelfall unpassend sein. Bitte prüfe jeden Entwurf

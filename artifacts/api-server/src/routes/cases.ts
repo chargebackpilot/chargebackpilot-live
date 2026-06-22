@@ -1,6 +1,4 @@
-/* eslint-disable */
-// @ts-nocheck
-import { Router } from "express";
+import { Router, type Request, type Response } from "express";
 import { db } from "@workspace/db";
 import { casesTable, type CaseAnalysis } from "@workspace/db";
 import { CreateCaseBody, GetCaseParams } from "@workspace/api-zod";
@@ -10,7 +8,7 @@ import { analyzeWithGemini } from "../lib/gemini-analysis";
 import { LRUCache } from "../lib/lru-cache";
 import { getApiServerEnv } from "@workspace/env";
 import { logger } from "../lib/logger";
-import { createHash } from "node:crypto";
+import { createHash, randomBytes, timingSafeEqual } from "node:crypto";
 
 const env = getApiServerEnv();
 const router = Router();
@@ -20,7 +18,7 @@ const router = Router();
  * Prevents duplicate API calls for identical inputs
  * Max 500 entries, 1 hour TTL
  */
-const aiCache = new LRUCache<string, unknown>(500, 60 * 60 * 1000);
+const aiCache = new LRUCache<string, CaseAnalysis>(500, 60 * 60 * 1000);
 
 /**
  * Track recent submissions per IP for rate limiting
@@ -47,6 +45,26 @@ function getClientIp(req: {
     req.headers?.["x-forwarded-for"] as string | string[] | undefined
   );
   return forwarded || req.ip || req.socket?.remoteAddress || "unknown";
+}
+
+function createReadToken() {
+  return randomBytes(32).toString("base64url");
+}
+
+function hashReadToken(token: string) {
+  return createHash("sha256").update(token).digest("hex");
+}
+
+function hasValidReadToken(storedHash: string | null, candidateToken: string | undefined) {
+  if (!storedHash || !candidateToken) return false;
+
+  const candidateHash = hashReadToken(candidateToken);
+  const storedBuffer = Buffer.from(storedHash, "hex");
+  const candidateBuffer = Buffer.from(candidateHash, "hex");
+
+  return (
+    storedBuffer.length === candidateBuffer.length && timingSafeEqual(storedBuffer, candidateBuffer)
+  );
 }
 
 function countRecentSubmissions(ip: string) {
@@ -86,7 +104,7 @@ const limiter = rateLimit({
   keyGenerator: (req) => ipKeyGenerator(getClientIp(req)),
 });
 
-router.post("/cases", limiter, async (req, res) => {
+router.post("/cases", limiter, async (req: Request, res: Response) => {
   const ip = getClientIp(req);
   const submissionCount = countRecentSubmissions(ip);
   const turnstileRequired =
@@ -98,8 +116,8 @@ router.post("/cases", limiter, async (req, res) => {
   if (turnstileRequired || turnstileToken) {
     const verification = await verifyTurnstileToken(turnstileToken, ip);
     if (turnstileRequired && !verification.ok) {
-      req.log.warn(
-        { ip, submissionCount, reason: verification.reason },
+      logger.warn(
+        { submissionCount, reason: verification.reason },
         "Case create Turnstile challenge failed"
       );
       res
@@ -108,11 +126,9 @@ router.post("/cases", limiter, async (req, res) => {
       return;
     }
     if (turnstileToken && !verification.ok) {
-      res
-        .status(400)
-        .json({
-          error: "Ungültige Sicherheitsprüfung. Bitte Seite neu laden und erneut versuchen.",
-        });
+      res.status(400).json({
+        error: "Ungültige Sicherheitsprüfung. Bitte Seite neu laden und erneut versuchen.",
+      });
       return;
     }
   }
@@ -166,7 +182,11 @@ router.post("/cases", limiter, async (req, res) => {
     analysis,
   };
 
-  const [newCase] = await db.insert(casesTable).values(caseData).returning();
+  const readToken = createReadToken();
+  const [newCase] = await db
+    .insert(casesTable)
+    .values({ ...caseData, readTokenHash: hashReadToken(readToken) })
+    .returning();
 
   res.status(201).json({
     id: String(newCase.id),
@@ -181,11 +201,12 @@ router.post("/cases", limiter, async (req, res) => {
     evidence: newCase.evidence,
     description: newCase.description,
     analysis: newCase.analysis,
+    readToken,
     createdAt: newCase.createdAt.toISOString(),
   });
 });
 
-router.get("/cases/stats", async (req, res) => {
+router.get("/cases/stats", async (_req: Request, res: Response) => {
   const [totalResult] = await db.select({ count: count() }).from(casesTable);
   const total = Number(totalResult.count);
 
@@ -231,7 +252,7 @@ router.get("/cases/stats", async (req, res) => {
   });
 });
 
-router.get("/cases/:id", async (req, res) => {
+router.get("/cases/:id", async (req: Request, res: Response) => {
   const paramsResult = GetCaseParams.safeParse(req.params);
   if (!paramsResult.success) {
     res.status(400).json({ error: "Ungültige ID" });
@@ -245,7 +266,14 @@ router.get("/cases/:id", async (req, res) => {
   }
 
   const [found] = await db.select().from(casesTable).where(eq(casesTable.id, id));
-  if (!found) {
+  const readToken =
+    typeof req.query.readToken === "string"
+      ? req.query.readToken
+      : typeof req.headers["x-case-read-token"] === "string"
+        ? req.headers["x-case-read-token"]
+        : undefined;
+
+  if (!found || !hasValidReadToken(found.readTokenHash, readToken)) {
     res.status(404).json({ error: "Fall nicht gefunden" });
     return;
   }

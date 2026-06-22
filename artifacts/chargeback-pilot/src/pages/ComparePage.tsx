@@ -19,16 +19,16 @@ const ROWS: {
   klarna: string | true | false;
 }[] = [
   {
-    label: "Frist ab Zahlung",
-    paypal: "180 Tage",
-    karte: "60–120 Tage",
-    klarna: "Bis Zahlungsziel",
+    label: "Frist prüfen",
+    paypal: "häufig bis 180 Tage",
+    karte: "bank- und fallabhängig",
+    klarna: "möglichst früh melden",
   },
   {
-    label: "Reaktionszeit Erstattung",
-    paypal: "10–20 Tage",
-    karte: "30–90 Tage",
-    klarna: "1–10 Tage",
+    label: "Bearbeitungsdauer",
+    paypal: "fallabhängig",
+    karte: "bankabhängig",
+    klarna: "fallabhängig",
   },
   { label: "Käuferschutz: Ware nicht erhalten", paypal: true, karte: true, klarna: true },
   { label: "Käuferschutz: Anders als beschrieben", paypal: true, karte: true, klarna: true },
@@ -96,7 +96,7 @@ export default function ComparePage() {
       logo: { "@type": "ImageObject", url: "https://chargebackpilot.de/favicon.svg" },
     },
     datePublished: "2026-01-15",
-    dateModified: "2026-05-20",
+    dateModified: "2026-06-22",
     mainEntityOfPage: "https://chargebackpilot.de/vergleich/paypal-vs-kreditkarte-vs-klarna",
     keywords:
       "paypal vs kreditkarte vs klarna, käuferschutz vergleich, paypal käuferschutz kreditkarte chargeback klarna",

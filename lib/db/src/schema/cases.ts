@@ -1,32 +1,48 @@
-import { pgTable, text, serial, integer, real, boolean, timestamp, jsonb, index } from "drizzle-orm/pg-core";
+import {
+  pgTable,
+  text,
+  serial,
+  integer,
+  real,
+  boolean,
+  timestamp,
+  jsonb,
+  index,
+} from "drizzle-orm/pg-core";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod/v4";
 
-export const casesTable = pgTable("cases", {
-  id: serial("id").primaryKey(),
-  paymentMethod: text("payment_method").notNull(),
-  problemType: text("problem_type").notNull(),
-  merchantName: text("merchant_name").notNull(),
-  amount: real("amount").notNull(),
-  paymentDate: text("payment_date").notNull(),
-  merchantCountry: text("merchant_country"),
-  merchantContacted: boolean("merchant_contacted").notNull().default(false),
-  merchantResponse: text("merchant_response"),
-  evidence: jsonb("evidence").$type<string[]>().notNull().default([]),
-  description: text("description").notNull(),
-  analysis: jsonb("analysis").$type<CaseAnalysis>().notNull(),
-  paid: boolean("paid").notNull().default(false),
-  paidAt: timestamp("paid_at"),
-  paidAmountCents: integer("paid_amount_cents").notNull().default(0),
-  stripeSessionId: text("stripe_session_id"),
-  createdAt: timestamp("created_at").defaultNow().notNull(),
-}, (table) => {
-  return {
-    stripeSessionIdIdx: index("stripe_session_id_idx").on(table.stripeSessionId),
-    createdAtIdx: index("created_at_idx").on(table.createdAt),
-    paymentMethodIdx: index("payment_method_idx").on(table.paymentMethod),
-  };
-});
+export const casesTable = pgTable(
+  "cases",
+  {
+    id: serial("id").primaryKey(),
+    paymentMethod: text("payment_method").notNull(),
+    problemType: text("problem_type").notNull(),
+    merchantName: text("merchant_name").notNull(),
+    amount: real("amount").notNull(),
+    paymentDate: text("payment_date").notNull(),
+    merchantCountry: text("merchant_country"),
+    merchantContacted: boolean("merchant_contacted").notNull().default(false),
+    merchantResponse: text("merchant_response"),
+    evidence: jsonb("evidence").$type<string[]>().notNull().default([]),
+    description: text("description").notNull(),
+    analysis: jsonb("analysis").$type<CaseAnalysis>().notNull(),
+    paid: boolean("paid").notNull().default(false),
+    paidAt: timestamp("paid_at"),
+    paidAmountCents: integer("paid_amount_cents").notNull().default(0),
+    stripeSessionId: text("stripe_session_id"),
+    readTokenHash: text("read_token_hash"),
+    createdAt: timestamp("created_at").defaultNow().notNull(),
+  },
+  (table) => {
+    return {
+      stripeSessionIdIdx: index("stripe_session_id_idx").on(table.stripeSessionId),
+      readTokenHashIdx: index("read_token_hash_idx").on(table.readTokenHash),
+      createdAtIdx: index("created_at_idx").on(table.createdAt),
+      paymentMethodIdx: index("payment_method_idx").on(table.paymentMethod),
+    };
+  }
+);
 
 export type CaseAnalysis = {
   strength: "stark" | "mittel" | "schwach";

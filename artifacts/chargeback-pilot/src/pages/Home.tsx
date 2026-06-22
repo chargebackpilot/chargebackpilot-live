@@ -271,7 +271,7 @@ function ReviewProfileBadge({
 const FAQS = [
   {
     q: "Ist ChargebackPilot eine Rechtsberatung?",
-    a: "Nein. ChargebackPilot bietet keine Rechtsberatung, keine Rechtsdienstleistung und keine Vertretung gegenüber Banken oder Händlern. Wir helfen dir, deinen Fall strukturiert aufzubereiten und stellen KI-generierte Textvorlagen zur Verfügung.",
+    a: "Nein. ChargebackPilot bietet keine Rechtsberatung, keine Rechtsdienstleistung und keine Vertretung gegenüber Banken oder Händlern. Wir helfen dir, deinen Fall strukturiert aufzubereiten und stellen KI-gestützte Formulierungsvorschläge zur Verfügung.",
   },
   {
     q: "Für welche Zahlungsarten funktioniert ein Chargeback?",
@@ -726,18 +726,18 @@ export default function Home() {
               Hilfe nach Zahlungsart
             </span>
             <h2 className="text-3xl font-bold mb-3">
-              Wie hast du bezahlt? So generieren wir deine Briefe.
+              Wie hast du bezahlt? So entstehen passende Textentwürfe.
             </h2>
             <p className="text-muted-foreground max-w-2xl mx-auto">
               Jede Zahlungsart hat eigene Regeln, Fristen und Reklamationswege. Klicke deine
-              Zahlungsmethode an — wir öffnen den Text-Generator mit passenden
+              Zahlungsmethode an — wir öffnen die Formulierungshilfe mit passenden
               Orientierungshinweisen.
             </p>
           </div>
           <PaymentHelpGrid />
           <p className="text-center text-xs text-muted-foreground mt-6 max-w-xl mx-auto">
-            Kein Häkchen, keine Anmeldung — die Text-Generierung startet ohne Bezahlpflicht. Du
-            zahlst erst, wenn du die vollständigen Brief-Entwürfe freischalten möchtest (0,99 €
+            Kein Häkchen, keine Anmeldung — die erste Formulierungshilfe startet ohne Bezahlpflicht.
+            Du zahlst erst, wenn du die vollständigen Brief-Entwürfe freischalten möchtest (0,99 €
             Endpreis pro Fall; Kleinunternehmerregelung, keine Umsatzsteuer-Ausweisung).
           </p>
         </div>
@@ -761,7 +761,7 @@ export default function Home() {
             <Card className="border">
               <CardHeader className="pb-4">
                 <CardTitle className="text-lg">Basis-Formulierungshilfe</CardTitle>
-                <CardDescription>Kostenlose Text-Generierung</CardDescription>
+                <CardDescription>Kostenlose Formulierungshilfe</CardDescription>
                 <div className="text-4xl font-black mt-3">
                   0 <span className="text-lg font-normal text-muted-foreground">€</span>
                 </div>

@@ -106,7 +106,7 @@ export const MERCHANTS: MerchantDef[] = [
     country: "China",
     trustLevel: "mixed",
     description:
-      "Chinesischer Online-Marktplatz mit besonders niedrigen Preisen. Nutzerberichte betreffen häufig Lieferzeiten, Produktqualität und Rückerstattungsprozesse.",
+      "Chinesischer Online-Marktplatz. Bei Reklamationen sollten Lieferstatus, Produktbeschreibung, Verkäuferdaten und Rückerstattungsstand getrennt dokumentiert werden.",
     problems: ["ware-nicht-erhalten", "ware-defekt", "betrugsverdacht"],
   },
   {
@@ -116,7 +116,7 @@ export const MERCHANTS: MerchantDef[] = [
     country: "Singapur / China",
     trustLevel: "mixed",
     description:
-      "Fast-Fashion-Plattform mit Sitz in Singapur. Nutzerberichte betreffen häufig Größen, Materialqualität und verspätete Lieferungen.",
+      "Fast-Fashion-Plattform mit Sitz in Singapur. Bei Reklamationen sind Größenangabe, Materialbeschreibung, Lieferstatus und Retourennachweis besonders wichtig.",
     problems: ["ware-nicht-erhalten", "ware-defekt"],
   },
   {
@@ -136,7 +136,7 @@ export const MERCHANTS: MerchantDef[] = [
     country: "China",
     trustLevel: "mixed",
     description:
-      "Chinesischer Marktplatz (Alibaba-Gruppe). Käuferschutz vorhanden, Bearbeitungszeit oft mehrere Wochen.",
+      "Chinesischer Marktplatz der Alibaba-Gruppe. Käuferschutz, Bearbeitungsstand und aktuelle Fristen sollten direkt im jeweiligen Konto geprüft werden.",
     problems: ["ware-nicht-erhalten", "ware-defekt"],
   },
   {
@@ -348,7 +348,7 @@ export const MERCHANTS: MerchantDef[] = [
     country: "Großbritannien",
     trustLevel: "mixed",
     description:
-      "Sport-Streaming-Dienst. Häufige Verbraucherbeschwerden zu Preisanpassungen und Kündigungsmöglichkeiten.",
+      "Sport-Streaming-Dienst. Bei strittigen Abbuchungen sollten Vertragskonto, Preisänderung, Kündigungsstatus und Zahlungsweg sauber dokumentiert werden.",
     problems: ["abbuchung-ohne-zustimmung"],
   },
   {
@@ -358,7 +358,7 @@ export const MERCHANTS: MerchantDef[] = [
     country: "Deutschland",
     trustLevel: "mixed",
     description:
-      "Pay-TV- und Streaming-Anbieter. Häufige Themen sind nicht akzeptierte Kündigungen und automatische Vertragsverlängerungen.",
+      "Pay-TV- und Streaming-Anbieter. Bei strittigen Abbuchungen sollten Vertragslaufzeit, Kündigungsstatus und Zahlungsweg nachvollziehbar dokumentiert werden.",
     problems: ["abbuchung-ohne-zustimmung"],
   },
   {
@@ -469,6 +469,7 @@ export function generateMerchantProblemCopy(
 }
 
 function merchantFocusForCombo(m: MerchantDef, p: ProblemDef): string[] {
+  const providerContext = `Für die Einordnung bei ${m.name} ist der Anbieter-Kontext relevant: ${m.description}`;
   const sectorHints: Record<MerchantDef["sector"], string[]> = {
     marketplace: [
       "Prüfe, ob du direkt beim Händler oder bei einem Drittanbieter auf dem Marktplatz gekauft hast.",
@@ -518,7 +519,9 @@ function merchantFocusForCombo(m: MerchantDef, p: ProblemDef): string[] {
     betrugsverdacht: `Bei ${m.name} sollten Website-Screenshots, Verkäuferdaten und Zahlungsbeleg gesichert werden, ohne unbelegte Vorwürfe zu formulieren.`,
   };
 
-  return [...(sectorHints[m.sector] ?? []), problemHints[p.slug] ?? ""].filter(Boolean);
+  return [providerContext, ...(sectorHints[m.sector] ?? []), problemHints[p.slug] ?? ""].filter(
+    Boolean
+  );
 }
 
 function paymentNextStepForCombo(p: ProblemDef, m: MerchantDef): { title: string; text: string } {
@@ -625,7 +628,7 @@ function legalBasisForProblem(p: ProblemDef): { title: string; text: string }[] 
   }
   if (p.slug === "abbuchung-ohne-zustimmung") {
     base.push({
-      title: "Fernabsatzrecht: § 312g BGB Widerrufsrecht 14 Tage",
+      title: "Fernabsatzrecht: mögliches Widerrufsrecht",
       text: "Bei online abgeschlossenen Verbraucherverträgen kann ein Widerrufsrecht bestehen. Fristbeginn, Belehrung und Ausnahmen hängen vom konkreten Vertrag ab und sollten im Einzelfall geprüft werden.",
     });
   }
@@ -640,43 +643,43 @@ function disputeCategoryForCombo(p: ProblemDef): {
 } {
   const map: Record<string, { method: string; code: string; explainer: string }> = {
     "ware-nicht-erhalten": {
-      method: "Visa / Mastercard",
-      code: "13.1 Merchandise/Services Not Received",
+      method: "Kreditkarte",
+      code: "Visa 13.1 / Mastercard-Kategorie bankintern",
       explainer:
         "Diese Kategorie kann in Betracht kommen, wenn bezahlte Ware oder Dienstleistungen nicht angekommen sind. Hilfreich sind Bestellbestätigung, Lieferstatus und dokumentierte Kontaktversuche.",
     },
     "ware-defekt": {
-      method: "Visa / Mastercard",
-      code: "13.3 Not as Described or Defective Merchandise/Services",
+      method: "Kreditkarte",
+      code: "Visa 13.3 / Mastercard-Kategorie bankintern",
       explainer:
         "Greift, wenn die Ware erheblich von der Beschreibung abweicht oder defekt ankommt. Beweislage: Fotos des Mangels, Original-Produktbeschreibung als Screenshot, Schriftwechsel mit dem Händler.",
     },
     "flug-storniert": {
-      method: "Visa / Mastercard",
-      code: "13.1 Services Not Received (Annullierung)",
+      method: "Kreditkarte",
+      code: "Visa 13.1 / Mastercard-Kategorie bankintern",
       explainer:
         "Bei gestrichenen Flügen kann je nach Zahlungsart eine Reklamation beim Zahlungsdienstleister zusätzlich zur direkten Erstattungsklärung geprüft werden. Bereits erhaltene Zahlungen sollten transparent angegeben werden.",
     },
     "hotel-anders-als-beschrieben": {
-      method: "Visa / Mastercard",
-      code: "13.3 Not as Described",
+      method: "Kreditkarte",
+      code: "Visa 13.3 / Mastercard-Kategorie bankintern",
       explainer:
         "Wenn eine Unterkunft erheblich von der Beschreibung abweicht, kann eine Reklamation beim Anbieter oder Zahlungsdienstleister in Betracht kommen. Fotos und eine zeitnahe Meldung vor Ort sind praktisch hilfreich.",
     },
     "abbuchung-ohne-zustimmung": {
-      method: "SEPA / Visa",
-      code: "10.4 Other Fraud — Card Absent Environment",
+      method: "SEPA / Kreditkarte",
+      code: "Visa 10.4 / Mastercard-Kategorie bankintern",
       explainer:
         "Bei möglicherweise unautorisierten Abbuchungen sollte zuerst geprüft werden, ob eine Autorisierung, ein vergessenes Abo oder ein Missbrauchsfall vorliegt. Die passende Kategorie hängt vom Ergebnis dieser Prüfung ab.",
     },
     "lieferung-falsch": {
-      method: "PayPal / Visa",
-      code: "13.3 Not as Described — Falsche Lieferung",
+      method: "PayPal / Kreditkarte",
+      code: "Visa 13.3 / Mastercard-Kategorie bankintern",
       explainer:
         "Wenn die Lieferung komplett falsch oder unbrauchbar ankam, können Fotos der erhaltenen Ware, Bestellübersicht und Supportverlauf bei der Einordnung helfen.",
     },
     betrugsverdacht: {
-      method: "Visa / Mastercard / Amex",
+      method: "Kreditkarte / PayPal",
       code: "abhängig von Bank und Kartensystem",
       explainer:
         "Bei unklarem Shop- oder Drittanbieterfall sind Screenshots, Zahlungsnachweis, Kontaktversuche und ggf. eine Anzeige wichtige Dokumente. Ob eine Rückbuchung gelingt, entscheidet der Zahlungsdienstleister im Einzelfall.",
@@ -684,8 +687,8 @@ function disputeCategoryForCombo(p: ProblemDef): {
   };
   return (
     map[p.slug] ?? {
-      method: "Visa / Mastercard",
-      code: "13.1 Services Not Received",
+      method: "Kreditkarte",
+      code: "Visa 13.1 / Mastercard-Kategorie bankintern",
       explainer:
         "Mögliche Kategorie für nicht erbrachte Leistungen. ChargebackPilot gibt hierzu nur eine unverbindliche Orientierung auf Basis deiner Angaben.",
     }
@@ -826,18 +829,18 @@ function paymentSpecificStep(p: ProblemDef, m: MerchantDef): string {
 function commonMistakes(p: ProblemDef): string[] {
   const generic = [
     "Typische Fristen zu spät geprüft — bei PayPal, Bank oder Kartenausgeber gelten unterschiedliche Regeln.",
-    "Keine schriftliche Dokumentation — nur telefonische Beschwerden sind im Streitfall praktisch wertlos.",
-    "Gutschein oder Teilangebot ungeprüft akzeptiert — dadurch kann die spätere Durchsetzung schwieriger werden.",
+    "Keine schriftliche Dokumentation — rein telefonische Beschwerden sind später häufig schwerer nachvollziehbar.",
+    "Gutschein oder Teilangebot ungeprüft akzeptiert — dadurch kann die spätere Klärung schwieriger werden.",
   ];
   const specific: Record<string, string[]> = {
     "ware-nicht-erhalten": [
       "Nur den Versanddienstleister kontaktieren — häufig ist zusätzlich der Händler als Vertragspartner einzubeziehen.",
     ],
     "ware-defekt": [
-      "Die Ware ohne Rücksprache zurücksenden — ohne RMA-Nummer geht die Rückerstattung oft verloren.",
+      "Die Ware ohne Rücksprache zurücksenden — ohne Retourenfreigabe oder Sendungsnachweis wird die Rückerstattung häufig schwerer nachvollziehbar.",
     ],
     "flug-storniert": [
-      "Eine Umbuchung akzeptieren und damit auf die Geldrückerstattung verzichten.",
+      "Eine Umbuchung akzeptieren, ohne die Bedingungen und Auswirkungen auf eine mögliche Erstattung zu dokumentieren.",
     ],
     "abbuchung-ohne-zustimmung": [
       "Mit der Klärung bis zur nächsten Abbuchung warten — Bank und Anbieter sollten zeitnah kontaktiert werden.",

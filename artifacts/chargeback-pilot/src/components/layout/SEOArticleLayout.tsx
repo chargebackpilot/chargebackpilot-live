@@ -87,8 +87,8 @@ interface MoneyPageProfile {
 }
 
 const SITE = "https://chargebackpilot.de";
-const DISPLAY_UPDATED_AT = "11. Juni 2026";
-const SCHEMA_UPDATED_AT = "2026-06-11";
+const DISPLAY_UPDATED_AT = "22. Juni 2026";
+const SCHEMA_UPDATED_AT = "2026-06-22";
 
 const MONEY_PAGE_PROFILES: Record<string, MoneyPageProfile> = {
   "/chargeback-antrag-vorlage": {

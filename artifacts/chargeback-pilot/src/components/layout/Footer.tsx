@@ -77,8 +77,8 @@ export function Footer() {
             <LogoLockup size={24} />
           </Link>
           <p className="text-sm text-muted-foreground mb-4 max-w-md leading-relaxed">
-            KI-gestützte Text-Generierung für Chargebacks und Käuferschutz. Strukturierte
-            Briefvorlagen für PayPal, Visa, Mastercard und Klarna.
+            KI-gestützte Formulierungshilfe für Chargebacks und Käuferschutz. Strukturierte
+            Textentwürfe für PayPal, Visa, Mastercard und Klarna.
           </p>
           <div className="mb-4 flex items-center gap-2" aria-label="Social Media Profile">
             {SOCIAL_LINKS.map((profile) => (

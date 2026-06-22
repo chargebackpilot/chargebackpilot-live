@@ -49,7 +49,7 @@ router.post("/login", loginLimiter, (req: any, res: Response): void => {
     return;
   }
 
-  if (password.length < 8) {
+  if (password.length < 15) {
     res.status(400).json({
       code: "INVALID_PASSWORD",
       message: "Falsches Passwort",
@@ -59,7 +59,7 @@ router.post("/login", loginLimiter, (req: any, res: Response): void => {
   }
 
   if (!safeCompare(password, env.ADMIN_PASSWORD)) {
-    logger.warn({ ip: req.ip }, "Failed admin login attempt");
+    logger.warn("Failed admin login attempt");
     res.status(401).json({
       code: "INVALID_PASSWORD",
       message: "Falsches Passwort",
@@ -70,7 +70,7 @@ router.post("/login", loginLimiter, (req: any, res: Response): void => {
 
   // Create session token
   const token = sessionStore.create();
-  logger.info({ ip: req.ip }, "Admin login successful");
+  logger.info("Admin login successful");
 
   res.json({
     ok: true,
@@ -88,7 +88,7 @@ router.post("/logout", adminAuth, (req: any, res: Response): void => {
   if (authHeader?.startsWith("Bearer ")) {
     const token = authHeader.slice(7);
     sessionStore.destroy(token);
-    logger.info({ ip: req.ip }, "Admin logout");
+    logger.info("Admin logout");
   }
 
   res.json({

@@ -15,7 +15,7 @@ export default function MerchantIndexPage() {
   if (!merchant) return <NotFound />;
 
   const title = `${merchant.name} Reklamation & Chargeback 2026 | ChargebackPilot`;
-  const description = `Probleme mit ${merchant.name}? Hier findest du Schritt-für-Schritt-Anleitungen für alle häufigen ${merchant.name}-Probleme: Lieferung, Defekte, Erstattung und mehr.`;
+  const description = `Probleme mit ${merchant.name}? Strukturierte Orientierung zu Lieferung, Defekten, Erstattung, Abbuchung und passenden Zahlungswegen.`;
   const problems = merchant.problems
     .map((slug) => getProblem(slug))
     .filter((p): p is NonNullable<typeof p> => !!p);
@@ -80,21 +80,56 @@ export default function MerchantIndexPage() {
           )}
           {indexedProblems.length === 0 && (
             <section className="rounded-2xl border bg-card p-6 shadow-sm">
-              <h2 className="text-2xl font-bold mb-3">Hilfe zu {merchant.name}</h2>
+              <h2 className="text-2xl font-bold mb-3">
+                Fall bei {merchant.name} strukturiert vorbereiten
+              </h2>
               <p className="text-sm text-muted-foreground leading-relaxed mb-5">
-                Für {merchant.name} werden die Detail-Guides gestaffelt freigegeben. Du kannst
-                deinen konkreten Fall trotzdem sofort im Generator strukturieren und erhältst eine
-                kostenlose Ersteinschätzung mit Beleg-Checkliste.
+                Bei {merchant.name} kommt es vor allem auf eine klare Chronologie, den passenden
+                Zahlungsweg und nachvollziehbare Belege an. Der kostenlose Fall-Check hilft dir,
+                dein konkretes Problem sachlich einzuordnen und die nächsten Schritte vorzubereiten.
               </p>
-              <div className="grid gap-2 sm:grid-cols-2">
+              <div className="grid gap-3 sm:grid-cols-2">
                 {problems.map((p) => (
-                  <div key={p.slug} className="rounded-lg border bg-muted/30 px-3 py-2 text-sm">
-                    {p.label}
-                  </div>
+                  <Link
+                    key={p.slug}
+                    href={`/vorlagen-generator?merchant=${encodeURIComponent(
+                      merchant.name
+                    )}&problem=${encodeURIComponent(p.wizardProblemId)}`}
+                    className="rounded-lg border bg-muted/30 px-3 py-3 text-sm transition-colors hover:border-primary/40 hover:bg-primary/5"
+                  >
+                    <span className="font-semibold">{p.label}</span>
+                    <span className="mt-1 block text-xs text-muted-foreground">
+                      Belege sichern, Zahlungsweg prüfen, Textentwurf vorbereiten
+                    </span>
+                  </Link>
                 ))}
               </div>
             </section>
           )}
+
+          <section className="grid gap-3 sm:grid-cols-3">
+            {[
+              {
+                title: "Belege sichern",
+                text: "Bestellung, Zahlungsnachweis, Tracking, Screenshots und Supportverlauf geordnet ablegen.",
+              },
+              {
+                title: "Zahlungsweg prüfen",
+                text: "PayPal, Kreditkarte, Klarna oder Bank haben unterschiedliche Abläufe und Fristen.",
+              },
+              {
+                title: "Sachlich formulieren",
+                text: "Keine Vorwürfe, sondern konkrete Daten, Problem, bisherige Klärung und gewünschte Lösung.",
+              },
+            ].map((item) => (
+              <Card key={item.title}>
+                <CardContent className="p-4">
+                  <h2 className="mb-1 text-sm font-bold">{item.title}</h2>
+                  <p className="text-sm leading-relaxed text-muted-foreground">{item.text}</p>
+                </CardContent>
+              </Card>
+            ))}
+          </section>
         </div>
       </article>
     </MainLayout>

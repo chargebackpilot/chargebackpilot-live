@@ -21,7 +21,7 @@ export function PayPalSEO() {
         "Händler kontaktieren: Versuche zunächst eine direkte Klärung.",
         "Problem bei PayPal melden: Logge dich ein und öffne das Konfliktlösungen-Center.",
         "Fall eröffnen: Klicke auf 'Problem melden' und wähle die entsprechende Transaktion.",
-        "Antrag auf Käuferschutz stellen: Eskaliere den Konflikt innerhalb von 20 Tagen an PayPal zur Klärung.",
+        "Antrag auf Käuferschutz stellen: Eskaliere den Konflikt innerhalb der im PayPal-Konto angezeigten Frist zur Klärung.",
         "Beweise einreichen: Lade alle relevanten Dokumente im Center hoch.",
       ]}
       mistakes={[
@@ -37,6 +37,22 @@ export function PayPalSEO() {
         {
           q: "Greift der Schutz bei digitalen Gütern?",
           a: "Das hängt von den jeweils aktuellen PayPal-Richtlinien und dem Einzelfall ab. Prüfe die geltenden Bedingungen direkt bei PayPal.",
+        },
+        {
+          q: "Was ist der Unterschied zwischen Konflikt und Käuferschutzantrag?",
+          a: "Der Konflikt ist zunächst der Versuch, das Problem mit dem Händler über PayPal zu klären. Wird keine Lösung erreicht, muss der Fall innerhalb der angezeigten Frist an PayPal eskaliert werden.",
+        },
+        {
+          q: "Welche Belege sollte ich bei PayPal hochladen?",
+          a: "Hilfreich sind Bestellbestätigung, Zahlungsdaten, Artikelbeschreibung, Tracking, Fotos und der bisherige Händlerkontakt. Je konkreter der Zusammenhang zum Problem ist, desto nachvollziehbarer wird der Fall.",
+        },
+        {
+          q: "Was passiert, wenn der Händler eine Trackingnummer angibt?",
+          a: "Prüfe, ob Trackingadresse, Zustellzeit, Empfänger und Gewicht zum Kauf passen. Wenn etwas nicht stimmig ist, solltest du das mit Screenshots und kurzer Erklärung dokumentieren.",
+        },
+        {
+          q: "Kann ich nach PayPal noch die Kreditkarte reklamieren?",
+          a: "Das hängt vom Zahlungsweg und vom Stand des PayPal-Falls ab. Vermeide doppelte Erstattungsversuche und sprich mit deiner Bank, wenn PayPal keine Lösung bietet.",
         },
       ]}
     />
@@ -76,6 +92,22 @@ export function AmexSEO() {
           q: "Ist Amex bei Reklamationen oft kulant?",
           a: "Das hängt vom Einzelfall und der Dokumentation ab. Eine präzise und vollständige Schilderung ist regelmäßig hilfreich.",
         },
+        {
+          q: "Wo reklamiere ich einen Amex Umsatz?",
+          a: "In der Regel startest du die Prüfung im American-Express-Onlinekonto oder über den Amex Support. Entscheidend ist, den konkreten Umsatz, Betrag und Händler eindeutig zu benennen.",
+        },
+        {
+          q: "Muss ich zuerst den Händler kontaktieren?",
+          a: "Bei vielen Reklamationen ist ein dokumentierter Klärungsversuch hilfreich oder erforderlich. Sichere E-Mails, Chatverläufe und Antwortfristen, bevor du den Umsatz reklamierst.",
+        },
+        {
+          q: "Welche Fälle passen zu einer Amex Reklamation?",
+          a: "Typisch sind nicht autorisierte Belastungen, doppelte Abbuchungen, nicht gelieferte Ware oder nicht erbrachte Leistungen. Die Prüfung richtet sich aber immer nach Amex-Regeln und Einzelfall.",
+        },
+        {
+          q: "Was sollte ich bei Reisebuchungen beachten?",
+          a: "Sichere Buchungsbestätigung, Stornierungsnachweis, Anbieterantworten und mögliche Gutschein- oder Erstattungsangebote. Akzeptierte Alternativleistungen können die spätere Prüfung beeinflussen.",
+        },
       ]}
     />
   );
@@ -106,12 +138,28 @@ export function VisaMastercardSEO() {
       ]}
       mistakes={[
         "Die Bank vorschnell abwimmeln lassen: Banken verweisen teils auf interne Prozesse. Bitte um schriftliche Begründung und bleibe sachlich dran.",
-        "Nur telefonisch kontaktieren: Ohne schriftliche Beweise hast du beim Chargeback schlechte Karten.",
+        "Nur telefonisch kontaktieren: Ohne schriftliche Belege wird die Prüfung für Bank oder Zahlungsdienstleister häufig deutlich schwieriger.",
       ]}
       faq={[
         {
           q: "Kann meine Bank ein Chargeback-Verfahren prüfen?",
           a: "Ob ein Chargeback-Verfahren eingeleitet wird, hängt von den Regeln des Kartennetzwerks, der Bank und dem Einzelfall ab.",
+        },
+        {
+          q: "Wende ich mich an Visa, Mastercard oder meine Bank?",
+          a: "Für Verbraucher ist normalerweise die kartenausgebende Bank der richtige Ansprechpartner. Visa und Mastercard stellen die Kartenregeln bereit, die Bank prüft den konkreten Umsatz.",
+        },
+        {
+          q: "Welche Fristen gelten bei Visa und Mastercard?",
+          a: "Fristen unterscheiden sich nach Bank, Kartenregel und Problemtyp. Prüfe sie direkt bei deiner Bank und warte nicht, bis der Händler mehrfach nicht reagiert hat.",
+        },
+        {
+          q: "Brauche ich einen Reason Code?",
+          a: "Meist reicht eine klare Sachverhaltsdarstellung. Ein passender Reason-Code-Hinweis kann helfen, sollte aber nicht als Garantie oder Rechtsbehauptung formuliert werden.",
+        },
+        {
+          q: "Was macht einen Kreditkartenfall nachvollziehbar?",
+          a: "Wichtig sind Kartenumsatz, Händlername, Datum, Betrag, Problem, Händlerkontakt und konkrete Belege wie Tracking, Stornierung oder Fotos.",
         },
       ]}
     />
@@ -142,12 +190,28 @@ export function KlarnaSEO() {
       ]}
       mistakes={[
         "Zahlungspause nicht aktiviert: Wenn du die Rechnung nicht pausierst, gerätst du in den Mahnprozess.",
-        "Retourenbeleg weggeworfen: Ohne Nachweis der Rücksendung bist du zahlungspflichtig.",
+        "Retourenbeleg weggeworfen: Ohne Nachweis der Rücksendung lässt sich eine strittige Forderung häufig schwerer klären.",
       ]}
       faq={[
         {
           q: "Was passiert, wenn der Händler sich nicht meldet?",
           a: "Dann prüft Klarna den Fall nach den eigenen Regeln und anhand der eingereichten Belege.",
+        },
+        {
+          q: "Sollte ich die Klarna-Rechnung einfach ignorieren?",
+          a: "Nein. Melde das Problem im Klarna-Konto und dokumentiere den Händlerkontakt. Unbeantwortete Rechnungen können sonst in Mahnungen übergehen.",
+        },
+        {
+          q: "Was ist bei Retouren besonders wichtig?",
+          a: "Sichere Einlieferungsbeleg, Tracking, Retourenlabel und Händlerantwort. Ohne Versandnachweis ist eine nicht verbuchte Retoure oft schwerer nachvollziehbar.",
+        },
+        {
+          q: "Kann Klarna eine Zahlung pausieren?",
+          a: "Klarna bietet je nach Kauf und Problem Möglichkeiten zur Problemmeldung. Ob eine Zahlung pausiert oder geklärt wird, hängt von Klarna, Händler und Belegen ab.",
+        },
+        {
+          q: "Muss ich zusätzlich dem Händler schreiben?",
+          a: "Ja, das ist häufig sinnvoll. Klarna ist Zahlungsdienstleister; die sachliche Klärung mit dem Händler bleibt für Retoure, Lieferung oder Mangel wichtig.",
         },
       ]}
     />
@@ -183,6 +247,22 @@ export function FlugSEO() {
         {
           q: "Kann ich Chargeback nutzen, wenn der Flug verspätet war?",
           a: "Bei reinen Verspätungen kommen häufig andere Ansprüche als bei einer Annullierung in Betracht. Prüfe die passende Grundlage je nach Einzelfall.",
+        },
+        {
+          q: "Was ist bei annullierten Flügen wichtig?",
+          a: "Sichere Annullierungsnachricht, Buchungsbestätigung, Zahlungsnachweis und den Erstattungsstand. Prüfe zuerst die Rückmeldung der Airline oder Plattform.",
+        },
+        {
+          q: "Was, wenn ich einen Gutschein akzeptiert habe?",
+          a: "Ein angenommener Gutschein kann die spätere Zahlungsreklamation beeinflussen. Dokumentiere genau, ob du ihn aktiv akzeptiert hast oder ob er nur angeboten wurde.",
+        },
+        {
+          q: "Kann ich bei Buchungsplattformen wie Kiwi.com reklamieren?",
+          a: "Das hängt davon ab, wer Vertragspartner ist, was gebucht wurde und welche Zahlung betroffen ist. Wichtig sind Plattformkommunikation, Airline-Status und Zahlungsweg.",
+        },
+        {
+          q: "Welche Unterlagen braucht die Bank bei Reise-Chargeback?",
+          a: "Typisch sind Ticket, Buchungsnummer, Zahlungsbeleg, Stornierungsnachweis, Anbieterantworten und eine kurze Chronologie der bisherigen Klärung.",
         },
       ]}
     />
@@ -224,6 +304,18 @@ export function LieferandoSEO() {
           q: "Essen war kalt, weil der Fahrer einen Umweg gemacht hat - Erstattung möglich?",
           a: "Wenn das Essen dadurch nicht mehr vertragsgemäß nutzbar ist, kann eine (Teil-)Erstattung in Betracht kommen. Fotos, Zeitstempel und Supportverlauf helfen bei der Prüfung.",
         },
+        {
+          q: "Was dokumentiere ich bei falscher Lieferung?",
+          a: "Fotografiere Lieferung, Bon, Verpackung und Bestellübersicht möglichst sofort. Notiere, welche Artikel fehlten oder falsch waren und wann du den Support kontaktiert hast.",
+        },
+        {
+          q: "Muss ich einen Gutschein akzeptieren?",
+          a: "Das hängt vom Einzelfall und den Plattformbedingungen ab. Wenn du eine Erstattung auf den ursprünglichen Zahlungsweg möchtest, formuliere das klar und speichere die Antwort.",
+        },
+        {
+          q: "Wann lohnt sich der Zahlungsdienstleister?",
+          a: "Erst wenn der Plattform- oder Restaurant-Support keine nachvollziehbare Lösung bietet, kann je nach Zahlungsart eine sachliche Prüfung über PayPal oder Bank in Betracht kommen.",
+        },
       ]}
     />
   );
@@ -252,12 +344,28 @@ export function WoltSEO() {
       ]}
       mistakes={[
         "Wolt-Credits akzeptieren, obwohl du eine Erstattung auf das ursprüngliche Zahlungsmittel prüfen möchtest.",
-        "Die Frist für eine Reklamation (meist 24h) verstreichen lassen.",
+        "Zu lange warten: Reklamationen bei Lebensmitteln sollten möglichst zeitnah über den Support dokumentiert werden.",
       ]}
       faq={[
         {
           q: "Was beachten, wenn ich wegen einer Zahlungsreklamation Sorgen um mein Wolt-Konto habe?",
           a: "Eine Zahlungsreklamation kann je nach Belegen und Zahlungsart in Betracht kommen. Prüfe vorher die Plattformbedingungen und dokumentiere den Supportverlauf, weil mögliche Kontofolgen vom Einzelfall abhängen.",
+        },
+        {
+          q: "Welche Belege helfen bei kaltem Essen?",
+          a: "Fotos, Zeitstempel, Bestellübersicht, Lieferzeit und Supportchat helfen, den Zustand der Lieferung nachvollziehbar zu machen.",
+        },
+        {
+          q: "Was, wenn einzelne Artikel fehlen?",
+          a: "Melde fehlende Artikel zeitnah im Supportchat und sichere Bon, Verpackung und Bestellliste. Bei Teilerstattungen sollte klar sein, welche Position betroffen ist.",
+        },
+        {
+          q: "Kann ich statt Wolt-Guthaben eine Rückzahlung verlangen?",
+          a: "Du kannst sachlich anfragen, ob eine Erstattung auf den ursprünglichen Zahlungsweg möglich ist. Ob Wolt dem folgt, hängt von Plattformregeln und Einzelfall ab.",
+        },
+        {
+          q: "Wann ist eine Bank- oder PayPal-Prüfung sinnvoll?",
+          a: "Wenn keine nachvollziehbare Lösung erfolgt und du den Mangel belegen kannst, kann der Zahlungsweg geprüft werden. Vorher sollte der Supportverlauf vollständig gesichert sein.",
         },
       ]}
     />
@@ -292,6 +400,22 @@ export function UberEatsSEO() {
         {
           q: "Uber Eats Support bietet keine Lösung, was nun?",
           a: "Prüfe zuerst die Begründung der Antwort und sichere Bestelldaten, Fotos und Supportverlauf. Je nach Zahlungsart kann anschließend eine sachliche Prüfung bei PayPal oder deiner Bank in Betracht kommen.",
+        },
+        {
+          q: "Was tun, wenn die Bestellung angeblich zugestellt wurde?",
+          a: "Sichere App-Tracking, Abstellfoto, Uhrzeit, Adresse und Supportantwort. Wenn die Lieferung nicht auffindbar ist, beschreibe den Widerspruch konkret und ohne pauschale Vorwürfe.",
+        },
+        {
+          q: "Welche Belege helfen bei falscher Adresse?",
+          a: "Hilfreich sind Screenshots der Lieferadresse, Trackingkarte, Supportticket und Fotos des tatsächlichen Ablageorts, falls vorhanden.",
+        },
+        {
+          q: "Kann ich Uber Eats direkt zur Auszahlung auffordern?",
+          a: "Du kannst sachlich um Prüfung einer Erstattung auf den ursprünglichen Zahlungsweg bitten. Ob das möglich ist, richtet sich nach Plattformbedingungen und Fallprüfung.",
+        },
+        {
+          q: "Wann sollte ich PayPal oder Bank einschalten?",
+          a: "Erst nach dokumentiertem Supportkontakt und gesicherten Belegen. Der Zahlungsdienstleister prüft dann nach eigenen Regeln, nicht als allgemeine Beschwerdestelle.",
         },
       ]}
     />
@@ -331,6 +455,18 @@ export function KiwiSEO() {
           q: "Wie prüfe ich die Erstattung von Steuern und Gebühren?",
           a: "Fordere die Positionen nachvollziehbar und schriftlich an. Falls keine Einigung erfolgt, kann je nach Zahlungsart eine Reklamation über den Zahlungsdienstleister geprüft werden.",
         },
+        {
+          q: "Ist Kiwi.com immer mein Vertragspartner?",
+          a: "Das hängt von Buchungsmodell, Airline, Vermittlung und den angezeigten Bedingungen ab. Für die Prüfung solltest du Buchungsbestätigung und Vertragsunterlagen sichern.",
+        },
+        {
+          q: "Was ist bei No-Show oder eigener Stornierung anders?",
+          a: "Wenn du selbst stornierst oder den Flug nicht antrittst, ist eine vollständige Rückzahlung oft schwieriger. Einzelne Steuern oder Gebühren können trotzdem gesondert zu prüfen sein.",
+        },
+        {
+          q: "Welche Belege brauche ich bei Kiwi.com?",
+          a: "Buchungsbestätigung, Ticketdaten, Stornierungsstatus, Gebührenaufstellung, Supportverlauf und Zahlungsnachweis sind die wichtigsten Unterlagen.",
+        },
       ]}
     />
   );
@@ -359,12 +495,28 @@ export function WareNichtErhaltenSEO() {
       ]}
       mistakes={[
         "Nur selbst einen Nachforschungsauftrag stellen: Häufig sollte zusätzlich der Händler als Vertragspartner eingebunden werden.",
-        "Die Frist des Zahlungsdienstleisters (z.B. 180 Tage bei PayPal, 120 bei Kreditkarte) verpassen.",
+        "Die jeweilige Frist des Zahlungsdienstleisters verpassen, ohne sie frühzeitig im Konto oder bei der Bank zu prüfen.",
       ]}
       faq={[
         {
           q: "Was, wenn laut Tracking geliefert wurde, ich aber nichts habe?",
           a: "Dann ist der Fall häufig schwieriger. Zusätzliche Belege wie Nachbarschaftsnachfragen, Händlerkommunikation oder ggf. eine Anzeige können je nach Fall hilfreich sein.",
+        },
+        {
+          q: "Soll ich zuerst Händler oder Paketdienst kontaktieren?",
+          a: "Der Händler bleibt häufig der zentrale Ansprechpartner für die Bestellung. Ein Kontakt zum Paketdienst kann zusätzlich helfen, ersetzt aber nicht zwingend die Händlerklärung.",
+        },
+        {
+          q: "Welche Belege sind bei nicht erhaltener Ware am wichtigsten?",
+          a: "Bestellbestätigung, Zahlungsnachweis, Trackingverlauf, Händlerantworten und Screenshots der Produkt- oder Versandseite sind besonders hilfreich.",
+        },
+        {
+          q: "Kann PayPal helfen, wenn Ware fehlt?",
+          a: "PayPal kann relevant sein, wenn die Zahlung käuferschutzfähig war und die Fristen eingehalten werden. Maßgeblich sind die Regeln im PayPal-Konto.",
+        },
+        {
+          q: "Wann kommt Kreditkarten-Chargeback in Betracht?",
+          a: "Wenn mit Karte gezahlt wurde und Ware trotz Händlerkontakt nicht geliefert wurde, kann eine Umsatzreklamation bei der Bank geprüft werden.",
         },
       ]}
     />
@@ -400,6 +552,22 @@ export function AboFalleSEO() {
         {
           q: "Kann ich rückwirkend für mehrere Monate eine Erstattung prüfen?",
           a: "Das hängt von Zahlungsart, Frist und Einzelfall ab. Prüfe die konkreten Möglichkeiten möglichst früh direkt bei Bank, PayPal oder Kartenausgeber.",
+        },
+        {
+          q: "Was sollte ich zuerst tun, wenn ich eine Abo-Falle vermute?",
+          a: "Sichere Abbuchung, Bestell- oder Anmeldeseite, E-Mails und Kündigungsnachweis. Kündige bzw. widersprich schriftlich und prüfe parallel den Zahlungsweg.",
+        },
+        {
+          q: "Reicht es, die Kreditkarte zu sperren?",
+          a: "Eine Kartensperre verhindert nicht automatisch jede Forderung aus einem behaupteten Vertrag. Dokumentiere zusätzlich den Widerspruch oder die Kündigung beim Anbieter.",
+        },
+        {
+          q: "Welche Rolle spielt die Autorisierung?",
+          a: "Bei wiederkehrenden Abbuchungen ist wichtig, ob und wofür du eine Zustimmung erteilt hast. Screenshots der Bestellseite und AGB können für die Einordnung helfen.",
+        },
+        {
+          q: "Was mache ich bei weiteren Mahnungen?",
+          a: "Nicht vorschnell zahlen. Prüfe, ob die Forderung nachvollziehbar ist, widersprich unklaren Forderungen sachlich und bewahre alle Schreiben auf.",
         },
       ]}
     />
@@ -442,6 +610,22 @@ export function ChargebackAntragVorlageSEO() {
           q: "Sollte ich einen Reason Code selbst kennen?",
           a: "In der Regel reicht eine klare Sachverhaltsschilderung. Die Bank ordnet den Fall intern ein; eine passende Kategorie kann aber die Nachvollziehbarkeit verbessern.",
         },
+        {
+          q: "Welche Angaben gehören in den Antrag?",
+          a: "Nenne Kartenumsatz, Datum, Betrag, Händler, Problem, bisherigen Kontakt und die gewünschte Prüfung. Ergänze eine kurze Anlagenliste.",
+        },
+        {
+          q: "Muss ich dem Händler vorher schreiben?",
+          a: "Bei vielen Fällen ist ein dokumentierter Händlerkontakt hilfreich. Wenn Gefahr weiterer Abbuchungen besteht, solltest du zusätzlich früh mit der Bank sprechen.",
+        },
+        {
+          q: "Wie lang sollte der Antrag sein?",
+          a: "Kurz genug für schnelle Prüfung, aber vollständig genug für die Einordnung: Chronologie, Problem, Belege und konkrete Bitte an die Bank.",
+        },
+        {
+          q: "Kann ich dieselbe Vorlage für Visa, Mastercard und Amex nutzen?",
+          a: "Der Aufbau ist ähnlich, die Regeln unterscheiden sich aber. Passe Zahlungsart, Bankformular und Beleganforderungen immer an deinen Fall an.",
+        },
       ]}
     />
   );
@@ -481,6 +665,22 @@ export function PayPalKaeuferschutzVorlageSEO() {
         {
           q: "Was gehört in die PayPal Käuferschutz Vorlage?",
           a: "Wichtig sind Transaktion, Bestelldatum, Problem, Händlerkontakt, gewünschte Lösung und die wichtigsten Belege.",
+        },
+        {
+          q: "Soll ich die Vorlage in das Konfliktcenter kopieren?",
+          a: "Ja, du kannst sie als Grundlage nutzen und auf die PayPal-Felder anpassen. Wichtig ist, keine irrelevanten Details oder unbelegten Vorwürfe zu ergänzen.",
+        },
+        {
+          q: "Was schreibe ich bei Ware nicht erhalten?",
+          a: "Beschreibe Bestellung, Trackingstatus, Lieferadresse, Händlerkontakt und warum du die Lieferung nicht erhalten hast. Hänge Tracking und Bestellbelege an.",
+        },
+        {
+          q: "Was schreibe ich bei Ware anders als beschrieben?",
+          a: "Vergleiche Artikelbeschreibung und erhaltene Ware konkret: Fotos, Produktseite, Mangel oder Abweichung und bisherige Händlerantwort.",
+        },
+        {
+          q: "Was, wenn PayPal weitere Unterlagen verlangt?",
+          a: "Reagiere innerhalb der angezeigten Frist und lade genau die verlangten Nachweise hoch. Speichere Screenshots der Einreichung.",
         },
       ]}
     />
@@ -523,6 +723,22 @@ export function KlarnaReklamationVorlageSEO() {
           q: "Ist die Klarna Vorlage eine Rechtsberatung?",
           a: "Nein. Sie ist eine sachliche Formulierungshilfe zur strukturierten Darstellung deines Falls.",
         },
+        {
+          q: "Was schreibe ich bei nicht verbuchter Retoure?",
+          a: "Nenne Rechnungsnummer, Retourendatum, Sendungsnummer, Einlieferungsbeleg und bisherigen Händlerkontakt. Bitte um Prüfung und Klärung der Forderung.",
+        },
+        {
+          q: "Was schreibe ich bei Ware nicht erhalten?",
+          a: "Beschreibe Bestellung, Lieferstatus, Tracking und Kontakt zum Händler. Bitte Klarna um Problemmeldung bzw. Klärung der offenen Rechnung.",
+        },
+        {
+          q: "Soll ich Klarna und Händler denselben Text senden?",
+          a: "Der Kern kann gleich sein, aber passe den Empfänger an: Klarna braucht Rechnungs- und Zahlungsdaten, der Händler braucht Bestell- und Lieferdetails.",
+        },
+        {
+          q: "Was, wenn Klarna Mahnungen schickt?",
+          a: "Prüfe den Status im Klarna-Konto, sichere Mahnungen und reagiere sachlich mit Hinweis auf die Problemmeldung und deine Belege.",
+        },
       ]}
     />
   );
@@ -558,6 +774,22 @@ export function WareNichtErhaltenMusterbriefSEO() {
         {
           q: "Was schreibe ich, wenn Ware nicht angekommen ist?",
           a: "Nenne Bestellung, Zahlungsdatum, Trackingstatus, bisherigen Kontakt und deine gewünschte Lösung. Bleibe sachlich und füge Belege bei.",
+        },
+        {
+          q: "Welche Frist ist im Musterbrief sinnvoll?",
+          a: "Eine angemessene Rückmeldefrist kann die Dokumentation verbessern. Die konkrete Länge hängt vom Fall ab; vermeide unrealistisch kurze Fristen.",
+        },
+        {
+          q: "Was, wenn der Händler auf den Paketdienst verweist?",
+          a: "Bitte den Händler trotzdem um Klärung der Bestellung und sichere die Antwort. Ein Paketdienstkontakt kann zusätzlich helfen, ersetzt aber nicht jede Händlerpflicht.",
+        },
+        {
+          q: "Kann ich den Musterbrief für PayPal nutzen?",
+          a: "Ja, aber kürze ihn für das Konfliktcenter und ergänze PayPal-Transaktionsnummer, Artikelbeschreibung und relevante Screenshots.",
+        },
+        {
+          q: "Was, wenn das Paket angeblich beim Nachbarn liegt?",
+          a: "Dokumentiere Nachfragen, Zustellnachweis und jede Händlerantwort. Wenn der Zustellstatus zweifelhaft ist, erkläre den Widerspruch konkret.",
         },
       ]}
     />
@@ -595,6 +827,22 @@ export function AboFalleMusterbriefSEO() {
           q: "Kann ich Abo-Fallen rückbuchen?",
           a: "Das hängt von Zahlungsart, Frist, Autorisierung und Einzelfall ab. Prüfe die konkreten Möglichkeiten frühzeitig bei Bank oder Zahlungsdienstleister.",
         },
+        {
+          q: "Was gehört in den Abo-Falle Musterbrief?",
+          a: "Nenne Abbuchung, Anbieter, Datum, Betrag, fehlende oder bestrittene Zustimmung, Kündigung/Widerspruch und die Bitte um nachvollziehbare Vertragsgrundlage.",
+        },
+        {
+          q: "Soll ich vorsorglich kündigen?",
+          a: "Eine vorsorgliche schriftliche Kündigung kann sinnvoll sein, ohne damit automatisch anzuerkennen, dass ein wirksamer Vertrag besteht. Formuliere entsprechend vorsichtig.",
+        },
+        {
+          q: "Wie verhindere ich weitere Abbuchungen?",
+          a: "Sprich mit Bank, Kartenausgeber oder PayPal über Sperr- oder Rückgabemöglichkeiten und dokumentiere parallel deinen Widerspruch beim Anbieter.",
+        },
+        {
+          q: "Was mache ich bei Inkasso?",
+          a: "Sichere alle Schreiben und prüfe die Forderung. Bei unklarer Lage können Verbraucherzentrale oder anwaltliche Prüfung sinnvoll sein.",
+        },
       ]}
     />
   );
@@ -631,6 +879,22 @@ export function RueckerstattungHaendlerVorlageSEO() {
           q: "Wann sollte ich dem Händler eine Frist setzen?",
           a: "Wenn du bereits gezahlt hast und der Händler nicht reagiert oder eine zugesagte Erstattung ausbleibt, kann eine schriftliche Rückmeldefrist die Dokumentation verbessern.",
         },
+        {
+          q: "Welche Angaben braucht der Händler?",
+          a: "Bestellnummer, Betrag, Zahlungsdatum, Grund der Rückerstattung, bisherige Zusage oder Retoure und deine gewünschte Lösung sollten klar erkennbar sein.",
+        },
+        {
+          q: "Wie formuliere ich ohne Eskalation?",
+          a: "Bleibe konkret: Sachverhalt, Belege, Bitte um Prüfung und Rückmeldung. Drohungen oder harte Rechtsbehauptungen sind meist weniger hilfreich.",
+        },
+        {
+          q: "Wann gehe ich zu PayPal, Klarna oder Bank?",
+          a: "Wenn der Händler nicht reagiert oder keine nachvollziehbare Lösung anbietet, kann je nach Zahlungsart der passende Zahlungsdienstleister geprüft werden.",
+        },
+        {
+          q: "Soll ich eine Teilzahlung akzeptieren?",
+          a: "Prüfe vorher, welche Positionen abgedeckt sind und ob du damit weitere Ansprüche oder Prüfwege beeinflusst. Sichere die Begründung schriftlich.",
+        },
       ]}
     />
   );
@@ -666,6 +930,22 @@ export function VisaReasonCodeSEO() {
           q: "Sollte ich Visa Reason Code 13.1 selbst angeben?",
           a: "Nicht zwingend. Verbraucher beschreiben meist den Sachverhalt; die Bank ordnet den Fall nach den Kartenregeln ein.",
         },
+        {
+          q: "Wofür steht Visa Reason Code 13.1 grob?",
+          a: "Er wird häufig mit nicht erhaltener Ware oder nicht erbrachter Leistung verbunden. Die genaue Einordnung nimmt jedoch die Bank nach den aktuellen Visa-Regeln vor.",
+        },
+        {
+          q: "Welche Belege passen zu 13.1?",
+          a: "Bestellung, Zahlungsbeleg, Tracking, Stornierung, Händlerkontakt und Nachweis, dass Ware oder Leistung nicht wie vereinbart erbracht wurde.",
+        },
+        {
+          q: "Kann ich 13.1 bei Flugstornierung nennen?",
+          a: "Das kann je nach Fall naheliegen, wenn die bezahlte Leistung nicht erbracht wurde. Entscheidend bleibt die Prüfung durch deine Bank.",
+        },
+        {
+          q: "Was sollte ich vermeiden?",
+          a: "Stelle den Reason Code nicht als sicheren Anspruch dar. Beschreibe den Fall sachlich und lasse die interne Zuordnung bei der Bank.",
+        },
       ]}
     />
   );
@@ -700,6 +980,22 @@ export function MastercardReasonCodeSEO() {
         {
           q: "Welche Mastercard Reason Codes gibt es?",
           a: "Mastercard nutzt interne Kategorien für unterschiedliche Reklamationsgründe. Entscheidend ist für Verbraucher vor allem eine klare Beschreibung des Falls und vollständige Belege.",
+        },
+        {
+          q: "Muss ich den Mastercard Code selbst auswählen?",
+          a: "In der Regel nicht. Deine Bank braucht vor allem eine klare Sachverhaltsdarstellung; die technische Einordnung erfolgt intern.",
+        },
+        {
+          q: "Welche Fälle sind bei Mastercard typisch?",
+          a: "Nicht erhaltene Ware, nicht erbrachte Leistung, falsche oder mangelhafte Ware, doppelte Belastung oder nicht autorisierte Abbuchung können Prüfgründe sein.",
+        },
+        {
+          q: "Welche Belege sollte ich einreichen?",
+          a: "Kartenumsatz, Bestellung, Vertrag, Händlerkommunikation, Tracking, Fotos oder Stornierungsnachweis - je nachdem, welches Problem vorliegt.",
+        },
+        {
+          q: "Was ist der Unterschied zwischen Chargeback und Rechtsanspruch?",
+          a: "Chargeback ist ein Kartenregel-Verfahren über die Bank. Es ersetzt keine Rechtsberatung und garantiert keine Erstattung.",
         },
       ]}
     />

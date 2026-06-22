@@ -1,6 +1,7 @@
 import fs from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import { loadSeoQualityRuntime } from "./seo-quality-runtime.mjs";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const root = path.resolve(__dirname, "..");
@@ -10,10 +11,10 @@ const template = await fs.readFile(path.join(dist, "index.html"), "utf-8");
 await fs.writeFile(path.join(dist, "app-shell.html"), template);
 const { render } = await import(serverEntry);
 const seoRoutesSource = await fs.readFile(path.join(root, "src", "seo-routes.ts"), "utf-8");
-const merchantSource = await fs.readFile(path.join(root, "src", "data", "merchants.ts"), "utf-8");
 const seoQualityConfig = JSON.parse(
   await fs.readFile(path.join(root, "src", "seo-quality-config.json"), "utf-8"),
 );
+const seoRuntime = await loadSeoQualityRuntime(root, seoQualityConfig);
 const staticRoutes = [
   "/",
   "/vorlagen-generator",
@@ -48,30 +49,11 @@ const staticRoutes = [
   "/widerruf",
 ];
 
-const merchantSectionMatch = merchantSource.match(/export const MERCHANTS:[\s\S]*?=\s*\[([\s\S]*?)\n\];/);
-const merchantSection = merchantSectionMatch?.[1] ?? "";
-const problemSectionMatch = merchantSource.match(/export const PROBLEMS:[\s\S]*?=\s*\[([\s\S]*?)\n\];/);
-const problemSection = problemSectionMatch?.[1] ?? "";
 const sitemapLastmod = seoQualityConfig.lastmod ?? new Date().toISOString().slice(0, 10);
-const qualityThreshold = Number(seoQualityConfig.threshold ?? 80);
-const forceIndexPaths = new Set(seoQualityConfig.forceIndex ?? []);
-const forceNoindexPaths = new Set(seoQualityConfig.forceNoindex ?? []);
-const scheduledIndexing = seoQualityConfig.scheduledIndexing ?? {
-  enabled: false,
-  startDate: "2099-01-01",
-  intervalDays: 30,
-  batchSize: 6,
-  minScore: qualityThreshold,
-  order: [],
-};
-const scheduledIndexOrder = new Map(scheduledIndexing.order.map((route, index) => [route, index]));
-const releaseToday = process.env.SEO_RELEASE_DATE ?? new Date().toISOString().slice(0, 10);
-const merchantBlocks = [...merchantSection.matchAll(/slug:\s*"([^"]+)"[\s\S]*?problems:\s*\[([^\]]*)\]/g)];
-const merchantRoutes = merchantBlocks.map(([, merchantSlug]) => `/hilfe/${merchantSlug}`);
-const merchantProblemRoutes = merchantBlocks.flatMap(([, merchantSlug, problemBlock]) => {
-  const problemSlugs = [...problemBlock.matchAll(/"([^"]+)"/g)].map((m) => m[1]);
-  return problemSlugs.map((problemSlug) => `/hilfe/${merchantSlug}/${problemSlug}`);
-});
+const merchantRoutes = seoRuntime.merchants.map((merchant) => `/hilfe/${merchant.slug}`);
+const merchantProblemRoutes = seoRuntime.merchants.flatMap((merchant) =>
+  merchant.problems.map((problemSlug) => `/hilfe/${merchant.slug}/${problemSlug}`),
+);
 const routes = [...new Set([...staticRoutes, ...merchantRoutes, ...merchantProblemRoutes])];
 
 const staticRouteMeta = new Map(
@@ -89,79 +71,18 @@ const staticRouteMeta = new Map(
   ),
 );
 
-const problemMeta = new Map(
-  [
-    ...problemSection.matchAll(
-      /slug:\s*"([^"]+)"[\s\S]*?label:\s*"([^"]+)"[\s\S]*?searchPhrase:\s*"([^"]+)"[\s\S]*?sentencePhrase:\s*"([^"]+)"/g,
-    ),
-  ].map(
-    (match) => [
-      match[1],
-      {
-        label: match[2],
-        searchPhrase: match[3],
-        sentencePhrase: match[4],
-      },
-    ],
-  ),
-);
+const problemMeta = seoRuntime.problemsBySlug;
 
 function lowerFirst(value) {
   return value ? `${value.charAt(0).toLocaleLowerCase("de-DE")}${value.slice(1)}` : value;
 }
 
-function getMerchantProblemScore(route) {
-  // Mirrors src/seo-quality.ts closely enough for prerendered robots/sitemap
-  // decisions without bundling the Vite alias graph into this Node script.
-  const hasProviderSpecificSection = true;
-  const hasProblemSpecificEvidence = true;
-  const hasPaymentSpecificNextStep = true;
-  const hasFaqDepth = true;
-  const hasMethodologySignal = true;
-  const hasNoGenericPlaceholders = true;
-  return (
-    (hasProviderSpecificSection ? 20 : 0) +
-    (hasProblemSpecificEvidence ? 20 : 0) +
-    (hasPaymentSpecificNextStep ? 15 : 0) +
-    (hasFaqDepth ? 15 : 0) +
-    (hasMethodologySignal ? 15 : 0) +
-    (hasNoGenericPlaceholders ? 15 : 0)
-  );
-}
-
 function isIndexableMerchantProblemRoute(route) {
-  if (forceNoindexPaths.has(route)) return false;
-  if (forceIndexPaths.has(route)) return true;
-  const score = getMerchantProblemScore(route);
-  const releaseDate = getScheduledReleaseDate(route, score);
-  if (releaseDate) return score >= qualityThreshold && releaseDate <= releaseToday;
-  return score >= qualityThreshold;
-}
-
-function getScheduledReleaseDate(route, score) {
-  if (
-    !scheduledIndexing.enabled ||
-    score < scheduledIndexing.minScore ||
-    forceIndexPaths.has(route) ||
-    forceNoindexPaths.has(route)
-  ) {
-    return null;
-  }
-  const orderIndex = scheduledIndexOrder.get(route);
-  if (orderIndex === undefined) return null;
-  const batchIndex = Math.floor(orderIndex / scheduledIndexing.batchSize);
-  return addDays(scheduledIndexing.startDate, batchIndex * scheduledIndexing.intervalDays);
-}
-
-function addDays(date, days) {
-  const value = new Date(`${date}T00:00:00.000Z`);
-  value.setUTCDate(value.getUTCDate() + days);
-  return value.toISOString().slice(0, 10);
+  return seoRuntime.isIndexableUrl(route);
 }
 
 function getMerchantName(merchantSlug) {
-  const merchantNameMatch = merchantSection.match(new RegExp(`slug:\\s*"${merchantSlug}"[\\s\\S]*?name:\\s*"([^"]+)"`));
-  return merchantNameMatch?.[1] ?? null;
+  return seoRuntime.merchantsBySlug.get(merchantSlug)?.name ?? null;
 }
 
 function getRouteMeta(route) {
@@ -278,5 +199,30 @@ const sitemapXml = `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http:
   .filter(Boolean)
   .join("\n")}\n</urlset>\n`;
 
+const releaseManifest = {
+  generatedAt: new Date().toISOString(),
+  lastmod: sitemapLastmod,
+  threshold: seoRuntime.threshold,
+  routes: routes.flatMap((route) => {
+    const meta = getRouteMeta(route);
+    if (!meta) return [];
+    const quality = seoRuntime.evaluateUrl(route);
+    return [
+      {
+        path: route,
+        changefreq: meta.changefreq,
+        priority: meta.priority,
+        indexable: !meta.noindex,
+        releaseDate: quality?.releaseDate ?? null,
+        forceNoindex: quality?.override === "forceNoindex",
+      },
+    ];
+  }),
+};
+
 await fs.writeFile(path.join(dist, "sitemap.xml"), sitemapXml);
 await fs.writeFile(path.join(root, "public", "sitemap.xml"), sitemapXml);
+await fs.writeFile(
+  path.join(root, "dist", "seo-release-manifest.json"),
+  `${JSON.stringify(releaseManifest, null, 2)}\n`,
+);
