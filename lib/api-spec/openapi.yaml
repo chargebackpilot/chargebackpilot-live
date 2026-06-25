@@ -53,7 +53,7 @@ paths:
       operationId: getCase
       tags: [cases]
       summary: Get a case by ID and read token
-      description: Returns case details only when the non-guessable read token from case creation is provided.
+      description: Returns the free case view when the non-guessable read token from case creation is provided. Paid templates and full guidance are intentionally empty in this response.
       parameters:
         - name: id
           in: path
@@ -72,6 +72,40 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Case"
+        "404":
+          description: Not found
+
+  /cases/{id}/unlock:
+    get:
+      operationId: unlockCase
+      tags: [cases]
+      summary: Get unlocked case content
+      description: Returns full paid templates and guidance only after a server-side payment or active flatrate check.
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: readToken
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: flatrateSessionId
+          in: query
+          required: false
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Fully unlocked case details
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Case"
+        "402":
+          description: Case is not unlocked yet
         "404":
           description: Not found
 
@@ -177,18 +211,19 @@ components:
           type: array
           items:
             type: string
+          description: "Free responses contain the first visible next step; unlocked responses contain the full list."
         recommendedCategory:
           type: string
         legalBasis:
           type: array
           items:
             type: string
-          description: "General consumer or procedure notes, not legal advice"
+          description: "General consumer or procedure notes, not legal advice. Empty until unlock."
         counterarguments:
           type: array
           items:
             type: string
-          description: "Potential merchant/bank counterarguments and how to respond"
+          description: "Potential merchant/bank counterarguments and how to respond. Empty until unlock."
         urgencyLevel:
           type: string
           description: "hoch, mittel, niedrig — based on deadlines"
@@ -197,11 +232,13 @@ components:
           description: "Important deadline information"
         merchantTemplate:
           type: string
+          description: "Case-bound template text. Empty until unlock."
         bankTemplate:
           type: string
+          description: "Case-bound payment-provider template text. Empty until unlock."
         escalationTemplate:
           type: string
-          description: "Escalation letter if first attempts fail"
+          description: "Escalation letter if first attempts fail. Empty until unlock."
         disclaimer:
           type: string
 

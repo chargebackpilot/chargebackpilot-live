@@ -14,3 +14,4 @@ export * from "./caseStatsTopPaymentMethodsItem";
 export * from "./caseStatsTopProblemTypesItem";
 export * from "./getCaseParams";
 export * from "./healthStatus";
+export * from "./unlockCaseParams";

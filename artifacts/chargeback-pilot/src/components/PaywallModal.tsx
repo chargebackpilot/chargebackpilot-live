@@ -20,8 +20,6 @@ import { PaymentLogoStrip } from "@/components/PaymentLogos";
 import { Dialog, DialogContent, DialogDescription, DialogTitle } from "@/components/ui/dialog";
 
 interface PaywallProps {
-  onUnlock: () => void;
-  isPaying: boolean;
   caseId?: string;
   merchantName: string;
   amount: number;
@@ -133,8 +131,6 @@ const TONE_CLASSES: Record<string, string> = {
 };
 
 export function PaywallModal({
-  onUnlock,
-  isPaying,
   caseId,
   merchantName,
   amount,
@@ -255,9 +251,9 @@ export function PaywallModal({
             size="lg"
             className="w-full min-h-[3.5rem] px-3 py-3 text-sm sm:text-base font-bold gap-2 shadow-lg shadow-primary/20"
             onClick={handleCheckout}
-            disabled={loading || isPaying}
+            disabled={loading}
           >
-            {loading || isPaying ? (
+            {loading ? (
               <Loader2 className="w-5 h-5 animate-spin" />
             ) : (
               <>

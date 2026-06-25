@@ -90,6 +90,7 @@ import {
   markCaseIdUnlocked,
   isCaseUnlocked,
   isFlatrateActive,
+  getFlatrateSessionId,
   clearCurrentCase,
 } from "@/lib/case-persistence";
 
@@ -109,6 +110,14 @@ interface FormData {
 }
 
 type CaseResult = ReturnType<typeof useCreateCase>["data"];
+type ResolvedCaseResult = NonNullable<CaseResult>;
+
+function hasUnlockedAnalysisContent(data: CaseResult): boolean {
+  const analysis = data?.analysis;
+  return Boolean(
+    analysis?.merchantTemplate || analysis?.bankTemplate || analysis?.escalationTemplate
+  );
+}
 
 declare global {
   interface Window {
@@ -197,7 +206,26 @@ export default function Wizard() {
           markCaseIdUnlocked(String(j.caseId));
           // Only flip the UI when the returned caseId matches the case we're viewing
           if (expectedCaseId && String(j.caseId) === expectedCaseId) {
-            setHasUnlocked(true);
+            const readToken = getStoredReadToken(expectedCaseId);
+            if (!readToken) {
+              setHasUnlocked(false);
+              toast({
+                title: "Fall konnte nicht geladen werden",
+                description:
+                  "Die Zahlung wurde bestätigt. Bitte öffne den Fall erneut über „Meine Fälle”.",
+                variant: "destructive",
+              });
+              return;
+            }
+            void unlockCaseContent(expectedCaseId, readToken, form.getValues()).catch(() => {
+              setHasUnlocked(false);
+              toast({
+                title: "Freischaltung noch nicht abrufbar",
+                description:
+                  "Die Zahlung wurde bestätigt. Bitte lade den Fall in wenigen Sekunden erneut.",
+                variant: "destructive",
+              });
+            });
           }
         })
         .catch(() => {
@@ -218,7 +246,6 @@ export default function Wizard() {
       window.history.replaceState({}, "", url.pathname + (url.search ? url.search : ""));
     }
   }, []);
-  const [isPaying, setIsPaying] = useState(false);
   const validatedPrefilledProblem = PROBLEM_TYPES.some((pt) => pt.id === prefilledProblem)
     ? prefilledProblem
     : "";
@@ -259,6 +286,67 @@ export default function Wizard() {
   const [isSubmittingCase, setIsSubmittingCase] = useState(false);
   const { toast } = useToast();
 
+  function saveCaseSnapshot(
+    data: ResolvedCaseResult,
+    formSnapshot: WizardFormData | FormData = form.getValues()
+  ) {
+    const caseId = String(data.id ?? "");
+    if (!caseId) return;
+
+    saveCurrentCase({
+      caseId,
+      readToken: data.readToken,
+      merchantName: data.merchantName ?? formSnapshot.merchantName ?? "",
+      amount: Number(data.amount ?? formSnapshot.disputedAmount ?? 0),
+      paymentMethod: data.paymentMethod ?? formSnapshot.paymentMethod ?? "",
+      problemType: data.problemType ?? formSnapshot.problemType ?? "",
+      paymentDate: data.paymentDate ?? formSnapshot.paymentDate ?? "",
+      successProbability: data.analysis?.successProbability ?? 0,
+      successProbabilityLabel: data.analysis?.successProbabilityLabel ?? "",
+      createdAt: data.createdAt ?? new Date().toISOString(),
+      result: data,
+      formData: formSnapshot,
+    });
+  }
+
+  function getStoredReadToken(caseId: string | undefined | null) {
+    if (!caseId) return undefined;
+    if (result?.id != null && String(result.id) === String(caseId) && result.readToken) {
+      return result.readToken;
+    }
+    const current = loadCurrentCase();
+    if (current?.caseId === String(caseId)) {
+      return current.readToken ?? (current.result as { readToken?: string } | undefined)?.readToken;
+    }
+    const selected = setCurrentCaseById(String(caseId));
+    return (
+      selected?.readToken ?? (selected?.result as { readToken?: string } | undefined)?.readToken
+    );
+  }
+
+  async function unlockCaseContent(
+    caseId: string,
+    readToken: string | undefined,
+    formSnapshot: WizardFormData | FormData = form.getValues()
+  ) {
+    if (!readToken) throw new Error("missing read token");
+
+    const params = new URLSearchParams({ readToken });
+    const flatrateSessionId = getFlatrateSessionId();
+    if (flatrateSessionId) params.set("flatrateSessionId", flatrateSessionId);
+
+    const response = await fetch(`/api/cases/${encodeURIComponent(caseId)}/unlock?${params}`);
+    if (!response.ok) throw new Error("unlock failed");
+
+    const unlocked = (await response.json()) as ResolvedCaseResult;
+    setResult(unlocked);
+    setResultViewKey((key) => key + 1);
+    setHasUnlocked(true);
+    markCaseIdUnlocked(caseId);
+    saveCaseSnapshot(unlocked, formSnapshot);
+    return unlocked;
+  }
+
   useEffect(() => {
     if (typeof window === "undefined") return;
 
@@ -266,8 +354,7 @@ export default function Wizard() {
       clearCurrentCase();
       setResult(undefined);
       setStep(1);
-      setHasUnlocked(isFlatrateActive());
-      setIsPaying(false);
+      setHasUnlocked(false);
       setAcceptedLegal(false);
       form.reset({
         paymentMethod: prefilledPayment,
@@ -307,9 +394,16 @@ export default function Wizard() {
 
     setResult(restoredResult);
     setStep(restoredResult ? 6 : 1);
-    setHasUnlocked(
-      isFlatrateActive() || (persisted?.caseId ? isCaseUnlocked(persisted.caseId) : false)
-    );
+    const shouldUnlock =
+      isFlatrateActive() || (persisted?.caseId ? isCaseUnlocked(persisted.caseId) : false);
+    setHasUnlocked(false);
+    if (persisted?.caseId && shouldUnlock && restoredResult) {
+      void unlockCaseContent(
+        persisted.caseId,
+        getStoredReadToken(persisted.caseId),
+        restoredFormData ?? form.getValues()
+      ).catch(() => setHasUnlocked(false));
+    }
     // This effect intentionally runs for navigation inputs only. Adding mutation objects
     // such as createCase here can reset the form on every mutation-state render and break
     // wizard progression (e.g. the "Weiter" button appears to do nothing).
@@ -328,8 +422,15 @@ export default function Wizard() {
     setStep(selectedResult ? 6 : 1);
     setResult(selectedResult);
     setResultViewKey((key) => key + 1);
-    setHasUnlocked(isFlatrateActive() || isCaseUnlocked(selected.caseId));
-    setIsPaying(false);
+    const shouldUnlock = isFlatrateActive() || isCaseUnlocked(selected.caseId);
+    setHasUnlocked(false);
+    if (shouldUnlock && selectedResult) {
+      void unlockCaseContent(
+        selected.caseId,
+        getStoredReadToken(selected.caseId),
+        selectedFormData ?? form.getValues()
+      ).catch(() => setHasUnlocked(false));
+    }
     setAcceptedLegal(false);
   }, [caseIdParam, forceNew, form]);
 
@@ -479,21 +580,13 @@ export default function Wizard() {
             const newCaseId = String(data.id ?? "");
             // Restore unlock ONLY for this exact caseId (handles refresh after payment)
             const alreadyPaidForThisCase = isCaseUnlocked(newCaseId) || isFlatrateActive();
-            if (alreadyPaidForThisCase) setHasUnlocked(true);
-            // Persist FULL state so Stripe cancel/back restores the entire case.
-            saveCurrentCase({
-              caseId: newCaseId,
-              merchantName: data.merchantName ?? formData.merchantName ?? "",
-              amount: Number(data.amount ?? formData.disputedAmount ?? 0),
-              paymentMethod: data.paymentMethod ?? formData.paymentMethod ?? "",
-              problemType: data.problemType ?? formData.problemType ?? "",
-              paymentDate: data.paymentDate ?? formData.paymentDate ?? "",
-              successProbability: data.analysis?.successProbability ?? 0,
-              successProbabilityLabel: data.analysis?.successProbabilityLabel ?? "",
-              createdAt: new Date().toISOString(),
-              result: data,
-              formData,
-            });
+            setHasUnlocked(false);
+            saveCaseSnapshot(data, formData);
+            if (alreadyPaidForThisCase) {
+              void unlockCaseContent(newCaseId, data.readToken, formData).catch(() => {
+                setHasUnlocked(false);
+              });
+            }
           }
         },
         onError: () => {
@@ -531,7 +624,6 @@ export default function Wizard() {
     createCase.reset();
     setAcceptedLegal(false);
     setHasUnlocked(false);
-    setIsPaying(false);
     setFormData({
       paymentMethod: "",
       problemType: "",
@@ -549,21 +641,16 @@ export default function Wizard() {
     window.history.replaceState({}, "", "/vorlagen-generator");
   };
 
-  const handlePayment = () => {
-    setIsPaying(true);
-    setTimeout(() => {
-      setIsPaying(false);
-      setHasUnlocked(true);
-      if (result?.id != null) markCaseIdUnlocked(String(result.id));
-      toast({
-        title: "Freigeschaltet!",
-        description: "Alle Vorlagen und Anleitungen sind jetzt verfügbar.",
-      });
-    }, 1500);
-  };
-
   const handleDownloadPdf = async () => {
     if (!result || !analysis) return;
+    if (!hasUnlockedAnalysisContent(result)) {
+      toast({
+        title: "PDF erst nach Freischaltung",
+        description: "Bitte schalte die vollständigen Textvorlagen zuerst frei.",
+        variant: "destructive",
+      });
+      return;
+    }
     try {
       const { generatePdf } = await import("@/lib/pdf-generator");
       await generatePdf({
@@ -1439,8 +1526,6 @@ export default function Wizard() {
                               </div>
                               <div ref={paywallAnchorRef} data-testid="paywall-anchor">
                                 <PaywallModal
-                                  onUnlock={handlePayment}
-                                  isPaying={isPaying}
                                   caseId={result.id}
                                   merchantName={result.merchantName ?? formData.merchantName}
                                   amount={

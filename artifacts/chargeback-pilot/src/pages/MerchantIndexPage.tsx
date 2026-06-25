@@ -130,6 +130,16 @@ export default function MerchantIndexPage() {
               </Card>
             ))}
           </section>
+
+          <section className="text-xs text-muted-foreground bg-muted/50 p-4 rounded-lg border border-border/50">
+            <p>
+              <strong>Markenrechtlicher Hinweis:</strong> {merchant.name} ist eine Markenbezeichnung
+              des jeweiligen Rechteinhabers. ChargebackPilot ist unabhängig und steht in keiner
+              Verbindung, Partnerschaft oder Kooperation mit {merchant.name}. Die Nennung dient
+              ausschließlich dazu, typische Verbraucherfälle sachlich einzuordnen. Keine
+              Rechtsberatung.
+            </p>
+          </section>
         </div>
       </article>
     </MainLayout>

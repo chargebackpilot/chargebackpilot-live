@@ -65,26 +65,36 @@ export const CreateCaseResponse = zod.object({
     summary: zod.string(),
     reasoning: zod.string(),
     missingEvidence: zod.array(zod.string()),
-    nextSteps: zod.array(zod.string()),
+    nextSteps: zod
+      .array(zod.string())
+      .describe(
+        "Free responses contain the first visible next step; unlocked responses contain the full list."
+      ),
     recommendedCategory: zod.string(),
     legalBasis: zod
       .array(zod.string())
-      .describe("General consumer or procedure notes, not legal advice"),
+      .describe("General consumer or procedure notes, not legal advice. Empty until unlock."),
     counterarguments: zod
       .array(zod.string())
-      .describe("Potential merchant\/bank counterarguments and how to respond"),
+      .describe(
+        "Potential merchant\/bank counterarguments and how to respond. Empty until unlock."
+      ),
     urgencyLevel: zod.string().describe("hoch, mittel, niedrig — based on deadlines"),
     deadline: zod.string().describe("Important deadline information"),
-    merchantTemplate: zod.string(),
-    bankTemplate: zod.string(),
-    escalationTemplate: zod.string().describe("Escalation letter if first attempts fail"),
+    merchantTemplate: zod.string().describe("Case-bound template text. Empty until unlock."),
+    bankTemplate: zod
+      .string()
+      .describe("Case-bound payment-provider template text. Empty until unlock."),
+    escalationTemplate: zod
+      .string()
+      .describe("Escalation letter if first attempts fail. Empty until unlock."),
     disclaimer: zod.string(),
   }),
   createdAt: zod.string(),
 });
 
 /**
- * Returns case details only when the non-guessable read token from case creation is provided.
+ * Returns the free case view when the non-guessable read token from case creation is provided. Paid templates and full guidance are intentionally empty in this response.
  * @summary Get a case by ID and read token
  */
 export const GetCaseParams = zod.object({
@@ -121,19 +131,96 @@ export const GetCaseResponse = zod.object({
     summary: zod.string(),
     reasoning: zod.string(),
     missingEvidence: zod.array(zod.string()),
-    nextSteps: zod.array(zod.string()),
+    nextSteps: zod
+      .array(zod.string())
+      .describe(
+        "Free responses contain the first visible next step; unlocked responses contain the full list."
+      ),
     recommendedCategory: zod.string(),
     legalBasis: zod
       .array(zod.string())
-      .describe("General consumer or procedure notes, not legal advice"),
+      .describe("General consumer or procedure notes, not legal advice. Empty until unlock."),
     counterarguments: zod
       .array(zod.string())
-      .describe("Potential merchant\/bank counterarguments and how to respond"),
+      .describe(
+        "Potential merchant\/bank counterarguments and how to respond. Empty until unlock."
+      ),
     urgencyLevel: zod.string().describe("hoch, mittel, niedrig — based on deadlines"),
     deadline: zod.string().describe("Important deadline information"),
-    merchantTemplate: zod.string(),
-    bankTemplate: zod.string(),
-    escalationTemplate: zod.string().describe("Escalation letter if first attempts fail"),
+    merchantTemplate: zod.string().describe("Case-bound template text. Empty until unlock."),
+    bankTemplate: zod
+      .string()
+      .describe("Case-bound payment-provider template text. Empty until unlock."),
+    escalationTemplate: zod
+      .string()
+      .describe("Escalation letter if first attempts fail. Empty until unlock."),
+    disclaimer: zod.string(),
+  }),
+  createdAt: zod.string(),
+});
+
+/**
+ * Returns full paid templates and guidance only after a server-side payment or active flatrate check.
+ * @summary Get unlocked case content
+ */
+export const UnlockCaseParams = zod.object({
+  id: zod.coerce.string(),
+});
+
+export const UnlockCaseQueryParams = zod.object({
+  readToken: zod.coerce.string(),
+  flatrateSessionId: zod.coerce.string().optional(),
+});
+
+export const UnlockCaseResponse = zod.object({
+  id: zod.string(),
+  readToken: zod
+    .string()
+    .optional()
+    .describe("Returned only when creating a case; use it to read this case later."),
+  paymentMethod: zod.string(),
+  problemType: zod.string(),
+  merchantName: zod.string(),
+  amount: zod.number(),
+  paymentDate: zod.string(),
+  merchantCountry: zod.string().nullish(),
+  merchantContacted: zod.boolean(),
+  merchantResponse: zod.string().nullish(),
+  evidence: zod.array(zod.string()),
+  description: zod.string(),
+  analysis: zod.object({
+    strength: zod.string().describe("stark, mittel, schwach"),
+    strengthLabel: zod.string(),
+    successProbability: zod
+      .number()
+      .describe("0-100 internal orientation score, not a binding success forecast"),
+    successProbabilityLabel: zod.string().describe("Hoch, Mittel, Niedrig"),
+    summary: zod.string(),
+    reasoning: zod.string(),
+    missingEvidence: zod.array(zod.string()),
+    nextSteps: zod
+      .array(zod.string())
+      .describe(
+        "Free responses contain the first visible next step; unlocked responses contain the full list."
+      ),
+    recommendedCategory: zod.string(),
+    legalBasis: zod
+      .array(zod.string())
+      .describe("General consumer or procedure notes, not legal advice. Empty until unlock."),
+    counterarguments: zod
+      .array(zod.string())
+      .describe(
+        "Potential merchant\/bank counterarguments and how to respond. Empty until unlock."
+      ),
+    urgencyLevel: zod.string().describe("hoch, mittel, niedrig — based on deadlines"),
+    deadline: zod.string().describe("Important deadline information"),
+    merchantTemplate: zod.string().describe("Case-bound template text. Empty until unlock."),
+    bankTemplate: zod
+      .string()
+      .describe("Case-bound payment-provider template text. Empty until unlock."),
+    escalationTemplate: zod
+      .string()
+      .describe("Escalation letter if first attempts fail. Empty until unlock."),
     disclaimer: zod.string(),
   }),
   createdAt: zod.string(),

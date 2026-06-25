@@ -16,7 +16,14 @@ import type {
   UseQueryResult,
 } from "@tanstack/react-query";
 
-import type { Case, CaseInput, CaseStats, GetCaseParams, HealthStatus } from "./api.schemas";
+import type {
+  Case,
+  CaseInput,
+  CaseStats,
+  GetCaseParams,
+  HealthStatus,
+  UnlockCaseParams,
+} from "./api.schemas";
 
 import { customFetch } from "../custom-fetch";
 import type { ErrorType, BodyType } from "../custom-fetch";
@@ -181,7 +188,7 @@ export const getGetCaseUrl = (id: string, params: GetCaseParams) => {
 };
 
 /**
- * Returns case details only when the non-guessable read token from case creation is provided.
+ * Returns the free case view when the non-guessable read token from case creation is provided. Paid templates and full guidance are intentionally empty in this response.
  * @summary Get a case by ID and read token
  */
 export const getCase = async (
@@ -241,6 +248,94 @@ export function useGetCase<TData = Awaited<ReturnType<typeof getCase>>, TError =
   }
 ): UseQueryResult<TData, TError> & { queryKey: QueryKey } {
   const queryOptions = getGetCaseQueryOptions(id, params, options);
+
+  const query = useQuery(queryOptions) as UseQueryResult<TData, TError> & { queryKey: QueryKey };
+
+  return { ...query, queryKey: queryOptions.queryKey };
+}
+
+export const getUnlockCaseUrl = (id: string, params: UnlockCaseParams) => {
+  const normalizedParams = new URLSearchParams();
+
+  Object.entries(params || {}).forEach(([key, value]) => {
+    if (value !== undefined) {
+      normalizedParams.append(key, value === null ? "null" : String(value));
+    }
+  });
+
+  const stringifiedParams = normalizedParams.toString();
+
+  return stringifiedParams.length > 0
+    ? `/api/cases/${id}/unlock?${stringifiedParams}`
+    : `/api/cases/${id}/unlock`;
+};
+
+/**
+ * Returns full paid templates and guidance only after a server-side payment or active flatrate check.
+ * @summary Get unlocked case content
+ */
+export const unlockCase = async (
+  id: string,
+  params: UnlockCaseParams,
+  options?: RequestInit
+): Promise<Case> => {
+  return customFetch<Case>(getUnlockCaseUrl(id, params), {
+    ...options,
+    method: "GET",
+  });
+};
+
+export const getUnlockCaseQueryKey = (id: string, params?: UnlockCaseParams) => {
+  return [`/api/cases/${id}/unlock`, ...(params ? [params] : [])] as const;
+};
+
+export const getUnlockCaseQueryOptions = <
+  TData = Awaited<ReturnType<typeof unlockCase>>,
+  TError = ErrorType<void>,
+>(
+  id: string,
+  params: UnlockCaseParams,
+  options?: {
+    query?: UseQueryOptions<Awaited<ReturnType<typeof unlockCase>>, TError, TData>;
+    request?: SecondParameter<typeof customFetch>;
+  }
+) => {
+  const { query: queryOptions, request: requestOptions } = options ?? {};
+
+  const queryKey = queryOptions?.queryKey ?? getUnlockCaseQueryKey(id, params);
+
+  const queryFn: QueryFunction<Awaited<ReturnType<typeof unlockCase>>> = ({ signal }) =>
+    unlockCase(id, params, { signal, ...requestOptions });
+
+  return {
+    queryKey,
+    queryFn,
+    enabled: id !== null && id !== undefined,
+    ...queryOptions,
+  } as UseQueryOptions<Awaited<ReturnType<typeof unlockCase>>, TError, TData> & {
+    queryKey: QueryKey;
+  };
+};
+
+export type UnlockCaseQueryResult = NonNullable<Awaited<ReturnType<typeof unlockCase>>>;
+export type UnlockCaseQueryError = ErrorType<void>;
+
+/**
+ * @summary Get unlocked case content
+ */
+
+export function useUnlockCase<
+  TData = Awaited<ReturnType<typeof unlockCase>>,
+  TError = ErrorType<void>,
+>(
+  id: string,
+  params: UnlockCaseParams,
+  options?: {
+    query?: UseQueryOptions<Awaited<ReturnType<typeof unlockCase>>, TError, TData>;
+    request?: SecondParameter<typeof customFetch>;
+  }
+): UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+  const queryOptions = getUnlockCaseQueryOptions(id, params, options);
 
   const query = useQuery(queryOptions) as UseQueryResult<TData, TError> & { queryKey: QueryKey };
 

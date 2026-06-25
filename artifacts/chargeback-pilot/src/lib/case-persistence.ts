@@ -65,6 +65,7 @@ export function markCaseIdUnlocked(caseId: string): void {
 // ---------------------------------------------------------------------------
 export interface PersistedCase {
   caseId: string;
+  readToken?: string;
   merchantName: string;
   amount: number;
   paymentMethod: string;
@@ -279,6 +280,18 @@ export function getFlatrateExpiry(): Date | null {
     const parsed = JSON.parse(raw) as FlatrateEntry;
     const d = new Date(parsed.expiresAt);
     return d.getTime() > Date.now() ? d : null;
+  } catch {
+    return null;
+  }
+}
+
+export function getFlatrateSessionId(): string | null {
+  try {
+    const raw = localStorage.getItem(FLATRATE_KEY);
+    if (!raw) return null;
+    const parsed = JSON.parse(raw) as FlatrateEntry;
+    if (!parsed.sessionId || new Date(parsed.expiresAt).getTime() <= Date.now()) return null;
+    return parsed.sessionId;
   } catch {
     return null;
   }

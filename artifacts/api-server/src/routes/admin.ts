@@ -1,6 +1,6 @@
 import { Router, type Response } from "express";
-import { db, casesTable } from "@workspace/db";
-import { desc, eq, count, sql, and, gte } from "drizzle-orm";
+import { db, casesTable, type CaseAnalysis } from "@workspace/db";
+import { desc, eq, count, sql, and, gte, lt } from "drizzle-orm";
 import rateLimit from "express-rate-limit";
 import { getApiServerEnv } from "@workspace/env";
 import { safeCompare, sessionStore, adminAuth } from "../lib/auth";
@@ -37,6 +37,28 @@ function sendAdminRouteError(res: Response) {
     error: "Admin-Daten konnten nicht geladen werden.",
     timestamp: new Date().toISOString(),
   });
+}
+
+function anonymizedAnalysis(): CaseAnalysis {
+  return {
+    strength: "schwach",
+    strengthLabel: "Anonymisiert",
+    successProbability: 0,
+    successProbabilityLabel: "Anonymisiert",
+    summary: "Dieser Fall wurde nach Ablauf der Aufbewahrungsfrist anonymisiert.",
+    reasoning: "Personen- und fallbezogene Inhalte wurden entfernt.",
+    missingEvidence: [],
+    nextSteps: [],
+    recommendedCategory: "Anonymisiert",
+    legalBasis: [],
+    counterarguments: [],
+    urgencyLevel: "niedrig",
+    deadline: "Anonymisiert",
+    merchantTemplate: "",
+    bankTemplate: "",
+    escalationTemplate: "",
+    disclaimer: "Anonymisiert.",
+  };
 }
 
 router.post("/login", loginLimiter, (req: any, res: Response): void => {
@@ -257,6 +279,63 @@ router.get("/cases", async (req, res) => {
     });
   } catch (error) {
     logAdminRouteError(error, "Failed to load admin cases");
+    sendAdminRouteError(res);
+  }
+});
+
+router.post("/maintenance/anonymize-old-cases", async (req, res) => {
+  try {
+    const cutoff = new Date();
+    cutoff.setMonth(cutoff.getMonth() - 12);
+
+    const [eligible] = await db
+      .select({ count: count() })
+      .from(casesTable)
+      .where(lt(casesTable.createdAt, cutoff));
+
+    const execute =
+      req.query.execute === "1" &&
+      (req.body as { confirm?: string } | undefined)?.confirm === "ANONYMIZE_OLD_CASES";
+
+    if (!execute) {
+      res.json({
+        ok: true,
+        dryRun: true,
+        eligibleCases: Number(eligible?.count ?? 0),
+        cutoff: cutoff.toISOString(),
+        requiredConfirmation: "ANONYMIZE_OLD_CASES",
+      });
+      return;
+    }
+
+    const updated = await db
+      .update(casesTable)
+      .set({
+        merchantName: "Anonymisiert",
+        amount: 0,
+        paymentDate: "anonymisiert",
+        merchantCountry: null,
+        merchantContacted: false,
+        merchantResponse: null,
+        evidence: [],
+        description: "Anonymisiert nach Ablauf der Aufbewahrungsfrist.",
+        analysis: anonymizedAnalysis(),
+        stripeSessionId: null,
+        readTokenHash: null,
+      })
+      .where(lt(casesTable.createdAt, cutoff))
+      .returning({ id: casesTable.id });
+
+    logger.info({ count: updated.length, cutoff: cutoff.toISOString() }, "Old cases anonymized");
+
+    res.json({
+      ok: true,
+      dryRun: false,
+      anonymizedCases: updated.length,
+      cutoff: cutoff.toISOString(),
+    });
+  } catch (error) {
+    logAdminRouteError(error, "Failed to anonymize old cases");
     sendAdminRouteError(res);
   }
 });

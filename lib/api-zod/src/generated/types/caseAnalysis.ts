@@ -17,19 +17,22 @@ export interface CaseAnalysis {
   summary: string;
   reasoning: string;
   missingEvidence: string[];
+  /** Free responses contain the first visible next step; unlocked responses contain the full list. */
   nextSteps: string[];
   recommendedCategory: string;
-  /** General consumer or procedure notes, not legal advice */
+  /** General consumer or procedure notes, not legal advice. Empty until unlock. */
   legalBasis: string[];
-  /** Potential merchant/bank counterarguments and how to respond */
+  /** Potential merchant/bank counterarguments and how to respond. Empty until unlock. */
   counterarguments: string[];
   /** hoch, mittel, niedrig — based on deadlines */
   urgencyLevel: string;
   /** Important deadline information */
   deadline: string;
+  /** Case-bound template text. Empty until unlock. */
   merchantTemplate: string;
+  /** Case-bound payment-provider template text. Empty until unlock. */
   bankTemplate: string;
-  /** Escalation letter if first attempts fail */
+  /** Escalation letter if first attempts fail. Empty until unlock. */
   escalationTemplate: string;
   disclaimer: string;
 }

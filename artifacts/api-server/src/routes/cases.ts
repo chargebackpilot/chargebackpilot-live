@@ -4,6 +4,7 @@ import { casesTable, type CaseAnalysis } from "@workspace/db";
 import { CreateCaseBody, GetCaseParams } from "@workspace/api-zod";
 import { eq, count, sql } from "drizzle-orm";
 import rateLimit, { ipKeyGenerator } from "express-rate-limit";
+import Stripe from "stripe";
 import { analyzeWithGemini } from "../lib/gemini-analysis";
 import { LRUCache } from "../lib/lru-cache";
 import { getApiServerEnv } from "@workspace/env";
@@ -65,6 +66,89 @@ function hasValidReadToken(storedHash: string | null, candidateToken: string | u
   return (
     storedBuffer.length === candidateBuffer.length && timingSafeEqual(storedBuffer, candidateBuffer)
   );
+}
+
+function publicAnalysis(analysis: CaseAnalysis): CaseAnalysis {
+  return {
+    ...analysis,
+    nextSteps: analysis.nextSteps.slice(0, 1),
+    legalBasis: [],
+    counterarguments: [],
+    merchantTemplate: "",
+    bankTemplate: "",
+    escalationTemplate: "",
+  };
+}
+
+function caseResponse(
+  row: typeof casesTable.$inferSelect,
+  readToken: string | undefined,
+  fullAnalysis: boolean
+) {
+  return {
+    id: String(row.id),
+    paymentMethod: row.paymentMethod,
+    problemType: row.problemType,
+    merchantName: row.merchantName,
+    amount: row.amount,
+    paymentDate: row.paymentDate,
+    merchantCountry: row.merchantCountry,
+    merchantContacted: row.merchantContacted,
+    merchantResponse: row.merchantResponse,
+    evidence: row.evidence,
+    description: row.description,
+    analysis: fullAnalysis ? row.analysis : publicAnalysis(row.analysis),
+    ...(readToken ? { readToken } : {}),
+    createdAt: row.createdAt.toISOString(),
+  };
+}
+
+function getReadToken(req: Request) {
+  return typeof req.query.readToken === "string"
+    ? req.query.readToken
+    : typeof req.headers["x-case-read-token"] === "string"
+      ? req.headers["x-case-read-token"]
+      : undefined;
+}
+
+function getStripeClient(): Stripe | null {
+  const key = process.env.STRIPE_SECRET_KEY;
+  if (!key) return null;
+  return new Stripe(key, { apiVersion: "2026-05-27.dahlia" });
+}
+
+function flatrateStillValid(createdSeconds: number) {
+  const createdAt = new Date(createdSeconds * 1000);
+  const expiresAt = new Date(createdAt);
+  expiresAt.setMonth(expiresAt.getMonth() + 12);
+  return expiresAt.getTime() > Date.now();
+}
+
+async function hasServerSideUnlock(row: typeof casesTable.$inferSelect, req: Request) {
+  if (row.paid) return true;
+
+  const flatrateSessionId =
+    typeof req.query.flatrateSessionId === "string" ? req.query.flatrateSessionId : undefined;
+  if (!flatrateSessionId) return false;
+
+  const stripe = getStripeClient();
+  if (!stripe) return false;
+
+  try {
+    const session = await stripe.checkout.sessions.retrieve(flatrateSessionId);
+    return (
+      session.payment_status === "paid" &&
+      session.metadata?.mode === "flatrate" &&
+      typeof session.created === "number" &&
+      flatrateStillValid(session.created)
+    );
+  } catch (err) {
+    logger.warn(
+      { error: err instanceof Error ? err.message : String(err) },
+      "Flatrate session verification failed"
+    );
+    return false;
+  }
 }
 
 function countRecentSubmissions(ip: string) {
@@ -188,22 +272,7 @@ router.post("/cases", limiter, async (req: Request, res: Response) => {
     .values({ ...caseData, readTokenHash: hashReadToken(readToken) })
     .returning();
 
-  res.status(201).json({
-    id: String(newCase.id),
-    paymentMethod: newCase.paymentMethod,
-    problemType: newCase.problemType,
-    merchantName: newCase.merchantName,
-    amount: newCase.amount,
-    paymentDate: newCase.paymentDate,
-    merchantCountry: newCase.merchantCountry,
-    merchantContacted: newCase.merchantContacted,
-    merchantResponse: newCase.merchantResponse,
-    evidence: newCase.evidence,
-    description: newCase.description,
-    analysis: newCase.analysis,
-    readToken,
-    createdAt: newCase.createdAt.toISOString(),
-  });
+  res.status(201).json(caseResponse(newCase, readToken, false));
 });
 
 router.get("/cases/stats", async (_req: Request, res: Response) => {
@@ -252,6 +321,35 @@ router.get("/cases/stats", async (_req: Request, res: Response) => {
   });
 });
 
+router.get("/cases/:id/unlock", async (req: Request, res: Response) => {
+  const paramsResult = GetCaseParams.safeParse(req.params);
+  if (!paramsResult.success) {
+    res.status(400).json({ error: "Ungültige ID" });
+    return;
+  }
+
+  const id = parseInt(paramsResult.data.id, 10);
+  if (isNaN(id)) {
+    res.status(400).json({ error: "ID muss eine Zahl sein" });
+    return;
+  }
+
+  const [found] = await db.select().from(casesTable).where(eq(casesTable.id, id));
+  const readToken = getReadToken(req);
+
+  if (!found || !hasValidReadToken(found.readTokenHash, readToken)) {
+    res.status(404).json({ error: "Fall nicht gefunden" });
+    return;
+  }
+
+  if (!(await hasServerSideUnlock(found, req))) {
+    res.status(402).json({ error: "Fall noch nicht freigeschaltet" });
+    return;
+  }
+
+  res.json(caseResponse(found, readToken, true));
+});
+
 router.get("/cases/:id", async (req: Request, res: Response) => {
   const paramsResult = GetCaseParams.safeParse(req.params);
   if (!paramsResult.success) {
@@ -266,33 +364,14 @@ router.get("/cases/:id", async (req: Request, res: Response) => {
   }
 
   const [found] = await db.select().from(casesTable).where(eq(casesTable.id, id));
-  const readToken =
-    typeof req.query.readToken === "string"
-      ? req.query.readToken
-      : typeof req.headers["x-case-read-token"] === "string"
-        ? req.headers["x-case-read-token"]
-        : undefined;
+  const readToken = getReadToken(req);
 
   if (!found || !hasValidReadToken(found.readTokenHash, readToken)) {
     res.status(404).json({ error: "Fall nicht gefunden" });
     return;
   }
 
-  res.json({
-    id: String(found.id),
-    paymentMethod: found.paymentMethod,
-    problemType: found.problemType,
-    merchantName: found.merchantName,
-    amount: found.amount,
-    paymentDate: found.paymentDate,
-    merchantCountry: found.merchantCountry,
-    merchantContacted: found.merchantContacted,
-    merchantResponse: found.merchantResponse,
-    evidence: found.evidence,
-    description: found.description,
-    analysis: found.analysis,
-    createdAt: found.createdAt.toISOString(),
-  });
+  res.json(caseResponse(found, readToken, false));
 });
 
 export default router;
