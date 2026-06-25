@@ -301,6 +301,15 @@ export function activateFlatrate(sessionId: string, durationMonths = 12): void {
   }
 }
 
+export function clearFlatrate(): void {
+  try {
+    localStorage.removeItem(FLATRATE_KEY);
+    notifyCaseStorageChanged();
+  } catch {
+    /* ignore */
+  }
+}
+
 // ---------------------------------------------------------------------------
 // Wizard draft (work-in-progress before submission)
 // ---------------------------------------------------------------------------

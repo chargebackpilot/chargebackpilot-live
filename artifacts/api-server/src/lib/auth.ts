@@ -12,15 +12,18 @@ class SessionStore {
 
   constructor() {
     // Cleanup expired sessions every 5 minutes
-    this.cleanupInterval = setInterval(() => {
-      const now = Date.now();
-      for (const [key, value] of this.sessions.entries()) {
-        if (value.expiresAt < now) {
-          this.sessions.delete(key);
+    this.cleanupInterval = setInterval(
+      () => {
+        const now = Date.now();
+        for (const [key, value] of this.sessions.entries()) {
+          if (value.expiresAt < now) {
+            this.sessions.delete(key);
+          }
         }
-      }
-      logger.debug(`Cleaned up expired sessions. Remaining: ${this.sessions.size}`);
-    }, 5 * 60 * 1000);
+        logger.debug(`Cleaned up expired sessions. Remaining: ${this.sessions.size}`);
+      },
+      5 * 60 * 1000
+    );
   }
 
   create(): string {
@@ -87,7 +90,7 @@ export function adminAuth(req: Request, res: Response, next: NextFunction): void
 
   const token = authHeader.slice(7); // Remove "Bearer " prefix
   if (!sessionStore.verify(token)) {
-    logger.warn({ token: token.slice(0, 8) }, "Invalid or expired admin session");
+    logger.warn("Invalid or expired admin session");
     res.status(401).json({
       code: "UNAUTHORIZED",
       message: "Invalid or expired session",

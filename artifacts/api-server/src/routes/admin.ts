@@ -28,6 +28,17 @@ const loginLimiter = rateLimit({
 
 const MIN_ADMIN_PASSWORD_LENGTH = 15;
 
+function logAdminRouteError(error: unknown, message: string) {
+  logger.error({ error: error instanceof Error ? error.message : String(error) }, message);
+}
+
+function sendAdminRouteError(res: Response) {
+  res.status(500).json({
+    error: "Admin-Daten konnten nicht geladen werden.",
+    timestamp: new Date().toISOString(),
+  });
+}
+
 router.post("/login", loginLimiter, (req: any, res: Response): void => {
   if (!env.ADMIN_PASSWORD || env.ADMIN_PASSWORD.length < MIN_ADMIN_PASSWORD_LENGTH) {
     logger.error("ADMIN_PASSWORD not configured");
@@ -104,127 +115,150 @@ router.post("/logout", adminAuth, (req: any, res: Response): void => {
 router.use(adminAuth);
 
 router.get("/stats", async (_req: any, res: Response): Promise<void> => {
-  const now = new Date();
-  const since24h = new Date(now.getTime() - 24 * 60 * 60 * 1000);
-  const since7d = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
-  const since30d = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
+  try {
+    const now = new Date();
+    const since24h = new Date(now.getTime() - 24 * 60 * 60 * 1000);
+    const since7d = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+    const since30d = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
 
-  const [totals] = await db
-    .select({
-      total: count(),
-      paidCount: sql<number>`COUNT(*) FILTER (WHERE ${casesTable.paid} = true)`,
-      revenueCents: sql<number>`COALESCE(SUM(CASE WHEN ${casesTable.paid} = true THEN ${casesTable.paidAmountCents} ELSE 0 END), 0)`,
-      avgAmount: sql<number>`COALESCE(AVG(${casesTable.amount}), 0)`,
-      disputedTotal: sql<number>`COALESCE(SUM(${casesTable.amount}), 0)`,
-    })
-    .from(casesTable);
+    const [totals] = await db
+      .select({
+        total: count(),
+        paidCount: sql<number>`COUNT(*) FILTER (WHERE ${casesTable.paid} = true)`,
+        revenueCents: sql<number>`COALESCE(SUM(CASE WHEN ${casesTable.paid} = true THEN ${casesTable.paidAmountCents} ELSE 0 END), 0)`,
+        avgAmount: sql<number>`COALESCE(AVG(${casesTable.amount}), 0)`,
+        disputedTotal: sql<number>`COALESCE(SUM(${casesTable.amount}), 0)`,
+      })
+      .from(casesTable);
 
-  const [cases24h] = await db
-    .select({ c: count() })
-    .from(casesTable)
-    .where(gte(casesTable.createdAt, since24h));
-  const [cases7d] = await db
-    .select({ c: count() })
-    .from(casesTable)
-    .where(gte(casesTable.createdAt, since7d));
-  const [cases30d] = await db
-    .select({ c: count() })
-    .from(casesTable)
-    .where(gte(casesTable.createdAt, since30d));
+    const [cases24h] = await db
+      .select({ c: count() })
+      .from(casesTable)
+      .where(gte(casesTable.createdAt, since24h));
+    const [cases7d] = await db
+      .select({ c: count() })
+      .from(casesTable)
+      .where(gte(casesTable.createdAt, since7d));
+    const [cases30d] = await db
+      .select({ c: count() })
+      .from(casesTable)
+      .where(gte(casesTable.createdAt, since30d));
 
-  const [paid24h] = await db
-    .select({ c: count() })
-    .from(casesTable)
-    .where(and(eq(casesTable.paid, true), gte(casesTable.paidAt, since24h)));
+    const [paid24h] = await db
+      .select({ c: count() })
+      .from(casesTable)
+      .where(and(eq(casesTable.paid, true), gte(casesTable.paidAt, since24h)));
 
-  const byStrength = await db
-    .select({
-      strength: sql<string>`${casesTable.analysis}->>'strength'`,
-      c: count(),
-    })
-    .from(casesTable)
-    .groupBy(sql`${casesTable.analysis}->>'strength'`);
+    const byStrength = await db
+      .select({
+        strength: sql<string>`${casesTable.analysis}->>'strength'`,
+        c: count(),
+      })
+      .from(casesTable)
+      .groupBy(sql`${casesTable.analysis}->>'strength'`);
 
-  const byPaymentMethod = await db
-    .select({ method: casesTable.paymentMethod, c: count() })
-    .from(casesTable)
-    .groupBy(casesTable.paymentMethod);
+    const byPaymentMethod = await db
+      .select({ method: casesTable.paymentMethod, c: count() })
+      .from(casesTable)
+      .groupBy(casesTable.paymentMethod);
 
-  const byProblemType = await db
-    .select({ type: casesTable.problemType, c: count() })
-    .from(casesTable)
-    .groupBy(casesTable.problemType);
+    const byProblemType = await db
+      .select({ type: casesTable.problemType, c: count() })
+      .from(casesTable)
+      .groupBy(casesTable.problemType);
 
-  const dailyRaw = await db
-    .select({
-      day: sql<string>`TO_CHAR(DATE_TRUNC('day', ${casesTable.createdAt} AT TIME ZONE 'UTC'), 'YYYY-MM-DD')`,
-      total: count(),
-      paid: sql<number>`COUNT(*) FILTER (WHERE ${casesTable.paid} = true)`,
-    })
-    .from(casesTable)
-    .where(gte(casesTable.createdAt, since30d))
-    .groupBy(sql`DATE_TRUNC('day', ${casesTable.createdAt} AT TIME ZONE 'UTC')`)
-    .orderBy(sql`DATE_TRUNC('day', ${casesTable.createdAt} AT TIME ZONE 'UTC')`);
+    const dailyRaw = await db
+      .select({
+        day: sql<string>`TO_CHAR(DATE_TRUNC('day', ${casesTable.createdAt} AT TIME ZONE 'UTC'), 'YYYY-MM-DD')`,
+        total: count(),
+        paid: sql<number>`COUNT(*) FILTER (WHERE ${casesTable.paid} = true)`,
+      })
+      .from(casesTable)
+      .where(gte(casesTable.createdAt, since30d))
+      .groupBy(sql`DATE_TRUNC('day', ${casesTable.createdAt} AT TIME ZONE 'UTC')`)
+      .orderBy(sql`DATE_TRUNC('day', ${casesTable.createdAt} AT TIME ZONE 'UTC')`);
 
-  const totalNum = Number(totals.total);
-  const paidNum = Number(totals.paidCount);
+    const totalNum = Number(totals?.total ?? 0);
+    const paidNum = Number(totals?.paidCount ?? 0);
 
-  res.json({
-    totalCases: totalNum,
-    paidCases: paidNum,
-    conversionRate: totalNum > 0 ? Math.round((paidNum / totalNum) * 1000) / 10 : 0,
-    revenueEur: Number(totals.revenueCents) / 100,
-    avgDisputedAmount: Math.round(Number(totals.avgAmount) * 100) / 100,
-    totalDisputedAmount: Math.round(Number(totals.disputedTotal) * 100) / 100,
-    cases24h: Number(cases24h.c),
-    cases7d: Number(cases7d.c),
-    cases30d: Number(cases30d.c),
-    paid24h: Number(paid24h.c),
-    byStrength: byStrength.map((r) => ({
-      strength: r.strength ?? "unbekannt",
-      count: Number(r.c),
-    })),
-    byPaymentMethod: byPaymentMethod.map((r) => ({ method: r.method, count: Number(r.c) })),
-    byProblemType: byProblemType.map((r) => ({ type: r.type, count: Number(r.c) })),
-    dailySeries: dailyRaw.map((r) => ({
-      day: r.day,
-      total: Number(r.total),
-      paid: Number(r.paid),
-    })),
-  });
+    res.json({
+      totalCases: totalNum,
+      paidCases: paidNum,
+      conversionRate: totalNum > 0 ? Math.round((paidNum / totalNum) * 1000) / 10 : 0,
+      revenueEur: Number(totals?.revenueCents ?? 0) / 100,
+      avgDisputedAmount: Math.round(Number(totals?.avgAmount ?? 0) * 100) / 100,
+      totalDisputedAmount: Math.round(Number(totals?.disputedTotal ?? 0) * 100) / 100,
+      cases24h: Number(cases24h?.c ?? 0),
+      cases7d: Number(cases7d?.c ?? 0),
+      cases30d: Number(cases30d?.c ?? 0),
+      paid24h: Number(paid24h?.c ?? 0),
+      byStrength: byStrength.map((r) => ({
+        strength: r.strength ?? "unbekannt",
+        count: Number(r.c),
+      })),
+      byPaymentMethod: byPaymentMethod.map((r) => ({ method: r.method, count: Number(r.c) })),
+      byProblemType: byProblemType.map((r) => ({ type: r.type, count: Number(r.c) })),
+      dailySeries: dailyRaw.map((r) => ({
+        day: r.day,
+        total: Number(r.total),
+        paid: Number(r.paid),
+      })),
+    });
+  } catch (error) {
+    logAdminRouteError(error, "Failed to load admin stats");
+    sendAdminRouteError(res);
+  }
 });
 
 router.get("/cases", async (req, res) => {
-  const limit = Math.min(Number(req.query.limit ?? 50), 200);
-  const offset = Math.max(Number(req.query.offset ?? 0), 0);
-  const onlyPaid = req.query.paid === "1";
+  try {
+    const requestedLimit = Number(req.query.limit ?? 50);
+    const requestedOffset = Number(req.query.offset ?? 0);
+    const limit = Number.isFinite(requestedLimit) ? Math.min(Math.max(requestedLimit, 1), 200) : 50;
+    const offset = Number.isFinite(requestedOffset) ? Math.max(requestedOffset, 0) : 0;
+    const onlyPaid = req.query.paid === "1";
 
-  const rows = await db
-    .select()
-    .from(casesTable)
-    .where(onlyPaid ? eq(casesTable.paid, true) : sql`true`)
-    .orderBy(desc(casesTable.createdAt))
-    .limit(limit)
-    .offset(offset);
+    const rows = await db
+      .select({
+        id: casesTable.id,
+        merchantName: casesTable.merchantName,
+        paymentMethod: casesTable.paymentMethod,
+        problemType: casesTable.problemType,
+        amount: casesTable.amount,
+        paymentDate: casesTable.paymentDate,
+        analysis: casesTable.analysis,
+        paid: casesTable.paid,
+        paidAt: casesTable.paidAt,
+        createdAt: casesTable.createdAt,
+      })
+      .from(casesTable)
+      .where(onlyPaid ? eq(casesTable.paid, true) : sql`true`)
+      .orderBy(desc(casesTable.createdAt))
+      .limit(limit)
+      .offset(offset);
 
-  res.json({
-    cases: rows.map((c) => ({
-      id: String(c.id),
-      merchantName: c.merchantName,
-      paymentMethod: c.paymentMethod,
-      problemType: c.problemType,
-      amount: c.amount,
-      paymentDate: c.paymentDate,
-      successProbability: c.analysis?.successProbability ?? 0,
-      strength: c.analysis?.strength ?? "unbekannt",
-      paid: c.paid,
-      paidAt: c.paidAt?.toISOString() ?? null,
-      createdAt: c.createdAt.toISOString(),
-    })),
-    count: rows.length,
-    limit,
-    offset,
-  });
+    res.json({
+      cases: rows.map((c) => ({
+        id: String(c.id),
+        merchantName: c.merchantName,
+        paymentMethod: c.paymentMethod,
+        problemType: c.problemType,
+        amount: c.amount,
+        paymentDate: c.paymentDate,
+        successProbability: c.analysis?.successProbability ?? 0,
+        strength: c.analysis?.strength ?? "unbekannt",
+        paid: c.paid,
+        paidAt: c.paidAt?.toISOString() ?? null,
+        createdAt: c.createdAt.toISOString(),
+      })),
+      count: rows.length,
+      limit,
+      offset,
+    });
+  } catch (error) {
+    logAdminRouteError(error, "Failed to load admin cases");
+    sendAdminRouteError(res);
+  }
 });
 
 router.get("/cases/:id", async (req, res) => {

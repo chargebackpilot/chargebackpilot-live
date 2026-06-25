@@ -26,7 +26,7 @@ const routes = (
 )
   .split(",")
   .map((route) => route.trim())
-  .filter(Boolean);
+  .filter((route) => Boolean(route) && !route.startsWith("/admin"));
 
 function request(url) {
   return new Promise((resolve, reject) => {

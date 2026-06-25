@@ -15,8 +15,16 @@ import {
   Filter,
   Calendar,
   Activity,
+  UnlockKeyhole,
+  XCircle,
 } from "lucide-react";
 import { getAllSeoQualityResults, SEO_QUALITY_CONFIG } from "@/seo-quality";
+import {
+  activateFlatrate,
+  clearFlatrate,
+  getFlatrateExpiry,
+  isFlatrateActive,
+} from "@/lib/case-persistence";
 import {
   adminLogin,
   clearAdminPassword,
@@ -100,7 +108,10 @@ function AdminLogin({ onSuccess }: { onSuccess: () => void }) {
           <h1 className="text-2xl font-bold text-white">Admin-Bereich</h1>
           <p className="text-slate-400 text-sm mt-1">ChargebackPilot</p>
         </div>
-        <form onSubmit={submit} className="bg-white rounded-2xl shadow-2xl p-6 space-y-4">
+        <form
+          onSubmit={submit}
+          className="bg-white text-slate-950 rounded-2xl shadow-2xl p-6 space-y-4"
+        >
           <div>
             <label className="text-sm font-semibold block mb-2">Passwort</label>
             <Input
@@ -176,7 +187,7 @@ function AdminDashboard({ onLogout }: { onLogout: () => void }) {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50">
+    <div className="min-h-screen bg-slate-50 text-slate-950">
       {/* Top bar */}
       <header className="bg-white border-b sticky top-0 z-30">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 py-3 flex items-center justify-between">
@@ -409,10 +420,91 @@ function AdminDashboard({ onLogout }: { onLogout: () => void }) {
               averageScore={averageSeoScore}
               nextRelease={nextSeoRelease}
             />
+
+            <BrowserUnlockDisclosure />
           </>
         ) : null}
       </main>
     </div>
+  );
+}
+
+function readBrowserUnlockState() {
+  const expiry = getFlatrateExpiry();
+  return {
+    active: isFlatrateActive(),
+    expiryLabel: expiry
+      ? expiry.toLocaleDateString("de-DE", { day: "2-digit", month: "2-digit", year: "numeric" })
+      : null,
+  };
+}
+
+function BrowserUnlockDisclosure() {
+  const [state, setState] = useState(readBrowserUnlockState);
+  const [message, setMessage] = useState("");
+
+  const activate = () => {
+    const sessionId = `admin_test_${Math.random().toString(36).slice(2)}_${Date.now()}`;
+    activateFlatrate(sessionId, 12);
+    setState(readBrowserUnlockState());
+    setMessage("Testfreischaltung ist in diesem Browser aktiv.");
+  };
+
+  const reset = () => {
+    clearFlatrate();
+    setState(readBrowserUnlockState());
+    setMessage("Testfreischaltung wurde in diesem Browser entfernt.");
+  };
+
+  return (
+    <details className="group bg-white rounded-2xl border">
+      <summary className="flex cursor-pointer list-none items-center justify-between gap-4 p-5 marker:hidden">
+        <div className="flex items-start gap-3">
+          <div className="mt-0.5 flex h-9 w-9 items-center justify-center rounded-lg bg-slate-100 text-slate-700">
+            <UnlockKeyhole className="h-4 w-4" />
+          </div>
+          <div>
+            <h2 className="font-bold text-sm uppercase tracking-wide text-slate-700">
+              Interne Browser-Testfreischaltung
+            </h2>
+            <p className="mt-1 text-xs text-slate-500">
+              {state.active && state.expiryLabel
+                ? `Aktiv bis ${state.expiryLabel} in diesem Browser.`
+                : "Nicht aktiv. Nur fuer lokale Admin-Tests im aktuellen Browser."}
+            </p>
+          </div>
+        </div>
+        <span className="rounded-lg border px-3 py-1.5 text-xs font-semibold text-slate-600 transition-colors group-open:bg-slate-50">
+          <span className="group-open:hidden">Aufklappen</span>
+          <span className="hidden group-open:inline">Zuklappen</span>
+        </span>
+      </summary>
+      <div className="border-t px-5 pb-5 pt-4">
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+          <div className="text-sm text-slate-600">
+            Schaltet die Paywall nur in deinem aktuellen Browser frei, damit PDF-Export und
+            Ergebnisansicht intern getestet werden koennen. Es wird keine Stripe-Zahlung simuliert.
+            {message && <p className="mt-2 font-semibold text-slate-800">{message}</p>}
+          </div>
+          <div className="flex flex-col gap-2 sm:flex-row">
+            <Button type="button" onClick={activate} className="gap-2 whitespace-nowrap">
+              <CheckCircle2 className="h-4 w-4" />
+              Testfreischaltung aktivieren
+            </Button>
+            <Button
+              type="button"
+              variant="outline"
+              onClick={reset}
+              disabled={!state.active}
+              className="gap-2 whitespace-nowrap"
+            >
+              <XCircle className="h-4 w-4" />
+              Entfernen
+            </Button>
+          </div>
+        </div>
+      </div>
+    </details>
   );
 }
 

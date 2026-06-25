@@ -66,7 +66,6 @@ const LazyToaster = lazy(() =>
 );
 const WizardRoute = lazyWithPreload(loadWizardRoute);
 const Admin = lazyWithPreload(() => import("@/pages/Admin"));
-const AdminDemo = import.meta.env.DEV ? lazyWithPreload(() => import("@/pages/AdminDemo")) : null;
 
 const useIsomorphicLayoutEffect = typeof window === "undefined" ? useEffect : useLayoutEffect;
 
@@ -102,6 +101,16 @@ function RouteHeadSync() {
   const [pathname] = useLocation();
 
   useIsomorphicLayoutEffect(() => {
+    if (pathname === "/admin" || pathname.startsWith("/admin/")) {
+      applyStandardSeoHead({
+        title: "Admin · ChargebackPilot",
+        description: "Interner Admin-Bereich von ChargebackPilot.",
+        canonical: pathname === "/admin" ? "/admin" : "/404",
+        noindex: true,
+      });
+      return;
+    }
+
     const meta = getRouteMeta(pathname);
     if (!meta) return;
 
@@ -114,6 +123,14 @@ function RouteHeadSync() {
   }, [pathname]);
 
   return null;
+}
+
+function AdminRouteFallback() {
+  return (
+    <div className="min-h-screen bg-slate-50 flex items-center justify-center" aria-hidden="true">
+      <div className="h-8 w-8 rounded-full border-2 border-slate-200 border-t-primary animate-spin" />
+    </div>
+  );
 }
 
 function RouteShellFallback() {
@@ -193,7 +210,7 @@ function RouteShellFallback() {
 }
 
 const withAdminSuspense = (Component: React.ComponentType<any>) => (props: any) => (
-  <Suspense fallback={<RouteShellFallback />}>
+  <Suspense fallback={<AdminRouteFallback />}>
     <Component {...props} />
   </Suspense>
 );
@@ -213,7 +230,6 @@ function Router() {
       </Route>
       <Route path="/ratgeber" component={RatgeberIndex} />
       <Route path="/admin" component={withAdminSuspense(Admin)} />
-      {AdminDemo ? <Route path="/admin/demo" component={withAdminSuspense(AdminDemo)} /> : null}
 
       {/* Legal Pages */}
       <Route path="/impressum" component={Impressum} />
@@ -267,19 +283,28 @@ interface AppProps {
   ssrPath?: string;
 }
 
+function AppFrame() {
+  const [pathname] = useLocation();
+  const isAdminPath = pathname === "/admin" || pathname.startsWith("/admin/");
+
+  return (
+    <div className="min-h-screen flex flex-col font-sans bg-background">
+      <RouteHeadSync />
+      {!isAdminPath && <Navbar />}
+      <main className="flex-1">
+        <ScrollToTop />
+        <Router />
+      </main>
+      {!isAdminPath && <Footer />}
+    </div>
+  );
+}
+
 function App({ ssrPath }: AppProps) {
   return (
     <ThemeProvider>
       <WouterRouter base={import.meta.env.BASE_URL.replace(/\/$/, "")} ssrPath={ssrPath}>
-        <div className="min-h-screen flex flex-col font-sans bg-background">
-          <RouteHeadSync />
-          <Navbar />
-          <main className="flex-1">
-            <ScrollToTop />
-            <Router />
-          </main>
-          <Footer />
-        </div>
+        <AppFrame />
       </WouterRouter>
       <IdleToaster />
     </ThemeProvider>

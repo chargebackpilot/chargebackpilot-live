@@ -289,6 +289,31 @@ const escapeHtml = (value: string) =>
     .replace(/"/g, "&quot;")
     .replace(/'/g, "&#39;");
 
+const escapeRegExp = (value: string) => value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+
+function replaceMetaTag(
+  html: string,
+  attrName: "name" | "property",
+  attrValue: string,
+  content: string
+) {
+  const pattern = new RegExp(
+    `<meta\\b(?=[^>]*\\b${attrName}="${escapeRegExp(attrValue)}")[^>]*>`,
+    "i"
+  );
+  return html.replace(
+    pattern,
+    `<meta ${attrName}="${attrValue}" content="${escapeHtml(content)}" />`
+  );
+}
+
+function replaceCanonicalTag(html: string, href: string) {
+  return html.replace(
+    /<link\b(?=[^>]*\brel="canonical")[^>]*>/i,
+    `<link rel="canonical" href="${escapeHtml(href)}" />`
+  );
+}
+
 const metaByPath: Array<{ match: RegExp; title: string; description: string; noindex?: boolean }> =
   [
     {
@@ -304,7 +329,7 @@ const metaByPath: Array<{ match: RegExp; title: string; description: string; noi
         "Erstelle in wenigen Schritten sachliche Entwürfe für Händler, Bank/PayPal/Klarna und Eskalation.",
     },
     {
-      match: /^\/admin(?:\/.*)?$/,
+      match: /^\/admin\/?$/,
       title: "Admin · ChargebackPilot",
       description: "Interner Admin-Bereich von ChargebackPilot.",
       noindex: true,
@@ -391,7 +416,6 @@ function renderSeoHtml(pathname: string) {
   const isKnownRoute = Boolean(current);
   const isNoindex = current?.noindex === true || !isKnownRoute;
   const title = escapeHtml(effective.title);
-  const description = escapeHtml(effective.description);
   const canonical = `${origin}${pathname}`;
   const robots = isNoindex
     ? "noindex, nofollow"
@@ -400,44 +424,16 @@ function renderSeoHtml(pathname: string) {
     ? "noindex, nofollow"
     : "index, follow, max-image-preview:large, max-snippet:-1";
 
-  const html = raw
-    .replace(/<title>.*?<\/title>/i, `<title>${title}</title>`)
-    .replace(
-      /<meta name="description" content=".*?"\s*\/>/i,
-      `<meta name="description" content="${description}" />`
-    )
-    .replace(
-      /<meta name="robots" content=".*?"\s*\/>/i,
-      `<meta name="robots" content="${robots}" />`
-    )
-    .replace(
-      /<meta name="googlebot" content=".*?"\s*\/>/i,
-      `<meta name="googlebot" content="${googlebot}" />`
-    )
-    .replace(
-      /<meta property="og:title" content=".*?"\s*\/>/i,
-      `<meta property="og:title" content="${title}" />`
-    )
-    .replace(
-      /<meta property="og:description" content=".*?"\s*\/>/i,
-      `<meta property="og:description" content="${description}" />`
-    )
-    .replace(
-      /<meta property="og:url" content=".*?"\s*\/>/i,
-      `<meta property="og:url" content="${canonical}" />`
-    )
-    .replace(
-      /<meta name="twitter:title" content=".*?"\s*\/>/i,
-      `<meta name="twitter:title" content="${title}" />`
-    )
-    .replace(
-      /<meta name="twitter:description" content=".*?"\s*\/>/i,
-      `<meta name="twitter:description" content="${description}" />`
-    )
-    .replace(
-      /<link rel="canonical" href=".*?"\s*\/>/i,
-      `<link rel="canonical" href="${canonical}" />`
-    );
+  let html = raw.replace(/<title>.*?<\/title>/i, `<title>${title}</title>`);
+  html = replaceMetaTag(html, "name", "description", effective.description);
+  html = replaceMetaTag(html, "name", "robots", robots);
+  html = replaceMetaTag(html, "name", "googlebot", googlebot);
+  html = replaceMetaTag(html, "property", "og:title", effective.title);
+  html = replaceMetaTag(html, "property", "og:description", effective.description);
+  html = replaceMetaTag(html, "property", "og:url", canonical);
+  html = replaceMetaTag(html, "name", "twitter:title", effective.title);
+  html = replaceMetaTag(html, "name", "twitter:description", effective.description);
+  html = replaceCanonicalTag(html, canonical);
 
   return { html, isKnownRoute };
 }

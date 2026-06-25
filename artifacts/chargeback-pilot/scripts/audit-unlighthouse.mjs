@@ -118,6 +118,8 @@ try {
       baseUrl,
       "--sitemaps",
       `${baseUrl}/sitemap.xml`,
+      "--exclude-urls",
+      "/admin,/admin/*",
       "--mobile",
       "--throttle",
       "--reporter",
