@@ -22,12 +22,18 @@ import {
   PenLine,
 } from "lucide-react";
 import NotFound from "./not-found";
-import { getMerchant, getProblem, generateMerchantProblemCopy, MERCHANTS } from "@/data/merchants";
+import {
+  getMerchant,
+  getProblem,
+  getProblemDisplayLabel,
+  generateMerchantProblemCopy,
+  MERCHANTS,
+} from "@/data/merchants";
 import { isIndexableMerchantProblemPath } from "@/seo-quality";
 
 const SITE = "https://chargebackpilot.de";
-const DISPLAY_UPDATED_AT = "22. Juni 2026";
-const SCHEMA_UPDATED_AT = "2026-06-22";
+const DISPLAY_UPDATED_AT = "25. Juni 2026";
+const SCHEMA_UPDATED_AT = "2026-06-25";
 
 const TRUST_LABEL: Record<string, { label: string; color: string }> = {
   trusted: {
@@ -82,7 +88,7 @@ export default function MerchantProblemPage() {
   const breadcrumbItems = [
     { label: "Ratgeber", href: "/ratgeber" },
     { label: merchant.name, href: `/hilfe/${merchant.slug}` },
-    { label: problem.label },
+    { label: copy.displayLabel },
   ];
 
   const canonicalPath = `/hilfe/${merchant.slug}/${problem.slug}`;
@@ -92,7 +98,7 @@ export default function MerchantProblemPage() {
   const howToSchema = {
     "@context": "https://schema.org",
     "@type": "HowTo",
-    name: `${merchant.name} ${problem.label}: strukturiert vorgehen`,
+    name: `${merchant.name} ${copy.displayLabel}: strukturiert vorgehen`,
     description: copy.metaDescription,
     totalTime: "PT15M",
     supply: copy.evidence.map((e) => ({ "@type": "HowToSupply", name: e })),
@@ -161,12 +167,11 @@ export default function MerchantProblemPage() {
               </span>
             </div>
             <h1 className="text-3xl md:text-5xl font-bold mb-4 leading-tight">
-              {merchant.name}: {problem.label}
+              {merchant.name}: {copy.displayLabel}
             </h1>
             <p className="text-lg md:text-xl text-muted-foreground mb-6 leading-relaxed">
-              {merchant.description} Hier liest du, wie du bei{" "}
-              <strong>{problem.searchPhrase}</strong> strukturiert vorgehst — mit Fristen, Beweisen
-              und fertigen Textvorlagen.
+              {merchant.description} Hier liest du, wie du bei <strong>{copy.searchPhrase}</strong>{" "}
+              strukturiert vorgehst — mit Fristen, Beweisen und fertigen Textvorlagen.
             </p>
             <div className="mb-6 flex flex-wrap items-center gap-2 text-sm text-muted-foreground">
               <span className="inline-flex items-center gap-2 rounded-md border bg-background px-3 py-1.5">
@@ -431,7 +436,7 @@ export default function MerchantProblemPage() {
                     <Card className="hover:border-primary transition-colors cursor-pointer">
                       <CardContent className="p-4 flex items-center justify-between gap-3">
                         <span className="font-medium text-sm">
-                          {merchant.name}: {p.label}
+                          {merchant.name}: {getProblemDisplayLabel(merchant, p)}
                         </span>
                         <ArrowRight className="w-4 h-4 text-muted-foreground shrink-0" />
                       </CardContent>

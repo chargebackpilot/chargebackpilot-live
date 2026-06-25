@@ -125,15 +125,15 @@ export default function ScamShopsPage() {
 
   const routeMeta = getRouteMeta("/scam-shops-2026");
   const title =
-    routeMeta?.title ?? "Fake-Shop-Verdacht & auffällige Online-Shops 2026 | ChargebackPilot";
+    routeMeta?.title ?? "Fake-Shop Geld zurück? Zahlungsweg bei Verdacht prüfen | ChargebackPilot";
   const description =
     routeMeta?.description ??
-    "Verdacht auf Fake-Shop oder auffälligen Online-Shop? Die wichtigsten Warnsignale 2026 plus strukturierte Orientierung zu Chargeback, PayPal-Käuferschutz und möglicher Lastschrift-Rückgabe.";
+    "Fake-Shop-Verdacht? Belege sichern und Zahlungsweg prüfen: PayPal, Kreditkarte, Klarna, Lastschrift oder Bankkontakt sachlich vorbereiten.";
 
   const articleSchema = {
     "@context": "https://schema.org",
     "@type": "Article",
-    headline: "Fake-Shop-Verdacht und auffällige Online-Shops 2026",
+    headline: "Fake-Shop-Verdacht: Geld zurück und Zahlungsweg prüfen",
     description,
     inLanguage: "de-DE",
     author: { "@type": "Organization", name: "ChargebackPilot" },
@@ -184,12 +184,12 @@ export default function ScamShopsPage() {
               Warnsignale 2026
             </div>
             <h1 className="text-3xl md:text-5xl font-bold mb-4 leading-tight">
-              Fake-Shop-Verdacht? So gehst du strukturiert vor.
+              Fake-Shop-Verdacht? Geld zurück und Zahlungsweg prüfen.
             </h1>
             <p className="text-lg text-muted-foreground mb-6">
-              Die 8 wichtigsten Warnsignale 2026 plus die strukturierte
-              Schritt-für-Schritt-Orientierung für PayPal-Käuferschutz, Kreditkarten-Chargeback und
-              mögliche Lastschrift-Rückgabe.
+              Die 8 wichtigsten Warnsignale 2026 plus strukturierte Orientierung, wie du Belege
+              sicherst und PayPal-Käuferschutz, Kreditkarten-Chargeback, Klarna oder mögliche
+              Lastschrift-Rückgabe prüfst.
             </p>
             <Link href="/vorlagen-generator?problem=fraud">
               <Button size="lg" className="gap-2">

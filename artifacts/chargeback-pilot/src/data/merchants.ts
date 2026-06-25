@@ -38,6 +38,37 @@ export interface MerchantDef {
   problems: string[];
 }
 
+export interface MerchantIndexSeo {
+  title: string;
+  description: string;
+  headline: string;
+}
+
+const MERCHANT_INDEX_SEO_OVERRIDES: Record<string, MerchantIndexSeo> = {
+  apple: {
+    title: "Apple / iTunes Abbuchung prüfen: Abo, App Store & Erstattung | ChargebackPilot",
+    description:
+      "Apple / iTunes Abbuchung unklar? Abo, In-App-Kauf, App-Store-Erstattung und Zahlungsweg sachlich prüfen und Belege strukturiert vorbereiten.",
+    headline: "Apple / iTunes Abbuchung prüfen",
+  },
+  "uber-eats": {
+    title: "Uber Eats Reklamation: Bestellung fehlt oder falsch | ChargebackPilot",
+    description:
+      "Uber Eats Bestellung fehlt, kam falsch oder unbrauchbar an? App-Status, Fotos, Supportverlauf und Zahlungsweg strukturiert vorbereiten.",
+    headline: "Uber Eats Reklamation: Bestellung fehlt oder falsch",
+  },
+};
+
+export function getMerchantIndexSeo(merchant: MerchantDef): MerchantIndexSeo {
+  return (
+    MERCHANT_INDEX_SEO_OVERRIDES[merchant.slug] ?? {
+      title: `${merchant.name} Reklamation & Chargeback 2026 | ChargebackPilot`,
+      description: `Probleme mit ${merchant.name}? Strukturierte Orientierung zu Lieferung, Defekten, Erstattung, Abbuchung und passenden Zahlungswegen.`,
+      headline: `${merchant.name}: Reklamation & Chargeback`,
+    }
+  );
+}
+
 export const PROBLEMS: ProblemDef[] = [
   {
     slug: "ware-nicht-erhalten",
@@ -392,6 +423,27 @@ export function getProblem(slug: string): ProblemDef | null {
   return PROBLEMS.find((p) => p.slug === slug) ?? null;
 }
 
+export function getProblemDisplayLabel(merchant: MerchantDef, problem: ProblemDef): string {
+  if (merchant.sector === "food_delivery" && problem.slug === "ware-nicht-erhalten") {
+    return "Bestellung nicht erhalten";
+  }
+  return problem.label;
+}
+
+export function getProblemSearchPhrase(merchant: MerchantDef, problem: ProblemDef): string {
+  if (merchant.sector === "food_delivery" && problem.slug === "ware-nicht-erhalten") {
+    return "Bestellung nicht erhalten";
+  }
+  return problem.searchPhrase;
+}
+
+function getProblemSentencePhrase(merchant: MerchantDef, problem: ProblemDef): string {
+  if (merchant.sector === "food_delivery" && problem.slug === "ware-nicht-erhalten") {
+    return "nicht erhaltener Bestellung";
+  }
+  return problem.sentencePhrase;
+}
+
 export function getAllMerchantProblemPaths(): { merchant: string; problem: string }[] {
   const out: { merchant: string; problem: string }[] = [];
   for (const m of MERCHANTS) {
@@ -406,6 +458,8 @@ export interface GeneratedCopy {
   title: string;
   metaDescription: string;
   category: string;
+  displayLabel: string;
+  searchPhrase: string;
   /** 2-3 paragraph intro for the article — primary SEO body copy. */
   intro: string[];
   whenApplies: string[];
@@ -432,18 +486,20 @@ export function generateMerchantProblemCopy(
   problem: ProblemDef
 ): GeneratedCopy {
   const m = merchant.name;
-  const sentencePhrase = problem.sentencePhrase;
+  const displayLabel = getProblemDisplayLabel(merchant, problem);
+  const searchPhrase = getProblemSearchPhrase(merchant, problem);
+  const sentencePhrase = getProblemSentencePhrase(merchant, problem);
   const sectorWord = sectorLabel(merchant.sector);
 
-  const title = `${m} ${problem.label} — Reklamation strukturiert vorbereiten 2026`;
+  const title = `${m} ${displayLabel} — Reklamation strukturiert vorbereiten 2026`;
   const metaDescription = `Du hast bei ${m} Probleme mit ${sentencePhrase}? Strukturierte Orientierung 2026: Belege, typische Fristenhinweise und unverbindliche Textentwürfe für Händler, Bank oder Zahlungsdienstleister.`;
 
   const whenApplies = applicableScenarios(merchant, problem);
-  const evidence = evidenceForProblem(problem);
+  const evidence = evidenceForProblem(problem, merchant);
   const merchantFocus = merchantFocusForCombo(merchant, problem);
   const paymentNextStep = paymentNextStepForCombo(problem, merchant);
   const steps = stepsForCombo(merchant, problem);
-  const mistakes = commonMistakes(problem);
+  const mistakes = commonMistakes(problem, merchant);
   const faq = faqForCombo(merchant, problem, sectorWord);
   const intro = introParagraphs(merchant, problem, sectorWord);
   const deadlines = deadlinesForCombo(problem);
@@ -453,7 +509,9 @@ export function generateMerchantProblemCopy(
   return {
     title,
     metaDescription,
-    category: `${m} ${problem.label}`,
+    category: `${m} ${displayLabel}`,
+    displayLabel,
+    searchPhrase,
     intro,
     whenApplies,
     evidence,
@@ -557,7 +615,8 @@ function paymentNextStepForCombo(p: ProblemDef, m: MerchantDef): { title: string
 
 // ── Long-form intro paragraphs (primary SEO body) ─────────────────
 function introParagraphs(m: MerchantDef, p: ProblemDef, sector: string): string[] {
-  const para1 = `Wenn du bei ${m.name} mit ${p.sentencePhrase} konfrontiert bist, kommen 2026 je nach Zahlungsart und Einzelfall verschiedene Reklamationswege in Betracht. ${m.name} (${sector}, Sitz in ${m.country}) ist für deutsche Verbraucher grundsätzlich erreichbar — wichtig ist vor allem, den Sachverhalt nachvollziehbar zu dokumentieren und typische Fristen direkt beim jeweiligen Anbieter zu prüfen.`;
+  const sentencePhrase = getProblemSentencePhrase(m, p);
+  const para1 = `Wenn du bei ${m.name} mit ${sentencePhrase} konfrontiert bist, kommen 2026 je nach Zahlungsart und Einzelfall verschiedene Reklamationswege in Betracht. ${m.name} (${sector}, Sitz in ${m.country}) ist für deutsche Verbraucher grundsätzlich erreichbar — wichtig ist vor allem, den Sachverhalt nachvollziehbar zu dokumentieren und typische Fristen direkt beim jeweiligen Anbieter zu prüfen.`;
   const para2 = `Typische Anlaufstellen sind PayPal-Käuferschutz, Kreditkarten-Reklamation/Chargeback über die kartenausgebende Bank, SEPA-Lastschriftrückgabe oder Klarna-Käuferschutz. Welcher Weg bei dir sinnvoll ist, hängt davon ab, womit du bei ${m.name} bezahlt hast und welche Anbieterregeln gelten — die Hinweise weiter unten helfen dir, die nächsten Schritte sachlich zu sortieren.`;
   const para3 = `Praktisch ist meist hilfreich, ${m.name} zunächst nachweisbar direkt zu kontaktieren und eine angemessene Rückmeldefrist zu setzen. ChargebackPilot unterstützt dich dabei mit unverbindlichen Textentwürfen — von der ersten Reklamation bis zu einer möglichen Nachricht an Bank oder Zahlungsdienstleister. Die KI-gestützte Strukturierung ist kostenlos; vollständige Entwürfe als PDF kosten einmalig 0,99 € Endpreis.`;
   return [para1, para2, para3];
@@ -719,6 +778,14 @@ function sectorLabel(s: MerchantDef["sector"]): string {
 }
 
 function applicableScenarios(m: MerchantDef, p: ProblemDef): string[] {
+  if (m.sector === "food_delivery" && p.slug === "ware-nicht-erhalten") {
+    return [
+      `Deine Bestellung bei ${m.name} wurde in der App als zugestellt angezeigt, ist aber nicht angekommen.`,
+      "Die Lieferung wurde abgebrochen, stark verzögert oder ist im App-Status unklar geblieben.",
+      `${m.name} oder der App-Support hat den betroffenen Betrag bisher nicht nachvollziehbar geklärt.`,
+    ];
+  }
+
   const base: Record<string, string[]> = {
     "ware-nicht-erhalten": [
       `Deine Bestellung bei ${m.name} ist nicht angekommen, obwohl der Liefertermin überschritten ist.`,
@@ -759,11 +826,20 @@ function applicableScenarios(m: MerchantDef, p: ProblemDef): string[] {
   return base[p.slug] ?? [];
 }
 
-function evidenceForProblem(p: ProblemDef): string[] {
+function evidenceForProblem(p: ProblemDef, merchant?: MerchantDef): string[] {
   const generic = [
     "Bestellbestätigung / Buchungsnummer",
     "Zahlungsnachweis (Kontoauszug, PayPal-Transaktion)",
   ];
+  if (merchant?.sector === "food_delivery" && p.slug === "ware-nicht-erhalten") {
+    return [
+      "Bestellübersicht in der App",
+      "Zahlungsnachweis",
+      "Screenshot des Lieferstatus",
+      "Support-Chat oder E-Mail-Verlauf",
+      "Zeitpunkt der erwarteten Lieferung",
+    ];
+  }
   const specific: Record<string, string[]> = {
     "ware-nicht-erhalten": ["Tracking-Screenshot", "E-Mails an Händler", "Lieferadresse / -datum"],
     "ware-defekt": [
@@ -826,12 +902,19 @@ function paymentSpecificStep(p: ProblemDef, m: MerchantDef): string {
   return `Prüfe je nach Zahlungsart (${p.paymentMethods.join(", ")}), welche Rückforderungsoption die kürzeste Frist hat.`;
 }
 
-function commonMistakes(p: ProblemDef): string[] {
+function commonMistakes(p: ProblemDef, merchant?: MerchantDef): string[] {
   const generic = [
     "Typische Fristen zu spät geprüft — bei PayPal, Bank oder Kartenausgeber gelten unterschiedliche Regeln.",
     "Keine schriftliche Dokumentation — rein telefonische Beschwerden sind später häufig schwerer nachvollziehbar.",
     "Gutschein oder Teilangebot ungeprüft akzeptiert — dadurch kann die spätere Klärung schwieriger werden.",
   ];
+  if (merchant?.sector === "food_delivery" && p.slug === "ware-nicht-erhalten") {
+    return [
+      ...generic,
+      "Nur mündlich über die App reklamieren — sichere zusätzlich Screenshots von Bestellstatus, Supportantwort und Zahlungsbeleg.",
+      "Zu lange warten, bis der App-Verlauf schwer auffindbar ist — dokumentiere Uhrzeit, Lieferstatus und Supportreaktion zeitnah.",
+    ];
+  }
   const specific: Record<string, string[]> = {
     "ware-nicht-erhalten": [
       "Nur den Versanddienstleister kontaktieren — häufig ist zusätzlich der Händler als Vertragspartner einzubeziehen.",
@@ -850,10 +933,13 @@ function commonMistakes(p: ProblemDef): string[] {
 }
 
 function faqForCombo(m: MerchantDef, p: ProblemDef, sector: string): { q: string; a: string }[] {
+  const displayLabel = getProblemDisplayLabel(m, p);
+  const sentencePhrase = getProblemSentencePhrase(m, p);
+  const evidence = evidenceForProblem(p, m);
   return [
     {
-      q: `Welche Belege sind bei ${m.name} und "${p.label}" besonders wichtig?`,
-      a: `Bei ${p.sentencePhrase} zählen vor allem fallnahe Nachweise: ${evidenceForProblem(p)
+      q: `Welche Belege sind bei ${m.name} und "${displayLabel}" besonders wichtig?`,
+      a: `Bei ${sentencePhrase} zählen vor allem fallnahe Nachweise: ${evidence
         .slice(0, 4)
         .join(
           ", "

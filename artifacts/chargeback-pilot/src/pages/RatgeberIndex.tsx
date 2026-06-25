@@ -4,7 +4,7 @@ import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/com
 import { ArrowRight, BookOpen, AlertTriangle, GitCompare, Store } from "lucide-react";
 import { Breadcrumbs } from "@/components/Breadcrumbs";
 import { SeoHead } from "@/components/SeoHead";
-import { getMerchant, getProblem, MERCHANTS } from "@/data/merchants";
+import { getMerchant, getProblem, getProblemDisplayLabel, MERCHANTS } from "@/data/merchants";
 import { getAllSeoQualityResults } from "@/seo-quality";
 
 export const GUIDES = [
@@ -119,6 +119,33 @@ const HIGHLIGHTS = [
     title: "Fake-Shop-Verdacht & Warnsignale 2026",
     desc: "8 Warnsignale, 4 typische Muster und strukturierte nächste Schritte bei auffälligen Online-Shops.",
     tag: "Warnsignale",
+  },
+];
+
+const CURRENTLY_SEARCHED = [
+  {
+    href: "/hilfe/apple",
+    tag: "App Store",
+    title: "Apple / iTunes Abbuchung prüfen",
+    desc: "Abo, In-App-Kauf oder App-Store-Zahlung sachlich einordnen und Belege sichern.",
+  },
+  {
+    href: "/hilfe/uber-eats",
+    tag: "Lieferdienst",
+    title: "Uber Eats Reklamation",
+    desc: "Fehlende, falsche oder unbrauchbare Bestellung mit App-Status und Supportverlauf dokumentieren.",
+  },
+  {
+    href: "/scam-shops-2026",
+    tag: "Warnsignale",
+    title: "Fake-Shop-Verdacht: Zahlungsweg prüfen",
+    desc: "Erst Belege sichern, dann PayPal, Kreditkarte, Klarna, Lastschrift oder Bankweg prüfen.",
+  },
+  {
+    href: "/vergleich/paypal-vs-kreditkarte-vs-klarna",
+    tag: "Vergleich",
+    title: "PayPal vs Klarna vs Kreditkarte",
+    desc: "Welcher Reklamationsweg je nach Zahlungsart typischerweise naheliegt.",
   },
 ];
 
@@ -245,8 +272,8 @@ export default function RatgeberIndex() {
     return [
       {
         path: result.url,
-        title: `${merchant.name}: ${problem.label}`,
-        desc: `${problem.searchPhrase} bei ${merchant.name} strukturiert vorbereiten.`,
+        title: `${merchant.name}: ${getProblemDisplayLabel(merchant, problem)}`,
+        desc: `${getProblemDisplayLabel(merchant, problem)} bei ${merchant.name} strukturiert vorbereiten.`,
       },
     ];
   });
@@ -276,6 +303,39 @@ export default function RatgeberIndex() {
             </span>
           </p>
         </div>
+
+        <section className="mb-16">
+          <div className="mb-5 flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
+            <div>
+              <p className="mb-1 text-xs font-bold uppercase tracking-wider text-primary">
+                Aktuell häufig gesucht
+              </p>
+              <h2 className="text-2xl font-bold">Schnell zu sichtbaren Themen</h2>
+            </div>
+            <p className="max-w-xl text-sm leading-relaxed text-muted-foreground">
+              Diese Einstiege greifen aktuelle SearchConsole-Signale auf und führen direkt zu den
+              passenden Anleitungen.
+            </p>
+          </div>
+          <div className="grid gap-3 md:grid-cols-2">
+            {CURRENTLY_SEARCHED.map((item) => (
+              <Link key={item.href} href={item.href}>
+                <Card className="h-full cursor-pointer transition-colors hover:border-primary">
+                  <CardContent className="flex items-start justify-between gap-4 p-4">
+                    <div>
+                      <span className="mb-2 inline-flex rounded-md bg-primary/10 px-2 py-0.5 text-[11px] font-bold uppercase tracking-wider text-primary">
+                        {item.tag}
+                      </span>
+                      <h3 className="mb-1 font-semibold">{item.title}</h3>
+                      <p className="text-sm leading-relaxed text-muted-foreground">{item.desc}</p>
+                    </div>
+                    <ArrowRight className="mt-1 h-4 w-4 shrink-0 text-muted-foreground" />
+                  </CardContent>
+                </Card>
+              </Link>
+            ))}
+          </div>
+        </section>
 
         <section className="mb-16">
           <div className="mb-5 flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">

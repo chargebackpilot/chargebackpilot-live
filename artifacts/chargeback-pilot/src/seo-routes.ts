@@ -1,4 +1,9 @@
-import { generateMerchantProblemCopy, getMerchant, getProblem } from "@/data/merchants";
+import {
+  generateMerchantProblemCopy,
+  getMerchant,
+  getMerchantIndexSeo,
+  getProblem,
+} from "@/data/merchants";
 import { isIndexableMerchantProblemPath, SEO_QUALITY_CONFIG } from "@/seo-quality";
 
 export type SeoRouteType = "landing" | "guide" | "legal" | "trust" | "compare";
@@ -254,9 +259,9 @@ export const SEO_ROUTES: SeoRouteMeta[] = [
   },
   {
     path: "/scam-shops-2026",
-    title: "Fake-Shop-Verdacht & auffällige Online-Shops 2026 | ChargebackPilot",
+    title: "Fake-Shop Geld zurück? Zahlungsweg bei Verdacht prüfen | ChargebackPilot",
     description:
-      "Verdacht auf Fake-Shop oder auffälligen Online-Shop? Die wichtigsten Warnsignale 2026 plus strukturierte Orientierung zu Chargeback, PayPal-Käuferschutz und möglicher Lastschrift-Rückgabe.",
+      "Fake-Shop-Verdacht? Belege sichern und Zahlungsweg prüfen: PayPal, Kreditkarte, Klarna, Lastschrift oder Bankkontakt sachlich vorbereiten.",
     changefreq: "weekly",
     priority: 0.8,
     type: "guide",
@@ -264,10 +269,9 @@ export const SEO_ROUTES: SeoRouteMeta[] = [
   },
   {
     path: "/vergleich/paypal-vs-kreditkarte-vs-klarna",
-    title:
-      "PayPal vs. Kreditkarte vs. Klarna — welcher Käuferschutz ist 2026 besser? | ChargebackPilot",
+    title: "PayPal vs Klarna vs Kreditkarte: Käuferschutz vergleichen | ChargebackPilot",
     description:
-      "Vergleich 2026: PayPal-Käuferschutz, Kreditkarten-Reklamation und Klarna-Käuferschutz im Überblick. Typische Fristen, Abläufe und Vor- und Nachteile — als unverbindliche Orientierung.",
+      "PayPal, Klarna oder Kreditkarte? Vergleich 2026: typische Reklamationswege, Fristen, Belege und nächste Schritte als unverbindliche Orientierung.",
     changefreq: "monthly",
     priority: 0.8,
     type: "compare",
@@ -381,10 +385,11 @@ export function getRouteMeta(pathname: string): SeoRouteMeta | null {
   if (merchantIndexMatch) {
     const merchant = getMerchant(merchantIndexMatch[1]);
     if (!merchant) return null;
+    const merchantSeo = getMerchantIndexSeo(merchant);
     return {
       path: normalized,
-      title: `${merchant.name} Reklamation & Chargeback 2026 | ChargebackPilot`,
-      description: `Probleme mit ${merchant.name}? Hier findest du Schritt-für-Schritt-Anleitungen für alle häufigen ${merchant.name}-Probleme: Lieferung, Defekte, Erstattung und mehr.`,
+      title: merchantSeo.title,
+      description: merchantSeo.description,
       changefreq: "monthly",
       priority: 0.7,
       type: "guide",

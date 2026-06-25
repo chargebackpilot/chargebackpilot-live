@@ -24,6 +24,7 @@ export async function loadSeoQualityRuntime(root, providedConfig) {
   const merchants = merchantModule.MERCHANTS;
   const problems = merchantModule.PROBLEMS;
   const generateCopy = merchantModule.generateMerchantProblemCopy;
+  const getMerchantIndexSeo = merchantModule.getMerchantIndexSeo;
   const merchantsBySlug = new Map(merchants.map((merchant) => [merchant.slug, merchant]));
   const problemsBySlug = new Map(problems.map((problem) => [problem.slug, problem]));
   const forceIndex = new Set(config.forceIndex ?? []);
@@ -84,7 +85,10 @@ export async function loadSeoQualityRuntime(root, providedConfig) {
           ) &&
           copy.faq.some(
             (faq) =>
-              faq.q.includes(problem.label) || faq.a.includes(problem.searchPhrase),
+              faq.q.includes(problem.label) ||
+              faq.a.includes(problem.searchPhrase) ||
+              faq.q.includes(copy.displayLabel) ||
+              faq.a.includes(copy.searchPhrase),
           ),
         weight: config.weights.faqDepth,
         missing: "mindestens 3 passende FAQ",
@@ -193,6 +197,8 @@ export async function loadSeoQualityRuntime(root, providedConfig) {
     problems,
     merchantsBySlug,
     problemsBySlug,
+    generateCopy,
+    getMerchantIndexSeo,
     evaluate,
     evaluateUrl,
     getAllResults,

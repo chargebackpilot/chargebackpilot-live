@@ -173,7 +173,13 @@ function hasFaqDepth(copy: GeneratedCopy, merchant: MerchantDef, problem: Proble
   return (
     copy.faq.length >= 3 &&
     copy.faq.some((faq) => faq.q.includes(merchant.name) || faq.a.includes(merchant.name)) &&
-    copy.faq.some((faq) => faq.q.includes(problem.label) || faq.a.includes(problem.searchPhrase))
+    copy.faq.some(
+      (faq) =>
+        faq.q.includes(problem.label) ||
+        faq.a.includes(problem.searchPhrase) ||
+        faq.q.includes(copy.displayLabel) ||
+        faq.a.includes(copy.searchPhrase)
+    )
   );
 }
 

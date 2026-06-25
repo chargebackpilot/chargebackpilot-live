@@ -7,6 +7,7 @@
     "build": "pnpm run typecheck && pnpm run lint && pnpm -r --if-present run build",
     "build:render": "pnpm --filter @workspace/db run push && BASE_PATH=/ pnpm --filter @workspace/chargeback-pilot run build && pnpm --filter @workspace/api-server run build",
     "seo:report": "pnpm --filter @workspace/chargeback-pilot run seo:report",
+    "seo:gsc-report": "node scripts/gsc-report.mjs",
     "sync:reviews": "pnpm --filter @workspace/chargeback-pilot run sync:reviews",
     "audit:lighthouse": "pnpm --filter @workspace/chargeback-pilot run audit:lighthouse",
     "audit:unlighthouse": "pnpm --filter @workspace/chargeback-pilot run audit:unlighthouse",

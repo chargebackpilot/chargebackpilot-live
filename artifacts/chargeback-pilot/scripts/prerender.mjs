@@ -71,18 +71,8 @@ const staticRouteMeta = new Map(
   ),
 );
 
-const problemMeta = seoRuntime.problemsBySlug;
-
-function lowerFirst(value) {
-  return value ? `${value.charAt(0).toLocaleLowerCase("de-DE")}${value.slice(1)}` : value;
-}
-
 function isIndexableMerchantProblemRoute(route) {
   return seoRuntime.isIndexableUrl(route);
-}
-
-function getMerchantName(merchantSlug) {
-  return seoRuntime.merchantsBySlug.get(merchantSlug)?.name ?? null;
 }
 
 function getRouteMeta(route) {
@@ -93,15 +83,13 @@ function getRouteMeta(route) {
   if (merchantProblemMatch) {
     const merchantSlug = merchantProblemMatch[1];
     const problemSlug = merchantProblemMatch[2];
-    const merchantName = getMerchantName(merchantSlug);
-    const problem = problemMeta.get(problemSlug);
-    if (!merchantName) return null;
-    const problemLabel = problem?.label ?? problemSlug.replace(/-/g, " ");
-    const searchPhrase = problem?.searchPhrase ?? problemLabel;
-    const sentencePhrase = problem?.sentencePhrase ?? lowerFirst(searchPhrase);
+    const merchant = seoRuntime.merchantsBySlug.get(merchantSlug);
+    const problem = seoRuntime.problemsBySlug.get(problemSlug);
+    if (!merchant || !problem || !merchant.problems.includes(problem.slug)) return null;
+    const copy = seoRuntime.generateCopy(merchant, problem);
     return {
-      title: `${merchantName}: ${problemLabel} - Reklamation & Käuferschutz vorbereiten 2026 | ChargebackPilot`,
-      description: `Probleme mit ${merchantName}? Strukturierte Orientierung bei ${sentencePhrase} mit Belegen, Fristenhinweisen und unverbindlichen Textentwürfen für Händler, Bank, PayPal oder Klarna.`,
+      title: `${copy.title} | ChargebackPilot`,
+      description: copy.metaDescription,
       changefreq: "monthly",
       priority: 0.6,
       noindex: !isIndexableMerchantProblemRoute(route),
@@ -111,11 +99,12 @@ function getRouteMeta(route) {
   const merchantIndexMatch = route.match(/^\/hilfe\/([^/]+)$/);
   if (merchantIndexMatch) {
     const merchantSlug = merchantIndexMatch[1];
-    const merchantName = getMerchantName(merchantSlug);
-    if (!merchantName) return null;
+    const merchant = seoRuntime.merchantsBySlug.get(merchantSlug);
+    if (!merchant) return null;
+    const merchantSeo = seoRuntime.getMerchantIndexSeo(merchant);
     return {
-      title: `${merchantName} Reklamation & Chargeback 2026 | ChargebackPilot`,
-      description: `Probleme mit ${merchantName}? Hier findest du Schritt-für-Schritt-Anleitungen für häufige ${merchantName}-Probleme, Belege und mögliche nächste Schritte.`,
+      title: merchantSeo.title,
+      description: merchantSeo.description,
       changefreq: "monthly",
       priority: 0.7,
       noindex: false,

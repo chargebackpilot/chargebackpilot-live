@@ -6,7 +6,12 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { ArrowRight } from "lucide-react";
 import NotFound from "./not-found";
-import { getMerchant, getProblem } from "@/data/merchants";
+import {
+  getMerchant,
+  getMerchantIndexSeo,
+  getProblem,
+  getProblemDisplayLabel,
+} from "@/data/merchants";
 import { isIndexableMerchantProblemPath } from "@/seo-quality";
 
 export default function MerchantIndexPage() {
@@ -14,8 +19,9 @@ export default function MerchantIndexPage() {
   const merchant = params ? getMerchant(params.merchantSlug) : null;
   if (!merchant) return <NotFound />;
 
-  const title = `${merchant.name} Reklamation & Chargeback 2026 | ChargebackPilot`;
-  const description = `Probleme mit ${merchant.name}? Strukturierte Orientierung zu Lieferung, Defekten, Erstattung, Abbuchung und passenden Zahlungswegen.`;
+  const indexSeo = getMerchantIndexSeo(merchant);
+  const title = indexSeo.title;
+  const description = indexSeo.description;
   const problems = merchant.problems
     .map((slug) => getProblem(slug))
     .filter((p): p is NonNullable<typeof p> => !!p);
@@ -31,9 +37,7 @@ export default function MerchantIndexPage() {
       <article className="pb-20">
         <header className="bg-gradient-to-b from-blue-50 to-background py-12 px-4 border-b">
           <div className="container mx-auto max-w-3xl">
-            <h1 className="text-3xl md:text-5xl font-bold mb-4">
-              {merchant.name}: Reklamation & Chargeback
-            </h1>
+            <h1 className="text-3xl md:text-5xl font-bold mb-4">{indexSeo.headline}</h1>
             <p className="text-lg text-muted-foreground mb-6">{merchant.description}</p>
             <Link href="/vorlagen-generator">
               <Button size="lg" className="gap-2">
@@ -54,7 +58,7 @@ export default function MerchantIndexPage() {
                       <CardContent className="p-5 flex items-center justify-between gap-3">
                         <div>
                           <div className="font-semibold">
-                            {merchant.name}: {p.label}
+                            {merchant.name}: {getProblemDisplayLabel(merchant, p)}
                           </div>
                           <div className="text-sm text-muted-foreground leading-relaxed mt-2">
                             <p>
@@ -97,7 +101,7 @@ export default function MerchantIndexPage() {
                     )}&problem=${encodeURIComponent(p.wizardProblemId)}`}
                     className="rounded-lg border bg-muted/30 px-3 py-3 text-sm transition-colors hover:border-primary/40 hover:bg-primary/5"
                   >
-                    <span className="font-semibold">{p.label}</span>
+                    <span className="font-semibold">{getProblemDisplayLabel(merchant, p)}</span>
                     <span className="mt-1 block text-xs text-muted-foreground">
                       Belege sichern, Zahlungsweg prüfen, Textentwurf vorbereiten
                     </span>
