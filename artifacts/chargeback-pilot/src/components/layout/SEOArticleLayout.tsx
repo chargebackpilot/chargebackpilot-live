@@ -95,7 +95,7 @@ const MONEY_PAGE_PROFILES: Record<string, MoneyPageProfile> = {
     primaryKeyword: "Chargeback Antrag Vorlage",
     headline: "Chargeback Antrag Vorlage: was diese Seite sofort klärt",
     metaDescription:
-      "Chargeback Antrag Vorlage für Bank und Kreditkarte: Sachverhalt, Belege, Händlerkontakt und Umsatzreklamation strukturiert vorbereiten.",
+      "Chargeback Antrag Vorlage für deine Bank: Umsatz, Sachverhalt, Händlerkontakt und Belege strukturiert für Kreditkartenreklamation vorbereiten.",
     intent:
       "Du suchst vermutlich keinen langen Ratgeber, sondern einen prüfbaren Aufbau für deine Bank: Was ist passiert, welcher Kartenumsatz ist betroffen und welche Belege zeigen die Nichterfüllung?",
     immediateAnswer:

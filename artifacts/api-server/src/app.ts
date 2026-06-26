@@ -113,8 +113,15 @@ const apiLimiter = rateLimit({
     code: "RATE_LIMIT_EXCEEDED",
   },
   skip: (req) => {
-    // Don't rate limit health checks or Stripe's signed webhook delivery.
-    return req.path === "/healthz" || req.path === "/stripe/webhook";
+    // Don't let best-effort analytics consume the strict API budget needed for analysis/payment.
+    const path = req.path;
+    const originalPath = req.originalUrl?.split("?")[0] ?? "";
+    return (
+      path === "/healthz" ||
+      path === "/stripe/webhook" ||
+      path.startsWith("/analytics/") ||
+      originalPath.startsWith("/api/analytics/")
+    );
   },
 });
 
@@ -324,9 +331,9 @@ const metaByPath: Array<{ match: RegExp; title: string; description: string; noi
     },
     {
       match: /^\/vorlagen-generator$/,
-      title: "Vorlagen-Generator · ChargebackPilot",
+      title: "Kostenloser Fall-Check für Chargeback & Käuferschutz | ChargebackPilot",
       description:
-        "Erstelle in wenigen Schritten sachliche Entwürfe für Händler, Bank/PayPal/Klarna und Eskalation.",
+        "Starte den kostenlosen Fall-Check: Zahlungsart, Problem und Belege strukturieren und unverbindliche nächste Schritte für Chargeback, PayPal oder Klarna erhalten.",
     },
     {
       match: /^\/admin\/?$/,
@@ -380,9 +387,9 @@ const metaByPath: Array<{ match: RegExp; title: string; description: string; noi
     },
     {
       match: /^\/scam-shops-2026$/,
-      title: "Fake-Shop-Verdacht & auffällige Online-Shops 2026 | ChargebackPilot",
+      title: "Fake-Shop Geld zurück? Zahlungsweg bei Verdacht prüfen | ChargebackPilot",
       description:
-        "Verdacht auf Fake-Shop oder auffälligen Online-Shop? Die wichtigsten Warnsignale 2026 plus strukturierte Orientierung zu Chargeback, PayPal-Käuferschutz und Lastschriftrückruf.",
+        "Fake-Shop-Verdacht? Belege sichern und Zahlungsweg prüfen: PayPal, Kreditkarte, Klarna, Lastschrift oder Bankkontakt sachlich vorbereiten.",
     },
     {
       match: /^\/hilfe\//,

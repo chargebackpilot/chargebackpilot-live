@@ -58,10 +58,23 @@ export function getCaseRetentionMonths() {
   return Number.isFinite(raw) && raw >= 1 ? Math.floor(raw) : 12;
 }
 
-export function getRetentionCutoff(now = new Date()) {
+export function getAnalyticsRetentionMonths() {
+  const raw = Number(process.env.ANALYTICS_RETENTION_MONTHS ?? 12);
+  return Number.isFinite(raw) && raw >= 1 ? Math.floor(raw) : 12;
+}
+
+function getRetentionCutoffForMonths(months: number, now = new Date()) {
   const cutoff = new Date(now);
-  cutoff.setMonth(cutoff.getMonth() - getCaseRetentionMonths());
+  cutoff.setMonth(cutoff.getMonth() - months);
   return cutoff;
+}
+
+export function getRetentionCutoff(now = new Date()) {
+  return getRetentionCutoffForMonths(getCaseRetentionMonths(), now);
+}
+
+export function getAnalyticsRetentionCutoff(now = new Date()) {
+  return getRetentionCutoffForMonths(getAnalyticsRetentionMonths(), now);
 }
 
 export async function anonymizeExpiredCases() {
@@ -96,12 +109,25 @@ export async function anonymizeExpiredCases() {
   return { count: result.rowCount ?? 0, cutoff };
 }
 
+export async function deleteExpiredAnalyticsEvents() {
+  const cutoff = getAnalyticsRetentionCutoff();
+  const result = await pool.query(`DELETE FROM analytics_events WHERE created_at < $1`, [cutoff]);
+
+  if (result.rowCount && result.rowCount > 0) {
+    logger.info(
+      { count: result.rowCount, cutoff: cutoff.toISOString() },
+      "Expired analytics events deleted"
+    );
+  }
+  return { count: result.rowCount ?? 0, cutoff };
+}
+
 export function scheduleRetentionCleanup() {
   const run = () => {
-    anonymizeExpiredCases().catch((error) => {
+    Promise.all([anonymizeExpiredCases(), deleteExpiredAnalyticsEvents()]).catch((error) => {
       logger.error(
         { error: error instanceof Error ? error.message : String(error) },
-        "Case retention cleanup failed"
+        "Retention cleanup failed"
       );
     });
   };

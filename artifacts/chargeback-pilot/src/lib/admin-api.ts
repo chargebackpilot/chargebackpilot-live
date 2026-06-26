@@ -66,7 +66,9 @@ export interface AdminStats {
   totalCases: number;
   hiddenLegacyCases: number;
   visibleCasesSince: string;
+  rangeDays: number;
   retentionMonths: number;
+  analyticsRetentionMonths: number;
   paidCases: number;
   conversionRate: number;
   revenueEur: number;
@@ -86,6 +88,8 @@ export interface AdminStats {
     pageViews30d: number;
     visitors7d: number;
     visitors30d: number;
+    pageViewsRange: number;
+    visitorsRange: number;
     wizardStarts7d: number;
     wizardDrafts7d: number;
     analysisSubmits7d: number;
@@ -117,7 +121,7 @@ export interface AdminCaseRow {
   createdAt: string;
 }
 
-export const getAdminStats = () => adminFetch<AdminStats>("/stats");
+export const getAdminStats = (days = 30) => adminFetch<AdminStats>(`/stats?days=${days}`);
 export const getAdminCases = (onlyPaid = false, limit = 50) =>
   adminFetch<{ cases: AdminCaseRow[]; count: number }>(
     `/cases?limit=${limit}${onlyPaid ? "&paid=1" : ""}`

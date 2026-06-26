@@ -121,6 +121,54 @@ function hasUnlockedAnalysisContent(data: CaseResult): boolean {
   );
 }
 
+function getErrorStatus(error: unknown) {
+  if (!error || typeof error !== "object" || !("status" in error)) return 0;
+  const status = Number((error as { status?: unknown }).status);
+  return Number.isFinite(status) ? status : 0;
+}
+
+function describeCreateCaseError(error: unknown) {
+  const status = getErrorStatus(error);
+  const message = error instanceof Error ? error.message : "";
+
+  if (status === 429 || /rate_limit|zu viele|too many/i.test(message)) {
+    return {
+      title: "Zu viele Anfragen",
+      description:
+        "Bitte warte kurz und starte die Analyse danach erneut. Deine Eingaben bleiben erhalten.",
+    };
+  }
+
+  if (status === 403 || /turnstile|sicherheitspr/i.test(message)) {
+    return {
+      title: "Sicherheitsprüfung fehlgeschlagen",
+      description:
+        "Bitte lade die Seite neu oder versuche es in einem anderen Browser erneut. Deine Eingaben bleiben gespeichert.",
+    };
+  }
+
+  if (status === 400) {
+    return {
+      title: "Eingaben prüfen",
+      description:
+        "Eine Angabe konnte nicht verarbeitet werden. Bitte prüfe Betrag, Datum und Pflichtfelder noch einmal.",
+    };
+  }
+
+  if (status >= 500 || /gemini|unavailable|datenbank|database/i.test(message)) {
+    return {
+      title: "Analyse gerade nicht verfügbar",
+      description:
+        "Der Analyse-Dienst war kurz nicht erreichbar. Deine Eingaben bleiben erhalten; bitte versuche es gleich erneut.",
+    };
+  }
+
+  return {
+    title: "Analyse fehlgeschlagen",
+    description: "Bitte versuche es erneut. Deine Eingaben bleiben erhalten.",
+  };
+}
+
 declare global {
   interface Window {
     turnstile?: {
@@ -138,6 +186,7 @@ export default function Wizard() {
   const turnstileSiteKey = import.meta.env.VITE_TURNSTILE_SITE_KEY as string | undefined;
   const turnstileWidgetIdRef = useRef<string | null>(null);
   const turnstileContainerRef = useRef<HTMLDivElement | null>(null);
+  const lastWizardDraftTrackedAtRef = useRef(0);
   const [location] = useLocation();
   const [navigationKey, setNavigationKey] = useState(() => {
     if (typeof window === "undefined") return "";
@@ -306,9 +355,12 @@ export default function Wizard() {
 
   useEffect(() => {
     if (step >= 6) return;
+    const elapsed = Date.now() - lastWizardDraftTrackedAtRef.current;
+    const delay = Math.max(1500, 12_000 - elapsed);
     const timer = window.setTimeout(() => {
+      lastWizardDraftTrackedAtRef.current = Date.now();
       trackWizardEvent("wizard_draft", step, form.getValues());
-    }, 1200);
+    }, delay);
     return () => window.clearTimeout(timer);
   }, [step, wizardDraftSignature]);
 
@@ -640,11 +692,12 @@ export default function Wizard() {
             }
           }
         },
-        onError: () => {
+        onError: (error) => {
           setIsSubmittingCase(false);
+          const copy = describeCreateCaseError(error);
           toast({
-            title: "Analyse fehlgeschlagen",
-            description: "Bitte versuche es erneut.",
+            title: copy.title,
+            description: copy.description,
             variant: "destructive",
           });
           setStep(5);
@@ -817,8 +870,8 @@ export default function Wizard() {
   return (
     <MainLayout>
       <SeoHead
-        title="Vorlagen-Generator · ChargebackPilot"
-        description="Erstelle in wenigen Schritten sachliche Entwürfe für Händler, Bank/PayPal/Klarna und Eskalation."
+        title="Kostenloser Fall-Check für Chargeback & Käuferschutz | ChargebackPilot"
+        description="Starte den kostenlosen Fall-Check: Zahlungsart, Problem und Belege strukturieren und unverbindliche nächste Schritte für Chargeback, PayPal oder Klarna erhalten."
         canonical="/vorlagen-generator"
       />
       <ErrorBoundary>
@@ -1354,7 +1407,8 @@ export default function Wizard() {
                         </p>
                         <p>
                           Deine Angaben werden von unserer KI strukturiert und in passende Vorlagen
-                          überführt. Dauer: ca. 15–30 Sekunden.
+                          überführt. Diese Zustimmung ist erforderlich, damit die Analyse gestartet
+                          werden kann. Dauer: ca. 15–30 Sekunden.
                         </p>
                       </div>
 

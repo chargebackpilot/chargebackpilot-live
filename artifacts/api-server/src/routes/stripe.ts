@@ -6,6 +6,12 @@ import { createHash } from "crypto";
 
 const router = Router();
 
+const LEGAL_VERSIONS = {
+  agb: "2026-06-26",
+  widerruf: "2026-06-26",
+  datenschutz: "2026-06-26",
+} as const;
+
 function hashValue(input?: string): string | null {
   if (!input) return null;
   return createHash("sha256").update(input).digest("hex");
@@ -59,9 +65,9 @@ async function recordStripeTermsConsent(session: Stripe.Checkout.Session): Promi
     consentType,
     consentGiven: "accepted",
     consentTimestamp,
-    agbVersion: session.metadata?.agbVersion ?? "2026-06",
-    widerrufVersion: session.metadata?.widerrufVersion ?? "2026-06",
-    datenschutzVersion: session.metadata?.datenschutzVersion ?? "2026-06",
+    agbVersion: session.metadata?.agbVersion ?? LEGAL_VERSIONS.agb,
+    widerrufVersion: session.metadata?.widerrufVersion ?? LEGAL_VERSIONS.widerruf,
+    datenschutzVersion: session.metadata?.datenschutzVersion ?? LEGAL_VERSIONS.datenschutz,
     ipHash: session.metadata?.ipHash ?? null,
     userAgentHash: session.metadata?.userAgentHash ?? null,
     source: "stripe_checkout",
@@ -119,9 +125,9 @@ router.post("/checkout", async (req, res) => {
       metadata: {
         mode: "single",
         ...(caseId ? { caseId } : {}),
-        agbVersion: "2026-06",
-        widerrufVersion: "2026-06",
-        datenschutzVersion: "2026-06",
+        agbVersion: LEGAL_VERSIONS.agb,
+        widerrufVersion: LEGAL_VERSIONS.widerruf,
+        datenschutzVersion: LEGAL_VERSIONS.datenschutz,
         consentCollection: "stripe_terms_of_service_required",
         ...(ipHash ? { ipHash } : {}),
         ...(userAgentHash ? { userAgentHash } : {}),
@@ -197,9 +203,9 @@ router.post("/flatrate-checkout", async (req, res) => {
       locale: "de",
       metadata: {
         mode: "flatrate",
-        agbVersion: "2026-06",
-        widerrufVersion: "2026-06",
-        datenschutzVersion: "2026-06",
+        agbVersion: LEGAL_VERSIONS.agb,
+        widerrufVersion: LEGAL_VERSIONS.widerruf,
+        datenschutzVersion: LEGAL_VERSIONS.datenschutz,
         consentCollection: "stripe_terms_of_service_required",
         ...(ipHash ? { ipHash } : {}),
         ...(userAgentHash ? { userAgentHash } : {}),

@@ -22,6 +22,7 @@ import {
   Archive,
   Trash2,
   DatabaseZap,
+  Download,
 } from "lucide-react";
 import { getAllSeoQualityResults, SEO_QUALITY_CONFIG } from "@/seo-quality";
 import {
@@ -73,6 +74,69 @@ function labelPayment(m: string) {
 }
 function labelProblem(t: string) {
   return PROBLEM_TYPE_LABELS[t] ?? t;
+}
+
+function csvCell(value: unknown) {
+  const text =
+    value == null ? "" : typeof value === "object" ? JSON.stringify(value) : String(value);
+  return `"${text.replace(/"/g, '""')}"`;
+}
+
+function downloadCsv(filename: string, headers: string[], rows: unknown[][]) {
+  const csv = [headers, ...rows].map((row) => row.map(csvCell).join(",")).join("\n");
+  const blob = new Blob([`\uFEFF${csv}`], { type: "text/csv;charset=utf-8" });
+  const url = URL.createObjectURL(blob);
+  const anchor = document.createElement("a");
+  anchor.href = url;
+  anchor.download = filename;
+  document.body.appendChild(anchor);
+  anchor.click();
+  anchor.remove();
+  URL.revokeObjectURL(url);
+}
+
+function exportTopContentCsv(rows: AdminStats["topContentPages"], rangeDays: number) {
+  downloadCsv(
+    `chargebackpilot-content-${rangeDays}d.csv`,
+    ["URL", "Aufrufe", "Besucher", "Zuletzt gesehen"],
+    rows.map((row) => [row.path, row.views, row.visitors, row.lastSeen])
+  );
+}
+
+function exportWizardEventsCsv(rows: AdminStats["latestWizardEvents"]) {
+  downloadCsv(
+    "chargebackpilot-wizard-events.csv",
+    ["Event", "Zeitpunkt", "Schritt", "Zahlungsart", "Problem", "Anbieter", "Betrag"],
+    rows.map((row) => {
+      const meta = row.metadata ?? {};
+      return [
+        row.eventType,
+        row.createdAt,
+        String(meta.step ?? ""),
+        String(meta.paymentMethod ?? ""),
+        String(meta.problemType ?? ""),
+        String(meta.merchantName ?? ""),
+        String(meta.disputedAmount ?? meta.purchaseAmount ?? ""),
+      ];
+    })
+  );
+}
+
+function exportCasesCsv(rows: AdminCaseRow[], onlyPaid: boolean) {
+  downloadCsv(
+    `chargebackpilot-faelle${onlyPaid ? "-bezahlt" : ""}.csv`,
+    ["ID", "Erstellt", "Haendler", "Problem", "Zahlungsart", "Betrag", "Score", "Bezahlt"],
+    rows.map((row) => [
+      row.id,
+      row.createdAt,
+      row.merchantName,
+      row.problemType,
+      row.paymentMethod,
+      row.amount,
+      row.successProbability,
+      row.paid ? "ja" : "nein",
+    ])
+  );
 }
 
 export default function Admin() {
@@ -160,6 +224,7 @@ function AdminDashboard({ onLogout }: { onLogout: () => void }) {
   const [error, setError] = useState("");
   const [actionMessage, setActionMessage] = useState("");
   const [onlyPaid, setOnlyPaid] = useState(false);
+  const [rangeDays, setRangeDays] = useState<7 | 30 | 90>(30);
   const seoQualityRows = getAllSeoQualityResults();
   const seoIndexable = seoQualityRows.filter((row) => row.status === "index").length;
   const seoCandidates = seoQualityRows.length - seoIndexable;
@@ -173,7 +238,7 @@ function AdminDashboard({ onLogout }: { onLogout: () => void }) {
     setLoading(true);
     setError("");
     try {
-      const [s, c] = await Promise.all([getAdminStats(), getAdminCases(onlyPaid, 100)]);
+      const [s, c] = await Promise.all([getAdminStats(rangeDays), getAdminCases(onlyPaid, 100)]);
       setStats(s);
       setCases(c.cases);
     } catch (err) {
@@ -189,7 +254,7 @@ function AdminDashboard({ onLogout }: { onLogout: () => void }) {
 
   useEffect(() => {
     load();
-  }, [onlyPaid]);
+  }, [onlyPaid, rangeDays]);
 
   const logout = () => {
     clearAdminPassword();
@@ -328,15 +393,15 @@ function AdminDashboard({ onLogout }: { onLogout: () => void }) {
 
             <div className="grid grid-cols-1 md:grid-cols-4 gap-3 sm:gap-4">
               <StatBlock
-                label="Content-Aufrufe 7 Tage"
-                value={stats.traffic.pageViews7d}
-                sub={`${stats.traffic.visitors7d} Besucher`}
+                label={`Content-Aufrufe ${stats.rangeDays} Tage`}
+                value={stats.traffic.pageViewsRange}
+                sub={`${stats.traffic.visitorsRange} Besucher`}
                 icon={BarChart3}
               />
               <StatBlock
-                label="Content-Aufrufe 30 Tage"
-                value={stats.traffic.pageViews30d}
-                sub={`${stats.traffic.visitors30d} Besucher`}
+                label="Content-Aufrufe 24 Stunden"
+                value={stats.traffic.pageViews24h}
+                sub="öffentliche Seiten"
                 icon={FileSearch}
               />
               <StatBlock
@@ -351,6 +416,15 @@ function AdminDashboard({ onLogout }: { onLogout: () => void }) {
                 sub={`seit ${new Date(stats.visibleCasesSince).toLocaleDateString("de-DE")}`}
                 icon={Archive}
               />
+            </div>
+
+            <div className="flex flex-col gap-3 rounded-xl border bg-white px-4 py-3 text-xs text-slate-600 sm:flex-row sm:items-center sm:justify-between">
+              <p>
+                Admin-Sitzungen in diesem Browser werden nicht als normale Besucher gezählt.
+                Analytics-Daten laufen nach {stats.analyticsRetentionMonths} Monaten automatisch
+                aus.
+              </p>
+              <RangeSwitch value={rangeDays} onChange={setRangeDays} />
             </div>
 
             {/* Daily chart */}
@@ -402,10 +476,26 @@ function AdminDashboard({ onLogout }: { onLogout: () => void }) {
             </div>
 
             <div className="grid grid-cols-1 xl:grid-cols-[1.2fr_0.8fr] gap-4">
-              <Card title="Besuchte Ratgeber-/SEO-Seiten">
+              <Card
+                title={`Besuchte Ratgeber-/SEO-Seiten (${stats.rangeDays} Tage)`}
+                right={
+                  <AdminIconButton
+                    label="CSV"
+                    onClick={() => exportTopContentCsv(stats.topContentPages, stats.rangeDays)}
+                  />
+                }
+              >
                 <TopContentTable rows={stats.topContentPages} />
               </Card>
-              <Card title="Wizard-Eingaben">
+              <Card
+                title="Wizard-Eingaben"
+                right={
+                  <AdminIconButton
+                    label="CSV"
+                    onClick={() => exportWizardEventsCsv(stats.latestWizardEvents)}
+                  />
+                }
+              >
                 <WizardEventList rows={stats.latestWizardEvents} />
               </Card>
             </div>
@@ -414,18 +504,21 @@ function AdminDashboard({ onLogout }: { onLogout: () => void }) {
             <Card
               title="Fälle"
               right={
-                <button
-                  type="button"
-                  onClick={() => setOnlyPaid((v) => !v)}
-                  className={`inline-flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-lg border transition-colors ${
-                    onlyPaid
-                      ? "bg-emerald-50 border-emerald-300 text-emerald-700"
-                      : "bg-white border-slate-200 text-slate-600 hover:bg-slate-50"
-                  }`}
-                >
-                  <Filter className="w-3 h-3" />
-                  {onlyPaid ? "Nur bezahlte" : "Alle anzeigen"}
-                </button>
+                <div className="flex flex-wrap items-center justify-end gap-2">
+                  <AdminIconButton label="CSV" onClick={() => exportCasesCsv(cases, onlyPaid)} />
+                  <button
+                    type="button"
+                    onClick={() => setOnlyPaid((v) => !v)}
+                    className={`inline-flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-lg border transition-colors ${
+                      onlyPaid
+                        ? "bg-emerald-50 border-emerald-300 text-emerald-700"
+                        : "bg-white border-slate-200 text-slate-600 hover:bg-slate-50"
+                    }`}
+                  >
+                    <Filter className="w-3 h-3" />
+                    {onlyPaid ? "Nur bezahlte" : "Alle anzeigen"}
+                  </button>
+                </div>
               }
             >
               {cases.length === 0 ? (
@@ -523,7 +616,11 @@ function AdminDashboard({ onLogout }: { onLogout: () => void }) {
               nextRelease={nextSeoRelease}
             />
 
-            <RetentionDisclosure retentionMonths={stats.retentionMonths} onDone={load} />
+            <RetentionDisclosure
+              retentionMonths={stats.retentionMonths}
+              analyticsRetentionMonths={stats.analyticsRetentionMonths}
+              onDone={load}
+            />
 
             <BrowserUnlockDisclosure />
           </>
@@ -620,9 +717,11 @@ function BrowserUnlockDisclosure() {
 
 function RetentionDisclosure({
   retentionMonths,
+  analyticsRetentionMonths,
   onDone,
 }: {
   retentionMonths: number;
+  analyticsRetentionMonths: number;
   onDone: () => Promise<void>;
 }) {
   const [message, setMessage] = useState("");
@@ -669,7 +768,7 @@ function RetentionDisclosure({
             </h2>
             <p className="mt-1 text-xs text-slate-500">
               Automatische Retention: Fälle älter als {retentionMonths} Monate werden anonymisiert.
-              Hier kannst du zusätzlich manuell prüfen oder ausführen.
+              Analytics-Ereignisse werden nach {analyticsRetentionMonths} Monaten gelöscht.
             </p>
           </div>
         </div>
@@ -786,6 +885,47 @@ function labelWizardEvent(eventType: string) {
     analysis_success: "Analyse erfolgreich",
   };
   return labels[eventType] ?? eventType;
+}
+
+function RangeSwitch({
+  value,
+  onChange,
+}: {
+  value: 7 | 30 | 90;
+  onChange: (value: 7 | 30 | 90) => void;
+}) {
+  const options = [7, 30, 90] as const;
+  return (
+    <div className="inline-flex rounded-lg border border-slate-200 bg-slate-50 p-1">
+      {options.map((option) => (
+        <button
+          key={option}
+          type="button"
+          onClick={() => onChange(option)}
+          className={`min-w-12 rounded-md px-2.5 py-1 text-xs font-bold transition-colors ${
+            value === option
+              ? "bg-white text-slate-950 shadow-sm"
+              : "text-slate-500 hover:text-slate-900"
+          }`}
+        >
+          {option}T
+        </button>
+      ))}
+    </div>
+  );
+}
+
+function AdminIconButton({ label, onClick }: { label: string; onClick: () => void }) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      className="inline-flex items-center gap-1.5 rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-xs font-semibold text-slate-600 transition-colors hover:bg-slate-50 hover:text-slate-950"
+    >
+      <Download className="h-3.5 w-3.5" />
+      {label}
+    </button>
+  );
 }
 
 /* ── UI primitives ─────────────────────────────────── */

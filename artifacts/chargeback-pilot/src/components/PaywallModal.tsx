@@ -236,8 +236,8 @@ export function PaywallModal({
         {/* Checkout CTA */}
         <div className="space-y-3 pt-1">
           <p className="text-xs text-muted-foreground leading-relaxed">
-            Im nächsten Schritt im sicheren Stripe-Checkout bestätigst du AGB und Widerrufshinweise.
-            Der Kauf ist eine einmalige Bereitstellung digitaler Inhalte; es entsteht kein Abo.
+            Im nächsten Schritt bestätigst du AGB und Widerrufshinweise im sicheren Stripe-Checkout.
+            Die Freischaltung betrifft die digitalen Inhalte für diesen Fall; es entsteht kein Abo.
           </p>
 
           {error && (

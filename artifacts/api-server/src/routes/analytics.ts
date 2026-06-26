@@ -3,8 +3,25 @@ import { analyticsEventsTable, db } from "@workspace/db";
 import { createHash } from "node:crypto";
 import { z } from "zod";
 import { logger } from "../lib/logger";
+import rateLimit from "express-rate-limit";
 
 const router = Router();
+
+const pageViewLimiter = rateLimit({
+  windowMs: 60 * 60 * 1000,
+  max: 600,
+  standardHeaders: false,
+  legacyHeaders: false,
+  message: { ok: false },
+});
+
+const wizardEventLimiter = rateLimit({
+  windowMs: 60 * 60 * 1000,
+  max: 240,
+  standardHeaders: false,
+  legacyHeaders: false,
+  message: { ok: false },
+});
 
 const pageViewSchema = z.object({
   path: z.string().min(1).max(300),
@@ -76,7 +93,7 @@ function cleanWizardMetadata(input: z.infer<typeof wizardEventSchema>) {
   };
 }
 
-router.post("/analytics/page-view", async (req: Request, res: Response) => {
+router.post("/analytics/page-view", pageViewLimiter, async (req: Request, res: Response) => {
   const parsed = pageViewSchema.safeParse(req.body);
   if (!parsed.success) {
     res.status(400).json({ ok: false });
@@ -107,7 +124,7 @@ router.post("/analytics/page-view", async (req: Request, res: Response) => {
   }
 });
 
-router.post("/analytics/wizard-event", async (req: Request, res: Response) => {
+router.post("/analytics/wizard-event", wizardEventLimiter, async (req: Request, res: Response) => {
   const parsed = wizardEventSchema.safeParse(req.body);
   if (!parsed.success) {
     res.status(400).json({ ok: false });

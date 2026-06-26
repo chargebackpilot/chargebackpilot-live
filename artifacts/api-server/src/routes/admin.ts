@@ -5,7 +5,11 @@ import rateLimit from "express-rate-limit";
 import { getApiServerEnv } from "@workspace/env";
 import { safeCompare, sessionStore, adminAuth } from "../lib/auth";
 import { logger } from "../lib/logger";
-import { getCaseRetentionMonths, getRetentionCutoff } from "../lib/db-maintenance";
+import {
+  getAnalyticsRetentionMonths,
+  getCaseRetentionMonths,
+  getRetentionCutoff,
+} from "../lib/db-maintenance";
 
 const env = getApiServerEnv();
 const router = Router();
@@ -68,6 +72,12 @@ function anonymizedAnalysis(): CaseAnalysis {
     escalationTemplate: "",
     disclaimer: "Anonymisiert.",
   };
+}
+
+function getStatsRangeDays(value: unknown) {
+  const raw = Array.isArray(value) ? value[0] : value;
+  const parsed = Number(raw ?? 30);
+  return parsed === 7 || parsed === 90 ? parsed : 30;
 }
 
 function adminCaseResponse(found: typeof casesTable.$inferSelect, readToken?: string) {
@@ -164,12 +174,14 @@ router.post("/logout", adminAuth, (req: any, res: Response): void => {
  */
 router.use(adminAuth);
 
-router.get("/stats", async (_req: any, res: Response): Promise<void> => {
+router.get("/stats", async (req: any, res: Response): Promise<void> => {
   try {
+    const rangeDays = getStatsRangeDays(req.query.days);
     const now = new Date();
     const since24h = new Date(now.getTime() - 24 * 60 * 60 * 1000);
     const since7d = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
     const since30d = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
+    const sinceRange = new Date(now.getTime() - rangeDays * 24 * 60 * 60 * 1000);
 
     const [totals] = await db
       .select({
@@ -243,6 +255,8 @@ router.get("/stats", async (_req: any, res: Response): Promise<void> => {
       page_views_30d: string;
       visitors_7d: string;
       visitors_30d: string;
+      page_views_range: string;
+      visitors_range: string;
       wizard_starts_7d: string;
       wizard_drafts_7d: string;
       analysis_submits_7d: string;
@@ -265,6 +279,12 @@ router.get("/stats", async (_req: any, res: Response): Promise<void> => {
             WHERE event_type = 'page_view' AND is_admin = false AND created_at >= $3
           )::int AS visitors_30d,
           COUNT(*) FILTER (
+            WHERE event_type = 'page_view' AND is_admin = false AND created_at >= $4
+          )::int AS page_views_range,
+          COUNT(DISTINCT session_hash) FILTER (
+            WHERE event_type = 'page_view' AND is_admin = false AND created_at >= $4
+          )::int AS visitors_range,
+          COUNT(*) FILTER (
             WHERE event_type = 'wizard_step' AND created_at >= $2 AND metadata->>'step' = '1'
           )::int AS wizard_starts_7d,
           COUNT(*) FILTER (
@@ -275,7 +295,7 @@ router.get("/stats", async (_req: any, res: Response): Promise<void> => {
           )::int AS analysis_submits_7d
         FROM analytics_events
       `,
-      [since24h, since7d, since30d]
+      [since24h, since7d, since30d, sinceRange]
     );
 
     const topContentPages = await pool.query<{
@@ -304,7 +324,7 @@ router.get("/stats", async (_req: any, res: Response): Promise<void> => {
         ORDER BY views DESC, visitors DESC, last_seen DESC
         LIMIT 20
       `,
-      [since30d]
+      [sinceRange]
     );
 
     const latestWizardEvents = await pool.query<{
@@ -328,7 +348,9 @@ router.get("/stats", async (_req: any, res: Response): Promise<void> => {
       totalCases: totalNum,
       hiddenLegacyCases: Number(hiddenLegacy?.c ?? 0),
       visibleCasesSince: ADMIN_VISIBLE_CASES_FROM.toISOString(),
+      rangeDays,
       retentionMonths: getCaseRetentionMonths(),
+      analyticsRetentionMonths: getAnalyticsRetentionMonths(),
       paidCases: paidNum,
       conversionRate: totalNum > 0 ? Math.round((paidNum / totalNum) * 1000) / 10 : 0,
       revenueEur: Number(totals?.revenueCents ?? 0) / 100,
@@ -355,6 +377,8 @@ router.get("/stats", async (_req: any, res: Response): Promise<void> => {
         pageViews30d: Number(traffic.rows[0]?.page_views_30d ?? 0),
         visitors7d: Number(traffic.rows[0]?.visitors_7d ?? 0),
         visitors30d: Number(traffic.rows[0]?.visitors_30d ?? 0),
+        pageViewsRange: Number(traffic.rows[0]?.page_views_range ?? 0),
+        visitorsRange: Number(traffic.rows[0]?.visitors_range ?? 0),
         wizardStarts7d: Number(traffic.rows[0]?.wizard_starts_7d ?? 0),
         wizardDrafts7d: Number(traffic.rows[0]?.wizard_drafts_7d ?? 0),
         analysisSubmits7d: Number(traffic.rows[0]?.analysis_submits_7d ?? 0),

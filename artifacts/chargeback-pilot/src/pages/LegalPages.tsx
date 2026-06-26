@@ -77,6 +77,8 @@ export function Datenschutz() {
       <div className="container mx-auto max-w-3xl py-16 px-4">
         <h1 className="text-3xl font-bold mb-8">Datenschutzerklärung</h1>
         <div className="prose prose-slate dark:prose-invert max-w-none">
+          <p className="text-sm text-muted-foreground">Stand: 26. Juni 2026</p>
+
           <h2>1. Datenschutz auf einen Blick</h2>
           <p>
             Diese Datenschutzerklärung informiert Sie darüber, welche personenbezogenen Daten wir
@@ -159,43 +161,65 @@ export function Datenschutz() {
             Einwilligung jederzeit mit Wirkung für die Zukunft widerrufen.
           </p>
 
-          <h2>7. Rechtsgrundlagen</h2>
+          <h2>7. Interne Nutzungsstatistik</h2>
+          <p>
+            Zur Verbesserung von Produkt, Stabilität und Auffindbarkeit erfassen wir eine
+            datensparsame interne Nutzungsstatistik. Dabei können insbesondere aufgerufener
+            Seitenpfad, Seitentitel, Zeitpunkt, eine pseudonyme Besucherkennung sowie technische
+            Ereignisse wie Wizard-Schritt, Analyse-Start oder Analyse-Erfolg gespeichert werden.
+            Wenn Sie im Wizard Eingaben beginnen, können zusätzlich strukturierte Angaben wie
+            Zahlungsart, Problemtyp, Händlername, Betrag, Zahlungsdatum, Händlerkontakt,
+            Antwortkategorie und Anzahl ausgewählter Belege als Metadaten gespeichert werden.
+          </p>
+          <p>
+            Längere Freitexte aus der Fallbeschreibung oder aus freien Antwortfeldern werden für
+            diese Nutzungsstatistik nicht gespeichert. Die Auswertung erfolgt first-party auf
+            unserer eigenen Infrastruktur und wird nicht an externe Analyse- oder Werbenetzwerke
+            weitergegeben. Wenn im selben Browser eine Admin-Sitzung aktiv ist, werden öffentliche
+            Seitenaufrufe nicht als normale Besucheraufrufe gezählt.
+          </p>
+
+          <h2>8. Rechtsgrundlagen</h2>
           <p>
             Die Verarbeitung Ihrer Eingaben zur KI-Textgenerierung erfolgt auf Grundlage Ihrer
             freiwilligen Einwilligung (Art. 6 Abs. 1 lit. a DSGVO). Die Verarbeitung zur
             Bereitstellung kostenpflichtiger digitaler Inhalte und zur Zahlungsabwicklung erfolgt
-            zur Vertragserfüllung (Art. 6 Abs. 1 lit. b DSGVO). Technische Verbindungsdaten und
-            Sicherheitsprotokolle verarbeiten wir auf Grundlage unseres berechtigten Interesses an
-            einem sicheren Betrieb (Art. 6 Abs. 1 lit. f DSGVO). Gesetzliche Aufbewahrungspflichten,
-            insbesondere steuerliche Nachweise, beruhen auf Art. 6 Abs. 1 lit. c DSGVO.
+            zur Vertragserfüllung (Art. 6 Abs. 1 lit. b DSGVO). Technische Verbindungsdaten,
+            Sicherheitsprotokolle und interne Nutzungsstatistiken verarbeiten wir auf Grundlage
+            unseres berechtigten Interesses an einem sicheren Betrieb, der Fehleranalyse und der
+            Verbesserung unseres Angebots (Art. 6 Abs. 1 lit. f DSGVO). Gesetzliche
+            Aufbewahrungspflichten, insbesondere steuerliche Nachweise, beruhen auf Art. 6 Abs. 1
+            lit. c DSGVO.
           </p>
 
-          <h2>8. Speicherdauer</h2>
+          <h2>9. Speicherdauer</h2>
           <p>
             Personenbezogene Daten werden nur so lange gespeichert, wie es für den jeweiligen Zweck
             erforderlich ist oder gesetzliche Aufbewahrungsfristen bestehen. Falldaten werden in der
             Regel nach spätestens 12 Monaten gelöscht oder anonymisiert, sofern keine gesetzlichen
             Aufbewahrungspflichten entgegenstehen. Zahlungs- und Einwilligungsnachweise können im
             Rahmen gesetzlicher Nachweis- und Aufbewahrungspflichten länger gespeichert werden.
-            Technische Protokolldaten können aus Sicherheitsgründen für bis zu 30 Tage gespeichert
-            werden.
+            Interne Nutzungsstatistiken werden spätestens nach 12 Monaten gelöscht, aggregiert oder
+            anonymisiert. Technische Protokolldaten können aus Sicherheitsgründen für bis zu 30 Tage
+            gespeichert werden.
           </p>
           <p>
             Sie können die Löschung Ihrer Daten verlangen, soweit keine gesetzlichen
             Aufbewahrungsfristen entgegenstehen.
           </p>
 
-          <h2>9. Weitergabe von Daten</h2>
+          <h2>10. Weitergabe von Daten</h2>
           <p>
             Eine Weitergabe an Dritte erfolgt nur, soweit dies zur Bereitstellung des Dienstes
             notwendig ist, z. B. an Render Inc. (Hosting), Neon (Datenbank), Google LLC/Gemini
             (KI-Verarbeitung) und Stripe Payments Europe bzw. Stripe-Unternehmen
             (Zahlungsabwicklung). Stripe verarbeitet Zahlungsdaten grundsätzlich eigenverantwortlich
             nach den Stripe-Datenschutzbedingungen. Eine darüber hinausgehende Weitergabe,
-            insbesondere für eigene Werbezwecke von ChargebackPilot, findet nicht statt.
+            insbesondere für eigene Werbezwecke von ChargebackPilot oder an externe
+            Analytics-Netzwerke, findet nicht statt.
           </p>
 
-          <h2>10. Rechte der betroffenen Person</h2>
+          <h2>11. Rechte der betroffenen Person</h2>
           <p>
             Sie haben das Recht auf Auskunft, Berichtigung, Löschung, Einschränkung der
             Verarbeitung, Datenübertragbarkeit und Widerspruch. Sie können Ihre Einwilligung
@@ -203,25 +227,26 @@ export function Datenschutz() {
           </p>
           <p>Richten Sie Ihre Anfrage bitte an kontakt@chargebackpilot.de.</p>
 
-          <h2>11. Beschwerderecht</h2>
+          <h2>12. Beschwerderecht</h2>
           <p>
             Wenn Sie der Ansicht sind, dass die Verarbeitung Ihrer personenbezogenen Daten gegen die
             DSGVO verstößt, können Sie eine Beschwerde bei einer Datenschutzaufsichtsbehörde
             einreichen.
           </p>
 
-          <h2>12. Änderungen der Datenschutzerklärung</h2>
+          <h2>13. Änderungen der Datenschutzerklärung</h2>
           <p>
             Wir behalten uns vor, diese Datenschutzerklärung bei Bedarf anzupassen. Die jeweils
             aktuelle Fassung ist auf dieser Website verfügbar.
           </p>
 
-          <h2>13. Cookies und lokale Speicherung</h2>
+          <h2>14. Cookies und lokale Speicherung</h2>
           <p>
-            Es werden keine Analyse- oder Tracking-Dienste eingesetzt. Es werden ausschließlich
-            funktionale Daten lokal gespeichert, z. B. zur Vorhaltung von Anzeige-, Navigations-,
-            Zahlungsrückkehr- oder Fallzuständen. Diese Speicherung dient der Bedienbarkeit der
-            Anwendung und nicht der Erstellung von Nutzerprofilen.
+            ChargebackPilot verwendet lokale Speicherung im Browser, z. B. für Anzeige-,
+            Navigations-, Zahlungsrückkehr-, Theme-, Besucherkennungs- oder Fallzustände. Diese
+            Speicherung dient der Bedienbarkeit, der internen Produktstatistik und der
+            Wiederherstellung begonnener Fälle. Es werden keine externen Werbe-Cookies und keine
+            externen Tracking-Pixel eingesetzt.
           </p>
         </div>
       </div>

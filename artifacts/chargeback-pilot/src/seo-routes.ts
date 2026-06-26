@@ -59,9 +59,9 @@ export const SEO_ROUTES: SeoRouteMeta[] = [
   },
   {
     path: "/vorlagen-generator",
-    title: "Vorlagen-Generator · ChargebackPilot",
+    title: "Kostenloser Fall-Check für Chargeback & Käuferschutz | ChargebackPilot",
     description:
-      "Erstelle in wenigen Schritten sachliche Entwürfe für Händler, Bank/PayPal/Klarna und Eskalation.",
+      "Starte den kostenlosen Fall-Check: Zahlungsart, Problem und Belege strukturieren und unverbindliche nächste Schritte für Chargeback, PayPal oder Klarna erhalten.",
     changefreq: "weekly",
     priority: 0.9,
     type: "landing",
@@ -179,9 +179,9 @@ export const SEO_ROUTES: SeoRouteMeta[] = [
   },
   {
     path: "/chargeback-antrag-vorlage",
-    title: "Chargeback Antrag Vorlage für Bank & Kreditkarte | ChargebackPilot",
+    title: "Chargeback Antrag Vorlage: Bank-Antrag sachlich vorbereiten | ChargebackPilot",
     description:
-      "Chargeback Antrag Vorlage für Bank und Kreditkarte: Sachverhalt, Belege, Händlerkontakt und Umsatzreklamation strukturiert vorbereiten.",
+      "Chargeback Antrag Vorlage für deine Bank: Umsatz, Sachverhalt, Händlerkontakt und Belege strukturiert für Kreditkartenreklamation vorbereiten.",
     changefreq: "monthly",
     priority: 0.8,
     type: "guide",

@@ -577,7 +577,7 @@ export function AboFalleSEO() {
 export function ChargebackAntragVorlageSEO() {
   return (
     <SEOArticleLayout
-      title="Chargeback Antrag Vorlage für Bank & Kreditkarte"
+      title="Chargeback Antrag Vorlage: Bank-Antrag sachlich vorbereiten"
       category="Musterbrief"
       whenApplies={[
         "Du willst eine Kreditkarten-Reklamation bei deiner Bank strukturiert einreichen",
