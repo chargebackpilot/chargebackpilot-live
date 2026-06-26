@@ -93,6 +93,8 @@ import {
   getFlatrateSessionId,
   clearCurrentCase,
 } from "@/lib/case-persistence";
+import { getAdminToken } from "@/lib/admin-api";
+import { trackWizardEvent } from "@/lib/analytics";
 
 interface FormData {
   paymentMethod: string;
@@ -285,6 +287,30 @@ export default function Wizard() {
   const [resultViewKey, setResultViewKey] = useState(0);
   const [isSubmittingCase, setIsSubmittingCase] = useState(false);
   const { toast } = useToast();
+  const wizardDraftSignature = JSON.stringify({
+    paymentMethod: formData.paymentMethod,
+    problemType: formData.problemType,
+    merchantName: formData.merchantName,
+    purchaseAmount: formData.purchaseAmount,
+    disputedAmount: formData.disputedAmount,
+    paymentDate: formData.paymentDate,
+    merchantCountry: formData.merchantCountry,
+    merchantContacted: formData.merchantContacted,
+    merchantResponseType: formData.merchantResponseType,
+    evidence: formData.evidence,
+  });
+
+  useEffect(() => {
+    trackWizardEvent("wizard_step", step, form.getValues());
+  }, [step]);
+
+  useEffect(() => {
+    if (step >= 6) return;
+    const timer = window.setTimeout(() => {
+      trackWizardEvent("wizard_draft", step, form.getValues());
+    }, 1200);
+    return () => window.clearTimeout(timer);
+  }, [step, wizardDraftSignature]);
 
   function saveCaseSnapshot(
     data: ResolvedCaseResult,
@@ -329,10 +355,33 @@ export default function Wizard() {
     readToken: string | undefined,
     formSnapshot: WizardFormData | FormData = form.getValues()
   ) {
+    const flatrateSessionId = getFlatrateSessionId();
+    const adminToken = getAdminToken();
+
+    if (flatrateSessionId?.startsWith("admin_test_") && adminToken) {
+      const params = new URLSearchParams();
+      if (readToken) params.set("readToken", readToken);
+      const response = await fetch(
+        `/api/admin/cases/${encodeURIComponent(caseId)}/unlock-preview?${params}`,
+        { headers: { Authorization: `Bearer ${adminToken}` } }
+      );
+      if (!response.ok) throw new Error("admin unlock preview failed");
+      const unlocked = (await response.json()) as ResolvedCaseResult;
+      const unlockedWithToken =
+        readToken && !unlocked.readToken
+          ? ({ ...unlocked, readToken } as ResolvedCaseResult)
+          : unlocked;
+      setResult(unlockedWithToken);
+      setResultViewKey((key) => key + 1);
+      setHasUnlocked(true);
+      markCaseIdUnlocked(caseId);
+      saveCaseSnapshot(unlockedWithToken, formSnapshot);
+      return unlockedWithToken;
+    }
+
     if (!readToken) throw new Error("missing read token");
 
     const params = new URLSearchParams({ readToken });
-    const flatrateSessionId = getFlatrateSessionId();
     if (flatrateSessionId) params.set("flatrateSessionId", flatrateSessionId);
 
     const response = await fetch(`/api/cases/${encodeURIComponent(caseId)}/unlock?${params}`);
@@ -554,6 +603,7 @@ export default function Wizard() {
       formData.merchantResponseType || "",
       formData.merchantResponseNote || ""
     );
+    trackWizardEvent("analysis_submit", step, formData);
     setStep(6);
     createCase.mutate(
       {
@@ -574,6 +624,7 @@ export default function Wizard() {
       {
         onSuccess: (data) => {
           setIsSubmittingCase(false);
+          trackWizardEvent("analysis_success", 6, formData);
           setResult(data);
           setResultViewKey((key) => key + 1);
           if (data) {

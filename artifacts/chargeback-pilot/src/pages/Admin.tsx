@@ -17,6 +17,11 @@ import {
   Activity,
   UnlockKeyhole,
   XCircle,
+  BarChart3,
+  FileSearch,
+  Archive,
+  Trash2,
+  DatabaseZap,
 } from "lucide-react";
 import { getAllSeoQualityResults, SEO_QUALITY_CONFIG } from "@/seo-quality";
 import {
@@ -24,10 +29,15 @@ import {
   clearFlatrate,
   getFlatrateExpiry,
   isFlatrateActive,
+  listSavedCases,
+  markCaseIdUnlocked,
 } from "@/lib/case-persistence";
 import {
+  anonymizeAdminCase,
+  anonymizeOldAdminCases,
   adminLogin,
   clearAdminPassword,
+  deleteAdminCase,
   getAdminPassword,
   getAdminStats,
   getAdminCases,
@@ -148,6 +158,7 @@ function AdminDashboard({ onLogout }: { onLogout: () => void }) {
   const [cases, setCases] = useState<AdminCaseRow[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [actionMessage, setActionMessage] = useState("");
   const [onlyPaid, setOnlyPaid] = useState(false);
   const seoQualityRows = getAllSeoQualityResults();
   const seoIndexable = seoQualityRows.filter((row) => row.status === "index").length;
@@ -186,6 +197,34 @@ function AdminDashboard({ onLogout }: { onLogout: () => void }) {
     setLocation("/admin");
   };
 
+  const handleAnonymizeCase = async (id: string) => {
+    if (!window.confirm(`Fall #${id} wirklich anonymisieren?`)) return;
+    setActionMessage("");
+    try {
+      await anonymizeAdminCase(id);
+      setActionMessage(`Fall #${id} wurde anonymisiert.`);
+      await load();
+    } catch (err) {
+      setActionMessage(err instanceof Error ? err.message : "Anonymisieren fehlgeschlagen.");
+    }
+  };
+
+  const handleDeleteCase = async (id: string) => {
+    if (
+      !window.confirm(`Fall #${id} dauerhaft löschen? Das kann nicht rückgängig gemacht werden.`)
+    ) {
+      return;
+    }
+    setActionMessage("");
+    try {
+      await deleteAdminCase(id);
+      setActionMessage(`Fall #${id} wurde gelöscht.`);
+      await load();
+    } catch (err) {
+      setActionMessage(err instanceof Error ? err.message : "Löschen fehlgeschlagen.");
+    }
+  };
+
   return (
     <div className="min-h-screen bg-slate-50 text-slate-950">
       {/* Top bar */}
@@ -220,6 +259,12 @@ function AdminDashboard({ onLogout }: { onLogout: () => void }) {
             {error}
           </div>
         )}
+        {actionMessage && (
+          <div className="flex items-center gap-2 text-sm text-slate-800 bg-white border border-slate-200 rounded-lg px-4 py-3">
+            <CheckCircle2 className="w-4 h-4 flex-shrink-0 text-emerald-600" />
+            {actionMessage}
+          </div>
+        )}
 
         {loading && !stats ? (
           <div className="flex items-center justify-center py-20">
@@ -231,7 +276,7 @@ function AdminDashboard({ onLogout }: { onLogout: () => void }) {
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
               <Kpi
                 icon={Users}
-                label="Fälle gesamt"
+                label="Admin-Fälle"
                 value={stats.totalCases}
                 sub={`+${stats.cases24h} in 24 h`}
                 accent="blue"
@@ -278,6 +323,33 @@ function AdminDashboard({ onLogout }: { onLogout: () => void }) {
                 value={stats.cases30d}
                 sub="neue Fälle"
                 icon={Calendar}
+              />
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-3 sm:gap-4">
+              <StatBlock
+                label="Content-Aufrufe 7 Tage"
+                value={stats.traffic.pageViews7d}
+                sub={`${stats.traffic.visitors7d} Besucher`}
+                icon={BarChart3}
+              />
+              <StatBlock
+                label="Content-Aufrufe 30 Tage"
+                value={stats.traffic.pageViews30d}
+                sub={`${stats.traffic.visitors30d} Besucher`}
+                icon={FileSearch}
+              />
+              <StatBlock
+                label="Wizard-Starts 7 Tage"
+                value={stats.traffic.wizardStarts7d}
+                sub={`${stats.traffic.analysisSubmits7d} Analysen`}
+                icon={Activity}
+              />
+              <StatBlock
+                label="Legacy ausgeblendet"
+                value={stats.hiddenLegacyCases}
+                sub={`seit ${new Date(stats.visibleCasesSince).toLocaleDateString("de-DE")}`}
+                icon={Archive}
               />
             </div>
 
@@ -329,6 +401,15 @@ function AdminDashboard({ onLogout }: { onLogout: () => void }) {
               </Card>
             </div>
 
+            <div className="grid grid-cols-1 xl:grid-cols-[1.2fr_0.8fr] gap-4">
+              <Card title="Besuchte Ratgeber-/SEO-Seiten">
+                <TopContentTable rows={stats.topContentPages} />
+              </Card>
+              <Card title="Wizard-Eingaben">
+                <WizardEventList rows={stats.latestWizardEvents} />
+              </Card>
+            </div>
+
             {/* Cases table */}
             <Card
               title="Fälle"
@@ -364,6 +445,7 @@ function AdminDashboard({ onLogout }: { onLogout: () => void }) {
                         <Th className="text-right">Betrag</Th>
                         <Th className="text-right">Score</Th>
                         <Th>Bezahlt</Th>
+                        <Th>Aktion</Th>
                       </tr>
                     </thead>
                     <tbody className="divide-y">
@@ -405,6 +487,26 @@ function AdminDashboard({ onLogout }: { onLogout: () => void }) {
                               <span className="text-xs text-slate-400">offen</span>
                             )}
                           </Td>
+                          <Td>
+                            <div className="flex items-center gap-1.5">
+                              <button
+                                type="button"
+                                onClick={() => handleAnonymizeCase(c.id)}
+                                className="inline-flex h-8 w-8 items-center justify-center rounded-lg border border-slate-200 text-slate-500 hover:bg-slate-50 hover:text-slate-900"
+                                title="Fall anonymisieren"
+                              >
+                                <Archive className="h-3.5 w-3.5" />
+                              </button>
+                              <button
+                                type="button"
+                                onClick={() => handleDeleteCase(c.id)}
+                                className="inline-flex h-8 w-8 items-center justify-center rounded-lg border border-red-200 text-red-500 hover:bg-red-50"
+                                title="Fall dauerhaft löschen"
+                              >
+                                <Trash2 className="h-3.5 w-3.5" />
+                              </button>
+                            </div>
+                          </Td>
                         </tr>
                       ))}
                     </tbody>
@@ -420,6 +522,8 @@ function AdminDashboard({ onLogout }: { onLogout: () => void }) {
               averageScore={averageSeoScore}
               nextRelease={nextSeoRelease}
             />
+
+            <RetentionDisclosure retentionMonths={stats.retentionMonths} onDone={load} />
 
             <BrowserUnlockDisclosure />
           </>
@@ -446,8 +550,14 @@ function BrowserUnlockDisclosure() {
   const activate = () => {
     const sessionId = `admin_test_${Math.random().toString(36).slice(2)}_${Date.now()}`;
     activateFlatrate(sessionId, 12);
+    const savedCases = listSavedCases();
+    savedCases.forEach((entry) => markCaseIdUnlocked(entry.caseId));
     setState(readBrowserUnlockState());
-    setMessage("Testfreischaltung ist in diesem Browser aktiv.");
+    setMessage(
+      savedCases.length > 0
+        ? `Testfreischaltung ist aktiv. ${savedCases.length} gespeicherte Fälle wurden markiert.`
+        : "Testfreischaltung ist in diesem Browser aktiv."
+    );
   };
 
   const reset = () => {
@@ -506,6 +616,176 @@ function BrowserUnlockDisclosure() {
       </div>
     </details>
   );
+}
+
+function RetentionDisclosure({
+  retentionMonths,
+  onDone,
+}: {
+  retentionMonths: number;
+  onDone: () => Promise<void>;
+}) {
+  const [message, setMessage] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  const dryRun = async () => {
+    setLoading(true);
+    try {
+      const result = await anonymizeOldAdminCases(false);
+      setMessage(
+        `${result.eligibleCases ?? 0} Fälle älter als ${retentionMonths} Monate wären betroffen.`
+      );
+    } catch (err) {
+      setMessage(err instanceof Error ? err.message : "Prüfung fehlgeschlagen.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const execute = async () => {
+    if (!window.confirm("Alte Fälle jetzt anonymisieren?")) return;
+    setLoading(true);
+    try {
+      const result = await anonymizeOldAdminCases(true);
+      setMessage(`${result.anonymizedCases ?? 0} alte Fälle wurden anonymisiert.`);
+      await onDone();
+    } catch (err) {
+      setMessage(err instanceof Error ? err.message : "Anonymisierung fehlgeschlagen.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <details className="group bg-white rounded-2xl border">
+      <summary className="flex cursor-pointer list-none items-center justify-between gap-4 p-5 marker:hidden">
+        <div className="flex items-start gap-3">
+          <div className="mt-0.5 flex h-9 w-9 items-center justify-center rounded-lg bg-slate-100 text-slate-700">
+            <DatabaseZap className="h-4 w-4" />
+          </div>
+          <div>
+            <h2 className="font-bold text-sm uppercase tracking-wide text-slate-700">
+              Datenschutz & Aufbewahrung
+            </h2>
+            <p className="mt-1 text-xs text-slate-500">
+              Automatische Retention: Fälle älter als {retentionMonths} Monate werden anonymisiert.
+              Hier kannst du zusätzlich manuell prüfen oder ausführen.
+            </p>
+          </div>
+        </div>
+        <span className="rounded-lg border px-3 py-1.5 text-xs font-semibold text-slate-600 transition-colors group-open:bg-slate-50">
+          <span className="group-open:hidden">Aufklappen</span>
+          <span className="hidden group-open:inline">Zuklappen</span>
+        </span>
+      </summary>
+      <div className="border-t px-5 pb-5 pt-4">
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+          <div className="text-sm text-slate-600">
+            {message || "Prüfe zuerst per Dry-Run, bevor alte Fälle anonymisiert werden."}
+          </div>
+          <div className="flex flex-col gap-2 sm:flex-row">
+            <Button type="button" variant="outline" onClick={dryRun} disabled={loading}>
+              {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : "Dry-Run prüfen"}
+            </Button>
+            <Button type="button" onClick={execute} disabled={loading}>
+              Alte Fälle anonymisieren
+            </Button>
+          </div>
+        </div>
+      </div>
+    </details>
+  );
+}
+
+function TopContentTable({ rows }: { rows: AdminStats["topContentPages"] }) {
+  if (rows.length === 0) {
+    return (
+      <p className="text-sm text-muted-foreground text-center py-10">
+        Noch keine externen Ratgeber-Aufrufe erfasst.
+      </p>
+    );
+  }
+
+  return (
+    <div className="overflow-x-auto -mx-5 sm:mx-0">
+      <table className="min-w-full text-sm">
+        <thead className="text-xs uppercase tracking-wide text-slate-500 border-b">
+          <tr>
+            <Th>Seite</Th>
+            <Th className="text-right">Aufrufe</Th>
+            <Th className="text-right">Besucher</Th>
+            <Th>Zuletzt</Th>
+          </tr>
+        </thead>
+        <tbody className="divide-y">
+          {rows.map((row) => (
+            <tr key={row.path} className="hover:bg-slate-50">
+              <Td className="font-mono text-xs text-slate-700">{row.path}</Td>
+              <Td className="text-right font-bold tabular-nums">{row.views}</Td>
+              <Td className="text-right tabular-nums">{row.visitors}</Td>
+              <Td className="whitespace-nowrap text-xs text-slate-500">
+                {new Date(row.lastSeen).toLocaleString("de-DE", {
+                  dateStyle: "short",
+                  timeStyle: "short",
+                })}
+              </Td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  );
+}
+
+function WizardEventList({ rows }: { rows: AdminStats["latestWizardEvents"] }) {
+  if (rows.length === 0) {
+    return (
+      <p className="text-sm text-muted-foreground text-center py-10">
+        Noch keine Wizard-Zwischenstände erfasst.
+      </p>
+    );
+  }
+
+  return (
+    <div className="space-y-2 max-h-[420px] overflow-y-auto pr-1">
+      {rows.map((row, index) => {
+        const meta = row.metadata ?? {};
+        return (
+          <div key={`${row.createdAt}-${index}`} className="rounded-xl border bg-slate-50 p-3">
+            <div className="flex items-center justify-between gap-3">
+              <p className="text-xs font-bold uppercase tracking-wide text-slate-600">
+                {labelWizardEvent(row.eventType)} · Schritt {String(meta.step ?? "-")}
+              </p>
+              <span className="text-[11px] text-slate-500 whitespace-nowrap">
+                {new Date(row.createdAt).toLocaleString("de-DE", {
+                  dateStyle: "short",
+                  timeStyle: "short",
+                })}
+              </span>
+            </div>
+            <p className="mt-1 text-sm font-semibold text-slate-900">
+              {String(meta.merchantName || "Noch kein Händler")}
+            </p>
+            <p className="mt-1 text-xs text-slate-600">
+              {labelPayment(String(meta.paymentMethod || "")) || "Zahlung offen"} ·{" "}
+              {labelProblem(String(meta.problemType || "")) || "Problem offen"} ·{" "}
+              {String(meta.disputedAmount || meta.purchaseAmount || "0")} €
+            </p>
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+
+function labelWizardEvent(eventType: string) {
+  const labels: Record<string, string> = {
+    wizard_step: "Schritt",
+    wizard_draft: "Eingabe",
+    analysis_submit: "Analyse gestartet",
+    analysis_success: "Analyse erfolgreich",
+  };
+  return labels[eventType] ?? eventType;
 }
 
 /* ── UI primitives ─────────────────────────────────── */

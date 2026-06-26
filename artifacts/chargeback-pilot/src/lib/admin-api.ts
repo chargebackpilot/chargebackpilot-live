@@ -64,6 +64,9 @@ export async function adminLogin(password: string): Promise<boolean> {
 
 export interface AdminStats {
   totalCases: number;
+  hiddenLegacyCases: number;
+  visibleCasesSince: string;
+  retentionMonths: number;
   paidCases: number;
   conversionRate: number;
   revenueEur: number;
@@ -77,6 +80,27 @@ export interface AdminStats {
   byPaymentMethod: { method: string; count: number }[];
   byProblemType: { type: string; count: number }[];
   dailySeries: { day: string; total: number; paid: number }[];
+  traffic: {
+    pageViews24h: number;
+    pageViews7d: number;
+    pageViews30d: number;
+    visitors7d: number;
+    visitors30d: number;
+    wizardStarts7d: number;
+    wizardDrafts7d: number;
+    analysisSubmits7d: number;
+  };
+  topContentPages: {
+    path: string;
+    views: number;
+    visitors: number;
+    lastSeen: string;
+  }[];
+  latestWizardEvents: {
+    eventType: string;
+    createdAt: string;
+    metadata: Record<string, unknown>;
+  }[];
 }
 
 export interface AdminCaseRow {
@@ -98,3 +122,28 @@ export const getAdminCases = (onlyPaid = false, limit = 50) =>
   adminFetch<{ cases: AdminCaseRow[]; count: number }>(
     `/cases?limit=${limit}${onlyPaid ? "&paid=1" : ""}`
   );
+
+export const anonymizeAdminCase = (id: string) =>
+  adminFetch<{ ok: true; id: string }>(`/cases/${encodeURIComponent(id)}/anonymize`, {
+    method: "POST",
+    body: JSON.stringify({ confirm: "ANONYMIZE_CASE" }),
+  });
+
+export const deleteAdminCase = (id: string) =>
+  adminFetch<{ ok: true; id: string }>(`/cases/${encodeURIComponent(id)}`, {
+    method: "DELETE",
+    body: JSON.stringify({ confirm: "DELETE_CASE" }),
+  });
+
+export const anonymizeOldAdminCases = (execute = false) =>
+  adminFetch<{
+    ok: true;
+    dryRun: boolean;
+    eligibleCases?: number;
+    anonymizedCases?: number;
+    cutoff: string;
+    retentionMonths: number;
+  }>(`/maintenance/anonymize-old-cases${execute ? "?execute=1" : ""}`, {
+    method: "POST",
+    body: JSON.stringify(execute ? { confirm: "ANONYMIZE_OLD_CASES" } : {}),
+  });

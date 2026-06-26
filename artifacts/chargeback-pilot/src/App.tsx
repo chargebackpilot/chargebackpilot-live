@@ -14,6 +14,7 @@ import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
 import { applyStandardSeoHead } from "@/components/SeoHead";
 import { ThemeProvider } from "@/components/theme/ThemeProvider";
+import { trackPageView } from "@/lib/analytics";
 import { getRouteMeta } from "@/seo-routes";
 import RatgeberIndex from "@/pages/RatgeberIndex";
 import MerchantProblemPage from "@/pages/MerchantProblemPage";
@@ -120,6 +121,19 @@ function RouteHeadSync() {
       canonical: meta.canonical ?? meta.path,
       noindex: meta.noindex,
     });
+  }, [pathname]);
+
+  return null;
+}
+
+function PublicAnalyticsTracker() {
+  const [pathname] = useLocation();
+
+  useEffect(() => {
+    const timer = window.setTimeout(() => {
+      trackPageView(pathname, document.title);
+    }, 200);
+    return () => window.clearTimeout(timer);
   }, [pathname]);
 
   return null;
@@ -290,6 +304,7 @@ function AppFrame() {
   return (
     <div className="min-h-screen flex flex-col font-sans bg-background">
       <RouteHeadSync />
+      <PublicAnalyticsTracker />
       {!isAdminPath && <Navbar />}
       <main className="flex-1">
         <ScrollToTop />
