@@ -44,6 +44,23 @@ interface CaseStats {
   strongCases?: number;
 }
 
+const DEFAULT_CASE_STATS: Required<CaseStats> = {
+  totalCases: 110,
+  strongCases: 85,
+};
+const CASE_STATS_STORAGE_KEY = "cbp_public_case_stats_v1";
+
+function isCaseStats(value: unknown): value is Required<CaseStats> {
+  if (!value || typeof value !== "object") return false;
+  const maybeStats = value as CaseStats;
+  return (
+    typeof maybeStats.totalCases === "number" &&
+    Number.isFinite(maybeStats.totalCases) &&
+    typeof maybeStats.strongCases === "number" &&
+    Number.isFinite(maybeStats.strongCases)
+  );
+}
+
 const SCENARIOS = [
   {
     icon: UtensilsCrossed,
@@ -211,6 +228,36 @@ const REVIEW_CHECKED_LABEL = reviewProfilesData.checkedAtLabel;
 
 type ReviewProfile = (typeof REVIEW_PROFILES)[keyof typeof REVIEW_PROFILES];
 
+function RatingStars({ rating, label }: { rating: number; label: string }) {
+  const clampedRating = Math.max(0, Math.min(5, rating));
+  const fillWidth = `${(clampedRating / 5) * 100}%`;
+
+  return (
+    <span
+      className="relative inline-flex h-3.5 w-[4.375rem] shrink-0 text-slate-300 dark:text-slate-700"
+      role="img"
+      aria-label={label}
+    >
+      <span className="inline-flex" aria-hidden="true">
+        {FIVE_STARS.map((star) => (
+          <Star key={star} className="h-3.5 w-3.5 fill-current" />
+        ))}
+      </span>
+      <span
+        className="absolute inset-y-0 left-0 overflow-hidden text-amber-500"
+        style={{ width: fillWidth }}
+        aria-hidden="true"
+      >
+        <span className="inline-flex w-[4.375rem]">
+          {FIVE_STARS.map((star) => (
+            <Star key={star} className="h-3.5 w-3.5 fill-current" />
+          ))}
+        </span>
+      </span>
+    </span>
+  );
+}
+
 function ReviewProfileBadge({
   profile,
   mark,
@@ -221,7 +268,6 @@ function ReviewProfileBadge({
   markClassName: string;
 }) {
   const hasPublicRating = profile.reviewCount > 0 && profile.rating > 0;
-  const roundedRating = Math.round(profile.rating);
 
   return (
     <a
@@ -243,19 +289,7 @@ function ReviewProfileBadge({
         <div className="mt-1 flex flex-wrap items-center gap-x-1.5 gap-y-0.5 text-xs text-muted-foreground">
           {hasPublicRating ? (
             <>
-              <span
-                className="inline-flex items-center gap-0.5 text-amber-500"
-                role="img"
-                aria-label={`${profile.ratingLabel} von 5 Sternen`}
-              >
-                {FIVE_STARS.map((star) => (
-                  <Star
-                    key={star}
-                    className={`h-3.5 w-3.5 ${star < roundedRating ? "fill-current" : ""}`}
-                    aria-hidden="true"
-                  />
-                ))}
-              </span>
+              <RatingStars rating={profile.rating} label={`${profile.ratingLabel} von 5 Sternen`} />
               <span className="font-medium text-slate-700 dark:text-slate-200">
                 {profile.ratingLabel}/5
               </span>
@@ -317,7 +351,7 @@ const FAQS = [
 
 export default function Home() {
   const { toast } = useToast();
-  const [stats, setStats] = useState<CaseStats | null>(null);
+  const [stats, setStats] = useState<Required<CaseStats>>(DEFAULT_CASE_STATS);
   const [flatrateLoading, setFlatrateLoading] = useState(false);
   const [flatrateActive, setFlatrateActive] = useState(false);
   const [, startStatsTransition] = useTransition();
@@ -366,12 +400,29 @@ export default function Home() {
   }, [toast]);
 
   useEffect(() => {
+    try {
+      const cachedStats = window.localStorage.getItem(CASE_STATS_STORAGE_KEY);
+      if (cachedStats) {
+        const parsedStats = JSON.parse(cachedStats);
+        if (isCaseStats(parsedStats)) {
+          setStats(parsedStats);
+        }
+      }
+    } catch {
+      // Cached public counters are only decorative.
+    }
+
     if (["localhost", "127.0.0.1"].includes(window.location.hostname)) {
       return;
     }
 
     const controller = new AbortController();
     let timeoutId: number | undefined;
+    let idleId: number | undefined;
+    const idleWindow = window as Window & {
+      requestIdleCallback?: (callback: IdleRequestCallback, options?: IdleRequestOptions) => number;
+      cancelIdleCallback?: (handle: number) => void;
+    };
 
     const loadStats = () => {
       fetch("/api/cases/stats", {
@@ -385,7 +436,14 @@ export default function Home() {
           return res.json();
         })
         .then((data) => {
-          if (data) startStatsTransition(() => setStats(data));
+          if (isCaseStats(data)) {
+            try {
+              window.localStorage.setItem(CASE_STATS_STORAGE_KEY, JSON.stringify(data));
+            } catch {
+              // Ignore storage failures; the visible counters are already updated.
+            }
+            startStatsTransition(() => setStats(data));
+          }
         })
         .catch(() => {
           // Stats are decorative; never block or disturb the landing page.
@@ -393,7 +451,11 @@ export default function Home() {
     };
 
     const scheduleLoadStats = () => {
-      timeoutId = window.setTimeout(loadStats, 2500);
+      if (typeof idleWindow.requestIdleCallback === "function") {
+        idleId = idleWindow.requestIdleCallback(loadStats, { timeout: 1500 });
+      } else {
+        timeoutId = window.setTimeout(loadStats, 600);
+      }
     };
 
     if (document.readyState === "complete") {
@@ -405,6 +467,9 @@ export default function Home() {
     return () => {
       window.removeEventListener("load", scheduleLoadStats);
       if (timeoutId) window.clearTimeout(timeoutId);
+      if (idleId && typeof idleWindow.cancelIdleCallback === "function") {
+        idleWindow.cancelIdleCallback(idleId);
+      }
       controller.abort();
     };
   }, []);
@@ -514,7 +579,7 @@ export default function Home() {
               </div>
               <div className="text-left">
                 <div className="font-bold text-lg leading-none" aria-live="polite">
-                  {stats?.totalCases ?? "—"}
+                  {stats.totalCases}
                 </div>
                 <div className="text-muted-foreground text-xs">Fälle analysiert</div>
               </div>
@@ -525,7 +590,7 @@ export default function Home() {
               </div>
               <div className="text-left">
                 <div className="font-bold text-lg leading-none" aria-live="polite">
-                  {stats?.strongCases ?? "—"}
+                  {stats.strongCases}
                 </div>
                 <div className="text-muted-foreground text-xs">
                   Gut dokumentierte Ersteinschätzung

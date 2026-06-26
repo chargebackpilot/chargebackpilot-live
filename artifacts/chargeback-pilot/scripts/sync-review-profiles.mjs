@@ -11,6 +11,18 @@ const PROFILE_URLS = {
   trustpilot: "https://de.trustpilot.com/review/chargebackpilot.de",
 };
 
+const CURATED_FALLBACK_PROFILES = {
+  trustpilot: {
+    name: "Trustpilot",
+    url: PROFILE_URLS.trustpilot,
+    rating: 3.6,
+    ratingLabel: "3,6",
+    reviewCount: 1,
+    reviewLabel: "1 Bewertung",
+    sourceUpdatedLabel: "26.06.2026",
+  },
+};
+
 const REQUEST_TIMEOUT_MS = 12000;
 
 function germanDateLabel(date = new Date()) {
@@ -173,7 +185,21 @@ async function main() {
       next.profiles[key] = parse(html);
       console.log(`review sync: ${key} updated`);
     } catch (error) {
-      console.warn(`review sync: ${key} kept fallback (${error.message})`);
+      const fallback = CURATED_FALLBACK_PROFILES[key];
+      const current = next.profiles[key];
+      if (
+        fallback &&
+        (!current ||
+          typeof current.rating !== "number" ||
+          typeof current.reviewCount !== "number" ||
+          current.rating <= 0 ||
+          current.reviewCount <= 0)
+      ) {
+        next.profiles[key] = fallback;
+        console.warn(`review sync: ${key} used curated fallback (${error.message})`);
+      } else {
+        console.warn(`review sync: ${key} kept fallback (${error.message})`);
+      }
     }
   }
 
