@@ -37,6 +37,9 @@ export const apiServerEnvSchema = z.object({
   TURNSTILE_AFTER_ATTEMPTS: z.coerce.number().int().min(1).default(2),
   CASE_CREATE_WINDOW_MS: z.coerce.number().int().positive().default(3600000), // 1 hour
   CASE_CREATE_LIMIT_PER_WINDOW: z.coerce.number().int().positive().default(10),
+  CASE_CREATE_DAILY_LIMIT_PER_IP: z.coerce.number().int().positive().default(3),
+  CASE_DESCRIPTION_MIN_CHARS: z.coerce.number().int().min(20).default(80),
+  CASE_DESCRIPTION_MAX_CHARS: z.coerce.number().int().min(500).default(6000),
   REQUIRE_TURNSTILE_ON_CASE_CREATE: z.enum(["0", "1"]).default("1"),
   BASE_PATH: z.string().default("/"),
 });

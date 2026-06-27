@@ -5,6 +5,7 @@ import { CreateCaseBody, GetCaseParams } from "@workspace/api-zod";
 import { eq, count, sql } from "drizzle-orm";
 import rateLimit, { ipKeyGenerator } from "express-rate-limit";
 import Stripe from "stripe";
+import type { z } from "zod";
 import { analyzeWithGemini } from "../lib/gemini-analysis";
 import { LRUCache } from "../lib/lru-cache";
 import { getApiServerEnv } from "@workspace/env";
@@ -25,12 +26,22 @@ const aiCache = new LRUCache<string, CaseAnalysis>(500, 60 * 60 * 1000);
  * Track recent submissions per IP for rate limiting
  */
 const ipRecentSubmissions = new Map<string, number[]>();
+const ipDailySuccessfulSubmissions = new Map<string, number[]>();
+let lastRecentSubmissionPruneAt = 0;
+let lastDailySubmissionPruneAt = 0;
 
 const TURNSTILE_VERIFY_URL = "https://challenges.cloudflare.com/turnstile/v0/siteverify";
 const CASE_CREATE_WINDOW_MS = env.CASE_CREATE_WINDOW_MS;
 const CASE_CREATE_LIMIT = env.CASE_CREATE_LIMIT_PER_WINDOW;
+const CASE_CREATE_DAILY_LIMIT = env.CASE_CREATE_DAILY_LIMIT_PER_IP;
+const CASE_DESCRIPTION_MIN_CHARS = env.CASE_DESCRIPTION_MIN_CHARS;
+const CASE_DESCRIPTION_MAX_CHARS = env.CASE_DESCRIPTION_MAX_CHARS;
+const CASE_MERCHANT_RESPONSE_MAX_CHARS = 2000;
+const CASE_DAILY_WINDOW_MS = 24 * 60 * 60 * 1000;
 const TURNSTILE_AFTER_ATTEMPTS = env.TURNSTILE_AFTER_ATTEMPTS;
 const REQUIRE_TURNSTILE_IN_PROD = env.REQUIRE_TURNSTILE_ON_CASE_CREATE === "1";
+
+type CreateCaseData = z.infer<typeof CreateCaseBody>;
 
 function firstForwardedIp(value: string | string[] | undefined): string | undefined {
   const raw = Array.isArray(value) ? value[0] : value;
@@ -153,11 +164,80 @@ async function hasServerSideUnlock(row: typeof casesTable.$inferSelect, req: Req
 
 function countRecentSubmissions(ip: string) {
   const now = Date.now();
+  if (now - lastRecentSubmissionPruneAt > CASE_CREATE_WINDOW_MS) {
+    pruneTimestampMap(ipRecentSubmissions, CASE_CREATE_WINDOW_MS, now);
+    lastRecentSubmissionPruneAt = now;
+  }
   const attempts = ipRecentSubmissions.get(ip) ?? [];
   const recent = attempts.filter((ts) => now - ts <= CASE_CREATE_WINDOW_MS);
   recent.push(now);
   ipRecentSubmissions.set(ip, recent.slice(-CASE_CREATE_LIMIT));
   return recent.length;
+}
+
+function pruneTimestampMap(map: Map<string, number[]>, windowMs: number, now = Date.now()) {
+  for (const [key, timestamps] of map.entries()) {
+    const recent = timestamps.filter((ts) => now - ts <= windowMs);
+    if (recent.length === 0) map.delete(key);
+    else map.set(key, recent);
+  }
+}
+
+function dailySuccessfulSubmissionCount(ip: string) {
+  const now = Date.now();
+  if (now - lastDailySubmissionPruneAt > 10 * 60 * 1000) {
+    pruneTimestampMap(ipDailySuccessfulSubmissions, CASE_DAILY_WINDOW_MS, now);
+    lastDailySubmissionPruneAt = now;
+  }
+  const attempts = ipDailySuccessfulSubmissions.get(ip) ?? [];
+  const recent = attempts.filter((ts) => now - ts <= CASE_DAILY_WINDOW_MS);
+  ipDailySuccessfulSubmissions.set(ip, recent);
+  return recent.length;
+}
+
+function recordDailySuccessfulSubmission(ip: string) {
+  const now = Date.now();
+  const attempts = ipDailySuccessfulSubmissions.get(ip) ?? [];
+  const recent = attempts.filter((ts) => now - ts <= CASE_DAILY_WINDOW_MS);
+  recent.push(now);
+  ipDailySuccessfulSubmissions.set(ip, recent.slice(-CASE_CREATE_DAILY_LIMIT));
+}
+
+function normalizedTextLength(value: string | null | undefined) {
+  return (value ?? "").replace(/\s+/g, " ").trim().length;
+}
+
+function validateCasePayloadQuality(data: CreateCaseData) {
+  const description = data.description.replace(/\s+/g, " ").trim();
+  const merchantResponse = (data.merchantResponse ?? "").replace(/\s+/g, " ").trim();
+  const combined = `${description} ${data.merchantName} ${merchantResponse}`;
+  const urlCount = (combined.match(/https?:\/\//gi) ?? []).length;
+
+  if (description.length < CASE_DESCRIPTION_MIN_CHARS) {
+    return "Bitte beschreibe deinen Fall etwas genauer, bevor die KI-Analyse gestartet wird.";
+  }
+
+  if (description.length > CASE_DESCRIPTION_MAX_CHARS) {
+    return "Die Fallbeschreibung ist zu lang. Bitte kürze sie auf die wichtigsten Fakten.";
+  }
+
+  if (normalizedTextLength(merchantResponse) > CASE_MERCHANT_RESPONSE_MAX_CHARS) {
+    return "Die Händlerantwort ist zu lang. Bitte fasse sie vor der Analyse kurz zusammen.";
+  }
+
+  if (!/[a-zA-ZÄÖÜäöüß]{3,}/.test(description)) {
+    return "Die Fallbeschreibung enthält zu wenig lesbaren Text.";
+  }
+
+  if (/(.)\1{40,}/u.test(description)) {
+    return "Die Fallbeschreibung wirkt technisch fehlerhaft. Bitte prüfe den Text noch einmal.";
+  }
+
+  if (urlCount > 3 || /<\s*script\b|<\/\s*[a-z][^>]*>/i.test(combined)) {
+    return "Die Eingaben enthalten zu viele Links oder technische Markierungen.";
+  }
+
+  return null;
 }
 
 async function verifyTurnstileToken(token: string, ip?: string) {
@@ -189,6 +269,19 @@ const limiter = rateLimit({
 });
 
 router.post("/cases", limiter, async (req: Request, res: Response) => {
+  const parseResult = CreateCaseBody.safeParse(req.body);
+  if (!parseResult.success) {
+    res.status(400).json({ error: "Ungültige Eingabedaten", details: parseResult.error.issues });
+    return;
+  }
+
+  const data = parseResult.data;
+  const qualityError = validateCasePayloadQuality(data);
+  if (qualityError) {
+    res.status(400).json({ error: qualityError });
+    return;
+  }
+
   const ip = getClientIp(req);
   const submissionCount = countRecentSubmissions(ip);
   const turnstileRequired =
@@ -217,13 +310,15 @@ router.post("/cases", limiter, async (req: Request, res: Response) => {
     }
   }
 
-  const parseResult = CreateCaseBody.safeParse(req.body);
-  if (!parseResult.success) {
-    res.status(400).json({ error: "Ungültige Eingabedaten", details: parseResult.error.issues });
+  if (dailySuccessfulSubmissionCount(ip) >= CASE_CREATE_DAILY_LIMIT) {
+    logger.warn({ ip, limit: CASE_CREATE_DAILY_LIMIT }, "Daily case create limit reached");
+    res.status(429).json({
+      error: "Tageslimit für kostenlose Analysen erreicht. Bitte versuche es morgen erneut.",
+    });
     return;
   }
 
-  const data = parseResult.data;
+  recordDailySuccessfulSubmission(ip);
   const evidence = (data.evidence as string[]) || [];
 
   const analysisInput = {

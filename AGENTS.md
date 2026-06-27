@@ -309,6 +309,9 @@ STRIPE_WEBHOOK_SECRET
 TURNSTILE_SECRET_KEY
 CASE_RETENTION_MONTHS=12
 ANALYTICS_RETENTION_MONTHS=12
+CASE_CREATE_DAILY_LIMIT_PER_IP=3
+CASE_DESCRIPTION_MIN_CHARS=80
+CASE_DESCRIPTION_MAX_CHARS=6000
 ```
 
 Security rules:
@@ -316,6 +319,8 @@ Security rules:
 - validate user input
 - no PII in logs
 - use rate limits and body limits
+- keep `/api/cases` cheap before Gemini: schema validation, low-quality payload rejection,
+  Turnstile, hourly limit and daily free-analysis limit all happen before the AI call
 - keep Helmet/CSP intentional
 - treat Stripe, Gemini, DB and Turnstile keys as secrets
 - if a real secret was committed, rotate it immediately

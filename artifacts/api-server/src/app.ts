@@ -80,6 +80,25 @@ app.use(
   })
 );
 
+const blockedProbePaths = [
+  /^\/\.env(?:$|[/?#])/i,
+  /^\/wp-admin(?:\/|$)/i,
+  /^\/wp-login\.php(?:$|[/?#])/i,
+  /^\/xmlrpc\.php(?:$|[/?#])/i,
+  /^\/phpmyadmin(?:\/|$)/i,
+  /^\/php-my-admin(?:\/|$)/i,
+  /^\/adminer(?:\.php)?(?:$|[/?#])/i,
+];
+
+app.use((req: Request, res: Response, next: NextFunction) => {
+  if (blockedProbePaths.some((pattern) => pattern.test(req.path))) {
+    res.setHeader("Cache-Control", "no-store");
+    res.status(404).type("text/plain").send("Not found");
+    return;
+  }
+  next();
+});
+
 // Request body parsing with size limits (prevent abuse)
 function isStripeWebhookRequest(req: Request) {
   return req.method === "POST" && req.originalUrl?.split("?")[0] === "/api/stripe/webhook";
@@ -413,6 +432,32 @@ const defaultMeta = {
 
 const origin = "https://chargebackpilot.de";
 
+function shouldCachePublicHtml(req: Request, isKnownRoute = true) {
+  if (!isKnownRoute || req.method !== "GET") return false;
+  if (Object.keys(req.query).length > 0) return false;
+
+  const pathname = req.path || "/";
+  if (pathname === "/admin" || pathname.startsWith("/admin/")) return false;
+  if (pathname === "/vorlagen-generator" || pathname.startsWith("/vorlagen-generator/")) {
+    return false;
+  }
+
+  return true;
+}
+
+function setHtmlCacheHeaders(req: Request, res: Response, isKnownRoute = true) {
+  if (!shouldCachePublicHtml(req, isKnownRoute)) {
+    res.setHeader("Cache-Control", "no-cache, must-revalidate");
+    return;
+  }
+
+  res.setHeader(
+    "Cache-Control",
+    "public, max-age=300, s-maxage=3600, stale-while-revalidate=86400"
+  );
+  res.setHeader("CDN-Cache-Control", "public, max-age=3600");
+}
+
 function renderSeoHtml(pathname: string) {
   const raw = fs.readFileSync(
     pathname === "/" || !fs.existsSync(appShellPath) ? indexPath : appShellPath,
@@ -485,7 +530,8 @@ app.use(
         return;
       }
       if (filePath.endsWith(".html") || filePath.endsWith("manifest.json")) {
-        res.setHeader("Cache-Control", "no-cache, must-revalidate");
+        res.setHeader("Cache-Control", "public, max-age=300, s-maxage=3600");
+        res.setHeader("CDN-Cache-Control", "public, max-age=3600");
       }
     },
   })
@@ -510,7 +556,7 @@ app.get(/(.*)/, (req, res) => {
   const prerenderedPath = getPrerenderedHtmlPath(req.path || "/");
   if (prerenderedPath) {
     res.setHeader("Content-Type", "text/html; charset=utf-8");
-    res.setHeader("Cache-Control", "no-cache, must-revalidate");
+    setHtmlCacheHeaders(req, res);
     const html = applyDynamicRobots(fs.readFileSync(prerenderedPath, "utf-8"), req.path || "/");
     res.status(200).send(html);
     return;
@@ -518,7 +564,7 @@ app.get(/(.*)/, (req, res) => {
 
   const { html, isKnownRoute } = renderSeoHtml(req.path || "/");
   res.setHeader("Content-Type", "text/html; charset=utf-8");
-  res.setHeader("Cache-Control", "no-cache, must-revalidate");
+  setHtmlCacheHeaders(req, res, isKnownRoute);
   res.status(isKnownRoute ? 200 : 404).send(applyDynamicRobots(html, req.path || "/"));
 });
 

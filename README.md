@@ -170,9 +170,14 @@ GEMINI_API_KEY
 STRIPE_SECRET_KEY
 STRIPE_WEBHOOK_SECRET
 TURNSTILE_SECRET_KEY
+CASE_CREATE_DAILY_LIMIT_PER_IP=3
+CASE_DESCRIPTION_MIN_CHARS=80
+CASE_DESCRIPTION_MAX_CHARS=6000
 ```
 
-Cloudflare kann DNS, SSL und statisches Asset-Caching übernehmen. `/api` muss dynamisch beim Backend bleiben.
+Cloudflare kann DNS, SSL und statisches Asset-Caching übernehmen. Öffentliche prerendered
+HTML-Seiten setzen CDN-freundliche Cache-Header; `/api`, Admin, Wizard und URLs mit Query bleiben
+dynamisch beim Backend.
 
 ## SEO Und Content
 
