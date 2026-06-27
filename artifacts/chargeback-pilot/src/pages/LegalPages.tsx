@@ -337,8 +337,8 @@ export function Methodik() {
           <h2>Welche Daten fließen ein?</h2>
           <p>
             Berücksichtigt werden insbesondere Problemkategorie, Zahlungsweg, Beleglage, bisherige
-            Kommunikation mit dem Händler und typische Fristenhinweise aus gängigen
-            Verbraucherfällen.
+            Kommunikation mit dem Händler und Fristen, die beim jeweiligen Zahlungsweg häufig zu
+            prüfen sind.
           </p>
           <h2>Wie entsteht das Ergebnis?</h2>
           <p>

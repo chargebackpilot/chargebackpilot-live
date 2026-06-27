@@ -5,12 +5,6 @@ import { SeoHead } from "@/components/SeoHead";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from "@/components/ui/accordion";
-import {
   ArrowRight,
   CheckCircle2,
   AlertTriangle,
@@ -53,6 +47,189 @@ const TRUST_LABEL: Record<string, { label: string; color: string }> = {
     color: "bg-red-100 text-red-800 border-red-300",
   },
 };
+
+interface GuideLink {
+  href: string;
+  label: string;
+  description: string;
+}
+
+const PROBLEM_GUIDE_LINKS: Record<string, GuideLink[]> = {
+  "ware-nicht-erhalten": [
+    {
+      href: "/ware-nicht-erhalten-musterbrief",
+      label: "Ware nicht erhalten Musterbrief",
+      description: "Sachlicher Aufbau für Händler, PayPal, Klarna oder Bank.",
+    },
+    {
+      href: "/paypal-kaeuferschutz-vorlage",
+      label: "PayPal Käuferschutz Vorlage",
+      description: "Textaufbau für Konfliktcenter und Eskalation.",
+    },
+    {
+      href: "/visa-mastercard-chargeback",
+      label: "Kreditkarten-Chargeback",
+      description: "Umsatzreklamation bei Visa oder Mastercard einordnen.",
+    },
+  ],
+  "lieferung-falsch": [
+    {
+      href: "/lieferando-rueckerstattung",
+      label: "Lieferdienst-Rückerstattung",
+      description: "Falsche, kalte oder unvollständige Bestellung dokumentieren.",
+    },
+    {
+      href: "/paypal-kaeuferschutz-vorlage",
+      label: "PayPal-Text vorbereiten",
+      description: "Kurz und belegorientiert im PayPal-Konfliktcenter formulieren.",
+    },
+    {
+      href: "/visa-mastercard-chargeback",
+      label: "Kartenzahlung prüfen",
+      description: "Kartenumsatz und Belege für die Bank sortieren.",
+    },
+  ],
+  "flug-storniert": [
+    {
+      href: "/flug-chargeback",
+      label: "Flug Chargeback",
+      description: "Stornierung, Erstattung, Gutschein und Zahlungsweg trennen.",
+    },
+    {
+      href: "/chargeback-antrag-vorlage",
+      label: "Bank-Antrag Vorlage",
+      description: "Umsatzreklamation mit Buchung und Belegen vorbereiten.",
+    },
+    {
+      href: "/paypal-chargeback",
+      label: "PayPal bei Reisebuchung",
+      description: "Konfliktcenter und Zahlungsquelle sauber unterscheiden.",
+    },
+  ],
+  "abbuchung-ohne-zustimmung": [
+    {
+      href: "/abo-falle-musterbrief",
+      label: "Abbuchung widersprechen",
+      description: "Anbieteranschreiben mit Umsatz, Kündigung und Vertragsgrundlage.",
+    },
+    {
+      href: "/chargeback-antrag-vorlage",
+      label: "Umsatzreklamation",
+      description: "Bank-Anfrage sachlich und belegorientiert vorbereiten.",
+    },
+  ],
+};
+
+const SPECIAL_GUIDE_LINKS: Record<string, GuideLink[]> = {
+  "amazon/ware-nicht-erhalten": [
+    {
+      href: "/chargeback-antrag-vorlage",
+      label: "Chargeback Antrag Vorlage",
+      description: "Bank-Antrag mit Umsatz, Bestellnummer und Händlerkontakt aufbauen.",
+    },
+    {
+      href: "/ware-nicht-erhalten-musterbrief",
+      label: "Ware nicht erhalten Musterbrief",
+      description: "Händlerkontakt und Zahlungsweg nachvollziehbar dokumentieren.",
+    },
+    {
+      href: "/paypal-kaeuferschutz-vorlage",
+      label: "PayPal Käuferschutz Vorlage",
+      description: "Falls die Zahlung über PayPal lief: Konflikt sauber formulieren.",
+    },
+    {
+      href: "/scam-shops-2026",
+      label: "Shop-Warnsignale prüfen",
+      description: "Bei Drittanbieter- oder Marktplatzfällen Belege zusätzlich sichern.",
+    },
+  ],
+  "uber-eats/ware-nicht-erhalten": [
+    {
+      href: "/hilfe/lieferando/lieferung-falsch",
+      label: "Lieferando Reklamation",
+      description: "Vergleichbarer Ablauf für Essen, Support-Chat und Zahlungsweg.",
+    },
+    {
+      href: "/hilfe/wolt/lieferung-falsch",
+      label: "Wolt Lieferung falsch",
+      description: "Konkrete Belege bei falscher oder unvollständiger Lieferung.",
+    },
+    {
+      href: "/paypal-kaeuferschutz-vorlage",
+      label: "PayPal-Text vorbereiten",
+      description: "Wenn die App-Zahlung über PayPal lief.",
+    },
+    {
+      href: "/visa-mastercard-chargeback",
+      label: "Kartenzahlung prüfen",
+      description: "Umsatz, Supportantwort und Betrag für die Bank sortieren.",
+    },
+  ],
+  "lieferando/lieferung-falsch": [
+    {
+      href: "/hilfe/wolt/lieferung-falsch",
+      label: "Wolt Lieferung falsch",
+      description: "Ähnliche Beleglogik bei App-Support und Essenslieferung.",
+    },
+    {
+      href: "/hilfe/uber-eats/lieferung-falsch",
+      label: "Uber Eats Reklamation",
+      description: "Supportverlauf, Fotos und Zahlungsweg vergleichbar dokumentieren.",
+    },
+    {
+      href: "/paypal-kaeuferschutz-vorlage",
+      label: "PayPal Käuferschutz Vorlage",
+      description: "Sachlicher Text für PayPal-Zahlungen bei Lieferproblemen.",
+    },
+  ],
+  "kiwi/flug-storniert": [
+    {
+      href: "/hilfe/ryanair/flug-storniert",
+      label: "Ryanair Flug storniert",
+      description: "Airline-Fall direkt mit Buchung, Stornierung und Zahlungsweg prüfen.",
+    },
+    {
+      href: "/flug-chargeback",
+      label: "Flug Chargeback",
+      description: "Ticketpreis, Steuern, Gebühren und Gutschein sauber trennen.",
+    },
+    {
+      href: "/visa-mastercard-chargeback",
+      label: "Kreditkarten-Chargeback",
+      description: "Kartenzahlung und Erstattungsantworten für die Bank sortieren.",
+    },
+    {
+      href: "/rueckerstattung-haendler-vorlage",
+      label: "Rückerstattung anfordern",
+      description: "Sachliche Anfrage an Anbieter oder Vermittler vorbereiten.",
+    },
+  ],
+};
+
+function merchantProblemGuideLinks(merchantSlug: string, problemSlug: string, currentPath: string) {
+  const key = `${merchantSlug}/${problemSlug}`;
+  const links = [
+    ...(SPECIAL_GUIDE_LINKS[key] ?? []),
+    ...(PROBLEM_GUIDE_LINKS[problemSlug] ?? []),
+    {
+      href: "/vergleich/paypal-vs-kreditkarte-vs-klarna",
+      label: "Zahlungswege vergleichen",
+      description: "PayPal, Kreditkarte und Klarna nach Belegen und Fristen einordnen.",
+    },
+  ];
+
+  const seen = new Set<string>();
+  return links
+    .filter((link) => {
+      if (link.href === currentPath || seen.has(link.href)) return false;
+      if (/^\/hilfe\/[^/]+\/[^/]+$/.test(link.href) && !isIndexableMerchantProblemPath(link.href)) {
+        return false;
+      }
+      seen.add(link.href);
+      return true;
+    })
+    .slice(0, 5);
+}
 
 export default function MerchantProblemPage() {
   const [, params] = useRoute<{ merchantSlug: string; problemSlug: string }>(
@@ -139,6 +316,11 @@ export default function MerchantProblemPage() {
     .filter((p): p is NonNullable<typeof p> => !!p);
   const indexedSiblings = siblings.filter((p) =>
     isIndexableMerchantProblemPath(`/hilfe/${merchant.slug}/${p.slug}`)
+  );
+  const contextualGuideLinks = merchantProblemGuideLinks(
+    merchant.slug,
+    problem.slug,
+    canonicalPath
   );
 
   return (
@@ -414,17 +596,38 @@ export default function MerchantProblemPage() {
           {/* FAQ */}
           <section>
             <h2 className="text-2xl font-bold mb-5 border-b pb-2">Häufig gestellte Fragen</h2>
-            <Accordion type="single" collapsible className="w-full">
+            <div className="grid gap-4">
               {copy.faq.map((f, i) => (
-                <AccordionItem key={i} value={`faq-${i}`}>
-                  <AccordionTrigger className="text-left">{f.q}</AccordionTrigger>
-                  <AccordionContent className="text-muted-foreground leading-relaxed">
-                    {f.a}
-                  </AccordionContent>
-                </AccordionItem>
+                <div key={i} className="rounded-xl border bg-background p-5 shadow-sm">
+                  <h3 className="mb-2 text-base font-bold leading-snug">{f.q}</h3>
+                  <p className="text-sm leading-relaxed text-muted-foreground">{f.a}</p>
+                </div>
               ))}
-            </Accordion>
+            </div>
           </section>
+
+          {contextualGuideLinks.length > 0 && (
+            <section>
+              <h2 className="text-2xl font-bold mb-5">Passend dazu</h2>
+              <div className="grid gap-3 sm:grid-cols-2">
+                {contextualGuideLinks.map((link) => (
+                  <Link key={link.href} href={link.href}>
+                    <Card className="h-full cursor-pointer transition-colors hover:border-primary">
+                      <CardContent className="p-4">
+                        <div className="mb-2 flex items-center justify-between gap-3">
+                          <span className="font-semibold text-sm">{link.label}</span>
+                          <ArrowRight className="h-4 w-4 shrink-0 text-muted-foreground" />
+                        </div>
+                        <p className="text-xs leading-relaxed text-muted-foreground">
+                          {link.description}
+                        </p>
+                      </CardContent>
+                    </Card>
+                  </Link>
+                ))}
+              </div>
+            </section>
+          )}
 
           {/* Sibling problems */}
           {indexedSiblings.length > 0 && (

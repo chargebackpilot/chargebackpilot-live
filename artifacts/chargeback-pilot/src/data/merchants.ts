@@ -492,7 +492,7 @@ export function generateMerchantProblemCopy(
   const sectorWord = sectorLabel(merchant.sector);
 
   const title = `${m} ${displayLabel} — Reklamation strukturiert vorbereiten 2026`;
-  const metaDescription = `Du hast bei ${m} Probleme mit ${sentencePhrase}? Strukturierte Orientierung 2026: Belege, typische Fristenhinweise und unverbindliche Textentwürfe für Händler, Bank oder Zahlungsdienstleister.`;
+  const metaDescription = `Du hast bei ${m} Probleme mit ${sentencePhrase}? Belege, Fristen beim Zahlungsweg und unverbindliche Textentwürfe für Händler, Bank oder Zahlungsdienstleister strukturiert vorbereiten.`;
 
   const whenApplies = applicableScenarios(merchant, problem);
   const evidence = evidenceForProblem(problem, merchant);

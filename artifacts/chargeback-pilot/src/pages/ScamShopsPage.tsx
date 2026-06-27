@@ -4,12 +4,6 @@ import { Breadcrumbs } from "@/components/Breadcrumbs";
 import { SeoHead } from "@/components/SeoHead";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from "@/components/ui/accordion";
 import { AlertTriangle, ArrowRight, ShieldCheck, Search, Sparkles } from "lucide-react";
 import { useState } from "react";
 import { getRouteMeta } from "@/seo-routes";
@@ -330,16 +324,54 @@ export default function ScamShopsPage() {
             <h2 className="text-2xl font-bold mb-5 border-b pb-2">
               Häufige Fragen zu Fake-Shop-Verdacht
             </h2>
-            <Accordion type="single" collapsible className="w-full">
-              {FAQS.map((faq, index) => (
-                <AccordionItem key={faq.q} value={`faq-${index}`}>
-                  <AccordionTrigger className="text-left">{faq.q}</AccordionTrigger>
-                  <AccordionContent className="text-muted-foreground leading-relaxed">
-                    {faq.a}
-                  </AccordionContent>
-                </AccordionItem>
+            <div className="grid gap-4">
+              {FAQS.map((faq) => (
+                <div key={faq.q} className="rounded-xl border bg-background p-5 shadow-sm">
+                  <h3 className="mb-2 text-base font-bold leading-snug">{faq.q}</h3>
+                  <p className="text-sm leading-relaxed text-muted-foreground">{faq.a}</p>
+                </div>
               ))}
-            </Accordion>
+            </div>
+          </section>
+
+          <section>
+            <h2 className="text-2xl font-bold mb-5">Passend dazu</h2>
+            <div className="grid gap-3 sm:grid-cols-2">
+              {[
+                {
+                  href: "/chargeback-antrag-vorlage",
+                  label: "Chargeback Antrag Vorlage",
+                  text: "Bank-Anfrage mit Umsatz, Shop-Daten und Belegen sachlich vorbereiten.",
+                },
+                {
+                  href: "/paypal-kaeuferschutz-vorlage",
+                  label: "PayPal Käuferschutz Vorlage",
+                  text: "Konflikt im PayPal-Konto ohne harte Vorwürfe nachvollziehbar formulieren.",
+                },
+                {
+                  href: "/ware-nicht-erhalten-musterbrief",
+                  label: "Ware nicht erhalten Musterbrief",
+                  text: "Händlerkontakt, Tracking und Zahlungsweg vor einer Eskalation sortieren.",
+                },
+                {
+                  href: "/vergleich/paypal-vs-kreditkarte-vs-klarna",
+                  label: "Zahlungswege vergleichen",
+                  text: "PayPal, Kreditkarte, Klarna und Bankkontakt nach Belegen und Fristen einordnen.",
+                },
+              ].map((link) => (
+                <Link key={link.href} href={link.href}>
+                  <Card className="h-full cursor-pointer transition-colors hover:border-primary">
+                    <CardContent className="p-4">
+                      <div className="mb-2 flex items-center justify-between gap-3">
+                        <span className="font-semibold text-sm">{link.label}</span>
+                        <ArrowRight className="h-4 w-4 shrink-0 text-muted-foreground" />
+                      </div>
+                      <p className="text-xs leading-relaxed text-muted-foreground">{link.text}</p>
+                    </CardContent>
+                  </Card>
+                </Link>
+              ))}
+            </div>
           </section>
 
           {/* CTA */}

@@ -4,12 +4,6 @@ import { SeoHead } from "@/components/SeoHead";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Link } from "wouter";
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from "@/components/ui/accordion";
 import { PaymentHelpGrid } from "@/components/PaymentLogos";
 import reviewProfilesData from "@/data/review-profiles.generated.json";
 import { useToast } from "@/hooks/use-toast";
@@ -1032,20 +1026,14 @@ export default function Home() {
               Fristen, Belegen und den ChargebackPilot-Vorlagen.
             </p>
           </div>
-          <Accordion type="single" collapsible className="w-full space-y-2">
-            {FAQS.map((faq, i) => (
-              <AccordionItem
-                key={i}
-                value={`item-${i}`}
-                className="bg-white border rounded-xl px-4"
-              >
-                <AccordionTrigger className="font-semibold text-left">{faq.q}</AccordionTrigger>
-                <AccordionContent className="text-muted-foreground leading-relaxed">
-                  {faq.a}
-                </AccordionContent>
-              </AccordionItem>
+          <div className="grid gap-4">
+            {FAQS.map((faq) => (
+              <div key={faq.q} className="rounded-xl border bg-card p-5 text-left shadow-sm">
+                <h3 className="mb-2 text-base font-bold leading-snug">{faq.q}</h3>
+                <p className="text-sm leading-relaxed text-muted-foreground">{faq.a}</p>
+              </div>
             ))}
-          </Accordion>
+          </div>
 
           <div className="mt-12 text-center">
             <p className="text-muted-foreground mb-4 text-sm">

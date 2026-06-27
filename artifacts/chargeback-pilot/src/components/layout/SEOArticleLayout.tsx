@@ -10,12 +10,6 @@ import {
   PenLine,
   Sparkles,
 } from "lucide-react";
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from "@/components/ui/accordion";
 import { Breadcrumbs } from "@/components/Breadcrumbs";
 import { SeoHead } from "@/components/SeoHead";
 import { openNewWizardCase } from "@/lib/case-persistence";
@@ -561,13 +555,57 @@ function guideContext(title: string, category: string): GuideContext {
   };
 }
 
-function snippetAnswer(title: string, category: string, ctx: GuideContext): string {
-  return `${title} ist vor allem dann relevant, wenn dein Problem zu ${category} passt, du Zahlung und Sachverhalt belegen kannst und der Anbieter keine nachvollziehbare Lösung anbietet. Der stärkste nächste Schritt ist meist: ${ctx.primaryPath}. Entscheidend sind saubere Belege, eine kurze Chronologie und die Fristen deines Zahlungsdienstleisters.`;
+function snippetAnswer(title: string, ctx: GuideContext): string {
+  return `${title} hilft vor allem dann, wenn du Zahlung und Sachverhalt belegen kannst und der Anbieter keine nachvollziehbare Lösung anbietet. Der stärkste nächste Schritt ist meist: ${ctx.primaryPath}. Entscheidend sind saubere Belege, eine kurze Chronologie und die Fristen deines Zahlungsdienstleisters.`;
+}
+
+function heroLead(title: string, category: string, profile: MoneyPageProfile | null): string {
+  if (profile) {
+    return `Hier findest du einen prüfbaren Aufbau für ${profile.primaryKeyword}: welche Angaben wichtig sind, welche Belege dazugehören und wie du die Bitte an den richtigen Empfänger sachlich formulierst.`;
+  }
+
+  if (category.toLowerCase().includes("musterbrief")) {
+    return `Diese Seite hilft dir, ${title.replace(/:.+$/, "")} sachlich vorzubereiten: mit klarer Chronologie, passenden Belegen und einem Textaufbau, den du vor dem Versand selbst prüfen kannst.`;
+  }
+
+  return `Hier sortierst du, wann ${category} eine sinnvolle Anlaufstelle sein kann, welche Belege zuerst wichtig sind und wie du den nächsten Schritt ohne harte Vorwürfe nachvollziehbar formulierst.`;
 }
 
 function guideExamples(category: string, title: string): GuideExample[] {
   const lowerTitle = title.toLowerCase();
   const lowerCategory = category.toLowerCase();
+
+  if (lowerTitle.includes("chargeback antrag")) {
+    return [
+      {
+        title: "Ware nicht erhalten",
+        situation:
+          "Du hast per Kreditkarte bezahlt, der Händler liefert nicht oder verweist nur auf einen unklaren Versandstatus.",
+        usefulProof:
+          "Kartenumsatz, Bestellbestätigung, Trackingverlauf, Lieferadresse und dokumentierter Händlerkontakt.",
+        nextMove:
+          "Umsatzreklamation bei der Bank mit kurzer Chronologie und Anlagenliste vorbereiten.",
+      },
+      {
+        title: "Flug storniert oder Leistung nicht erbracht",
+        situation:
+          "Ein Flug, Hotel oder eine andere gebuchte Leistung fällt aus; Erstattung, Gutschein oder Gebührenabzug sind unklar.",
+        usefulProof:
+          "Buchungsbestätigung, Stornierungsnachricht, Zahlungsbeleg, Erstattungsangebot und bisherige Antworten.",
+        nextMove:
+          "Offenen Betrag sauber aufschlüsseln und die Bank um Prüfung des Kartenumsatzes bitten.",
+      },
+      {
+        title: "Auffälliger Shop oder falsche Ware",
+        situation:
+          "Der Shop liefert gar nicht, verschwindet nach Zahlung oder sendet Ware, die deutlich von der Beschreibung abweicht.",
+        usefulProof:
+          "Shop-Screenshots, Produktbeschreibung, Fotos der erhaltenen Ware, Zahlungsnachweis und Kontaktversuche.",
+        nextMove:
+          "Sachverhalt ohne Betrugsvorwurf schildern und prüfen lassen, welcher Chargeback-Grund in Betracht kommt.",
+      },
+    ];
+  }
 
   if (lowerCategory.includes("paypal")) {
     return [
@@ -1243,7 +1281,7 @@ function enrichFaq(
   const generated: FaqItem[] = [
     {
       q: `Wann ist dieser Ratgeber sinnvoll?`,
-      a: `Sinnvoll ist dieser Weg, wenn dein Problem zum beschriebenen Falltyp passt, du Zahlung und Bestellung belegen kannst und der Händler oder Anbieter keine nachvollziehbare Lösung anbietet. Vor einer Eskalation solltest du prüfen, ${ctx.firstCheck}.`,
+      a: `Sinnvoll ist dieser Weg, wenn der beschriebene Falltyp zu deinem Sachverhalt passt, du Zahlung und Bestellung belegen kannst und der Händler oder Anbieter keine nachvollziehbare Lösung anbietet. Vor einer Eskalation solltest du prüfen, ${ctx.firstCheck}.`,
     },
     {
       q: `Welche Unterlagen sollte ich vor dem Antrag sortieren?`,
@@ -1301,12 +1339,13 @@ export function SEOArticleLayout({
   const description =
     routeMeta?.description ??
     moneyProfile?.metaDescription ??
-    `${title}: typische Fristenhinweise, Belege und strukturierte Orientierung bei ${category}. Mit unverbindlichen Textentwürfen.`;
+    `${title}: Belege, Fristen und nächste Schritte sachlich sortieren. Mit unverbindlichen Textentwürfen zur eigenen Prüfung.`;
   const context = guideContext(title, category);
   const enrichedFaq = enrichFaq(faq, title, category, context);
   const examples = guideExamples(category, title);
   const inlineLinks = contextualLinks(canonicalPath, category);
-  const shortAnswer = snippetAnswer(title, category, context);
+  const shortAnswer = snippetAnswer(title, context);
+  const lead = heroLead(title, category, moneyProfile);
   const insight = editorialInsight(title, category, context);
   const glossary = glossaryForGuide(title, category);
   const preview = wordingPreview(title, category, context);
@@ -1400,10 +1439,7 @@ export function SEOArticleLayout({
         <header className="bg-muted py-16 px-4 border-b">
           <div className="container mx-auto max-w-3xl">
             <h1 className="text-3xl md:text-5xl font-bold mb-6">{title}</h1>
-            <p className="text-xl text-muted-foreground mb-8">
-              Erhalte eine strukturierte Orientierung zu {category}: typische Fristenhinweise,
-              Belege und mögliche nächste Schritte.
-            </p>
+            <p className="text-xl text-muted-foreground mb-8">{lead}</p>
             <div className="mb-8 flex flex-wrap items-center gap-2 text-sm text-muted-foreground">
               <span className="inline-flex items-center gap-2 rounded-md border bg-background px-3 py-1.5">
                 <PenLine className="h-4 w-4 text-primary" />
@@ -1763,16 +1799,14 @@ export function SEOArticleLayout({
           {/* FAQ */}
           <section>
             <h2 className="text-2xl font-bold mb-6 border-b pb-2">Häufig gestellte Fragen (FAQ)</h2>
-            <Accordion type="single" collapsible className="w-full">
+            <div className="grid gap-4">
               {enrichedFaq.map((f, i) => (
-                <AccordionItem key={i} value={`faq-${i}`}>
-                  <AccordionTrigger className="text-left">{f.q}</AccordionTrigger>
-                  <AccordionContent className="text-muted-foreground leading-relaxed">
-                    {f.a}
-                  </AccordionContent>
-                </AccordionItem>
+                <div key={i} className="rounded-xl border bg-background p-5 shadow-sm">
+                  <h3 className="mb-2 text-base font-bold leading-snug">{f.q}</h3>
+                  <p className="text-sm leading-relaxed text-muted-foreground">{f.a}</p>
+                </div>
               ))}
-            </Accordion>
+            </div>
           </section>
 
           {/* Bottom CTA */}

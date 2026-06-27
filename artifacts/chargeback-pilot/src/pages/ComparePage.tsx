@@ -3,12 +3,6 @@ import { MainLayout } from "@/components/layout/MainLayout";
 import { Breadcrumbs } from "@/components/Breadcrumbs";
 import { SeoHead } from "@/components/SeoHead";
 import { Button } from "@/components/ui/button";
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from "@/components/ui/accordion";
 import { ArrowRight, Check, X, Minus, Sparkles } from "lucide-react";
 import { getRouteMeta } from "@/seo-routes";
 
@@ -277,16 +271,14 @@ export default function ComparePage() {
 
           <section>
             <h2 className="text-2xl font-bold mb-5 border-b pb-2">Häufige Fragen zum Vergleich</h2>
-            <Accordion type="single" collapsible className="w-full">
-              {FAQS.map((faq, index) => (
-                <AccordionItem key={faq.q} value={`faq-${index}`}>
-                  <AccordionTrigger className="text-left">{faq.q}</AccordionTrigger>
-                  <AccordionContent className="text-muted-foreground leading-relaxed">
-                    {faq.a}
-                  </AccordionContent>
-                </AccordionItem>
+            <div className="grid gap-4">
+              {FAQS.map((faq) => (
+                <div key={faq.q} className="rounded-xl border bg-background p-5 shadow-sm">
+                  <h3 className="mb-2 text-base font-bold leading-snug">{faq.q}</h3>
+                  <p className="text-sm leading-relaxed text-muted-foreground">{faq.a}</p>
+                </div>
               ))}
-            </Accordion>
+            </div>
           </section>
 
           {/* CTA */}
