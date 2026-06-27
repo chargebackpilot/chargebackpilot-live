@@ -281,6 +281,12 @@ Recent PageSpeed-sensitive decisions:
 - public Ratgeber, SEO, legal and `/hilfe/...` pages are intentionally imported synchronously in
   `App.tsx`. Do not lazy-load them again: visible content must not disappear between header and
   footer during navigation or hydration.
+- The homepage uses a separate lightweight `HomeApp` client bundle through `src/main.tsx`; all
+  non-home routes load the full synchronous public router. This keeps the homepage fast without
+  reintroducing Suspense gaps on Ratgeber/SEO/legal pages.
+- Links from the homepage to non-home internal routes intentionally use document navigation via
+  `HomeApp` capture handling, so prerendered route HTML appears immediately instead of rendering a
+  lazy SPA fallback.
 
 Do not add large always-loaded dependencies to `App.tsx` or homepage without a strong reason.
 Use lazy chunks for admin, wizard, PDF generation and other non-critical code.

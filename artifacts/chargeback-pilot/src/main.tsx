@@ -1,30 +1,31 @@
 import { createRoot, hydrateRoot } from "react-dom/client";
-import App from "./App";
 import "./index.css";
 import { AppErrorBoundary } from "@/components/AppErrorBoundary";
-import { applyStandardSeoHead } from "@/components/SeoHead";
-import { getRouteMeta } from "@/seo-routes";
+import HomeApp from "./HomeApp";
 
 const root = document.getElementById("root")!;
-const initialRouteMeta = getRouteMeta(window.location.pathname);
 
-if (initialRouteMeta) {
-  applyStandardSeoHead({
-    title: initialRouteMeta.title,
-    description: initialRouteMeta.description,
-    canonical: initialRouteMeta.canonical ?? initialRouteMeta.path,
-    noindex: initialRouteMeta.noindex,
+function loadClientApp() {
+  if (window.location.pathname === "/") {
+    return Promise.resolve({ default: HomeApp });
+  }
+  return import("./App");
+}
+
+loadClientApp()
+  .then(({ default: App }) => {
+    const app = (
+      <AppErrorBoundary>
+        <App />
+      </AppErrorBoundary>
+    );
+
+    if (root.hasChildNodes()) {
+      hydrateRoot(root, app);
+    } else {
+      createRoot(root).render(app);
+    }
+  })
+  .catch((error) => {
+    console.error("ChargebackPilot konnte nicht gestartet werden.", error);
   });
-}
-
-const app = (
-  <AppErrorBoundary>
-    <App />
-  </AppErrorBoundary>
-);
-
-if (root.hasChildNodes()) {
-  hydrateRoot(root, app);
-} else {
-  createRoot(root).render(app);
-}
