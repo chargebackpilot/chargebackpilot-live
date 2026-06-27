@@ -114,7 +114,7 @@ export const PROBLEMS: ProblemDef[] = [
     slug: "lieferung-falsch",
     label: "Lieferung falsch oder unbrauchbar",
     searchPhrase: "Essenslieferung falsch oder unbrauchbar",
-    sentencePhrase: "falscher oder unbrauchbarer Essenslieferung",
+    sentencePhrase: "einer falschen oder unbrauchbaren Essenslieferung",
     paymentMethods: ["paypal", "kreditkarte"],
     wizardProblemId: "food_delivery",
   },
@@ -460,6 +460,7 @@ export interface GeneratedCopy {
   category: string;
   displayLabel: string;
   searchPhrase: string;
+  shortAnswer: string;
   /** 2-3 paragraph intro for the article — primary SEO body copy. */
   intro: string[];
   whenApplies: string[];
@@ -501,6 +502,7 @@ export function generateMerchantProblemCopy(
   const steps = stepsForCombo(merchant, problem);
   const mistakes = commonMistakes(problem, merchant);
   const faq = faqForCombo(merchant, problem, sectorWord);
+  const shortAnswer = shortAnswerForCombo(merchant, problem);
   const intro = introParagraphs(merchant, problem, sectorWord);
   const deadlines = deadlinesForCombo(problem);
   const legalBasis = legalBasisForProblem(problem);
@@ -512,6 +514,7 @@ export function generateMerchantProblemCopy(
     category: `${m} ${displayLabel}`,
     displayLabel,
     searchPhrase,
+    shortAnswer,
     intro,
     whenApplies,
     evidence,
@@ -615,11 +618,52 @@ function paymentNextStepForCombo(p: ProblemDef, m: MerchantDef): { title: string
 
 // ── Long-form intro paragraphs (primary SEO body) ─────────────────
 function introParagraphs(m: MerchantDef, p: ProblemDef, sector: string): string[] {
-  const sentencePhrase = getProblemSentencePhrase(m, p);
-  const para1 = `Wenn du bei ${m.name} mit ${sentencePhrase} konfrontiert bist, kommen 2026 je nach Zahlungsart und Einzelfall verschiedene Reklamationswege in Betracht. ${m.name} (${sector}, Sitz in ${m.country}) ist für deutsche Verbraucher grundsätzlich erreichbar — wichtig ist vor allem, den Sachverhalt nachvollziehbar zu dokumentieren und typische Fristen direkt beim jeweiligen Anbieter zu prüfen.`;
-  const para2 = `Typische Anlaufstellen sind PayPal-Käuferschutz, Kreditkarten-Reklamation/Chargeback über die kartenausgebende Bank, SEPA-Lastschriftrückgabe oder Klarna-Käuferschutz. Welcher Weg bei dir sinnvoll ist, hängt davon ab, womit du bei ${m.name} bezahlt hast und welche Anbieterregeln gelten — die Hinweise weiter unten helfen dir, die nächsten Schritte sachlich zu sortieren.`;
-  const para3 = `Praktisch ist meist hilfreich, ${m.name} zunächst nachweisbar direkt zu kontaktieren und eine angemessene Rückmeldefrist zu setzen. ChargebackPilot unterstützt dich dabei mit unverbindlichen Textentwürfen — von der ersten Reklamation bis zu einer möglichen Nachricht an Bank oder Zahlungsdienstleister. Die KI-gestützte Strukturierung ist kostenlos; vollständige Entwürfe als PDF kosten einmalig 0,99 € Endpreis.`;
+  const paymentText = paymentMethodsText(p.paymentMethods);
+  const caseNoun =
+    m.sector === "food_delivery"
+      ? "Bestellung"
+      : m.sector === "airline" || m.sector === "travel"
+        ? "Buchung"
+        : "Bestellung oder Zahlung";
+  const para1 = `Bei ${m.name} geht es zuerst darum, ${caseNoun}, Problem und Zahlungsweg sauber auseinanderzuhalten. Notiere Datum, Betrag, Bestell- oder Buchungsnummer und den aktuellen Stand im ${sector}-Konto, bevor du weitere Schritte prüfst.`;
+  const para2 = `Je nach Zahlungsart können ${paymentText} eine Rolle spielen. Welche Frist und welches Verfahren tatsächlich gilt, hängt von deinem Konto, den Anbieterregeln und den Unterlagen ab; prüfe diese Regeln deshalb möglichst früh direkt beim jeweiligen Anbieter.`;
+  const para3 = `Praktisch ist meist hilfreich, ${m.name} zunächst nachweisbar direkt zu kontaktieren und eine angemessene Rückmeldefrist zu setzen. ChargebackPilot hilft dir anschließend, Chronologie, Belege und unverbindliche Textentwürfe für Händler, Bank oder Zahlungsdienstleister strukturiert vorzubereiten.`;
   return [para1, para2, para3];
+}
+
+function paymentMethodsText(methods: ProblemDef["paymentMethods"]): string {
+  const labels: Record<ProblemDef["paymentMethods"][number], string> = {
+    paypal: "PayPal-Käuferschutz",
+    kreditkarte: "Kreditkarten-Reklamation",
+    klarna: "Klarna-Käuferschutz",
+    lastschrift: "SEPA-Lastschrift",
+    apple_pay: "Wallet- oder Kartenprüfung",
+  };
+  const unique = Array.from(new Set(methods.map((method) => labels[method])));
+  if (unique.length <= 1) return unique[0] ?? "der Zahlungsdienstleister";
+  return `${unique.slice(0, -1).join(", ")} oder ${unique[unique.length - 1]}`;
+}
+
+function shortAnswerForCombo(m: MerchantDef, p: ProblemDef): string {
+  if (m.sector === "food_delivery" && p.slug === "lieferung-falsch") {
+    return `Sichere bei ${m.name} sofort Fotos der erhaltenen Bestellung, App-Bestellübersicht, Supportverlauf und Zahlungsnachweis. Reklamiere zuerst direkt in der App und prüfe danach je nach Zahlungsart, ob PayPal, Kreditkarte oder Bank eine weitere Prüfung ermöglichen.`;
+  }
+  if (m.sector === "food_delivery" && p.slug === "ware-nicht-erhalten") {
+    return `Wenn deine ${m.name}-Bestellung nicht angekommen ist, zählen App-Status, Uhrzeit, Supportantwort und Zahlungsnachweis. Halte alles als Screenshot fest und formuliere die Reklamation kurz, sachlich und mit klarer Betragsangabe.`;
+  }
+  if (p.slug === "flug-storniert") {
+    return `Bei einem gestrichenen oder verschobenen Flug solltest du Buchungscode, Stornierungsnachricht, angebotene Alternative und Zahlungsnachweis getrennt sichern. Danach kannst du Anbieterweg und Zahlungsweg sachlich nebeneinander prüfen.`;
+  }
+  if (p.slug === "abbuchung-ohne-zustimmung") {
+    return `Bei einer unklaren Abbuchung solltest du zuerst Konto, Abo, Probemonat und Zahlungsdatum prüfen. Wenn die Zahlung weiter unklar bleibt, dokumentiere Kündigung, Supportkontakt und Kontoauszug, bevor du Bank oder Zahlungsdienstleister kontaktierst.`;
+  }
+  if (p.slug === "ware-nicht-erhalten") {
+    return `Wenn Ware bei ${m.name} nicht angekommen ist, sind Bestellbestätigung, Tracking, Lieferadresse, Zahlungsnachweis und Händlerkontakt die wichtigsten Belege. Prüfe danach den passenden Weg über Händler, PayPal, Klarna oder kartenausgebende Bank.`;
+  }
+  if (p.slug === "ware-defekt") {
+    return `Bei defekter oder falsch beschriebener Ware helfen Fotos, Originalbeschreibung, Bestellbestätigung und schriftlicher Händlerkontakt. Je genauer die Abweichung belegt ist, desto nachvollziehbarer wird die spätere Prüfung.`;
+  }
+  return `Sichere zuerst Bestell- oder Buchungsdaten, Zahlungsnachweis und die Kommunikation mit ${m.name}. Danach kannst du den passenden Zahlungsweg prüfen und deinen Fall mit einer kurzen Chronologie sachlich aufbereiten.`;
 }
 
 // ── Deadlines / timing matrix per problem ─────────────────────────

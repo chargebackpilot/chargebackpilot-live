@@ -14,6 +14,7 @@ import {
   ExternalLink,
   CalendarCheck,
   PenLine,
+  Sparkles,
 } from "lucide-react";
 import NotFound from "./not-found";
 import {
@@ -304,6 +305,19 @@ export default function MerchantProblemPage() {
     dateModified: SCHEMA_UPDATED_AT,
   };
 
+  const faqSchema = {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: copy.faq.map((item) => ({
+      "@type": "Question",
+      name: item.q,
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: item.a,
+      },
+    })),
+  };
+
   // Related merchants in same sector
   const related = MERCHANTS.filter(
     (m) => m.slug !== merchant.slug && m.sector === merchant.sector
@@ -330,7 +344,7 @@ export default function MerchantProblemPage() {
         description={copy.metaDescription}
         canonical={canonicalPath}
         noindex={!isIndexable}
-        jsonLd={[howToSchema, articleSchema]}
+        jsonLd={[howToSchema, articleSchema, faqSchema]}
       />
       <Breadcrumbs items={breadcrumbItems} />
 
@@ -381,33 +395,26 @@ export default function MerchantProblemPage() {
                 </Button>
               </Link>
             </div>
-            <div className="grid grid-cols-3 gap-3 mt-8 text-center">
-              <div className="bg-background border rounded-lg p-3">
-                <Clock className="w-4 h-4 mx-auto text-primary mb-1" />
-                <div className="text-xs text-muted-foreground">Analyse</div>
-                <div className="font-semibold text-sm">ca. 1 Min.</div>
-              </div>
-              <div className="bg-background border rounded-lg p-3">
-                <FileText className="w-4 h-4 mx-auto text-primary mb-1" />
-                <div className="text-xs text-muted-foreground">Vorlagen</div>
-                <div className="font-semibold text-sm">3 fertig</div>
-              </div>
-              <div className="bg-background border rounded-lg p-3">
-                <ShieldCheck className="w-4 h-4 mx-auto text-primary mb-1" />
-                <div className="text-xs text-muted-foreground">Preis</div>
-                <div className="font-semibold text-sm">0,99 € Endpreis</div>
-              </div>
-            </div>
           </div>
         </header>
 
         <div className="container mx-auto max-w-3xl px-4 mt-12 space-y-14">
+          <section className="ai-summary-card rounded-2xl border border-blue-200/70 bg-slate-50 p-6 shadow-sm">
+            <div className="mb-3 flex flex-wrap items-center gap-2">
+              <span className="inline-flex items-center gap-1.5 rounded-full border border-blue-200 bg-white/85 px-3 py-1 text-xs font-bold uppercase tracking-wider text-primary shadow-sm">
+                <Sparkles className="ai-summary-sparkle h-3.5 w-3.5" />
+                Kurzantwort
+              </span>
+            </div>
+            <p className="ai-summary-text text-base leading-relaxed text-foreground/90">
+              {copy.shortAnswer}
+            </p>
+          </section>
+
           {/* Intro long-form */}
-          <section className="prose prose-neutral max-w-none">
+          <section className="space-y-4 text-base leading-relaxed text-foreground/85">
             {copy.intro.map((para, i) => (
-              <p key={i} className="text-foreground/90 leading-relaxed mb-4 text-[15px]">
-                {para}
-              </p>
+              <p key={i}>{para}</p>
             ))}
           </section>
 
