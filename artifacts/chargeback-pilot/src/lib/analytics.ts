@@ -60,7 +60,13 @@ export function trackPageView(pathname: string, title: string) {
 }
 
 export function trackWizardEvent(
-  eventType: "wizard_step" | "wizard_draft" | "analysis_submit" | "analysis_success",
+  eventType:
+    | "wizard_step"
+    | "wizard_draft"
+    | "analysis_submit"
+    | "analysis_success"
+    | "paywall_view"
+    | "checkout_click",
   step: number,
   snapshot: WizardSnapshot
 ) {

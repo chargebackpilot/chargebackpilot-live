@@ -998,8 +998,8 @@ function faqForCombo(m: MerchantDef, p: ProblemDef, sector: string): { q: string
       a: `Wichtig sind vor allem klare Belege, eine verständliche Chronologie, Zahlungsnachweise und ein dokumentierter Kontaktversuch. Ob ein Zahlungsdienstleister ein Verfahren annimmt oder entscheidet, hängt vom Einzelfall und den jeweiligen Regeln ab.`,
     },
     {
-      q: `Was passiert, wenn ${m.name} den Chargeback bestreitet?`,
-      a: `Dann kann deine Bank oder dein Zahlungsdienstleister weitere Belege anfordern. Eine klare, sachliche Dokumentation hilft, Rückfragen nachvollziehbar zu beantworten. ChargebackPilot unterstützt dich mit Formulierungsvorschlägen für typische Einwände.`,
+      q: `Was passiert, wenn im Fall ${m.name} weitere Belege angefordert werden?`,
+      a: `Dann kann deine Bank oder dein Zahlungsdienstleister zusätzliche Unterlagen prüfen. Eine klare, sachliche Dokumentation hilft, Rückfragen nachvollziehbar zu beantworten. ChargebackPilot unterstützt dich mit Formulierungsvorschlägen für typische Einwände.`,
     },
     {
       q: `Sollte ich ${m.name} vorher kontaktieren, bevor ich Zahlungsdienstleister einschalte?`,
@@ -1014,8 +1014,8 @@ function faqForCombo(m: MerchantDef, p: ProblemDef, sector: string): { q: string
       a: `Die KI-Ersteinschätzung deines Falls ist komplett kostenlos. Wenn du die fertigen Textvorlagen (Händler-Anschreiben, Bank-Chargeback-Antrag, Eskalationsschreiben) freischalten willst, zahlst du einmalig 0,99 € Endpreis pro Fall. Eine 12-Monats-Flatrate für mehrere Fälle gibt es für 9,99 € Endpreis.`,
     },
     {
-      q: `Kann ich gegen ${m.name} auch klagen, wenn der Chargeback scheitert?`,
-      a: `Weitere Schritte außerhalb des Zahlungsdienstleisters können je nach Streitwert und Sachverhalt möglich sein, etwa Verbraucherzentrale, Schlichtung oder anwaltliche Prüfung. ChargebackPilot bietet hierfür keine Vertretung und keine Rechtsberatung, kann aber bei der strukturierten Belegaufbereitung helfen.`,
+      q: `Welche weiteren Schritte gibt es, wenn die Zahlungsprüfung nicht hilft?`,
+      a: `Weitere Wege außerhalb des Zahlungsdienstleisters können je nach Streitwert und Sachverhalt möglich sein, etwa Verbraucherzentrale, Schlichtung oder anwaltliche Prüfung. ChargebackPilot bietet hierfür keine Vertretung und keine Rechtsberatung, kann aber bei der strukturierten Belegaufbereitung helfen.`,
     },
     {
       q: `Ist ChargebackPilot eine Rechtsberatung?`,

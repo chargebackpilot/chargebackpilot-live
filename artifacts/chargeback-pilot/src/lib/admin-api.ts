@@ -78,6 +78,7 @@ export interface AdminStats {
   cases7d: number;
   cases30d: number;
   paid24h: number;
+  paid7d: number;
   byStrength: { strength: string; count: number }[];
   byPaymentMethod: { method: string; count: number }[];
   byProblemType: { type: string; count: number }[];
@@ -93,6 +94,9 @@ export interface AdminStats {
     wizardStarts7d: number;
     wizardDrafts7d: number;
     analysisSubmits7d: number;
+    analysisSuccesses7d: number;
+    paywallViews7d: number;
+    checkoutClicks7d: number;
   };
   topContentPages: {
     path: string;

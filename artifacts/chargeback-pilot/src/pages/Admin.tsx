@@ -427,6 +427,8 @@ function AdminDashboard({ onLogout }: { onLogout: () => void }) {
               <RangeSwitch value={rangeDays} onChange={setRangeDays} />
             </div>
 
+            <FunnelPanel stats={stats} />
+
             {/* Daily chart */}
             <Card title="Tägliches Aufkommen (30 Tage)">
               <DailyChart series={stats.dailySeries} />
@@ -877,12 +879,90 @@ function WizardEventList({ rows }: { rows: AdminStats["latestWizardEvents"] }) {
   );
 }
 
+function FunnelPanel({ stats }: { stats: AdminStats }) {
+  const steps = [
+    {
+      label: "Wizard-Starts",
+      value: stats.traffic.wizardStarts7d,
+      base: stats.traffic.wizardStarts7d,
+      hint: "Schritt 1 geöffnet",
+    },
+    {
+      label: "Analyse gestartet",
+      value: stats.traffic.analysisSubmits7d,
+      base: stats.traffic.wizardStarts7d,
+      hint: "KI-Analyse angefordert",
+    },
+    {
+      label: "Analyse erfolgreich",
+      value: stats.traffic.analysisSuccesses7d,
+      base: stats.traffic.analysisSubmits7d,
+      hint: "Ergebnis erzeugt",
+    },
+    {
+      label: "Paywall gesehen",
+      value: stats.traffic.paywallViews7d,
+      base: stats.traffic.analysisSuccesses7d,
+      hint: "Freischaltung sichtbar",
+    },
+    {
+      label: "Checkout geklickt",
+      value: stats.traffic.checkoutClicks7d,
+      base: stats.traffic.paywallViews7d,
+      hint: "Stripe geöffnet",
+    },
+    {
+      label: "Bezahlt",
+      value: stats.paid7d,
+      base: stats.traffic.checkoutClicks7d,
+      hint: "bestätigte Zahlungen",
+    },
+  ];
+
+  const max = Math.max(1, ...steps.map((step) => step.value));
+
+  return (
+    <Card title="Conversion-Funnel (7 Tage)">
+      <div className="grid gap-3 md:grid-cols-6">
+        {steps.map((step) => {
+          const rate = step.base > 0 ? Math.round((step.value / step.base) * 100) : 0;
+          return (
+            <div key={step.label} className="rounded-xl border bg-slate-50 p-3">
+              <p className="text-[11px] font-bold uppercase tracking-wide text-slate-500">
+                {step.label}
+              </p>
+              <p className="mt-2 text-2xl font-black tabular-nums text-slate-950">{step.value}</p>
+              <div className="mt-2 h-2 overflow-hidden rounded-full bg-white">
+                <div
+                  className="h-full rounded-full bg-primary"
+                  style={{
+                    width: step.value > 0 ? `${Math.max(4, (step.value / max) * 100)}%` : 0,
+                  }}
+                />
+              </div>
+              <p className="mt-2 text-[11px] text-slate-500">
+                {step.hint} · {rate}% zur Vorstufe
+              </p>
+            </div>
+          );
+        })}
+      </div>
+      <p className="mt-4 text-xs text-slate-500">
+        Datensparsam: erfasst werden nur strukturierte Ereignisse ohne Freitext. Admin-Browser mit
+        aktivem Token werden ausgeschlossen.
+      </p>
+    </Card>
+  );
+}
+
 function labelWizardEvent(eventType: string) {
   const labels: Record<string, string> = {
     wizard_step: "Schritt",
     wizard_draft: "Eingabe",
     analysis_submit: "Analyse gestartet",
     analysis_success: "Analyse erfolgreich",
+    paywall_view: "Paywall gesehen",
+    checkout_click: "Checkout geklickt",
   };
   return labels[eventType] ?? eventType;
 }
@@ -1032,6 +1112,10 @@ function SeoQualityDisclosure({
           <p className="mt-1 text-xs text-slate-500">
             {indexable} index · {candidates} candidate · Ø {averageScore} ·{" "}
             {SEO_QUALITY_CONFIG.scheduledIndexing.batchSize}/Tranche
+          </p>
+          <p className="mt-1 text-xs text-slate-500">
+            Sitemap-Soll nach Build: {indexable} indexierbare Anbieter-Detailseiten. Prüfung:
+            <code className="ml-1 rounded bg-slate-100 px-1 py-0.5">pnpm seo:smoke</code>
           </p>
           {nextRelease && (
             <p className="mt-1 text-xs font-medium text-slate-600">

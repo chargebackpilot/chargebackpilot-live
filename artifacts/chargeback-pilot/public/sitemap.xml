@@ -11,15 +11,18 @@
   <url><loc>https://chargebackpilot.de/flug-chargeback</loc><lastmod>2026-06-25</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
   <url><loc>https://chargebackpilot.de/hilfe/airbnb</loc><lastmod>2026-06-25</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
   <url><loc>https://chargebackpilot.de/hilfe/aliexpress</loc><lastmod>2026-06-25</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://chargebackpilot.de/hilfe/aliexpress/ware-nicht-erhalten</loc><lastmod>2026-06-25</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
   <url><loc>https://chargebackpilot.de/hilfe/amazon</loc><lastmod>2026-06-25</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
   <url><loc>https://chargebackpilot.de/hilfe/amazon/ware-nicht-erhalten</loc><lastmod>2026-06-25</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
   <url><loc>https://chargebackpilot.de/hilfe/apple</loc><lastmod>2026-06-25</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://chargebackpilot.de/hilfe/apple/abbuchung-ohne-zustimmung</loc><lastmod>2026-06-25</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
   <url><loc>https://chargebackpilot.de/hilfe/booking</loc><lastmod>2026-06-25</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
   <url><loc>https://chargebackpilot.de/hilfe/dazn</loc><lastmod>2026-06-25</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
   <url><loc>https://chargebackpilot.de/hilfe/dhl</loc><lastmod>2026-06-25</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
   <url><loc>https://chargebackpilot.de/hilfe/ebay</loc><lastmod>2026-06-25</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
   <url><loc>https://chargebackpilot.de/hilfe/ebay/ware-nicht-erhalten</loc><lastmod>2026-06-25</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
   <url><loc>https://chargebackpilot.de/hilfe/etsy</loc><lastmod>2026-06-25</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://chargebackpilot.de/hilfe/etsy/ware-nicht-erhalten</loc><lastmod>2026-06-25</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
   <url><loc>https://chargebackpilot.de/hilfe/eurowings</loc><lastmod>2026-06-25</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
   <url><loc>https://chargebackpilot.de/hilfe/google-play</loc><lastmod>2026-06-25</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
   <url><loc>https://chargebackpilot.de/hilfe/google-play/abbuchung-ohne-zustimmung</loc><lastmod>2026-06-25</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
@@ -28,6 +31,7 @@
   <url><loc>https://chargebackpilot.de/hilfe/kiwi/flug-storniert</loc><lastmod>2026-06-25</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
   <url><loc>https://chargebackpilot.de/hilfe/lieferando</loc><lastmod>2026-06-25</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
   <url><loc>https://chargebackpilot.de/hilfe/lieferando/lieferung-falsch</loc><lastmod>2026-06-25</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://chargebackpilot.de/hilfe/lieferando/ware-nicht-erhalten</loc><lastmod>2026-06-25</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
   <url><loc>https://chargebackpilot.de/hilfe/lufthansa</loc><lastmod>2026-06-25</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
   <url><loc>https://chargebackpilot.de/hilfe/netflix</loc><lastmod>2026-06-25</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
   <url><loc>https://chargebackpilot.de/hilfe/otto</loc><lastmod>2026-06-25</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
@@ -35,6 +39,7 @@
   <url><loc>https://chargebackpilot.de/hilfe/ryanair</loc><lastmod>2026-06-25</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
   <url><loc>https://chargebackpilot.de/hilfe/ryanair/flug-storniert</loc><lastmod>2026-06-25</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
   <url><loc>https://chargebackpilot.de/hilfe/shein</loc><lastmod>2026-06-25</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://chargebackpilot.de/hilfe/shein/ware-nicht-erhalten</loc><lastmod>2026-06-25</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
   <url><loc>https://chargebackpilot.de/hilfe/sky</loc><lastmod>2026-06-25</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
   <url><loc>https://chargebackpilot.de/hilfe/spotify</loc><lastmod>2026-06-25</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
   <url><loc>https://chargebackpilot.de/hilfe/temu</loc><lastmod>2026-06-25</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
@@ -47,6 +52,7 @@
   <url><loc>https://chargebackpilot.de/hilfe/wish</loc><lastmod>2026-06-25</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
   <url><loc>https://chargebackpilot.de/hilfe/wolt</loc><lastmod>2026-06-25</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
   <url><loc>https://chargebackpilot.de/hilfe/wolt/lieferung-falsch</loc><lastmod>2026-06-25</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://chargebackpilot.de/hilfe/wolt/ware-nicht-erhalten</loc><lastmod>2026-06-25</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
   <url><loc>https://chargebackpilot.de/hilfe/zalando</loc><lastmod>2026-06-25</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
   <url><loc>https://chargebackpilot.de/hilfe/zalando/ware-nicht-erhalten</loc><lastmod>2026-06-25</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
   <url><loc>https://chargebackpilot.de/impressum</loc><lastmod>2026-06-25</lastmod><changefreq>yearly</changefreq><priority>0.3</priority></url>

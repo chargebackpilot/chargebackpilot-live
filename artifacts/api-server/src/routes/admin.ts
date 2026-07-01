@@ -216,6 +216,10 @@ router.get("/stats", async (req: any, res: Response): Promise<void> => {
       .select({ c: count() })
       .from(casesTable)
       .where(visibleCaseWhere(and(eq(casesTable.paid, true), gte(casesTable.paidAt, since24h))));
+    const [paid7d] = await db
+      .select({ c: count() })
+      .from(casesTable)
+      .where(visibleCaseWhere(and(eq(casesTable.paid, true), gte(casesTable.paidAt, since7d))));
 
     const byStrength = await db
       .select({
@@ -260,6 +264,9 @@ router.get("/stats", async (req: any, res: Response): Promise<void> => {
       wizard_starts_7d: string;
       wizard_drafts_7d: string;
       analysis_submits_7d: string;
+      analysis_successes_7d: string;
+      paywall_views_7d: string;
+      checkout_clicks_7d: string;
     }>(
       `
         SELECT
@@ -292,7 +299,16 @@ router.get("/stats", async (req: any, res: Response): Promise<void> => {
           )::int AS wizard_drafts_7d,
           COUNT(*) FILTER (
             WHERE event_type = 'analysis_submit' AND created_at >= $2
-          )::int AS analysis_submits_7d
+          )::int AS analysis_submits_7d,
+          COUNT(*) FILTER (
+            WHERE event_type = 'analysis_success' AND created_at >= $2
+          )::int AS analysis_successes_7d,
+          COUNT(*) FILTER (
+            WHERE event_type = 'paywall_view' AND created_at >= $2
+          )::int AS paywall_views_7d,
+          COUNT(*) FILTER (
+            WHERE event_type = 'checkout_click' AND created_at >= $2
+          )::int AS checkout_clicks_7d
         FROM analytics_events
       `,
       [since24h, since7d, since30d, sinceRange]
@@ -335,7 +351,14 @@ router.get("/stats", async (req: any, res: Response): Promise<void> => {
       `
         SELECT event_type, created_at, metadata
         FROM analytics_events
-        WHERE event_type IN ('wizard_step', 'wizard_draft', 'analysis_submit', 'analysis_success')
+        WHERE event_type IN (
+          'wizard_step',
+          'wizard_draft',
+          'analysis_submit',
+          'analysis_success',
+          'paywall_view',
+          'checkout_click'
+        )
         ORDER BY created_at DESC
         LIMIT 40
       `
@@ -360,6 +383,7 @@ router.get("/stats", async (req: any, res: Response): Promise<void> => {
       cases7d: Number(cases7d?.c ?? 0),
       cases30d: Number(cases30d?.c ?? 0),
       paid24h: Number(paid24h?.c ?? 0),
+      paid7d: Number(paid7d?.c ?? 0),
       byStrength: byStrength.map((r) => ({
         strength: r.strength ?? "unbekannt",
         count: Number(r.c),
@@ -382,6 +406,9 @@ router.get("/stats", async (req: any, res: Response): Promise<void> => {
         wizardStarts7d: Number(traffic.rows[0]?.wizard_starts_7d ?? 0),
         wizardDrafts7d: Number(traffic.rows[0]?.wizard_drafts_7d ?? 0),
         analysisSubmits7d: Number(traffic.rows[0]?.analysis_submits_7d ?? 0),
+        analysisSuccesses7d: Number(traffic.rows[0]?.analysis_successes_7d ?? 0),
+        paywallViews7d: Number(traffic.rows[0]?.paywall_views_7d ?? 0),
+        checkoutClicks7d: Number(traffic.rows[0]?.checkout_clicks_7d ?? 0),
       },
       topContentPages: topContentPages.rows.map((row) => ({
         path: row.path,

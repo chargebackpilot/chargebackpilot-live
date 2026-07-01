@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Lock,
@@ -18,6 +18,7 @@ import {
 import type { PdfData } from "@/lib/pdf-generator";
 import { PaymentLogoStrip } from "@/components/PaymentLogos";
 import { Dialog, DialogContent, DialogDescription, DialogTitle } from "@/components/ui/dialog";
+import { trackWizardEvent } from "@/lib/analytics";
 
 interface PaywallProps {
   caseId?: string;
@@ -144,9 +145,22 @@ export function PaywallModal({
   const band = toStrategyBand(strategyLabel);
   const bandClass = TONE_CLASSES[band.tone] ?? TONE_CLASSES.slate;
 
+  useEffect(() => {
+    trackWizardEvent("paywall_view", 6, {
+      paymentMethod,
+      merchantName,
+      disputedAmount: amount,
+    });
+  }, [amount, merchantName, paymentMethod]);
+
   const handleCheckout = async () => {
     setLoading(true);
     setError("");
+    trackWizardEvent("checkout_click", 6, {
+      paymentMethod,
+      merchantName,
+      disputedAmount: amount,
+    });
     try {
       const res = await fetch("/api/stripe/checkout", {
         method: "POST",

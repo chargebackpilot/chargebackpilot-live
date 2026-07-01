@@ -30,7 +30,14 @@ const pageViewSchema = z.object({
 });
 
 const wizardEventSchema = z.object({
-  eventType: z.enum(["wizard_step", "wizard_draft", "analysis_submit", "analysis_success"]),
+  eventType: z.enum([
+    "wizard_step",
+    "wizard_draft",
+    "analysis_submit",
+    "analysis_success",
+    "paywall_view",
+    "checkout_click",
+  ]),
   step: z.number().int().min(1).max(6).optional(),
   visitorId: z.string().min(8).max(120).optional(),
   data: z

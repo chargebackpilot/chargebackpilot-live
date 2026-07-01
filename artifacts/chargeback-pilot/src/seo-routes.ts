@@ -149,9 +149,9 @@ export const SEO_ROUTES: SeoRouteMeta[] = [
   },
   {
     path: "/ubereats-rueckerstattung",
-    title: "Uber Eats Erstattung & Chargeback | ChargebackPilot",
+    title: "Uber Eats Reklamation: Bestellung fehlt oder falsch | ChargebackPilot",
     description:
-      "Uber Eats Erstattung und mögliche Zahlungsreklamation vorbereiten: App-Status, Fotos, Support-Tickets und Zahlungsweg strukturiert sammeln.",
+      "Uber Eats Bestellung fehlt, kam falsch oder unbrauchbar an? App-Status, Fotos, Supportverlauf und Zahlungsweg strukturiert vorbereiten.",
     changefreq: "monthly",
     priority: 0.7,
     type: "guide",
@@ -179,9 +179,9 @@ export const SEO_ROUTES: SeoRouteMeta[] = [
   },
   {
     path: "/chargeback-antrag-vorlage",
-    title: "Chargeback Antrag Vorlage: Bank-Antrag sachlich vorbereiten | ChargebackPilot",
+    title: "Chargeback Antrag Vorlage für Bank & Kreditkarte | ChargebackPilot",
     description:
-      "Chargeback Antrag Vorlage für deine Bank: Umsatz, Sachverhalt, Händlerkontakt und Belege strukturiert für Kreditkartenreklamation vorbereiten.",
+      "Chargeback Antrag Vorlage für Bank und Kreditkarte: Umsatz, Sachverhalt, Händlerkontakt und Belege sachlich für die Reklamation vorbereiten.",
     changefreq: "monthly",
     priority: 0.8,
     type: "guide",
