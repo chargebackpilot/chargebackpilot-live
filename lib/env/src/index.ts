@@ -32,7 +32,10 @@ export const apiServerEnvSchema = z.object({
   // invalid values and the admin route returns 503 until a valid secret is set.
   ADMIN_PASSWORD: z.string().optional(),
   STRIPE_SECRET_KEY: z.string().startsWith("sk_", "Invalid Stripe secret key"),
-  STRIPE_WEBHOOK_SECRET: z.string().optional(),
+  STRIPE_WEBHOOK_SECRET: z
+    .string()
+    .startsWith("whsec_", "Invalid Stripe webhook secret")
+    .optional(),
   TURNSTILE_SECRET_KEY: z.string().optional(),
   TURNSTILE_AFTER_ATTEMPTS: z.coerce.number().int().min(1).default(2),
   CASE_CREATE_WINDOW_MS: z.coerce.number().int().positive().default(3600000), // 1 hour
@@ -92,6 +95,22 @@ export function parseEnv<T extends z.ZodSchema>(
  */
 export function getApiServerEnv(): ApiServerEnv {
   const env = parseEnv(apiServerEnvSchema);
+
+  if (env.NODE_ENV === "production" && !env.STRIPE_WEBHOOK_SECRET) {
+    console.warn(
+      "⚠️  STRIPE_WEBHOOK_SECRET is not set. Stripe webhooks will be rejected; configure the whsec_ secret in production."
+    );
+  }
+
+  if (
+    env.NODE_ENV === "production" &&
+    env.REQUIRE_TURNSTILE_ON_CASE_CREATE === "1" &&
+    !env.TURNSTILE_SECRET_KEY
+  ) {
+    console.warn(
+      "⚠️  TURNSTILE_SECRET_KEY is not set while production case creation requires Turnstile."
+    );
+  }
 
   if (env.ADMIN_PASSWORD && !isValidAdminPassword(env.ADMIN_PASSWORD)) {
     console.warn(

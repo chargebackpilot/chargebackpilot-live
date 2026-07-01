@@ -38,9 +38,8 @@ node_modules
 /.sass-cache
 /connect.lock
 /coverage
-/artifacts/lighthouse-report-local/
-/artifacts/unlighthouse-report-local/
-/artifacts/unlighthouse-report-live/
+/artifacts/lighthouse-report*/
+/artifacts/unlighthouse-report*/
 /SearchConsole/
 /libpeerconnection.log
 npm-debug.log

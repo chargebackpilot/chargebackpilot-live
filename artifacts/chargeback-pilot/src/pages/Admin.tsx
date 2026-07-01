@@ -106,7 +106,7 @@ function exportTopContentCsv(rows: AdminStats["topContentPages"], rangeDays: num
 function exportWizardEventsCsv(rows: AdminStats["latestWizardEvents"]) {
   downloadCsv(
     "chargebackpilot-wizard-events.csv",
-    ["Event", "Zeitpunkt", "Schritt", "Zahlungsart", "Problem", "Anbieter", "Betrag"],
+    ["Event", "Zeitpunkt", "Schritt", "Zahlungsart", "Problem", "Land", "Kontakt", "Belege"],
     rows.map((row) => {
       const meta = row.metadata ?? {};
       return [
@@ -115,8 +115,9 @@ function exportWizardEventsCsv(rows: AdminStats["latestWizardEvents"]) {
         String(meta.step ?? ""),
         String(meta.paymentMethod ?? ""),
         String(meta.problemType ?? ""),
-        String(meta.merchantName ?? ""),
-        String(meta.disputedAmount ?? meta.purchaseAmount ?? ""),
+        String(meta.merchantCountry ?? ""),
+        meta.merchantContacted === true ? "ja" : meta.merchantContacted === false ? "nein" : "",
+        String(meta.evidenceCount ?? ""),
       ];
     })
   );
@@ -865,12 +866,17 @@ function WizardEventList({ rows }: { rows: AdminStats["latestWizardEvents"] }) {
               </span>
             </div>
             <p className="mt-1 text-sm font-semibold text-slate-900">
-              {String(meta.merchantName || "Noch kein Händler")}
+              {labelPayment(String(meta.paymentMethod || "")) || "Zahlung offen"} ·{" "}
+              {labelProblem(String(meta.problemType || "")) || "Problem offen"}
             </p>
             <p className="mt-1 text-xs text-slate-600">
-              {labelPayment(String(meta.paymentMethod || "")) || "Zahlung offen"} ·{" "}
-              {labelProblem(String(meta.problemType || "")) || "Problem offen"} ·{" "}
-              {String(meta.disputedAmount || meta.purchaseAmount || "0")} €
+              {String(meta.merchantCountry || "Land offen")} ·{" "}
+              {meta.merchantContacted === true
+                ? "Händler kontaktiert"
+                : meta.merchantContacted === false
+                  ? "Noch kein Kontakt"
+                  : "Kontakt offen"}{" "}
+              · {String(meta.evidenceCount ?? 0)} Belege
             </p>
           </div>
         );

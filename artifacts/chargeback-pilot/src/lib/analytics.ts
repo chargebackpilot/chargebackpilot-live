@@ -3,10 +3,6 @@ import { getAdminToken } from "@/lib/admin-api";
 type WizardSnapshot = {
   paymentMethod?: string;
   problemType?: string;
-  merchantName?: string;
-  purchaseAmount?: string | number;
-  disputedAmount?: string | number;
-  paymentDate?: string;
   merchantCountry?: string;
   merchantContacted?: boolean;
   merchantResponseType?: string;
@@ -14,19 +10,45 @@ type WizardSnapshot = {
 };
 
 const VISITOR_ID_KEY = "cbp_visitor_id_v1";
+const VISITOR_ID_TTL_MS = 30 * 24 * 60 * 60 * 1000;
+
+type StoredVisitorId =
+  | string
+  | {
+      id?: string;
+      createdAt?: number;
+    };
 
 function getVisitorId() {
   try {
     const existing = localStorage.getItem(VISITOR_ID_KEY);
-    if (existing) return existing;
+    if (existing) {
+      const parsed = JSON.parse(existing) as StoredVisitorId;
+      const id = typeof parsed === "string" ? parsed : parsed.id;
+      const createdAt = typeof parsed === "string" ? 0 : parsed.createdAt;
+      if (id && createdAt && Date.now() - createdAt < VISITOR_ID_TTL_MS) return id;
+      if (id && !createdAt) {
+        localStorage.setItem(VISITOR_ID_KEY, JSON.stringify({ id, createdAt: Date.now() }));
+        return id;
+      }
+    }
     const next =
       typeof crypto !== "undefined" && "randomUUID" in crypto
         ? crypto.randomUUID()
         : `${Date.now()}_${Math.random().toString(36).slice(2)}`;
-    localStorage.setItem(VISITOR_ID_KEY, next);
+    localStorage.setItem(VISITOR_ID_KEY, JSON.stringify({ id: next, createdAt: Date.now() }));
     return next;
   } catch {
-    return undefined;
+    try {
+      const next =
+        typeof crypto !== "undefined" && "randomUUID" in crypto
+          ? crypto.randomUUID()
+          : `${Date.now()}_${Math.random().toString(36).slice(2)}`;
+      localStorage.setItem(VISITOR_ID_KEY, JSON.stringify({ id: next, createdAt: Date.now() }));
+      return next;
+    } catch {
+      return undefined;
+    }
   }
 }
 
@@ -78,10 +100,6 @@ export function trackWizardEvent(
     data: {
       paymentMethod: snapshot.paymentMethod,
       problemType: snapshot.problemType,
-      merchantName: snapshot.merchantName,
-      purchaseAmount: snapshot.purchaseAmount,
-      disputedAmount: snapshot.disputedAmount,
-      paymentDate: snapshot.paymentDate,
       merchantCountry: snapshot.merchantCountry,
       merchantContacted: snapshot.merchantContacted,
       merchantResponseType: snapshot.merchantResponseType,

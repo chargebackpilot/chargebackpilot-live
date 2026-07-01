@@ -12,6 +12,7 @@
     "sync:reviews": "pnpm --filter @workspace/chargeback-pilot run sync:reviews",
     "audit:lighthouse": "pnpm --filter @workspace/chargeback-pilot run audit:lighthouse",
     "audit:unlighthouse": "pnpm --filter @workspace/chargeback-pilot run audit:unlighthouse",
+    "security:smoke": "node scripts/security-smoke.mjs",
     "start": "pnpm --filter @workspace/api-server run start",
     "typecheck:libs": "tsc --build",
     "typecheck": "pnpm run typecheck:libs && pnpm -r --filter \"./artifacts/**\" --filter \"./scripts\" --if-present run typecheck",

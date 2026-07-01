@@ -148,18 +148,14 @@ export function PaywallModal({
   useEffect(() => {
     trackWizardEvent("paywall_view", 6, {
       paymentMethod,
-      merchantName,
-      disputedAmount: amount,
     });
-  }, [amount, merchantName, paymentMethod]);
+  }, [paymentMethod]);
 
   const handleCheckout = async () => {
     setLoading(true);
     setError("");
     trackWizardEvent("checkout_click", 6, {
       paymentMethod,
-      merchantName,
-      disputedAmount: amount,
     });
     try {
       const res = await fetch("/api/stripe/checkout", {
