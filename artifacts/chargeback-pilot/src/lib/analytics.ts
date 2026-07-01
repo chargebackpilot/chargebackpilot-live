@@ -54,6 +54,7 @@ function getVisitorId() {
 
 function postJson(path: string, payload: unknown) {
   if (typeof window === "undefined") return;
+  if (isLocalAuditHost()) return;
   const body = JSON.stringify(payload);
   const blob = new Blob([body], { type: "application/json" });
   if (navigator.sendBeacon?.(path, blob)) return;
@@ -65,6 +66,16 @@ function postJson(path: string, payload: unknown) {
   }).catch(() => {
     /* best-effort analytics */
   });
+}
+
+function isLocalAuditHost() {
+  const hostname = window.location.hostname;
+  return (
+    hostname === "localhost" ||
+    hostname === "127.0.0.1" ||
+    hostname === "::1" ||
+    hostname.endsWith(".local")
+  );
 }
 
 function shouldSkipTracking(pathname: string) {

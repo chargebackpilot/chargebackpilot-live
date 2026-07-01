@@ -69,6 +69,13 @@ export interface AdminStats {
   rangeDays: number;
   retentionMonths: number;
   analyticsRetentionMonths: number;
+  security: {
+    productionMode: boolean;
+    stripeWebhookConfigured: boolean;
+    turnstileRequired: boolean;
+    turnstileConfigured: boolean;
+    adminIpAllowlistConfigured: boolean;
+  };
   paidCases: number;
   conversionRate: number;
   revenueEur: number;

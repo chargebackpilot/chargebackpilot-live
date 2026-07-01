@@ -391,9 +391,9 @@ export default function RatgeberIndex() {
 
         <section className="mb-12">
           <SectionIntro
-            eyebrow="Schnelle Einstiege"
-            title="Aktuelle und häufige Suchintentionen"
-            description="Vier direkte Wege zu Themen, bei denen Nutzer meist schnell eine konkrete Orientierung brauchen."
+            eyebrow="Häufig gesucht"
+            title="Schnell zum passenden Thema"
+            description="Vier Einstiege zu Fällen, bei denen es meist auf Belege, Zahlungsweg und sachliche Formulierung ankommt."
           />
           <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-4">
             {QUICK_ENTRY_LINKS.map((item) => {
@@ -403,7 +403,7 @@ export default function RatgeberIndex() {
                   <Card className="h-full cursor-pointer transition-colors hover:border-primary">
                     <CardContent className="flex h-full flex-col p-4">
                       <div className="mb-4 flex items-center justify-between gap-3">
-                        <span className="rounded-md bg-primary/10 px-2 py-0.5 text-[11px] font-bold uppercase tracking-wider text-primary">
+                        <span className="rounded-md bg-primary px-2 py-0.5 text-[11px] font-bold uppercase tracking-wider text-primary-foreground shadow-sm">
                           {item.tag}
                         </span>
                         <Icon className="h-4 w-4 text-primary" />

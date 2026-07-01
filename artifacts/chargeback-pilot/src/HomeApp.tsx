@@ -11,16 +11,28 @@ const LazyToaster = lazy(() =>
 );
 
 function IdleToaster() {
-  const [enabled, setEnabled] = useState(false);
+  const [enabled, setEnabled] = useState(() => {
+    if (typeof window === "undefined") return false;
+    const params = new URLSearchParams(window.location.search);
+    return params.has("flatrate_success") || params.has("flatrate_cancel");
+  });
 
   useEffect(() => {
+    if (enabled) return;
     const schedule =
       window.requestIdleCallback ??
-      ((cb: IdleRequestCallback) => window.setTimeout(cb, 1200) as unknown as number);
+      ((cb: IdleRequestCallback) => window.setTimeout(cb, 8000) as unknown as number);
     const cancel = window.cancelIdleCallback ?? window.clearTimeout;
-    const id = schedule(() => setEnabled(true), { timeout: 2500 });
-    return () => cancel(id as number);
-  }, []);
+    const enable = () => setEnabled(true);
+    const id = schedule(enable, { timeout: 10000 });
+    window.addEventListener("pointerdown", enable, { once: true, passive: true });
+    window.addEventListener("keydown", enable, { once: true });
+    return () => {
+      cancel(id as number);
+      window.removeEventListener("pointerdown", enable);
+      window.removeEventListener("keydown", enable);
+    };
+  }, [enabled]);
 
   if (!enabled) return null;
   return (

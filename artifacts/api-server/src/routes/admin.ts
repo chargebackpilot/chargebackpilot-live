@@ -1,4 +1,4 @@
-import { Router, type Response } from "express";
+import { Router, type NextFunction, type Request, type Response } from "express";
 import { db, pool, casesTable, type CaseAnalysis } from "@workspace/db";
 import { desc, eq, count, sql, and, gte, lt, type SQL } from "drizzle-orm";
 import rateLimit from "express-rate-limit";
@@ -32,9 +32,51 @@ const loginLimiter = rateLimit({
 });
 
 const MIN_ADMIN_PASSWORD_LENGTH = 15;
+const ADMIN_ALLOWED_IPS = new Set(
+  (process.env.ADMIN_ALLOWED_IPS ?? "")
+    .split(",")
+    .map((value) => value.trim())
+    .filter(Boolean)
+);
 const ADMIN_VISIBLE_CASES_FROM = new Date(
   process.env.ADMIN_VISIBLE_CASES_FROM || "2026-06-26T00:00:00.000Z"
 );
+
+function firstHeaderValue(value: string | string[] | undefined) {
+  return Array.isArray(value) ? value[0] : value;
+}
+
+function getAdminRequestIp(req: Request) {
+  return (
+    firstHeaderValue(req.headers["cf-connecting-ip"] as string | string[] | undefined) ||
+    firstHeaderValue(req.headers["x-forwarded-for"] as string | string[] | undefined)
+      ?.split(",")[0]
+      ?.trim() ||
+    req.ip ||
+    req.socket.remoteAddress ||
+    "unknown"
+  );
+}
+
+function adminNetworkGuard(req: Request, res: Response, next: NextFunction) {
+  if (ADMIN_ALLOWED_IPS.size === 0) {
+    next();
+    return;
+  }
+
+  const ip = getAdminRequestIp(req);
+  if (!ADMIN_ALLOWED_IPS.has(ip)) {
+    logger.warn({ ip }, "Admin request blocked by ADMIN_ALLOWED_IPS");
+    res.status(403).json({
+      code: "ADMIN_IP_BLOCKED",
+      message: "Admin-Zugriff von dieser IP nicht erlaubt.",
+      timestamp: new Date().toISOString(),
+    });
+    return;
+  }
+
+  next();
+}
 
 function visibleCaseWhere(extra?: SQL) {
   const base = gte(casesTable.createdAt, ADMIN_VISIBLE_CASES_FROM);
@@ -98,6 +140,8 @@ function adminCaseResponse(found: typeof casesTable.$inferSelect, readToken?: st
     createdAt: found.createdAt.toISOString(),
   };
 }
+
+router.use(adminNetworkGuard);
 
 router.post("/login", loginLimiter, (req: any, res: Response): void => {
   if (!env.ADMIN_PASSWORD || env.ADMIN_PASSWORD.length < MIN_ADMIN_PASSWORD_LENGTH) {
@@ -374,6 +418,13 @@ router.get("/stats", async (req: any, res: Response): Promise<void> => {
       rangeDays,
       retentionMonths: getCaseRetentionMonths(),
       analyticsRetentionMonths: getAnalyticsRetentionMonths(),
+      security: {
+        productionMode: env.NODE_ENV === "production",
+        stripeWebhookConfigured: Boolean(process.env.STRIPE_WEBHOOK_SECRET),
+        turnstileRequired: env.REQUIRE_TURNSTILE_ON_CASE_CREATE === "1",
+        turnstileConfigured: Boolean(process.env.TURNSTILE_SECRET_KEY),
+        adminIpAllowlistConfigured: ADMIN_ALLOWED_IPS.size > 0,
+      },
       paidCases: paidNum,
       conversionRate: totalNum > 0 ? Math.round((paidNum / totalNum) * 1000) / 10 : 0,
       revenueEur: Number(totals?.revenueCents ?? 0) / 100,

@@ -54,6 +54,7 @@ const envExample = readFileSync(".env.example", "utf8");
 for (const required of [
   "STRIPE_WEBHOOK_SECRET",
   "TURNSTILE_SECRET_KEY",
+  "ADMIN_ALLOWED_IPS",
   "CASE_RETENTION_MONTHS",
   "ANALYTICS_RETENTION_MONTHS",
 ]) {

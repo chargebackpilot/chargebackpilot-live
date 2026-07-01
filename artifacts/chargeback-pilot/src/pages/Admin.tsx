@@ -428,6 +428,8 @@ function AdminDashboard({ onLogout }: { onLogout: () => void }) {
               <RangeSwitch value={rangeDays} onChange={setRangeDays} />
             </div>
 
+            <SecurityStatusPanel stats={stats} />
+
             <FunnelPanel stats={stats} />
 
             {/* Daily chart */}
@@ -641,6 +643,70 @@ function readBrowserUnlockState() {
       ? expiry.toLocaleDateString("de-DE", { day: "2-digit", month: "2-digit", year: "numeric" })
       : null,
   };
+}
+
+function SecurityStatusPanel({ stats }: { stats: AdminStats }) {
+  const items = [
+    {
+      label: "Produktionsmodus",
+      ok: stats.security.productionMode,
+      detail: stats.security.productionMode ? "aktiv" : "lokal/dev",
+      advisory: false,
+    },
+    {
+      label: "Stripe Webhook",
+      ok: stats.security.stripeWebhookConfigured,
+      detail: stats.security.stripeWebhookConfigured ? "whsec_ gesetzt" : "fehlt",
+      advisory: false,
+    },
+    {
+      label: "Turnstile",
+      ok: !stats.security.turnstileRequired || stats.security.turnstileConfigured,
+      detail: stats.security.turnstileRequired
+        ? stats.security.turnstileConfigured
+          ? "Pflicht aktiv"
+          : "Pflicht, Secret fehlt"
+        : "optional",
+      advisory: false,
+    },
+    {
+      label: "Admin-IP-Filter",
+      ok: stats.security.adminIpAllowlistConfigured,
+      detail: stats.security.adminIpAllowlistConfigured
+        ? "ADMIN_ALLOWED_IPS aktiv"
+        : "nicht gesetzt",
+      advisory: true,
+    },
+  ];
+
+  return (
+    <Card title="Sicherheit & Betrieb">
+      <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+        {items.map((item) => (
+          <div key={item.label} className="rounded-xl border border-slate-200 bg-slate-50 p-3">
+            <div className="flex items-center gap-2">
+              {item.ok ? (
+                <CheckCircle2 className="h-4 w-4 text-emerald-600" />
+              ) : item.advisory ? (
+                <Shield className="h-4 w-4 text-slate-500" />
+              ) : (
+                <AlertCircle className="h-4 w-4 text-amber-600" />
+              )}
+              <p className="text-xs font-bold uppercase tracking-wide text-slate-700">
+                {item.label}
+              </p>
+            </div>
+            <p className="mt-1 text-sm font-semibold text-slate-900">{item.detail}</p>
+          </div>
+        ))}
+      </div>
+      <p className="mt-3 text-xs leading-relaxed text-slate-500">
+        Empfehlung: Admin zusätzlich über Cloudflare Access oder <code>ADMIN_ALLOWED_IPS</code>{" "}
+        schützen. Das ist optional, erhöht aber die Sicherheit deutlich, ohne den öffentlichen
+        Funnel zu beeinflussen.
+      </p>
+    </Card>
+  );
 }
 
 function BrowserUnlockDisclosure() {

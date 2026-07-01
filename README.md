@@ -6,7 +6,9 @@ Live: https://chargebackpilot.de
 
 ## Für Menschen Und AI-Assistenten
 
-Diese `README.md` ist die einzige Root-Dokumentation und die Source of Truth für Codex, Cline, Copilot, ChatGPT und Menschen. Wenn du am Projekt arbeitest, lies zuerst diese Datei.
+Diese `README.md` ist die Produkt- und Projekt-Source-of-Truth. Agents lesen zusätzlich zuerst
+`AGENTS.md`, weil dort arbeitsbezogene Regeln, Design-Leitplanken und SEO-/Legal-Konventionen
+kompakt zusammengefasst sind.
 
 ## Was Die App Macht
 
@@ -137,10 +139,12 @@ Admin-Endpunkte sind geschützt und nutzen Bearer-Token-Sessions.
 - Wenn eine echte DB-URL oder ein API-Key versehentlich committed wurde: Credential sofort rotieren.
 - `DATABASE_URL` muss SSL nutzen, z. B. mit `sslmode=require`.
 - `ADMIN_PASSWORD` mindestens 15 Zeichen.
+- Optional `ADMIN_ALLOWED_IPS` setzen, wenn der Admin-Bereich zusätzlich IP-beschränkt werden soll.
 - `STRIPE_SECRET_KEY`, `GEMINI_API_KEY`, `TURNSTILE_SECRET_KEY` wie Passwörter behandeln.
 - User input immer validieren.
 - Keine PII ungefiltert loggen.
-- Security-Meldungen: `security@chargebackpilot.de`.
+- Security-Meldungen nur an eine tatsächlich eingerichtete Inbox veröffentlichen; sonst die
+  Impressumsadresse nutzen.
 
 ## Deployment
 
@@ -166,6 +170,7 @@ DATABASE_URL
 NODE_ENV=production
 BASE_PATH=/
 ADMIN_PASSWORD
+ADMIN_ALLOWED_IPS=
 GEMINI_API_KEY
 STRIPE_SECRET_KEY
 STRIPE_WEBHOOK_SECRET

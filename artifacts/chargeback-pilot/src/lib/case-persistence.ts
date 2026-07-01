@@ -253,6 +253,19 @@ export function removeSavedCase(caseId: string): void {
   }
 }
 
+export function clearLocalCaseData(): void {
+  try {
+    localStorage.removeItem(CURRENT_CASE_KEY);
+    localStorage.removeItem(CASE_LIST_KEY);
+    localStorage.removeItem(DRAFT_KEY);
+    localStorage.removeItem(UNLOCKED_CASE_IDS_KEY);
+    sessionStorage.removeItem(PENDING_PAYWALL_SCROLL_KEY);
+    notifyCaseStorageChanged();
+  } catch {
+    /* ignore */
+  }
+}
+
 // ---------------------------------------------------------------------------
 // Flatrate ("Pilot Flat") — multiple case unlocks for N months
 // ---------------------------------------------------------------------------

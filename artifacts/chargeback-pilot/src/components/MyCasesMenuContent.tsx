@@ -2,6 +2,7 @@ import type { MouseEvent } from "react";
 import { Link } from "wouter";
 import { ArrowRight, Infinity as InfinityIcon, Trash2 } from "lucide-react";
 import {
+  clearLocalCaseData,
   openNewWizardCase,
   openSavedCase,
   removeSavedCase,
@@ -86,6 +87,12 @@ export default function MyCasesMenuContent({
     openSavedCase(caseId);
   };
 
+  const handleClearAll = () => {
+    if (!window.confirm("Alle lokal gespeicherten Falldaten in diesem Browser löschen?")) return;
+    clearLocalCaseData();
+    onRefresh();
+  };
+
   return (
     <div
       role="menu"
@@ -153,13 +160,23 @@ export default function MyCasesMenuContent({
         </ul>
       )}
 
-      <div className="p-3 border-t bg-muted/20">
+      <div className="space-y-2 border-t bg-muted/20 p-3">
         <Link href="/vorlagen-generator?new=1" onClick={handleNewCase}>
           <Button size="sm" className="w-full gap-2">
             Neuen Fall analysieren
             <ArrowRight className="w-3.5 h-3.5" />
           </Button>
         </Link>
+        {count > 0 && (
+          <button
+            type="button"
+            onClick={handleClearAll}
+            className="flex w-full items-center justify-center gap-1.5 rounded-md px-2 py-1.5 text-xs font-semibold text-muted-foreground transition-colors hover:bg-red-50 hover:text-red-700"
+          >
+            <Trash2 className="h-3.5 w-3.5" />
+            Lokale Falldaten löschen
+          </button>
+        )}
       </div>
     </div>
   );
