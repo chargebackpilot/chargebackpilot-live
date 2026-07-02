@@ -311,6 +311,9 @@ router.get("/stats", async (req: any, res: Response): Promise<void> => {
       analysis_successes_7d: string;
       paywall_views_7d: string;
       checkout_clicks_7d: string;
+      validation_errors_7d: string;
+      wizard_abandons_7d: string;
+      avg_quality_score_7d: string | null;
     }>(
       `
         SELECT
@@ -352,7 +355,23 @@ router.get("/stats", async (req: any, res: Response): Promise<void> => {
           )::int AS paywall_views_7d,
           COUNT(*) FILTER (
             WHERE event_type = 'checkout_click' AND created_at >= $2
-          )::int AS checkout_clicks_7d
+          )::int AS checkout_clicks_7d,
+          COUNT(*) FILTER (
+            WHERE event_type = 'validation_error' AND created_at >= $2
+          )::int AS validation_errors_7d,
+          COUNT(*) FILTER (
+            WHERE event_type = 'wizard_abandon' AND created_at >= $2
+          )::int AS wizard_abandons_7d,
+          ROUND(AVG(
+            CASE
+              WHEN metadata->>'qualityScore' ~ '^[0-9]+$'
+              THEN (metadata->>'qualityScore')::numeric
+              ELSE NULL
+            END
+          ) FILTER (
+            WHERE event_type IN ('wizard_draft', 'analysis_submit', 'analysis_success')
+              AND created_at >= $2
+          ), 1)::text AS avg_quality_score_7d
         FROM analytics_events
       `,
       [since24h, since7d, since30d, sinceRange]
@@ -401,7 +420,10 @@ router.get("/stats", async (req: any, res: Response): Promise<void> => {
           'analysis_submit',
           'analysis_success',
           'paywall_view',
-          'checkout_click'
+          'checkout_click',
+          'validation_error',
+          'wizard_abandon',
+          'step_duration'
         )
         ORDER BY created_at DESC
         LIMIT 40
@@ -460,6 +482,9 @@ router.get("/stats", async (req: any, res: Response): Promise<void> => {
         analysisSuccesses7d: Number(traffic.rows[0]?.analysis_successes_7d ?? 0),
         paywallViews7d: Number(traffic.rows[0]?.paywall_views_7d ?? 0),
         checkoutClicks7d: Number(traffic.rows[0]?.checkout_clicks_7d ?? 0),
+        validationErrors7d: Number(traffic.rows[0]?.validation_errors_7d ?? 0),
+        wizardAbandons7d: Number(traffic.rows[0]?.wizard_abandons_7d ?? 0),
+        avgQualityScore7d: Number(traffic.rows[0]?.avg_quality_score_7d ?? 0),
       },
       topContentPages: topContentPages.rows.map((row) => ({
         path: row.path,

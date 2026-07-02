@@ -13,6 +13,7 @@ import {
   Camera,
   FileX,
 } from "lucide-react";
+import type { ComponentType } from "react";
 
 export const PAYMENT_METHODS = [
   { id: "paypal", label: "PayPal" },
@@ -20,6 +21,7 @@ export const PAYMENT_METHODS = [
   { id: "amex", label: "American Express" },
   { id: "klarna", label: "Klarna" },
   { id: "apple_google_pay", label: "Apple Pay / Google Pay" },
+  { id: "sepa", label: "SEPA-Lastschrift" },
   { id: "bank_transfer", label: "Banküberweisung" },
   { id: "other", label: "Sonstiges" },
 ];
@@ -127,7 +129,19 @@ export const MERCHANT_RESPONSE_OPTIONS = [
   { id: "sonstiges", label: "Sonstiges", sub: "Andere Reaktion" },
 ];
 
-export const EVIDENCE_GROUPS = [
+export interface EvidenceItem {
+  id: string;
+  label: string;
+  hint: string;
+}
+
+export interface EvidenceGroup {
+  label: string;
+  icon: ComponentType<{ className?: string }>;
+  items: EvidenceItem[];
+}
+
+export const EVIDENCE_GROUPS: EvidenceGroup[] = [
   {
     label: "Zahlungsnachweise",
     icon: Receipt,
@@ -162,7 +176,7 @@ export const EVIDENCE_GROUPS = [
       {
         id: "none",
         label: "Keine Beweise vorhanden",
-        hint: "KI analysiert trotzdem die Rechtslage",
+        hint: "Die Analyse bleibt möglich, kann aber allgemeiner ausfallen.",
       },
     ],
   },

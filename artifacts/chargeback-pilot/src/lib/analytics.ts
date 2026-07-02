@@ -7,6 +7,11 @@ type WizardSnapshot = {
   merchantContacted?: boolean;
   merchantResponseType?: string;
   evidence?: string[];
+  evidenceStatus?: Record<string, "have" | "later" | "missing">;
+  validationError?: string;
+  missingRequired?: string[];
+  durationMs?: number;
+  qualityScore?: number;
 };
 
 const VISITOR_ID_KEY = "cbp_visitor_id_v1";
@@ -99,7 +104,10 @@ export function trackWizardEvent(
     | "analysis_submit"
     | "analysis_success"
     | "paywall_view"
-    | "checkout_click",
+    | "checkout_click"
+    | "validation_error"
+    | "wizard_abandon"
+    | "step_duration",
   step: number,
   snapshot: WizardSnapshot
 ) {
@@ -115,6 +123,11 @@ export function trackWizardEvent(
       merchantContacted: snapshot.merchantContacted,
       merchantResponseType: snapshot.merchantResponseType,
       evidence: snapshot.evidence,
+      evidenceStatus: snapshot.evidenceStatus,
+      validationError: snapshot.validationError,
+      missingRequired: snapshot.missingRequired,
+      durationMs: snapshot.durationMs,
+      qualityScore: snapshot.qualityScore,
     },
   });
 }

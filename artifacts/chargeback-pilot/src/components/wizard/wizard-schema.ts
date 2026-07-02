@@ -12,6 +12,7 @@ export const wizardSchema = z.object({
   merchantResponseType: z.string().optional(),
   merchantResponseNote: z.string().optional(),
   evidence: z.array(z.string()).default([]),
+  evidenceStatus: z.record(z.string(), z.enum(["have", "later", "missing"])).default({}),
   structuredAnswers: z.record(z.string(), z.string()).default({}),
 });
 

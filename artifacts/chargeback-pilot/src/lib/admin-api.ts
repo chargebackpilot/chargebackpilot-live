@@ -104,6 +104,9 @@ export interface AdminStats {
     analysisSuccesses7d: number;
     paywallViews7d: number;
     checkoutClicks7d: number;
+    validationErrors7d: number;
+    wizardAbandons7d: number;
+    avgQualityScore7d: number;
   };
   topContentPages: {
     path: string;

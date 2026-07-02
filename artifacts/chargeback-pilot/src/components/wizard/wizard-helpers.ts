@@ -1,10 +1,23 @@
-import { STRUCTURED_QUESTIONS, MERCHANT_RESPONSE_OPTIONS } from "./wizard-constants";
+import {
+  STRUCTURED_QUESTIONS,
+  MERCHANT_RESPONSE_OPTIONS,
+  EVIDENCE_GROUPS,
+} from "./wizard-constants";
+
+const EVIDENCE_LABELS = EVIDENCE_GROUPS.flatMap((group) => group.items).reduce(
+  (acc, item) => {
+    acc[item.id] = item.label;
+    return acc;
+  },
+  {} as Record<string, string>
+);
 
 export function buildDescription(
   structuredAnswers: Record<string, string>,
   problemType: string,
   purchaseAmount: string,
   disputedAmount: string,
+  evidenceStatus: Record<string, "have" | "later" | "missing"> = {}
 ): string {
   const questions = STRUCTURED_QUESTIONS[problemType] ?? STRUCTURED_QUESTIONS.other;
   const parts: string[] = [];
@@ -22,16 +35,34 @@ export function buildDescription(
   ) {
     const pct = Math.round((parseFloat(disputedAmount) / parseFloat(purchaseAmount)) * 100);
     parts.push(
-      `Kaufbetrag gesamt: ${purchaseAmount} EUR — streitiger Betrag: ${disputedAmount} EUR (${pct}% des Kaufbetrags)`,
+      `Kaufbetrag gesamt: ${purchaseAmount} EUR — streitiger Betrag: ${disputedAmount} EUR (${pct}% des Kaufbetrags)`
     );
+  }
+
+  const evidenceGroups = {
+    Vorhanden: Object.entries(evidenceStatus)
+      .filter(([, status]) => status === "have")
+      .map(([id]) => EVIDENCE_LABELS[id] ?? id),
+    "Noch zu sichern": Object.entries(evidenceStatus)
+      .filter(([, status]) => status === "later")
+      .map(([id]) => EVIDENCE_LABELS[id] ?? id),
+    "Nicht vorhanden": Object.entries(evidenceStatus)
+      .filter(([, status]) => status === "missing")
+      .map(([id]) => EVIDENCE_LABELS[id] ?? id),
+  };
+
+  const evidenceLines = Object.entries(evidenceGroups)
+    .filter(([, values]) => values.length > 0)
+    .map(([label, values]) => `${label}: ${values.join(", ")}`);
+  if (evidenceLines.length > 0) {
+    parts.push(`Belegstatus\n${evidenceLines.join("\n")}`);
   }
 
   return parts.join("\n\n");
 }
 
 export function buildMerchantResponse(responseType: string, responseNote: string): string {
-  const label =
-    MERCHANT_RESPONSE_OPTIONS.find((o) => o.id === responseType)?.label ?? "";
+  const label = MERCHANT_RESPONSE_OPTIONS.find((o) => o.id === responseType)?.label ?? "";
   if (!label) return "";
   return responseNote.trim() ? `${label}: ${responseNote.trim()}` : label;
 }
@@ -54,5 +85,8 @@ export function extractBody(template: string): string {
   const start = lines.findIndex((l) => /sehr geehrte/i.test(l));
   const end = lines.findIndex((l) => /mit freundlichen gr/i.test(l));
   if (start === -1 || end === -1 || end <= start) return template;
-  return lines.slice(start + 1, end).join("\n").trim();
+  return lines
+    .slice(start + 1, end)
+    .join("\n")
+    .trim();
 }

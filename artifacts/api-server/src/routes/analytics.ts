@@ -37,6 +37,9 @@ const wizardEventSchema = z.object({
     "analysis_success",
     "paywall_view",
     "checkout_click",
+    "validation_error",
+    "wizard_abandon",
+    "step_duration",
   ]),
   step: z.number().int().min(1).max(6).optional(),
   visitorId: z.string().min(8).max(120).optional(),
@@ -48,6 +51,16 @@ const wizardEventSchema = z.object({
       merchantContacted: z.boolean().optional(),
       merchantResponseType: z.string().max(80).optional(),
       evidence: z.array(z.string().max(80)).max(30).optional(),
+      evidenceStatus: z.record(z.string().max(80), z.enum(["have", "later", "missing"])).optional(),
+      validationError: z.string().max(80).optional(),
+      missingRequired: z.array(z.string().max(80)).max(20).optional(),
+      durationMs: z
+        .number()
+        .int()
+        .min(0)
+        .max(60 * 60 * 1000)
+        .optional(),
+      qualityScore: z.number().int().min(0).max(100).optional(),
     })
     .default({}),
 });
@@ -81,6 +94,7 @@ function shouldIgnorePath(path: string) {
 
 function cleanWizardMetadata(input: z.infer<typeof wizardEventSchema>) {
   const data = input.data ?? {};
+  const evidenceStatusValues = Object.values(data.evidenceStatus ?? {});
   return {
     step: input.step ?? null,
     paymentMethod: data.paymentMethod || null,
@@ -89,6 +103,13 @@ function cleanWizardMetadata(input: z.infer<typeof wizardEventSchema>) {
     merchantContacted: data.merchantContacted ?? null,
     merchantResponseType: data.merchantResponseType || null,
     evidenceCount: data.evidence?.length ?? 0,
+    evidenceHaveCount: evidenceStatusValues.filter((status) => status === "have").length,
+    evidenceLaterCount: evidenceStatusValues.filter((status) => status === "later").length,
+    evidenceMissingCount: evidenceStatusValues.filter((status) => status === "missing").length,
+    validationError: data.validationError || null,
+    missingRequiredCount: data.missingRequired?.length ?? 0,
+    durationMs: data.durationMs ?? null,
+    qualityScore: data.qualityScore ?? null,
   };
 }
 

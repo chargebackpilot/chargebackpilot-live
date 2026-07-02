@@ -27,6 +27,7 @@ const PAYMENT_METHOD_LABELS: Record<string, string> = {
   amex: "American Express",
   klarna: "Klarna",
   apple_google_pay: "Apple Pay / Google Pay",
+  sepa: "SEPA-Lastschrift",
   bank_transfer: "Banküberweisung",
   other: "Sonstiges",
 };
@@ -112,6 +113,7 @@ WICHTIGE RICHTLINIEN FÜR DIE ANALYSE:
 - Sei realistisch und vorsichtig. Keine falschen Hoffnungen, keine Garantien, keine verbindlichen Rechtsaussagen.
 - Die successProbability ist nur eine interne grobe Orientierung und soll nicht wie eine verbindliche Erfolgsprognose klingen.
 - Für PayPal/Kreditkarten: Ein Käuferschutz-/Chargeback-Verfahren kann in Betracht kommen, wenn Belege und Anbieterregeln passen.
+- Für SEPA-Lastschrift: weise vorsichtig auf Bankprüfung und mögliche Rückgaberegeln hin, ohne feste Fristen zu versprechen.
 - Für Banküberweisung: weise vorsichtig darauf hin, dass direkte Händlerkommunikation oft wichtiger ist.
 - Die Textentwürfe müssen sachlich, vollständig und vom Nutzer vor Versand prüfbar sein.
 - Nutze keine verbindliche Anspruchsprüfung. Allgemeine Normen oder Anbieterregeln nur vorsichtig als Orientierung nennen.
@@ -240,7 +242,7 @@ function buildFallbackAnalysis(input: CaseInput): CaseAnalysis {
   const paymentLabel = PAYMENT_METHOD_LABELS[input.paymentMethod] || input.paymentMethod;
   const problemLabel = PROBLEM_TYPE_LABELS[input.problemType] || input.problemType;
   const strongMethods = ["paypal", "visa_mastercard", "amex"];
-  const mediumMethods = ["klarna", "apple_google_pay"];
+  const mediumMethods = ["klarna", "apple_google_pay", "sepa"];
   let score = 0;
   if (strongMethods.includes(input.paymentMethod)) score += 35;
   else if (mediumMethods.includes(input.paymentMethod)) score += 20;

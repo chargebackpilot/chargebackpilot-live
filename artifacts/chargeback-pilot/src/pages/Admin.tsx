@@ -78,7 +78,11 @@ function labelProblem(t: string) {
 
 function csvCell(value: unknown) {
   const text =
-    value == null ? "" : typeof value === "object" ? JSON.stringify(value) : String(value);
+    value === null || value === undefined
+      ? ""
+      : typeof value === "object"
+        ? JSON.stringify(value)
+        : String(value);
   return `"${text.replace(/"/g, '""')}"`;
 }
 
@@ -106,7 +110,19 @@ function exportTopContentCsv(rows: AdminStats["topContentPages"], rangeDays: num
 function exportWizardEventsCsv(rows: AdminStats["latestWizardEvents"]) {
   downloadCsv(
     "chargebackpilot-wizard-events.csv",
-    ["Event", "Zeitpunkt", "Schritt", "Zahlungsart", "Problem", "Land", "Kontakt", "Belege"],
+    [
+      "Event",
+      "Zeitpunkt",
+      "Schritt",
+      "Zahlungsart",
+      "Problem",
+      "Land",
+      "Kontakt",
+      "Belege",
+      "Score",
+      "Dauer ms",
+      "Fehler",
+    ],
     rows.map((row) => {
       const meta = row.metadata ?? {};
       return [
@@ -118,6 +134,9 @@ function exportWizardEventsCsv(rows: AdminStats["latestWizardEvents"]) {
         String(meta.merchantCountry ?? ""),
         meta.merchantContacted === true ? "ja" : meta.merchantContacted === false ? "nein" : "",
         String(meta.evidenceCount ?? ""),
+        String(meta.qualityScore ?? ""),
+        String(meta.durationMs ?? ""),
+        String(meta.validationError ?? ""),
       ];
     })
   );
@@ -944,6 +963,19 @@ function WizardEventList({ rows }: { rows: AdminStats["latestWizardEvents"] }) {
                   : "Kontakt offen"}{" "}
               · {String(meta.evidenceCount ?? 0)} Belege
             </p>
+            {((meta.qualityScore !== null && meta.qualityScore !== undefined) ||
+              (meta.durationMs !== null && meta.durationMs !== undefined) ||
+              Boolean(meta.validationError)) && (
+              <p className="mt-1 text-xs text-slate-500">
+                {meta.qualityScore !== null && meta.qualityScore !== undefined
+                  ? `Score ${String(meta.qualityScore)}`
+                  : "Score offen"}
+                {meta.durationMs !== null && meta.durationMs !== undefined
+                  ? ` · ${Math.round(Number(meta.durationMs) / 1000)}s`
+                  : ""}
+                {meta.validationError ? ` · ${String(meta.validationError)}` : ""}
+              </p>
+            )}
           </div>
         );
       })}
@@ -992,6 +1024,23 @@ function FunnelPanel({ stats }: { stats: AdminStats }) {
   ];
 
   const max = Math.max(1, ...steps.map((step) => step.value));
+  const uxSignals = [
+    {
+      label: "Validierungsfehler",
+      value: stats.traffic.validationErrors7d,
+      hint: "blockierte Weiter-Klicks",
+    },
+    {
+      label: "Abbrüche",
+      value: stats.traffic.wizardAbandons7d,
+      hint: "vor Ergebnis verlassen",
+    },
+    {
+      label: "Ø Fallqualität",
+      value: stats.traffic.avgQualityScore7d,
+      hint: "Score vor Analyse",
+    },
+  ];
 
   return (
     <Card title="Conversion-Funnel (7 Tage)">
@@ -1019,6 +1068,17 @@ function FunnelPanel({ stats }: { stats: AdminStats }) {
           );
         })}
       </div>
+      <div className="mt-4 grid gap-3 md:grid-cols-3">
+        {uxSignals.map((signal) => (
+          <div key={signal.label} className="rounded-xl border bg-white p-3">
+            <p className="text-[11px] font-bold uppercase tracking-wide text-slate-500">
+              {signal.label}
+            </p>
+            <p className="mt-1 text-2xl font-black tabular-nums text-slate-950">{signal.value}</p>
+            <p className="mt-1 text-[11px] text-slate-500">{signal.hint}</p>
+          </div>
+        ))}
+      </div>
       <p className="mt-4 text-xs text-slate-500">
         Datensparsam: erfasst werden nur strukturierte Ereignisse ohne Freitext. Admin-Browser mit
         aktivem Token werden ausgeschlossen.
@@ -1035,6 +1095,9 @@ function labelWizardEvent(eventType: string) {
     analysis_success: "Analyse erfolgreich",
     paywall_view: "Paywall gesehen",
     checkout_click: "Checkout geklickt",
+    validation_error: "Validierungsfehler",
+    wizard_abandon: "Abbruch",
+    step_duration: "Schrittdauer",
   };
   return labels[eventType] ?? eventType;
 }

@@ -144,7 +144,7 @@ components:
       properties:
         paymentMethod:
           type: string
-          description: "Payment method: paypal, visa_mastercard, amex, klarna, apple_google_pay, bank_transfer, other"
+          description: "Payment method: paypal, visa_mastercard, amex, klarna, apple_google_pay, sepa, bank_transfer, other"
         problemType:
           type: string
           description: "Problem type: not_received, defective, service_not_rendered, flight_travel, subscription, fraud, food_delivery, refund_promised, other"

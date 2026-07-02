@@ -22,7 +22,6 @@ import {
   ArrowLeft,
   ArrowRight,
   CheckCircle2,
-  Copy,
   Shield,
   Scale,
   Clock,
@@ -32,27 +31,11 @@ import {
   FileText,
   Building2,
   Landmark,
-  UtensilsCrossed,
-  Plane,
-  Package,
-  Repeat2,
-  RefreshCcw,
   Check,
   Loader2,
-  X,
-  ShieldCheck,
-  Users,
   MessageSquare,
-  Receipt,
-  Camera,
-  Mail,
-  Truck,
-  FileX,
-  BadgeAlert,
   Download,
   FileSignature,
-  Sparkles,
-  Lock as LockIcon,
 } from "lucide-react";
 
 import {
@@ -76,9 +59,18 @@ import {
   LockedTeaser,
   CopyableTemplate,
   MerchantQuickSelect,
-  ContentLocker,
   QuestionField,
+  CaseQualityPanel,
+  EvidenceCoach,
+  ActionPlanPanel,
 } from "@/components/wizard/WizardComponents";
+import {
+  getCaseQuality,
+  getEvidenceRecommendations,
+  getPaymentNextStep,
+  countEvidenceStatuses,
+  type EvidenceStatus,
+} from "@/components/wizard/wizard-insights";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
 import { LetterGenerator } from "@/components/LetterGenerator";
 import {
@@ -108,6 +100,7 @@ interface FormData {
   merchantResponseType: string;
   merchantResponseNote: string;
   evidence: string[];
+  evidenceStatus: Record<string, EvidenceStatus>;
   structuredAnswers: Record<string, string>;
 }
 
@@ -187,7 +180,9 @@ export default function Wizard() {
   const turnstileWidgetIdRef = useRef<string | null>(null);
   const turnstileContainerRef = useRef<HTMLDivElement | null>(null);
   const lastWizardDraftTrackedAtRef = useRef(0);
-  const [location] = useLocation();
+  const stepStartedAtRef = useRef(Date.now());
+  const trackedStepRef = useRef(1);
+  const [_location] = useLocation();
   const [navigationKey, setNavigationKey] = useState(() => {
     if (typeof window === "undefined") return "";
     return `${window.location.pathname}${window.location.search}${window.location.hash}`;
@@ -314,6 +309,7 @@ export default function Wizard() {
       merchantResponseType: "",
       merchantResponseNote: "",
       evidence: [],
+      evidenceStatus: {},
       structuredAnswers: {},
     },
     mode: "onTouched",
@@ -326,8 +322,8 @@ export default function Wizard() {
   ) => {
     const prev = form.getValues();
     const next = typeof updater === "function" ? updater(prev) : { ...prev, ...updater };
-    Object.keys(next).forEach((key) => {
-      form.setValue(key as keyof WizardFormData, (next as any)[key], { shouldValidate: true });
+    (Object.keys(next) as Array<keyof WizardFormData>).forEach((key) => {
+      form.setValue(key, next[key] as WizardFormData[typeof key], { shouldValidate: true });
     });
   };
 
@@ -347,11 +343,38 @@ export default function Wizard() {
     merchantContacted: formData.merchantContacted,
     merchantResponseType: formData.merchantResponseType,
     evidence: formData.evidence,
+    evidenceStatus: formData.evidenceStatus,
   });
 
   useEffect(() => {
+    const previousStep = trackedStepRef.current;
+    if (previousStep !== step && previousStep < 6) {
+      const values = form.getValues();
+      trackWizardEvent("step_duration", previousStep, {
+        ...values,
+        durationMs: Date.now() - stepStartedAtRef.current,
+        qualityScore: getCaseQuality(values).score,
+      });
+    }
+    trackedStepRef.current = step;
+    stepStartedAtRef.current = Date.now();
     trackWizardEvent("wizard_step", step, form.getValues());
   }, [step]);
+
+  useEffect(() => {
+    const handlePageHide = () => {
+      const currentStep = trackedStepRef.current;
+      if (currentStep >= 6) return;
+      const values = form.getValues();
+      trackWizardEvent("wizard_abandon", currentStep, {
+        ...values,
+        durationMs: Date.now() - stepStartedAtRef.current,
+        qualityScore: getCaseQuality(values).score,
+      });
+    };
+    window.addEventListener("pagehide", handlePageHide);
+    return () => window.removeEventListener("pagehide", handlePageHide);
+  }, [form]);
 
   useEffect(() => {
     if (step >= 6) return;
@@ -389,7 +412,12 @@ export default function Wizard() {
 
   function getStoredReadToken(caseId: string | undefined | null) {
     if (!caseId) return undefined;
-    if (result?.id != null && String(result.id) === String(caseId) && result.readToken) {
+    if (
+      result?.id !== null &&
+      result?.id !== undefined &&
+      String(result.id) === String(caseId) &&
+      result.readToken
+    ) {
       return result.readToken;
     }
     const current = loadCurrentCase();
@@ -469,6 +497,7 @@ export default function Wizard() {
         merchantResponseType: "",
         merchantResponseNote: "",
         evidence: [],
+        evidenceStatus: {},
         structuredAnswers: {},
       });
       return;
@@ -548,13 +577,17 @@ export default function Wizard() {
     let fieldsToValidate: (keyof WizardFormData)[] = [];
     if (step === 1) fieldsToValidate = ["paymentMethod"];
     if (step === 2) fieldsToValidate = ["problemType"];
-    if (step === 3)
-      fieldsToValidate = ["merchantName", "purchaseAmount", "disputedAmount", "paymentDate"];
+    if (step === 3) fieldsToValidate = ["merchantName", "disputedAmount", "paymentDate"];
 
     // Trigger validation for current step
     if (fieldsToValidate.length > 0) {
       const isValid = await form.trigger(fieldsToValidate);
       if (!isValid) {
+        trackWizardEvent("validation_error", step, {
+          ...form.getValues(),
+          validationError: "required_fields",
+          qualityScore: getCaseQuality(form.getValues()).score,
+        });
         toast({
           title: "Fehlende Angaben",
           description: "Bitte fülle alle Pflichtfelder korrekt aus.",
@@ -565,10 +598,17 @@ export default function Wizard() {
     }
 
     // Custom validation for step 4 and 5
-    if (step === 4 && formData.evidence.length === 0) {
+    const evidenceDecisionCount =
+      formData.evidence.length + Object.keys(formData.evidenceStatus ?? {}).length;
+    if (step === 4 && evidenceDecisionCount === 0) {
+      trackWizardEvent("validation_error", step, {
+        ...form.getValues(),
+        validationError: "evidence_missing",
+        qualityScore: getCaseQuality(form.getValues()).score,
+      });
       toast({
         title: "Beweise",
-        description: "Bitte wähle mindestens eine Option (oder 'Keine Beweise').",
+        description: "Bitte ordne mindestens einen Beleg ein oder wähle bewusst 'Keine Beweise'.",
         variant: "destructive",
       });
       return;
@@ -649,34 +689,52 @@ export default function Wizard() {
       formData.structuredAnswers,
       formData.problemType,
       formData.purchaseAmount || "",
-      formData.disputedAmount || ""
+      formData.disputedAmount || "",
+      formData.evidenceStatus ?? {}
     );
     const merchantResponse = buildMerchantResponse(
       formData.merchantResponseType || "",
       formData.merchantResponseNote || ""
     );
-    trackWizardEvent("analysis_submit", step, formData);
+    const evidenceForSubmission = Array.from(
+      new Set([
+        ...(formData.evidence ?? []),
+        ...Object.entries(formData.evidenceStatus ?? {})
+          .filter(([, status]) => status === "have")
+          .map(([id]) => id),
+      ])
+    ).filter((id) => id === "none" || id.trim().length > 0);
+    trackWizardEvent("analysis_submit", step, {
+      ...formData,
+      qualityScore: getCaseQuality(formData).score,
+    });
+    type CreateCaseVariables = Parameters<typeof createCase.mutate>[0];
+    type CreateCasePayload = CreateCaseVariables["data"] & { turnstileToken?: string };
+    const casePayload: CreateCasePayload = {
+      paymentMethod: formData.paymentMethod || "other",
+      problemType: formData.problemType || "other",
+      merchantName: formData.merchantName || "Unbekannter Händler",
+      amount: Number(formData.disputedAmount) || Number(formData.purchaseAmount) || 0,
+      paymentDate: formData.paymentDate || new Date().toISOString().split("T")[0],
+      merchantCountry: formData.merchantCountry || undefined,
+      merchantContacted: formData.merchantContacted,
+      merchantResponse: merchantResponse || undefined,
+      evidence: evidenceForSubmission,
+      description: description || "Keine Beschreibung",
+      ...(turnstileToken ? { turnstileToken } : {}),
+    };
     setStep(6);
     createCase.mutate(
       {
-        data: {
-          paymentMethod: formData.paymentMethod || "other",
-          problemType: formData.problemType || "other",
-          merchantName: formData.merchantName || "Unbekannter Händler",
-          amount: Number(formData.disputedAmount) || Number(formData.purchaseAmount) || 0,
-          paymentDate: formData.paymentDate || new Date().toISOString().split("T")[0],
-          merchantCountry: formData.merchantCountry || undefined,
-          merchantContacted: formData.merchantContacted,
-          merchantResponse: merchantResponse || undefined,
-          evidence: formData.evidence || [],
-          description: description || "Keine Beschreibung",
-          ...(turnstileToken ? { turnstileToken } : {}),
-        },
-      } as any,
+        data: casePayload,
+      },
       {
         onSuccess: (data) => {
           setIsSubmittingCase(false);
-          trackWizardEvent("analysis_success", 6, formData);
+          trackWizardEvent("analysis_success", 6, {
+            ...formData,
+            qualityScore: getCaseQuality(formData).score,
+          });
           setResult(data);
           setResultViewKey((key) => key + 1);
           if (data) {
@@ -708,12 +766,35 @@ export default function Wizard() {
 
   const toggleEvidence = (id: string) => {
     if (id === "none") {
-      setFormData((prev) => ({ ...prev, evidence: ["none"] }));
+      setFormData((prev) => ({ ...prev, evidence: ["none"], evidenceStatus: {} }));
       return;
     }
     const filtered = formData.evidence.filter((e) => e !== "none");
     const next = filtered.includes(id) ? filtered.filter((e) => e !== id) : [...filtered, id];
-    setFormData((prev) => ({ ...prev, evidence: next }));
+    setFormData((prev) => ({
+      ...prev,
+      evidence: next,
+      evidenceStatus: {
+        ...(prev.evidenceStatus ?? {}),
+        [id]: next.includes(id) ? "have" : "later",
+      },
+    }));
+  };
+
+  const setEvidenceStatus = (id: string, status: EvidenceStatus) => {
+    setFormData((prev) => {
+      const existing = new Set((prev.evidence ?? []).filter((item) => item !== "none"));
+      if (status === "have") existing.add(id);
+      else existing.delete(id);
+      return {
+        ...prev,
+        evidence: Array.from(existing),
+        evidenceStatus: {
+          ...(prev.evidenceStatus ?? {}),
+          [id]: status,
+        },
+      };
+    });
   };
 
   const copyToClipboard = (text: string, label: string) => {
@@ -740,6 +821,7 @@ export default function Wizard() {
       merchantResponseType: "",
       merchantResponseNote: "",
       evidence: [],
+      evidenceStatus: {},
       structuredAnswers: {},
     });
     window.history.replaceState({}, "", "/vorlagen-generator");
@@ -787,6 +869,15 @@ export default function Wizard() {
   };
 
   const analysis = result?.analysis;
+  const caseQuality = getCaseQuality(formData);
+  const evidenceRecommendations = getEvidenceRecommendations(
+    formData.problemType,
+    formData.paymentMethod
+  );
+  const evidenceCounts = countEvidenceStatuses(formData);
+  const hasEvidenceDecision =
+    formData.evidence.length > 0 || Object.keys(formData.evidenceStatus ?? {}).length > 0;
+  const paymentNextStep = getPaymentNextStep(result?.paymentMethod ?? formData.paymentMethod);
 
   // Step 5 validity: at least one required question answered
   const step5Valid = (() => {
@@ -805,7 +896,7 @@ export default function Wizard() {
       !!formData.merchantName &&
       !!(formData.disputedAmount || formData.purchaseAmount) &&
       !!formData.paymentDate) ||
-    (step === 4 && formData.evidence.length > 0);
+    (step === 4 && hasEvidenceDecision);
 
   useEffect(() => {
     if (scrollTarget === "paywall") return;
@@ -825,7 +916,8 @@ export default function Wizard() {
       }
     })();
     const shouldScroll =
-      scrollTarget === "paywall" || (result?.id != null && pendingCaseId === String(result.id));
+      scrollTarget === "paywall" ||
+      (result?.id !== null && result?.id !== undefined && pendingCaseId === String(result.id));
     if (!shouldScroll) return;
     if (step !== 6 || !result || hasUnlocked) return;
     let attempts = 0;
@@ -907,6 +999,9 @@ export default function Wizard() {
                       );
                     })}
                   </ol>
+                  <div className="mt-6">
+                    <CaseQualityPanel quality={caseQuality} compact />
+                  </div>
                   <div className="mt-6 rounded-xl border bg-muted/50 p-3 text-[11px] text-muted-foreground leading-relaxed">
                     <div className="flex items-center gap-1.5 mb-1 font-semibold text-foreground">
                       <Shield className="w-3.5 h-3.5 text-primary" /> Datenschutz transparent
@@ -929,6 +1024,11 @@ export default function Wizard() {
                     <span className="font-semibold text-foreground">{STEP_TITLES[step - 1]}</span>
                   </p>
                   <Progress value={(step / 5) * 100} className="h-2" />
+                  {step > 1 && (
+                    <div className="mt-4">
+                      <CaseQualityPanel quality={caseQuality} compact />
+                    </div>
+                  )}
                 </div>
               )}
 
@@ -1313,6 +1413,13 @@ export default function Wizard() {
                         </p>
                       </div>
 
+                      <EvidenceCoach
+                        recommendations={evidenceRecommendations}
+                        evidenceStatus={formData.evidenceStatus ?? {}}
+                        selectedEvidence={formData.evidence}
+                        onSetStatus={setEvidenceStatus}
+                      />
+
                       {EVIDENCE_GROUPS.map((group) => {
                         const GroupIcon = group.icon;
                         return (
@@ -1362,6 +1469,14 @@ export default function Wizard() {
                           ausgewählt — die spätere Formulierung kann dadurch konkreter werden.
                         </div>
                       )}
+                      {evidenceCounts.later > 0 && (
+                        <div className="flex items-center gap-2 text-sm text-blue-800 bg-blue-50 border border-blue-200 rounded-lg px-3 py-2">
+                          <Clock className="w-4 h-4 flex-shrink-0" />
+                          {evidenceCounts.later} Beleg
+                          {evidenceCounts.later !== 1 ? "e" : ""} als „hole ich” markiert — der Fall
+                          bleibt startklar, aber du bekommst eine klarere Checkliste.
+                        </div>
+                      )}
                       {formData.evidence.includes("none") && (
                         <div className="flex items-center gap-2 text-sm text-amber-800 bg-amber-50 border border-amber-200 rounded-lg px-3 py-2">
                           <AlertTriangle className="w-4 h-4 flex-shrink-0" />
@@ -1400,6 +1515,8 @@ export default function Wizard() {
                           </div>
                         ))}
                       </div>
+
+                      <CaseQualityPanel quality={caseQuality} />
 
                       <div className="bg-blue-50 border border-blue-200 rounded-xl p-4 text-sm text-blue-800">
                         <p className="font-semibold mb-1 flex items-center gap-2">
@@ -1480,6 +1597,16 @@ export default function Wizard() {
                           {analysis && (
                             <StrategyIndicator label={analysis.successProbabilityLabel} />
                           )}
+
+                          <ActionPlanPanel
+                            merchantName={result.merchantName ?? formData.merchantName}
+                            hasMerchantContacted={Boolean(
+                              result.merchantContacted ?? formData.merchantContacted
+                            )}
+                            missingEvidenceCount={analysis?.missingEvidence?.length ?? 0}
+                            paymentNextStep={paymentNextStep}
+                            hasUnlocked={hasUnlocked}
+                          />
 
                           {/* Urgency banners */}
                           {analysis?.urgencyLevel === "hoch" && (

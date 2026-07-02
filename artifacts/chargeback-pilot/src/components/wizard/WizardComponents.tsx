@@ -1,23 +1,29 @@
 import { useState, useEffect } from "react";
 import {
+  AlertTriangle,
+  ArrowRight,
   Check,
   CheckCircle2,
+  CircleDashed,
+  ClipboardCheck,
   Copy,
   Sparkles,
   FileText,
   Lock as LockIcon,
   Loader2,
   ShieldCheck,
+  Target,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
 import { LOADING_STEPS, KNOWN_MERCHANTS, Question } from "./wizard-constants";
+import type { CaseQuality, EvidenceRecommendation, EvidenceStatus } from "./wizard-insights";
 
 export function GeneratorLoader({ merchantName }: { merchantName: string }) {
   const [completedSteps, setCompletedSteps] = useState<number[]>([]);
-  const [allDone, setAllDone] = useState(false);
   const [factIndex, setFactIndex] = useState(0);
+  const [elapsed, setElapsed] = useState(0);
 
   const facts = [
     "Wusstest du? Bei Visa lautet der Chargeback-Grund für nicht gelieferte Ware 'Reason Code 13.1'.",
@@ -32,12 +38,12 @@ export function GeneratorLoader({ merchantName }: { merchantName: string }) {
   ];
 
   useEffect(() => {
-    const t1 = setTimeout(() => setCompletedSteps([0]), 7000);
-    const t2 = setTimeout(() => setCompletedSteps([0, 1]), 15000);
-    const t3 = setTimeout(() => {
-      setCompletedSteps([0, 1, 2]);
-      setTimeout(() => setAllDone(true), 600);
-    }, 23000);
+    const startedAt = Date.now();
+    const t1 = setTimeout(() => setCompletedSteps([0]), 1200);
+    const t2 = setTimeout(() => setCompletedSteps([0, 1]), 4500);
+    const elapsedInterval = setInterval(() => {
+      setElapsed(Math.round((Date.now() - startedAt) / 1000));
+    }, 1000);
 
     const fInterval = setInterval(() => {
       setFactIndex((prev) => (prev + 1) % facts.length);
@@ -46,7 +52,7 @@ export function GeneratorLoader({ merchantName }: { merchantName: string }) {
     return () => {
       clearTimeout(t1);
       clearTimeout(t2);
-      clearTimeout(t3);
+      clearInterval(elapsedInterval);
       clearInterval(fInterval);
     };
   }, []);
@@ -63,6 +69,9 @@ export function GeneratorLoader({ merchantName }: { merchantName: string }) {
         <h2 className="text-2xl font-bold mb-1">KI-Generator arbeitet</h2>
         <p className="text-muted-foreground text-sm">
           {merchantName ? `Fall gegen ${merchantName} wird erstellt...` : "Generierung läuft..."}
+        </p>
+        <p className="mt-1 text-xs text-muted-foreground">
+          Läuft seit {Math.max(1, elapsed)} Sek. · meist 15-30 Sek.
         </p>
       </div>
       <div className="flex flex-col gap-3 w-full max-w-xs">
@@ -98,26 +107,18 @@ export function GeneratorLoader({ merchantName }: { merchantName: string }) {
           );
         })}
       </div>
-      {allDone && (
-        <div className="animate-in fade-in slide-in-from-bottom-2 duration-500 flex items-center gap-2 text-emerald-700 font-semibold">
-          <CheckCircle2 className="w-5 h-5" />
-          Vorlagen erstellt — Ergebnisse laden...
-        </div>
-      )}
 
-      {!allDone && (
-        <div className="mt-4 max-w-sm mx-auto bg-muted/30 border rounded-xl p-4 text-xs text-muted-foreground animate-in fade-in duration-500">
-          <div className="font-semibold text-primary mb-1 flex items-center justify-center gap-1.5">
-            <Sparkles className="w-3.5 h-3.5" /> Wusstest du schon?
-          </div>
-          <p
-            key={factIndex}
-            className="animate-in fade-in slide-in-from-bottom-1 duration-300 min-h-[40px] flex items-center justify-center"
-          >
-            {facts[factIndex]}
-          </p>
+      <div className="mt-4 max-w-sm mx-auto bg-muted/30 border rounded-xl p-4 text-xs text-muted-foreground animate-in fade-in duration-500">
+        <div className="font-semibold text-primary mb-1 flex items-center justify-center gap-1.5">
+          <Sparkles className="w-3.5 h-3.5" /> Währenddessen hilfreich
         </div>
-      )}
+        <p
+          key={factIndex}
+          className="animate-in fade-in slide-in-from-bottom-1 duration-300 min-h-[40px] flex items-center justify-center"
+        >
+          {facts[factIndex]}
+        </p>
+      </div>
     </div>
   );
 }
@@ -188,6 +189,226 @@ export function StrategyIndicator({ label }: { label: string }) {
             Indikative Einschätzung der KI · keine Garantie auf den Verfahrensausgang
           </p>
         </div>
+      </div>
+    </div>
+  );
+}
+
+const QUALITY_TONES: Record<CaseQuality["tone"], string> = {
+  emerald: "border-emerald-200 bg-emerald-50 text-emerald-900",
+  blue: "border-blue-200 bg-blue-50 text-blue-900",
+  amber: "border-amber-200 bg-amber-50 text-amber-950",
+  slate: "border-slate-200 bg-slate-50 text-slate-800",
+};
+
+export function CaseQualityPanel({
+  quality,
+  compact = false,
+}: {
+  quality: CaseQuality;
+  compact?: boolean;
+}) {
+  const tone = QUALITY_TONES[quality.tone] ?? QUALITY_TONES.slate;
+  return (
+    <div className={`rounded-xl border p-3 ${tone}`}>
+      <div className="flex items-start justify-between gap-3">
+        <div className="min-w-0">
+          <p className="text-[10px] font-bold uppercase tracking-wide opacity-70">Fallqualität</p>
+          <p className="text-sm font-black leading-tight">{quality.label}</p>
+        </div>
+        <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full bg-white/70 text-sm font-black tabular-nums shadow-sm">
+          {quality.score}
+        </div>
+      </div>
+      <div className="mt-3 h-2 overflow-hidden rounded-full bg-white/70">
+        <div
+          className="h-full rounded-full bg-primary transition-all"
+          style={{ width: `${quality.score}%` }}
+        />
+      </div>
+      <p className="mt-2 text-xs leading-relaxed opacity-80">{quality.description}</p>
+      {!compact && (
+        <div className="mt-3 grid gap-2 text-[11px] sm:grid-cols-2">
+          <div>
+            <p className="mb-1 font-bold uppercase tracking-wide opacity-70">Stark</p>
+            <ul className="space-y-1">
+              {(quality.strengths.length ? quality.strengths : ["erste Angaben vorbereitet"]).map(
+                (item) => (
+                  <li key={item} className="flex items-start gap-1.5">
+                    <CheckCircle2 className="mt-0.5 h-3 w-3 flex-shrink-0" />
+                    <span>{item}</span>
+                  </li>
+                )
+              )}
+            </ul>
+          </div>
+          <div>
+            <p className="mb-1 font-bold uppercase tracking-wide opacity-70">Noch hilfreich</p>
+            <ul className="space-y-1">
+              {(quality.missing.length ? quality.missing : ["vor Versand selbst prüfen"]).map(
+                (item) => (
+                  <li key={item} className="flex items-start gap-1.5">
+                    <CircleDashed className="mt-0.5 h-3 w-3 flex-shrink-0" />
+                    <span>{item}</span>
+                  </li>
+                )
+              )}
+            </ul>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+const EVIDENCE_STATUS_LABELS: Record<EvidenceStatus, string> = {
+  have: "Habe ich",
+  later: "Hole ich",
+  missing: "Fehlt",
+};
+
+export function EvidenceCoach({
+  recommendations,
+  evidenceStatus,
+  selectedEvidence,
+  onSetStatus,
+}: {
+  recommendations: EvidenceRecommendation[];
+  evidenceStatus: Record<string, EvidenceStatus>;
+  selectedEvidence: string[];
+  onSetStatus: (id: string, status: EvidenceStatus) => void;
+}) {
+  if (recommendations.length === 0) return null;
+
+  return (
+    <div className="rounded-2xl border border-primary/20 bg-primary/5 p-4 sm:p-5">
+      <div className="mb-4 flex items-start gap-3">
+        <div className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-xl bg-primary/10">
+          <Target className="h-4 w-4 text-primary" />
+        </div>
+        <div>
+          <h3 className="text-sm font-bold">Beleg-Coach</h3>
+          <p className="text-xs leading-relaxed text-muted-foreground">
+            Markiere, was du schon hast oder noch sichern kannst. Das macht die spätere Formulierung
+            nachvollziehbarer.
+          </p>
+        </div>
+      </div>
+      <div className="space-y-2.5">
+        {recommendations.map((item) => {
+          const activeStatus = selectedEvidence.includes(item.id)
+            ? "have"
+            : evidenceStatus[item.id];
+          return (
+            <div key={item.id} className="rounded-xl border bg-background p-3">
+              <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                <div className="min-w-0">
+                  <p className="text-sm font-semibold">{item.label}</p>
+                  <p className="text-xs text-muted-foreground">{item.reason}</p>
+                </div>
+                <div className="grid grid-cols-3 gap-1 rounded-lg bg-muted p-1 sm:flex">
+                  {(["have", "later", "missing"] as EvidenceStatus[]).map((status) => (
+                    <button
+                      key={status}
+                      type="button"
+                      onClick={() => onSetStatus(item.id, status)}
+                      className={`rounded-md px-2 py-1.5 text-[11px] font-bold transition-colors ${
+                        activeStatus === status
+                          ? "bg-background text-primary shadow-sm"
+                          : "text-muted-foreground hover:text-foreground"
+                      }`}
+                    >
+                      {EVIDENCE_STATUS_LABELS[status]}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+export function ActionPlanPanel({
+  merchantName,
+  hasMerchantContacted,
+  missingEvidenceCount,
+  paymentNextStep,
+  hasUnlocked,
+}: {
+  merchantName: string;
+  hasMerchantContacted: boolean;
+  missingEvidenceCount: number;
+  paymentNextStep: string;
+  hasUnlocked: boolean;
+}) {
+  const items = [
+    {
+      title: "Belege sortieren",
+      body:
+        missingEvidenceCount > 0
+          ? `${missingEvidenceCount} Punkt(e) solltest du noch prüfen oder nachreichen.`
+          : "Die wichtigste Beleglage ist bereits gut vorbereitet.",
+      icon: ClipboardCheck,
+    },
+    {
+      title: hasMerchantContacted ? "Kontakt dokumentieren" : "Händlerkontakt vorbereiten",
+      body: hasMerchantContacted
+        ? "Halte Antwort, Datum und Screenshot oder E-Mail-Verlauf bereit."
+        : `Bereite eine sachliche Nachricht an ${merchantName || "den Anbieter"} vor.`,
+      icon: FileText,
+    },
+    {
+      title: "Zahlungsweg prüfen",
+      body: paymentNextStep,
+      icon: ShieldCheck,
+    },
+    {
+      title: hasUnlocked ? "Textentwürfe nutzen" : "Vorlagen freischalten",
+      body: hasUnlocked
+        ? "Prüfe die Texte selbst und passe persönliche Details vor dem Versand an."
+        : "Die vollständigen Vorlagen bleiben fallgebunden und werden nach Zahlung bereitgestellt.",
+      icon: hasUnlocked ? CheckCircle2 : LockIcon,
+    },
+  ];
+
+  return (
+    <div className="rounded-2xl border bg-card p-5">
+      <div className="mb-4 flex items-start gap-3">
+        <div className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-xl bg-primary/10">
+          <ArrowRight className="h-4 w-4 text-primary" />
+        </div>
+        <div>
+          <h3 className="font-bold">Dein nächster sinnvoller Ablauf</h3>
+          <p className="text-sm text-muted-foreground">
+            Kompakt sortiert, damit du ohne Druck Schritt für Schritt vorgehen kannst.
+          </p>
+        </div>
+      </div>
+      <div className="grid gap-3 sm:grid-cols-2">
+        {items.map((item, index) => {
+          const Icon = item.icon;
+          return (
+            <div key={item.title} className="rounded-xl border bg-muted/30 p-3">
+              <div className="mb-2 flex items-center gap-2">
+                <span className="flex h-6 w-6 items-center justify-center rounded-full bg-primary text-xs font-black text-primary-foreground">
+                  {index + 1}
+                </span>
+                <Icon className="h-4 w-4 text-primary" />
+                <p className="text-sm font-bold">{item.title}</p>
+              </div>
+              <p className="text-xs leading-relaxed text-muted-foreground">{item.body}</p>
+            </div>
+          );
+        })}
+      </div>
+      <div className="mt-4 flex items-start gap-2 rounded-xl border border-amber-200 bg-amber-50 px-3 py-2 text-xs leading-relaxed text-amber-900">
+        <AlertTriangle className="mt-0.5 h-3.5 w-3.5 flex-shrink-0" />
+        <span>
+          Keine Rechtsberatung. Prüfe Fristen, Anbieterregeln und Inhalte vor dem Versand.
+        </span>
       </div>
     </div>
   );
