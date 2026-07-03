@@ -44,6 +44,11 @@ export const apiServerEnvSchema = z.object({
   CASE_DESCRIPTION_MIN_CHARS: z.coerce.number().int().min(20).default(80),
   CASE_DESCRIPTION_MAX_CHARS: z.coerce.number().int().min(500).default(6000),
   REQUIRE_TURNSTILE_ON_CASE_CREATE: z.enum(["0", "1"]).default("1"),
+  GSC_ENABLED: z.enum(["0", "1"]).default("0"),
+  GSC_SITE_URL: z.string().optional(),
+  GSC_CLIENT_EMAIL: z.string().email().optional(),
+  GSC_PRIVATE_KEY: z.string().optional(),
+  GSC_SYNC_INTERVAL_HOURS: z.coerce.number().int().positive().default(24),
   BASE_PATH: z.string().default("/"),
 });
 
@@ -137,6 +142,22 @@ export function getApiServerEnv(): ApiServerEnv {
 
   if (!env.ADMIN_PASSWORD) {
     console.warn("⚠️  ADMIN_PASSWORD not set. Admin login is disabled.");
+  }
+
+  if (env.GSC_ENABLED === "1") {
+    const missingGscKeys = [
+      ["GSC_SITE_URL", env.GSC_SITE_URL],
+      ["GSC_CLIENT_EMAIL", env.GSC_CLIENT_EMAIL],
+      ["GSC_PRIVATE_KEY", env.GSC_PRIVATE_KEY],
+    ]
+      .filter(([, value]) => !value)
+      .map(([key]) => key);
+
+    if (missingGscKeys.length > 0) {
+      console.warn(
+        `⚠️  GSC_ENABLED=1 but ${missingGscKeys.join(", ")} missing. Search Console sync is disabled until fixed.`
+      );
+    }
   }
 
   return env;

@@ -50,6 +50,108 @@ export async function ensureDatabaseSchema() {
     `CREATE INDEX IF NOT EXISTS analytics_is_admin_idx ON analytics_events(is_admin)`
   );
 
+  await pool.query(`
+    CREATE TABLE IF NOT EXISTS gsc_sync_runs (
+      id serial PRIMARY KEY,
+      status text NOT NULL,
+      started_at timestamp NOT NULL DEFAULT now(),
+      finished_at timestamp,
+      manual boolean NOT NULL DEFAULT false,
+      date_from text,
+      date_to text,
+      search_analytics_rows integer NOT NULL DEFAULT 0,
+      inspection_count integer NOT NULL DEFAULT 0,
+      sitemap_count integer NOT NULL DEFAULT 0,
+      error text
+    )
+  `);
+  await pool.query(`CREATE INDEX IF NOT EXISTS gsc_sync_runs_status_idx ON gsc_sync_runs(status)`);
+  await pool.query(
+    `CREATE INDEX IF NOT EXISTS gsc_sync_runs_started_at_idx ON gsc_sync_runs(started_at)`
+  );
+
+  await pool.query(`
+    CREATE TABLE IF NOT EXISTS gsc_search_analytics (
+      id serial PRIMARY KEY,
+      data_from text NOT NULL,
+      data_to text NOT NULL,
+      page text NOT NULL,
+      query text NOT NULL DEFAULT '',
+      device text NOT NULL DEFAULT '',
+      country text NOT NULL DEFAULT '',
+      clicks integer NOT NULL DEFAULT 0,
+      impressions integer NOT NULL DEFAULT 0,
+      ctr real NOT NULL DEFAULT 0,
+      position real NOT NULL DEFAULT 0,
+      synced_at timestamp NOT NULL DEFAULT now()
+    )
+  `);
+  await pool.query(`
+    CREATE UNIQUE INDEX IF NOT EXISTS gsc_search_analytics_unique_snapshot_idx
+    ON gsc_search_analytics(data_from, data_to, page, query, device, country)
+  `);
+  await pool.query(
+    `CREATE INDEX IF NOT EXISTS gsc_search_analytics_page_idx ON gsc_search_analytics(page)`
+  );
+  await pool.query(
+    `CREATE INDEX IF NOT EXISTS gsc_search_analytics_query_idx ON gsc_search_analytics(query)`
+  );
+  await pool.query(
+    `CREATE INDEX IF NOT EXISTS gsc_search_analytics_synced_at_idx ON gsc_search_analytics(synced_at)`
+  );
+  await pool.query(
+    `CREATE INDEX IF NOT EXISTS gsc_search_analytics_impressions_idx ON gsc_search_analytics(impressions)`
+  );
+
+  await pool.query(`
+    CREATE TABLE IF NOT EXISTS gsc_url_inspections (
+      id serial PRIMARY KEY,
+      url text NOT NULL,
+      verdict text,
+      coverage_state text,
+      indexing_state text,
+      robots_txt_state text,
+      page_fetch_state text,
+      google_canonical text,
+      user_canonical text,
+      last_crawl_time timestamp,
+      raw jsonb NOT NULL DEFAULT '{}'::jsonb,
+      inspected_at timestamp NOT NULL DEFAULT now()
+    )
+  `);
+  await pool.query(`
+    CREATE UNIQUE INDEX IF NOT EXISTS gsc_url_inspections_url_unique_idx
+    ON gsc_url_inspections(url)
+  `);
+  await pool.query(
+    `CREATE INDEX IF NOT EXISTS gsc_url_inspections_verdict_idx ON gsc_url_inspections(verdict)`
+  );
+  await pool.query(
+    `CREATE INDEX IF NOT EXISTS gsc_url_inspections_inspected_at_idx ON gsc_url_inspections(inspected_at)`
+  );
+
+  await pool.query(`
+    CREATE TABLE IF NOT EXISTS gsc_sitemaps (
+      id serial PRIMARY KEY,
+      sitemap_url text NOT NULL,
+      last_submitted timestamp,
+      is_pending boolean,
+      is_sitemaps_index boolean,
+      warnings integer NOT NULL DEFAULT 0,
+      errors integer NOT NULL DEFAULT 0,
+      contents jsonb NOT NULL DEFAULT '[]'::jsonb,
+      raw jsonb NOT NULL DEFAULT '{}'::jsonb,
+      checked_at timestamp NOT NULL DEFAULT now()
+    )
+  `);
+  await pool.query(`
+    CREATE UNIQUE INDEX IF NOT EXISTS gsc_sitemaps_url_unique_idx
+    ON gsc_sitemaps(sitemap_url)
+  `);
+  await pool.query(
+    `CREATE INDEX IF NOT EXISTS gsc_sitemaps_checked_at_idx ON gsc_sitemaps(checked_at)`
+  );
+
   logger.info("Database schema guard completed");
 }
 

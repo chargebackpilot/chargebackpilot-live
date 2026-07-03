@@ -2,10 +2,12 @@ import app from "./app";
 import { getApiServerEnv } from "@workspace/env";
 import { logger } from "./lib/logger";
 import { ensureDatabaseSchema, scheduleRetentionCleanup } from "./lib/db-maintenance";
+import { scheduleGscSync } from "./lib/google-search-console";
 
 let env: ReturnType<typeof getApiServerEnv>;
 let server: ReturnType<typeof app.listen> | null = null;
 let stopRetentionCleanup: (() => void) | null = null;
+let stopGscSync: (() => void) | null = null;
 
 try {
   env = getApiServerEnv();
@@ -23,6 +25,7 @@ const host = "0.0.0.0";
 async function startServer() {
   await ensureDatabaseSchema();
   stopRetentionCleanup = scheduleRetentionCleanup();
+  stopGscSync = scheduleGscSync();
 
   server = app.listen(port, host, () => {
     logger.info({ port, host }, "Server listening");
@@ -50,6 +53,7 @@ function shutdown(signal: NodeJS.Signals) {
 
   logger.info({ signal }, "Received shutdown signal, closing server");
   stopRetentionCleanup?.();
+  stopGscSync?.();
 
   const forceExitTimer = setTimeout(() => {
     logger.warn({ signal }, "Graceful shutdown timed out, exiting");

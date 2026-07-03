@@ -42,10 +42,12 @@ import {
   getAdminPassword,
   getAdminStats,
   getAdminCases,
-  getGscOpportunities,
+  getGscDashboard,
+  refreshGscDashboard,
   type AdminStats,
   type AdminCaseRow,
-  type GscOpportunityReport,
+  type GscDashboardReport,
+  type GscPerformanceRow,
 } from "@/lib/admin-api";
 
 const PAYMENT_METHOD_LABELS: Record<string, string> = {
@@ -293,9 +295,10 @@ function AdminLogin({ onSuccess }: { onSuccess: () => void }) {
 function AdminDashboard({ onLogout }: { onLogout: () => void }) {
   const [, setLocation] = useLocation();
   const [stats, setStats] = useState<AdminStats | null>(null);
-  const [gscReport, setGscReport] = useState<GscOpportunityReport | null>(null);
+  const [gscReport, setGscReport] = useState<GscDashboardReport | null>(null);
   const [cases, setCases] = useState<AdminCaseRow[]>([]);
   const [loading, setLoading] = useState(true);
+  const [gscLoading, setGscLoading] = useState(false);
   const [error, setError] = useState("");
   const [actionMessage, setActionMessage] = useState("");
   const [onlyPaid, setOnlyPaid] = useState(false);
@@ -316,7 +319,7 @@ function AdminDashboard({ onLogout }: { onLogout: () => void }) {
       const [s, c, gsc] = await Promise.all([
         getAdminStats(rangeDays),
         getAdminCases(onlyPaid, 100),
-        getGscOpportunities().catch(() => null),
+        getGscDashboard().catch(() => null),
       ]);
       setStats(s);
       setCases(c.cases);
@@ -367,6 +370,34 @@ function AdminDashboard({ onLogout }: { onLogout: () => void }) {
       await load();
     } catch (err) {
       setActionMessage(err instanceof Error ? err.message : "Löschen fehlgeschlagen.");
+    }
+  };
+
+  const handleGscRefresh = async () => {
+    setGscLoading(true);
+    setActionMessage("");
+    try {
+      const response = await refreshGscDashboard();
+      setGscReport(response.report);
+      if (response.result.skipped) {
+        const reason =
+          response.result.reason === "disabled"
+            ? "Search Console ist deaktiviert."
+            : response.result.reason === "not_configured"
+              ? "Search Console ist noch nicht vollständig konfiguriert."
+              : response.result.reason === "already_running"
+                ? "Ein Search-Console-Sync läuft bereits."
+                : "Die Search-Console-Daten sind noch frisch.";
+        setActionMessage(reason);
+      } else {
+        setActionMessage(
+          `Search Console synchronisiert: ${response.result.searchAnalyticsRows} Analytics-Zeilen, ${response.result.inspectionCount} URL-Prüfungen.`
+        );
+      }
+    } catch (err) {
+      setActionMessage(err instanceof Error ? err.message : "Search-Console-Sync fehlgeschlagen.");
+    } finally {
+      setGscLoading(false);
     }
   };
 
@@ -511,7 +542,11 @@ function AdminDashboard({ onLogout }: { onLogout: () => void }) {
 
             <FunnelPanel stats={stats} />
 
-            <GscOpportunityPanel report={gscReport} />
+            <GscOpportunityPanel
+              report={gscReport}
+              loading={gscLoading}
+              onRefresh={handleGscRefresh}
+            />
 
             {/* Daily chart */}
             <Card title="Tägliches Aufkommen (30 Tage)">
@@ -1046,60 +1081,282 @@ function LandingFunnelTable({ rows }: { rows: AdminStats["landingFunnels"] }) {
   );
 }
 
-function GscOpportunityPanel({ report }: { report: GscOpportunityReport | null }) {
+function GscOpportunityPanel({
+  report,
+  loading,
+  onRefresh,
+}: {
+  report: GscDashboardReport | null;
+  loading: boolean;
+  onRefresh: () => void;
+}) {
   const rows = report?.opportunities ?? [];
+  const sourceLabel =
+    report?.source === "database"
+      ? "Live-API"
+      : report?.source === "csv"
+        ? `CSV${report.csvSource ? ` · ${report.csvSource}` : ""}`
+        : "Noch keine Daten";
+  const lastSyncLabel = report?.lastSync?.finishedAt
+    ? new Date(report.lastSync.finishedAt).toLocaleString("de-DE", {
+        dateStyle: "short",
+        timeStyle: "short",
+      })
+    : "noch nie";
+
   return (
     <Card
-      title="SearchConsole Chancen"
+      title="Search Console"
       right={
-        report?.available && report.source ? (
-          <span className="text-xs font-semibold text-slate-500">{report.source}</span>
-        ) : null
+        <div className="flex items-center gap-2">
+          <span className="hidden text-xs font-semibold text-slate-500 sm:inline">
+            {sourceLabel}
+          </span>
+          <Button size="sm" variant="outline" onClick={onRefresh} disabled={loading}>
+            {loading ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : "Refresh"}
+          </Button>
+        </div>
       }
     >
-      {!report?.available ? (
+      <div className="mb-4 grid grid-cols-2 gap-3 lg:grid-cols-4">
+        <GscMetric label="Klicks" value={report?.totals.clicks ?? 0} sub="letzter Snapshot" />
+        <GscMetric
+          label="Impressionen"
+          value={report?.totals.impressions ?? 0}
+          sub={report?.period ? `${report.period.data_from} bis ${report.period.data_to}` : "GSC"}
+        />
+        <GscMetric label="CTR" value={`${(report?.totals.ctr ?? 0).toFixed(2)}%`} sub="gewichtet" />
+        <GscMetric
+          label="Position"
+          value={(report?.totals.position ?? 0).toFixed(1)}
+          sub={`Sync: ${lastSyncLabel}`}
+        />
+      </div>
+
+      {!report?.enabled ? (
         <div className="rounded-xl border border-dashed bg-slate-50 p-4 text-sm text-slate-600">
-          Lege aktuelle SearchConsole-CSV-Exports lokal in <code>SearchConsole/</code> ab oder nutze{" "}
-          <code>pnpm seo:gsc-report</code>. In Produktion bleibt diese Dev-Auswertung leer, solange
-          keine CSV-Dateien vorhanden sind.
+          Search Console ist serverseitig deaktiviert. Setze <code>GSC_ENABLED=1</code> und die
+          Service-Account-ENV-Variablen in Render, dann synchronisiert ChargebackPilot automatisch
+          alle {report?.intervalHours ?? 24} Stunden.
         </div>
-      ) : rows.length === 0 ? (
-        <p className="text-sm text-muted-foreground text-center py-8">
-          Keine priorisierten GSC-Chancen im aktuellen Export.
-        </p>
+      ) : report && !report.configured ? (
+        <div className="rounded-xl border border-amber-200 bg-amber-50 p-4 text-sm text-amber-900">
+          Search Console ist aktiviert, aber noch nicht vollständig konfiguriert. Prüfe{" "}
+          <code>GSC_SITE_URL</code>, <code>GSC_CLIENT_EMAIL</code> und <code>GSC_PRIVATE_KEY</code>.
+        </div>
+      ) : !report?.available ? (
+        <div className="rounded-xl border border-dashed bg-slate-50 p-4 text-sm text-slate-600">
+          Noch keine Search-Console-Daten gespeichert. Der automatische Sync läuft höchstens alle{" "}
+          {report?.intervalHours ?? 24} Stunden; alternativ kannst du aktuelle CSV-Exports lokal in{" "}
+          <code>SearchConsole/</code> ablegen und <code>pnpm seo</code> nutzen.
+        </div>
       ) : (
-        <div className="overflow-x-auto -mx-5 sm:mx-0">
-          <table className="min-w-full text-sm">
-            <thead className="text-xs uppercase tracking-wide text-slate-500 border-b">
-              <tr>
-                <Th>URL</Th>
-                <Th className="text-right">Klicks</Th>
-                <Th className="text-right">Impr.</Th>
-                <Th className="text-right">CTR</Th>
-                <Th className="text-right">Pos.</Th>
-                <Th>Empfehlung</Th>
-              </tr>
-            </thead>
-            <tbody className="divide-y">
-              {rows.map((row) => (
-                <tr key={row.path} className="hover:bg-slate-50">
-                  <Td className="font-mono text-xs text-slate-700">{row.path}</Td>
-                  <Td className="text-right tabular-nums">{row.clicks}</Td>
-                  <Td className="text-right tabular-nums">{row.impressions}</Td>
-                  <Td className="text-right tabular-nums">{row.ctr.toFixed(2)}%</Td>
-                  <Td className="text-right tabular-nums">{row.position.toFixed(2)}</Td>
-                  <Td>
-                    <span className="inline-flex rounded-full border bg-slate-50 px-2 py-0.5 text-[11px] font-bold text-slate-700">
-                      {labelGscRecommendation(row.recommendation)}
-                    </span>
-                  </Td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+        <div className="space-y-5">
+          {report.lastSync?.status === "failed" && (
+            <div className="rounded-xl border border-red-200 bg-red-50 p-3 text-sm text-red-800">
+              Letzter Sync fehlgeschlagen: {report.lastSync.error ?? "unbekannter Fehler"}
+            </div>
+          )}
+
+          <div className="grid grid-cols-1 gap-4 xl:grid-cols-2">
+            <div>
+              <h3 className="mb-2 text-sm font-bold text-slate-900">Chancen & Empfehlungen</h3>
+              <GscPerformanceTable rows={rows} empty="Keine priorisierten Chancen im Snapshot." />
+            </div>
+            <div>
+              <h3 className="mb-2 text-sm font-bold text-slate-900">Top URLs</h3>
+              <GscPerformanceTable
+                rows={report.topUrls.slice(0, 12)}
+                empty="Noch keine URL-Daten."
+              />
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 gap-4 xl:grid-cols-2">
+            <div>
+              <h3 className="mb-2 text-sm font-bold text-slate-900">Top Suchanfragen</h3>
+              <GscQueryTable rows={report.topQueries.slice(0, 12)} />
+            </div>
+            <div>
+              <h3 className="mb-2 text-sm font-bold text-slate-900">Indexierung wichtiger URLs</h3>
+              <GscInspectionTable rows={report.inspections.slice(0, 12)} />
+            </div>
+          </div>
+
+          <div>
+            <h3 className="mb-2 text-sm font-bold text-slate-900">Sitemap-Status</h3>
+            <GscSitemapTable rows={report.sitemaps} />
+          </div>
         </div>
       )}
     </Card>
+  );
+}
+
+function GscMetric({ label, value, sub }: { label: string; value: React.ReactNode; sub: string }) {
+  return (
+    <div className="rounded-xl border bg-slate-50 p-3">
+      <p className="text-[11px] font-bold uppercase tracking-wide text-slate-500">{label}</p>
+      <p className="mt-1 text-xl font-black tabular-nums text-slate-950">{value}</p>
+      <p className="mt-1 text-xs text-slate-500">{sub}</p>
+    </div>
+  );
+}
+
+function GscPerformanceTable({ rows, empty }: { rows: GscPerformanceRow[]; empty: string }) {
+  if (rows.length === 0) {
+    return <p className="rounded-xl border bg-slate-50 p-4 text-sm text-slate-600">{empty}</p>;
+  }
+  return (
+    <div className="overflow-x-auto rounded-xl border">
+      <table className="min-w-full text-sm">
+        <thead className="border-b bg-slate-50 text-xs uppercase tracking-wide text-slate-500">
+          <tr>
+            <Th>URL</Th>
+            <Th className="text-right">Impr.</Th>
+            <Th className="text-right">CTR</Th>
+            <Th className="text-right">Pos.</Th>
+            <Th>Maßnahme</Th>
+          </tr>
+        </thead>
+        <tbody className="divide-y">
+          {rows.map((row) => (
+            <tr key={`${row.path}-${row.recommendation}`} className="hover:bg-slate-50">
+              <Td className="max-w-[240px] truncate font-mono text-xs text-slate-700">
+                {row.path}
+              </Td>
+              <Td className="text-right tabular-nums">{row.impressions}</Td>
+              <Td className="text-right tabular-nums">{row.ctr.toFixed(2)}%</Td>
+              <Td className="text-right tabular-nums">{row.position.toFixed(2)}</Td>
+              <Td>
+                <GscBadge recommendation={row.recommendation} />
+              </Td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  );
+}
+
+function GscQueryTable({ rows }: { rows: GscDashboardReport["topQueries"] }) {
+  if (rows.length === 0) {
+    return (
+      <p className="rounded-xl border bg-slate-50 p-4 text-sm text-slate-600">
+        Noch keine Query-Daten.
+      </p>
+    );
+  }
+  return (
+    <div className="overflow-x-auto rounded-xl border">
+      <table className="min-w-full text-sm">
+        <thead className="border-b bg-slate-50 text-xs uppercase tracking-wide text-slate-500">
+          <tr>
+            <Th>Query</Th>
+            <Th className="text-right">Klicks</Th>
+            <Th className="text-right">Impr.</Th>
+            <Th className="text-right">Pos.</Th>
+          </tr>
+        </thead>
+        <tbody className="divide-y">
+          {rows.map((row) => (
+            <tr key={row.query} className="hover:bg-slate-50">
+              <Td className="max-w-[260px] truncate text-slate-800">{row.query}</Td>
+              <Td className="text-right tabular-nums">{row.clicks}</Td>
+              <Td className="text-right tabular-nums">{row.impressions}</Td>
+              <Td className="text-right tabular-nums">{row.position.toFixed(2)}</Td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  );
+}
+
+function GscInspectionTable({ rows }: { rows: GscDashboardReport["inspections"] }) {
+  if (rows.length === 0) {
+    return (
+      <p className="rounded-xl border bg-slate-50 p-4 text-sm text-slate-600">
+        Noch keine URL-Inspection-Snapshots.
+      </p>
+    );
+  }
+  return (
+    <div className="overflow-x-auto rounded-xl border">
+      <table className="min-w-full text-sm">
+        <thead className="border-b bg-slate-50 text-xs uppercase tracking-wide text-slate-500">
+          <tr>
+            <Th>URL</Th>
+            <Th>Status</Th>
+            <Th>Coverage</Th>
+            <Th>Maßnahme</Th>
+          </tr>
+        </thead>
+        <tbody className="divide-y">
+          {rows.map((row) => (
+            <tr key={row.url} className="hover:bg-slate-50">
+              <Td className="max-w-[220px] truncate font-mono text-xs text-slate-700">
+                {row.path}
+              </Td>
+              <Td>{row.verdict ?? "-"}</Td>
+              <Td className="max-w-[220px] truncate">{row.coverageState ?? "-"}</Td>
+              <Td>
+                <GscBadge recommendation={row.recommendation} />
+              </Td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  );
+}
+
+function GscSitemapTable({ rows }: { rows: GscDashboardReport["sitemaps"] }) {
+  if (rows.length === 0) {
+    return (
+      <p className="rounded-xl border bg-slate-50 p-4 text-sm text-slate-600">
+        Noch kein Sitemap-Status gespeichert.
+      </p>
+    );
+  }
+  return (
+    <div className="overflow-x-auto rounded-xl border">
+      <table className="min-w-full text-sm">
+        <thead className="border-b bg-slate-50 text-xs uppercase tracking-wide text-slate-500">
+          <tr>
+            <Th>Sitemap</Th>
+            <Th className="text-right">Fehler</Th>
+            <Th className="text-right">Warnungen</Th>
+            <Th>Geprüft</Th>
+          </tr>
+        </thead>
+        <tbody className="divide-y">
+          {rows.map((row) => (
+            <tr key={row.sitemapUrl} className="hover:bg-slate-50">
+              <Td className="max-w-[360px] truncate font-mono text-xs text-slate-700">
+                {row.sitemapUrl}
+              </Td>
+              <Td className="text-right tabular-nums">{row.errors}</Td>
+              <Td className="text-right tabular-nums">{row.warnings}</Td>
+              <Td>
+                {new Date(row.checkedAt).toLocaleString("de-DE", {
+                  dateStyle: "short",
+                  timeStyle: "short",
+                })}
+              </Td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  );
+}
+
+function GscBadge({ recommendation }: { recommendation: string }) {
+  return (
+    <span className="inline-flex rounded-full border bg-slate-50 px-2 py-0.5 text-[11px] font-bold text-slate-700">
+      {labelGscRecommendation(recommendation)}
+    </span>
   );
 }
 
@@ -1298,6 +1555,8 @@ function labelGscRecommendation(recommendation: string) {
   const labels: Record<string, string> = {
     CTR_FIX: "Snippet/Title testen",
     INTERNAL_LINK_BOOST: "Interne Links stärken",
+    CONTENT_REFRESH: "Inhalt auffrischen",
+    INDEX_CHECK: "Indexierung prüfen",
     WIZARD_CTA_TEST: "Fall-Check CTA testen",
     WATCH: "Beobachten",
   };

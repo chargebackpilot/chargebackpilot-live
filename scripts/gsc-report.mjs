@@ -1,5 +1,6 @@
 import { existsSync, readdirSync, readFileSync, statSync } from "node:fs";
 import { basename, join } from "node:path";
+import { createRequire } from "node:module";
 
 const ROOT = process.cwd();
 const SEARCH_CONSOLE_DIR = join(ROOT, "SearchConsole");
@@ -114,32 +115,136 @@ function formatPercent(value) {
   return `${value.toFixed(value % 1 === 0 ? 0 : 2)}%`;
 }
 
-const pagesCsv = findLatestCsv("Seiten");
-const queriesCsv = findLatestCsv("Suchanfragen");
+function createPgPool() {
+  if (!process.env.DATABASE_URL) return null;
+  const requireFromDb = createRequire(new URL("../lib/db/package.json", import.meta.url));
+  const { Pool } = requireFromDb("pg");
+  const connectionString = process.env.DATABASE_URL;
+  const ssl =
+    connectionString.includes("neon.tech") || connectionString.includes("sslmode=require")
+      ? { rejectUnauthorized: false }
+      : false;
+  return new Pool({ connectionString, ssl });
+}
 
-if (!pagesCsv) {
+async function loadDatabaseReport() {
+  const pool = createPgPool();
+  if (!pool) return null;
+
+  try {
+    const latest = await pool.query(`
+      SELECT data_from, data_to
+      FROM gsc_search_analytics
+      ORDER BY data_to DESC, synced_at DESC
+      LIMIT 1
+    `);
+    const period = latest.rows[0];
+    if (!period) return null;
+
+    const params = [period.data_from, period.data_to];
+    const [pages, queries] = await Promise.all([
+      pool.query(
+        `
+          SELECT
+            page AS url,
+            SUM(clicks)::int AS clicks,
+            SUM(impressions)::int AS impressions,
+            CASE WHEN SUM(impressions) > 0
+              THEN (SUM(clicks)::float / SUM(impressions)::float) * 100
+              ELSE 0
+            END AS ctr,
+            CASE WHEN SUM(impressions) > 0
+              THEN SUM(position * impressions)::float / SUM(impressions)::float
+              ELSE AVG(position)
+            END AS position
+          FROM gsc_search_analytics
+          WHERE data_from = $1 AND data_to = $2
+          GROUP BY page
+        `,
+        params
+      ),
+      pool.query(
+        `
+          SELECT
+            query,
+            SUM(clicks)::int AS clicks,
+            SUM(impressions)::int AS impressions,
+            CASE WHEN SUM(impressions) > 0
+              THEN (SUM(clicks)::float / SUM(impressions)::float) * 100
+              ELSE 0
+            END AS ctr,
+            CASE WHEN SUM(impressions) > 0
+              THEN SUM(position * impressions)::float / SUM(impressions)::float
+              ELSE AVG(position)
+            END AS position
+          FROM gsc_search_analytics
+          WHERE data_from = $1 AND data_to = $2 AND query <> ''
+          GROUP BY query
+        `,
+        params
+      ),
+    ]);
+
+    return {
+      source: `Postgres GSC Snapshot ${period.data_from} bis ${period.data_to}`,
+      pageRows: pages.rows.map((row) => ({
+        url: row.url,
+        clicks: Number(row.clicks ?? 0),
+        impressions: Number(row.impressions ?? 0),
+        ctr: Number(row.ctr ?? 0),
+        position: Number(row.position ?? 0),
+      })),
+      queryRows: queries.rows.map((row) => ({
+        query: row.query,
+        clicks: Number(row.clicks ?? 0),
+        impressions: Number(row.impressions ?? 0),
+        ctr: Number(row.ctr ?? 0),
+        position: Number(row.position ?? 0),
+      })),
+    };
+  } catch (error) {
+    console.warn(
+      `Live-GSC-Daten nicht nutzbar, CSV-Fallback wird versucht: ${
+        error instanceof Error ? error.message : String(error)
+      }`
+    );
+    return null;
+  } finally {
+    await pool.end().catch(() => {});
+  }
+}
+
+const scheduledCandidates = loadScheduledCandidates();
+const databaseReport = await loadDatabaseReport();
+const pagesCsv = databaseReport ? null : findLatestCsv("Seiten");
+const queriesCsv = databaseReport ? null : findLatestCsv("Suchanfragen");
+
+if (!databaseReport && !pagesCsv) {
   console.log(
-    "Keine SearchConsole/Seiten*.csv gefunden. Export lokal ablegen und erneut ausführen."
+    "Keine Live-GSC-Daten und keine SearchConsole/Seiten*.csv gefunden. GSC aktivieren oder Export lokal ablegen."
   );
   process.exit(0);
 }
 
-const scheduledCandidates = loadScheduledCandidates();
-const pageRows = parseRows(pagesCsv).map(([url, clicks, impressions, ctr, position]) => ({
-  url,
-  clicks: parseNumber(clicks),
-  impressions: parseNumber(impressions),
-  ctr: parseNumber(ctr),
-  position: parseNumber(position),
-}));
+const pageRows =
+  databaseReport?.pageRows ??
+  parseRows(pagesCsv).map(([url, clicks, impressions, ctr, position]) => ({
+    url,
+    clicks: parseNumber(clicks),
+    impressions: parseNumber(impressions),
+    ctr: parseNumber(ctr),
+    position: parseNumber(position),
+  }));
 
-const queryRows = parseRows(queriesCsv).map(([query, clicks, impressions, ctr, position]) => ({
-  query,
-  clicks: parseNumber(clicks),
-  impressions: parseNumber(impressions),
-  ctr: parseNumber(ctr),
-  position: parseNumber(position),
-}));
+const queryRows =
+  databaseReport?.queryRows ??
+  parseRows(queriesCsv).map(([query, clicks, impressions, ctr, position]) => ({
+    query,
+    clicks: parseNumber(clicks),
+    impressions: parseNumber(impressions),
+    ctr: parseNumber(ctr),
+    position: parseNumber(position),
+  }));
 
 const totals = pageRows.reduce(
   (acc, row) => ({
@@ -152,7 +257,7 @@ const totals = pageRows.reduce(
 console.log(
   `SearchConsole Report · ${pageRows.length} URLs · ${totals.clicks} Klicks · ${totals.impressions} Impressionen`
 );
-console.log(`Quelle: SearchConsole/${basename(pagesCsv)}`);
+console.log(`Quelle: ${databaseReport?.source ?? `SearchConsole/${basename(pagesCsv)}`}`);
 console.log("");
 console.log(
   `${pad("URL", 62)} | ${pad("Klicks", 6)} | ${pad("Impr.", 6)} | ${pad("CTR", 7)} | ${pad(

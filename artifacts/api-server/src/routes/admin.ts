@@ -12,6 +12,7 @@ import {
   getCaseRetentionMonths,
   getRetentionCutoff,
 } from "../lib/db-maintenance";
+import { getGscDashboardData, syncGoogleSearchConsole } from "../lib/google-search-console";
 
 const env = getApiServerEnv();
 const router = Router();
@@ -212,8 +213,68 @@ function gscRecommendation(row: {
   if (row.impressions < 3) return "WATCH";
   if (row.clicks === 0 && row.position <= 8) return "CTR_FIX";
   if (row.clicks === 0 && row.position <= 12) return "WIZARD_CTA_TEST";
+  if (row.position > 30 && row.impressions >= 10) return "CONTENT_REFRESH";
   if (row.position > 12 && row.impressions >= 10) return "INTERNAL_LINK_BOOST";
   return "WATCH";
+}
+
+function loadCsvGscOpportunities() {
+  const pagesCsv = findLatestGscCsv("Seiten");
+  if (!pagesCsv) {
+    return {
+      available: false,
+      source: null as string | null,
+      generatedAt: new Date().toISOString(),
+      opportunities: [] as Array<{
+        path: string;
+        clicks: number;
+        impressions: number;
+        ctr: number;
+        position: number;
+        recommendation: string;
+      }>,
+    };
+  }
+
+  const lines = readFileSync(pagesCsv, "utf8").trim().split(/\r?\n/).filter(Boolean);
+  const rows = lines.slice(1).map(parseCsvLine);
+  const opportunities = rows
+    .map(([url, clicks, impressions, ctr, position]) => {
+      const parsed = {
+        path: gscPath(url),
+        url,
+        clicks: parseGscNumber(clicks),
+        impressions: parseGscNumber(impressions),
+        ctr: parseGscNumber(ctr),
+        position: parseGscNumber(position),
+      };
+      return {
+        ...parsed,
+        recommendation: gscRecommendation(parsed),
+      };
+    })
+    .filter((row) => row.impressions >= 3 || row.clicks > 0)
+    .sort((a, b) => {
+      const priorityOrder = [
+        "CTR_FIX",
+        "WIZARD_CTA_TEST",
+        "INTERNAL_LINK_BOOST",
+        "CONTENT_REFRESH",
+        "WATCH",
+      ];
+      const priorityDiff =
+        priorityOrder.indexOf(a.recommendation) - priorityOrder.indexOf(b.recommendation);
+      if (priorityDiff !== 0) return priorityDiff;
+      return b.impressions - a.impressions || a.position - b.position;
+    })
+    .slice(0, 25);
+
+  return {
+    available: true,
+    source: basename(pagesCsv),
+    generatedAt: new Date().toISOString(),
+    opportunities,
+  };
 }
 
 function adminCaseResponse(found: typeof casesTable.$inferSelect, readToken?: string) {
@@ -744,50 +805,67 @@ router.get("/stats", async (req: any, res: Response): Promise<void> => {
   }
 });
 
-router.get("/gsc-opportunities", (_req: Request, res: Response) => {
+router.get("/gsc", async (_req: Request, res: Response) => {
   try {
-    const pagesCsv = findLatestGscCsv("Seiten");
-    if (!pagesCsv) {
+    const report = await getGscDashboardData();
+    if (report.available) {
+      res.json(report);
+      return;
+    }
+
+    const csv = loadCsvGscOpportunities();
+    res.json({
+      ...report,
+      available: csv.available,
+      source: csv.available ? "csv" : report.source,
+      csvSource: csv.source,
+      topUrls: csv.opportunities,
+      opportunities: csv.opportunities,
+    });
+  } catch (error) {
+    logAdminRouteError(error, "Failed to load GSC dashboard");
+    sendAdminRouteError(res);
+  }
+});
+
+router.post("/gsc/sync", async (_req: Request, res: Response) => {
+  try {
+    const result = await syncGoogleSearchConsole({ manual: true, force: true });
+    const report = await getGscDashboardData();
+    res.json({
+      ok: !result.skipped,
+      result,
+      report,
+    });
+  } catch (error) {
+    logAdminRouteError(error, "Failed to sync Search Console");
+    res.status(502).json({
+      error: "Search-Console-Sync fehlgeschlagen.",
+      message: error instanceof Error ? error.message : "Unbekannter Fehler",
+      timestamp: new Date().toISOString(),
+    });
+  }
+});
+
+router.get("/gsc-opportunities", async (_req: Request, res: Response) => {
+  try {
+    const report = await getGscDashboardData();
+    if (report.available) {
       res.json({
-        available: false,
-        source: null,
-        generatedAt: new Date().toISOString(),
-        opportunities: [],
+        available: true,
+        source: "database",
+        generatedAt: report.generatedAt,
+        opportunities: report.opportunities,
       });
       return;
     }
 
-    const lines = readFileSync(pagesCsv, "utf8").trim().split(/\r?\n/).filter(Boolean);
-    const rows = lines.slice(1).map(parseCsvLine);
-    const opportunities = rows
-      .map(([url, clicks, impressions, ctr, position]) => {
-        const parsed = {
-          path: gscPath(url),
-          clicks: parseGscNumber(clicks),
-          impressions: parseGscNumber(impressions),
-          ctr: parseGscNumber(ctr),
-          position: parseGscNumber(position),
-        };
-        return {
-          ...parsed,
-          recommendation: gscRecommendation(parsed),
-        };
-      })
-      .filter((row) => row.impressions >= 3 || row.clicks > 0)
-      .sort((a, b) => {
-        const priorityOrder = ["CTR_FIX", "WIZARD_CTA_TEST", "INTERNAL_LINK_BOOST", "WATCH"];
-        const priorityDiff =
-          priorityOrder.indexOf(a.recommendation) - priorityOrder.indexOf(b.recommendation);
-        if (priorityDiff !== 0) return priorityDiff;
-        return b.impressions - a.impressions || a.position - b.position;
-      })
-      .slice(0, 25);
-
+    const csv = loadCsvGscOpportunities();
     res.json({
-      available: true,
-      source: basename(pagesCsv),
-      generatedAt: new Date().toISOString(),
-      opportunities,
+      available: csv.available,
+      source: csv.source,
+      generatedAt: csv.generatedAt,
+      opportunities: csv.opportunities,
     });
   } catch (error) {
     logAdminRouteError(error, "Failed to load GSC opportunities");

@@ -41,6 +41,9 @@ node_modules
 /artifacts/lighthouse-report*/
 /artifacts/unlighthouse-report*/
 /SearchConsole/
+*service-account*.json
+*google-credentials*.json
+*gsc-credentials*.json
 /libpeerconnection.log
 npm-debug.log
 yarn-error.log

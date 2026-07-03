@@ -59,6 +59,7 @@ pnpm run typecheck
 pnpm run lint
 pnpm run build
 pnpm run build:render
+pnpm seo
 pnpm start
 ```
 
@@ -180,7 +181,23 @@ CASE_DESCRIPTION_MIN_CHARS=80
 CASE_DESCRIPTION_MAX_CHARS=6000
 CASE_RETENTION_MONTHS=12
 ANALYTICS_RETENTION_MONTHS=12
+GSC_ENABLED=0
+GSC_SITE_URL=https://chargebackpilot.de/
+GSC_CLIENT_EMAIL=
+GSC_PRIVATE_KEY=
+GSC_SYNC_INTERVAL_HOURS=24
 ```
+
+Google-Search-Console-Integration:
+
+- `GSC_ENABLED=1` aktiviert den serverseitigen Sync.
+- Der Service Account muss in Search Console Zugriff auf `GSC_SITE_URL` haben.
+- `GSC_PRIVATE_KEY` wird als Render-Environment-Variable gespeichert; Zeilenumbrüche können als
+  `\n` escaped sein.
+- Keine JSON-Key-Dateien ins Repository legen.
+- Der Sync speichert nur aggregierte Search-Console-Daten in Postgres und läuft standardmäßig alle
+  24 Stunden. Manuelles Refresh ist im Admin-Dashboard möglich.
+- Die Google Indexing API wird nicht verwendet; es gibt keine Instant-Indexing-Versprechen.
 
 Cloudflare kann DNS, SSL und statisches Asset-Caching übernehmen. Öffentliche prerendered
 HTML-Seiten setzen CDN-freundliche Cache-Header; `/api`, Admin, Wizard und URLs mit Query bleiben

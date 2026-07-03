@@ -140,17 +140,87 @@ export interface AdminStats {
   }[];
 }
 
+export type GscRecommendation =
+  | "CTR_FIX"
+  | "INTERNAL_LINK_BOOST"
+  | "CONTENT_REFRESH"
+  | "INDEX_CHECK"
+  | "WIZARD_CTA_TEST"
+  | "WATCH";
+
 export interface GscOpportunityReport {
   available: boolean;
   source: string | null;
   generatedAt: string;
-  opportunities: {
-    path: string;
+  opportunities: GscPerformanceRow[];
+}
+
+export interface GscPerformanceRow {
+  path: string;
+  url?: string;
+  clicks: number;
+  impressions: number;
+  ctr: number;
+  position: number;
+  recommendation: GscRecommendation;
+}
+
+export interface GscDashboardReport {
+  enabled: boolean;
+  configured: boolean;
+  available: boolean;
+  source: "database" | "csv" | string | null;
+  csvSource?: string | null;
+  siteUrl: string | null;
+  intervalHours: number;
+  generatedAt: string;
+  period?: { data_from: string; data_to: string } | null;
+  lastSync: {
+    status: string;
+    startedAt: string;
+    finishedAt: string | null;
+    manual: boolean;
+    dateFrom: string | null;
+    dateTo: string | null;
+    searchAnalyticsRows: number;
+    inspectionCount: number;
+    sitemapCount: number;
+    error: string | null;
+  } | null;
+  totals: {
     clicks: number;
     impressions: number;
     ctr: number;
     position: number;
-    recommendation: "CTR_FIX" | "INTERNAL_LINK_BOOST" | "WIZARD_CTA_TEST" | "WATCH";
+  };
+  topUrls: GscPerformanceRow[];
+  topQueries: {
+    query: string;
+    clicks: number;
+    impressions: number;
+    ctr: number;
+    position: number;
+  }[];
+  opportunities: GscPerformanceRow[];
+  inspections: {
+    url: string;
+    path: string;
+    verdict: string | null;
+    coverageState: string | null;
+    indexingState: string | null;
+    robotsTxtState: string | null;
+    pageFetchState: string | null;
+    lastCrawlTime: string | null;
+    inspectedAt: string;
+    recommendation: GscRecommendation;
+  }[];
+  sitemaps: {
+    sitemapUrl: string;
+    lastSubmitted: string | null;
+    isPending: boolean | null;
+    warnings: number;
+    errors: number;
+    checkedAt: string;
   }[];
 }
 
@@ -170,6 +240,28 @@ export interface AdminCaseRow {
 
 export const getAdminStats = (days = 30) => adminFetch<AdminStats>(`/stats?days=${days}`);
 export const getGscOpportunities = () => adminFetch<GscOpportunityReport>("/gsc-opportunities");
+export const getGscDashboard = () => adminFetch<GscDashboardReport>("/gsc");
+export const refreshGscDashboard = () =>
+  adminFetch<{
+    ok: boolean;
+    result:
+      | {
+          skipped: true;
+          reason: "disabled" | "not_configured" | "already_running" | "fresh_cache";
+        }
+      | {
+          skipped: false;
+          dateFrom: string;
+          dateTo: string;
+          searchAnalyticsRows: number;
+          inspectionCount: number;
+          sitemapCount: number;
+        };
+    report: GscDashboardReport;
+  }>("/gsc/sync", {
+    method: "POST",
+    body: JSON.stringify({}),
+  });
 export const getAdminCases = (onlyPaid = false, limit = 50) =>
   adminFetch<{ cases: AdminCaseRow[]; count: number }>(
     `/cases?limit=${limit}${onlyPaid ? "&paid=1" : ""}`

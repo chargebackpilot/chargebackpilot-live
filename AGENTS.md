@@ -313,7 +313,22 @@ ANALYTICS_RETENTION_MONTHS=12
 CASE_CREATE_DAILY_LIMIT_PER_IP=3
 CASE_DESCRIPTION_MIN_CHARS=80
 CASE_DESCRIPTION_MAX_CHARS=6000
+GSC_ENABLED=0
+GSC_SITE_URL=https://chargebackpilot.de/
+GSC_CLIENT_EMAIL=
+GSC_PRIVATE_KEY=
+GSC_SYNC_INTERVAL_HOURS=24
 ```
+
+Search Console integration:
+
+- Use the Google Search Console API only for aggregated Search Analytics, sitemap status and URL
+  Inspection snapshots.
+- Store GSC data in Postgres, never in server files.
+- Use Render ENV variables for the service account; never commit JSON key files.
+- `pnpm seo` and `pnpm seo:gsc-report` prefer live Postgres GSC data and fall back to local
+  `SearchConsole/*.csv` exports.
+- Do not use the Google Indexing API for normal Ratgeber pages and do not promise instant indexing.
 
 Security rules:
 
