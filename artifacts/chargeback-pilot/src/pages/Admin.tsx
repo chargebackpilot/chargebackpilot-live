@@ -42,8 +42,10 @@ import {
   getAdminPassword,
   getAdminStats,
   getAdminCases,
+  getGscOpportunities,
   type AdminStats,
   type AdminCaseRow,
+  type GscOpportunityReport,
 } from "@/lib/admin-api";
 
 const PAYMENT_METHOD_LABELS: Record<string, string> = {
@@ -102,8 +104,56 @@ function downloadCsv(filename: string, headers: string[], rows: unknown[][]) {
 function exportTopContentCsv(rows: AdminStats["topContentPages"], rangeDays: number) {
   downloadCsv(
     `chargebackpilot-content-${rangeDays}d.csv`,
-    ["URL", "Aufrufe", "Besucher", "Zuletzt gesehen"],
-    rows.map((row) => [row.path, row.views, row.visitors, row.lastSeen])
+    [
+      "URL",
+      "Aufrufe",
+      "Besucher",
+      "CTA Klicks",
+      "Wizard Starts",
+      "Analyse Starts",
+      "Checkout Klicks",
+      "Zuletzt gesehen",
+    ],
+    rows.map((row) => [
+      row.path,
+      row.views,
+      row.visitors,
+      row.ctaClicks,
+      row.wizardStarts,
+      row.analysisSubmits,
+      row.checkoutClicks,
+      row.lastSeen,
+    ])
+  );
+}
+
+function exportLandingFunnelCsv(rows: AdminStats["landingFunnels"], rangeDays: number) {
+  downloadCsv(
+    `chargebackpilot-landing-funnel-${rangeDays}d.csv`,
+    [
+      "Content-Seite",
+      "Aufrufe",
+      "Besucher",
+      "CTA Klicks",
+      "Wizard Starts",
+      "Analyse Starts",
+      "Analyse Erfolg",
+      "Paywall",
+      "Checkout",
+      "Zuletzt gesehen",
+    ],
+    rows.map((row) => [
+      row.path,
+      row.pageViews,
+      row.visitors,
+      row.ctaClicks,
+      row.wizardStarts,
+      row.analysisSubmits,
+      row.analysisSuccesses,
+      row.paywallViews,
+      row.checkoutClicks,
+      row.lastSeen,
+    ])
   );
 }
 
@@ -122,6 +172,8 @@ function exportWizardEventsCsv(rows: AdminStats["latestWizardEvents"]) {
       "Score",
       "Dauer ms",
       "Fehler",
+      "Landingpage",
+      "CTA",
     ],
     rows.map((row) => {
       const meta = row.metadata ?? {};
@@ -137,6 +189,8 @@ function exportWizardEventsCsv(rows: AdminStats["latestWizardEvents"]) {
         String(meta.qualityScore ?? ""),
         String(meta.durationMs ?? ""),
         String(meta.validationError ?? ""),
+        String(meta.landingPath ?? ""),
+        String(meta.ctaId ?? ""),
       ];
     })
   );
@@ -239,6 +293,7 @@ function AdminLogin({ onSuccess }: { onSuccess: () => void }) {
 function AdminDashboard({ onLogout }: { onLogout: () => void }) {
   const [, setLocation] = useLocation();
   const [stats, setStats] = useState<AdminStats | null>(null);
+  const [gscReport, setGscReport] = useState<GscOpportunityReport | null>(null);
   const [cases, setCases] = useState<AdminCaseRow[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -258,9 +313,14 @@ function AdminDashboard({ onLogout }: { onLogout: () => void }) {
     setLoading(true);
     setError("");
     try {
-      const [s, c] = await Promise.all([getAdminStats(rangeDays), getAdminCases(onlyPaid, 100)]);
+      const [s, c, gsc] = await Promise.all([
+        getAdminStats(rangeDays),
+        getAdminCases(onlyPaid, 100),
+        getGscOpportunities().catch(() => null),
+      ]);
       setStats(s);
       setCases(c.cases);
+      setGscReport(gsc);
     } catch (err) {
       const msg = err instanceof Error ? err.message : "Fehler beim Laden";
       setError(msg);
@@ -427,7 +487,7 @@ function AdminDashboard({ onLogout }: { onLogout: () => void }) {
               <StatBlock
                 label="Wizard-Starts 7 Tage"
                 value={stats.traffic.wizardStarts7d}
-                sub={`${stats.traffic.analysisSubmits7d} Analysen`}
+                sub={`${stats.traffic.ctaClicks7d} CTA · ${stats.traffic.analysisSubmits7d} Analysen`}
                 icon={Activity}
               />
               <StatBlock
@@ -450,6 +510,8 @@ function AdminDashboard({ onLogout }: { onLogout: () => void }) {
             <SecurityStatusPanel stats={stats} />
 
             <FunnelPanel stats={stats} />
+
+            <GscOpportunityPanel report={gscReport} />
 
             {/* Daily chart */}
             <Card title="Tägliches Aufkommen (30 Tage)">
@@ -510,6 +572,17 @@ function AdminDashboard({ onLogout }: { onLogout: () => void }) {
                 }
               >
                 <TopContentTable rows={stats.topContentPages} />
+              </Card>
+              <Card
+                title={`Content-/CTA-Funnel (${stats.rangeDays} Tage)`}
+                right={
+                  <AdminIconButton
+                    label="CSV"
+                    onClick={() => exportLandingFunnelCsv(stats.landingFunnels, stats.rangeDays)}
+                  />
+                }
+              >
+                <LandingFunnelTable rows={stats.landingFunnels} />
               </Card>
               <Card
                 title="Wizard-Eingaben"
@@ -901,6 +974,10 @@ function TopContentTable({ rows }: { rows: AdminStats["topContentPages"] }) {
             <Th>Seite</Th>
             <Th className="text-right">Aufrufe</Th>
             <Th className="text-right">Besucher</Th>
+            <Th className="text-right">CTA</Th>
+            <Th className="text-right">Wizard</Th>
+            <Th className="text-right">Analyse</Th>
+            <Th className="text-right">Checkout</Th>
             <Th>Zuletzt</Th>
           </tr>
         </thead>
@@ -910,6 +987,10 @@ function TopContentTable({ rows }: { rows: AdminStats["topContentPages"] }) {
               <Td className="font-mono text-xs text-slate-700">{row.path}</Td>
               <Td className="text-right font-bold tabular-nums">{row.views}</Td>
               <Td className="text-right tabular-nums">{row.visitors}</Td>
+              <Td className="text-right tabular-nums">{row.ctaClicks}</Td>
+              <Td className="text-right tabular-nums">{row.wizardStarts}</Td>
+              <Td className="text-right tabular-nums">{row.analysisSubmits}</Td>
+              <Td className="text-right tabular-nums">{row.checkoutClicks}</Td>
               <Td className="whitespace-nowrap text-xs text-slate-500">
                 {new Date(row.lastSeen).toLocaleString("de-DE", {
                   dateStyle: "short",
@@ -921,6 +1002,104 @@ function TopContentTable({ rows }: { rows: AdminStats["topContentPages"] }) {
         </tbody>
       </table>
     </div>
+  );
+}
+
+function LandingFunnelTable({ rows }: { rows: AdminStats["landingFunnels"] }) {
+  if (rows.length === 0) {
+    return (
+      <p className="text-sm text-muted-foreground text-center py-10">
+        Noch keine Content-Funnel-Daten erfasst.
+      </p>
+    );
+  }
+
+  return (
+    <div className="overflow-x-auto -mx-5 sm:mx-0">
+      <table className="min-w-full text-sm">
+        <thead className="text-xs uppercase tracking-wide text-slate-500 border-b">
+          <tr>
+            <Th>Content-Seite</Th>
+            <Th className="text-right">Aufrufe</Th>
+            <Th className="text-right">CTA</Th>
+            <Th className="text-right">Wizard</Th>
+            <Th className="text-right">Analyse</Th>
+            <Th className="text-right">Paywall</Th>
+            <Th className="text-right">Checkout</Th>
+          </tr>
+        </thead>
+        <tbody className="divide-y">
+          {rows.map((row) => (
+            <tr key={row.path} className="hover:bg-slate-50">
+              <Td className="font-mono text-xs text-slate-700">{row.path}</Td>
+              <Td className="text-right font-bold tabular-nums">{row.pageViews}</Td>
+              <Td className="text-right tabular-nums">{row.ctaClicks}</Td>
+              <Td className="text-right tabular-nums">{row.wizardStarts}</Td>
+              <Td className="text-right tabular-nums">{row.analysisSubmits}</Td>
+              <Td className="text-right tabular-nums">{row.paywallViews}</Td>
+              <Td className="text-right tabular-nums">{row.checkoutClicks}</Td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  );
+}
+
+function GscOpportunityPanel({ report }: { report: GscOpportunityReport | null }) {
+  const rows = report?.opportunities ?? [];
+  return (
+    <Card
+      title="SearchConsole Chancen"
+      right={
+        report?.available && report.source ? (
+          <span className="text-xs font-semibold text-slate-500">{report.source}</span>
+        ) : null
+      }
+    >
+      {!report?.available ? (
+        <div className="rounded-xl border border-dashed bg-slate-50 p-4 text-sm text-slate-600">
+          Lege aktuelle SearchConsole-CSV-Exports lokal in <code>SearchConsole/</code> ab oder nutze{" "}
+          <code>pnpm seo:gsc-report</code>. In Produktion bleibt diese Dev-Auswertung leer, solange
+          keine CSV-Dateien vorhanden sind.
+        </div>
+      ) : rows.length === 0 ? (
+        <p className="text-sm text-muted-foreground text-center py-8">
+          Keine priorisierten GSC-Chancen im aktuellen Export.
+        </p>
+      ) : (
+        <div className="overflow-x-auto -mx-5 sm:mx-0">
+          <table className="min-w-full text-sm">
+            <thead className="text-xs uppercase tracking-wide text-slate-500 border-b">
+              <tr>
+                <Th>URL</Th>
+                <Th className="text-right">Klicks</Th>
+                <Th className="text-right">Impr.</Th>
+                <Th className="text-right">CTR</Th>
+                <Th className="text-right">Pos.</Th>
+                <Th>Empfehlung</Th>
+              </tr>
+            </thead>
+            <tbody className="divide-y">
+              {rows.map((row) => (
+                <tr key={row.path} className="hover:bg-slate-50">
+                  <Td className="font-mono text-xs text-slate-700">{row.path}</Td>
+                  <Td className="text-right tabular-nums">{row.clicks}</Td>
+                  <Td className="text-right tabular-nums">{row.impressions}</Td>
+                  <Td className="text-right tabular-nums">{row.ctr.toFixed(2)}%</Td>
+                  <Td className="text-right tabular-nums">{row.position.toFixed(2)}</Td>
+                  <Td>
+                    <span className="inline-flex rounded-full border bg-slate-50 px-2 py-0.5 text-[11px] font-bold text-slate-700">
+                      {labelGscRecommendation(row.recommendation)}
+                    </span>
+                  </Td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
+    </Card>
   );
 }
 
@@ -976,6 +1155,12 @@ function WizardEventList({ rows }: { rows: AdminStats["latestWizardEvents"] }) {
                 {meta.validationError ? ` · ${String(meta.validationError)}` : ""}
               </p>
             )}
+            {Boolean(meta.landingPath || meta.ctaId || meta.sourcePath) && (
+              <p className="mt-1 text-xs text-slate-500">
+                {meta.ctaId ? `CTA ${String(meta.ctaId)}` : "Quelle"} ·{" "}
+                {String(meta.landingPath || meta.sourcePath || "-")}
+              </p>
+            )}
           </div>
         );
       })}
@@ -986,9 +1171,15 @@ function WizardEventList({ rows }: { rows: AdminStats["latestWizardEvents"] }) {
 function FunnelPanel({ stats }: { stats: AdminStats }) {
   const steps = [
     {
+      label: "CTA-Klicks",
+      value: stats.traffic.ctaClicks7d,
+      base: stats.traffic.pageViews7d,
+      hint: "Fall-Check von Content geklickt",
+    },
+    {
       label: "Wizard-Starts",
       value: stats.traffic.wizardStarts7d,
-      base: stats.traffic.wizardStarts7d,
+      base: stats.traffic.ctaClicks7d || stats.traffic.wizardStarts7d,
       hint: "Schritt 1 geöffnet",
     },
     {
@@ -1044,7 +1235,7 @@ function FunnelPanel({ stats }: { stats: AdminStats }) {
 
   return (
     <Card title="Conversion-Funnel (7 Tage)">
-      <div className="grid gap-3 md:grid-cols-6">
+      <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-7">
         {steps.map((step) => {
           const rate = step.base > 0 ? Math.round((step.value / step.base) * 100) : 0;
           return (
@@ -1089,6 +1280,7 @@ function FunnelPanel({ stats }: { stats: AdminStats }) {
 
 function labelWizardEvent(eventType: string) {
   const labels: Record<string, string> = {
+    cta_click: "CTA-Klick",
     wizard_step: "Schritt",
     wizard_draft: "Eingabe",
     analysis_submit: "Analyse gestartet",
@@ -1100,6 +1292,16 @@ function labelWizardEvent(eventType: string) {
     step_duration: "Schrittdauer",
   };
   return labels[eventType] ?? eventType;
+}
+
+function labelGscRecommendation(recommendation: string) {
+  const labels: Record<string, string> = {
+    CTR_FIX: "Snippet/Title testen",
+    INTERNAL_LINK_BOOST: "Interne Links stärken",
+    WIZARD_CTA_TEST: "Fall-Check CTA testen",
+    WATCH: "Beobachten",
+  };
+  return labels[recommendation] ?? recommendation;
 }
 
 function RangeSwitch({

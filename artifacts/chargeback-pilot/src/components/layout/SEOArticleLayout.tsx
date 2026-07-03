@@ -12,8 +12,8 @@ import {
 } from "lucide-react";
 import { Breadcrumbs } from "@/components/Breadcrumbs";
 import { SeoHead } from "@/components/SeoHead";
-import { openNewWizardCase } from "@/lib/case-persistence";
-import { getRouteMeta } from "@/seo-routes";
+import { getRouteMeta, SEO_LASTMOD } from "@/seo-routes";
+import { trackCtaClick } from "@/lib/analytics";
 
 interface SEOProps {
   title: string;
@@ -82,7 +82,6 @@ interface MoneyPageProfile {
 
 const SITE = "https://chargebackpilot.de";
 const DISPLAY_UPDATED_AT = "22. Juni 2026";
-const SCHEMA_UPDATED_AT = "2026-06-22";
 
 const MONEY_PAGE_PROFILES: Record<string, MoneyPageProfile> = {
   "/chargeback-antrag-vorlage": {
@@ -1349,10 +1348,7 @@ export function SEOArticleLayout({
   const insight = editorialInsight(title, category, context);
   const glossary = glossaryForGuide(title, category);
   const preview = wordingPreview(title, category, context);
-
-  const handleNewCaseClick = () => {
-    openNewWizardCase();
-  };
+  const wizardHref = `/vorlagen-generator?new=1&source=${encodeURIComponent(canonicalPath)}`;
 
   const howToSchema = {
     "@context": "https://schema.org",
@@ -1382,7 +1378,7 @@ export function SEOArticleLayout({
     },
     mainEntityOfPage: `${SITE}${canonicalPath}`,
     datePublished: "2026-01-15",
-    dateModified: SCHEMA_UPDATED_AT,
+    dateModified: SEO_LASTMOD,
     ...(moneyProfile
       ? {
           keywords: moneyProfile.keywords.join(", "),
@@ -1453,13 +1449,7 @@ export function SEOArticleLayout({
                 Indikative Orientierung, keine Rechtsberatung
               </span>
             </div>
-            <Link
-              href="/vorlagen-generator?new=1"
-              onClick={(e) => {
-                e.preventDefault();
-                handleNewCaseClick();
-              }}
-            >
+            <Link href={wizardHref} onClick={() => trackCtaClick("seo_article_hero", wizardHref)}>
               <Button size="lg" className="gap-2">
                 Kostenlosen Fall-Check starten
                 <ArrowRight className="w-5 h-5" />
@@ -1815,13 +1805,7 @@ export function SEOArticleLayout({
             <p className="text-muted-foreground mb-6">
               Nutze unseren Generator und erhalte unverbindliche Textentwürfe zur eigenen Prüfung.
             </p>
-            <Link
-              href="/vorlagen-generator?new=1"
-              onClick={(e) => {
-                e.preventDefault();
-                handleNewCaseClick();
-              }}
-            >
+            <Link href={wizardHref} onClick={() => trackCtaClick("seo_article_bottom", wizardHref)}>
               <Button size="lg">Kostenlosen Fall-Check starten</Button>
             </Link>
           </section>

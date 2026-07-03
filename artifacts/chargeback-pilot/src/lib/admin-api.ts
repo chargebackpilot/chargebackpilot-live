@@ -104,6 +104,7 @@ export interface AdminStats {
     analysisSuccesses7d: number;
     paywallViews7d: number;
     checkoutClicks7d: number;
+    ctaClicks7d: number;
     validationErrors7d: number;
     wizardAbandons7d: number;
     avgQualityScore7d: number;
@@ -112,12 +113,44 @@ export interface AdminStats {
     path: string;
     views: number;
     visitors: number;
+    ctaClicks: number;
+    wizardStarts: number;
+    analysisSubmits: number;
+    analysisSuccesses: number;
+    paywallViews: number;
+    checkoutClicks: number;
+    lastSeen: string;
+  }[];
+  landingFunnels: {
+    path: string;
+    pageViews: number;
+    visitors: number;
+    ctaClicks: number;
+    wizardStarts: number;
+    analysisSubmits: number;
+    analysisSuccesses: number;
+    paywallViews: number;
+    checkoutClicks: number;
     lastSeen: string;
   }[];
   latestWizardEvents: {
     eventType: string;
     createdAt: string;
     metadata: Record<string, unknown>;
+  }[];
+}
+
+export interface GscOpportunityReport {
+  available: boolean;
+  source: string | null;
+  generatedAt: string;
+  opportunities: {
+    path: string;
+    clicks: number;
+    impressions: number;
+    ctr: number;
+    position: number;
+    recommendation: "CTR_FIX" | "INTERNAL_LINK_BOOST" | "WIZARD_CTA_TEST" | "WATCH";
   }[];
 }
 
@@ -136,6 +169,7 @@ export interface AdminCaseRow {
 }
 
 export const getAdminStats = (days = 30) => adminFetch<AdminStats>(`/stats?days=${days}`);
+export const getGscOpportunities = () => adminFetch<GscOpportunityReport>("/gsc-opportunities");
 export const getAdminCases = (onlyPaid = false, limit = 50) =>
   adminFetch<{ cases: AdminCaseRow[]; count: number }>(
     `/cases?limit=${limit}${onlyPaid ? "&paid=1" : ""}`

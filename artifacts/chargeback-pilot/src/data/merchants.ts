@@ -492,8 +492,8 @@ export function generateMerchantProblemCopy(
   const sentencePhrase = getProblemSentencePhrase(merchant, problem);
   const sectorWord = sectorLabel(merchant.sector);
 
-  const title = `${m} ${displayLabel} — Reklamation strukturiert vorbereiten 2026`;
-  const metaDescription = `Du hast bei ${m} Probleme mit ${sentencePhrase}? Belege, Fristen beim Zahlungsweg und unverbindliche Textentwürfe für Händler, Bank oder Zahlungsdienstleister strukturiert vorbereiten.`;
+  const title = titleForCombo(merchant, problem, displayLabel);
+  const metaDescription = metaDescriptionForCombo(merchant, problem, sentencePhrase);
 
   const whenApplies = applicableScenarios(merchant, problem);
   const evidence = evidenceForProblem(problem, merchant);
@@ -527,6 +527,36 @@ export function generateMerchantProblemCopy(
     mistakes,
     faq,
   };
+}
+
+function titleForCombo(merchant: MerchantDef, problem: ProblemDef, displayLabel: string) {
+  if (merchant.slug === "apple" && problem.slug === "abbuchung-ohne-zustimmung") {
+    return "Apple / iTunes Abbuchung prüfen: Abo, App Store & Zahlung";
+  }
+  if (merchant.sector === "food_delivery" && problem.slug === "ware-nicht-erhalten") {
+    return `${merchant.name} Bestellung nicht erhalten: Reklamation vorbereiten`;
+  }
+  if (merchant.sector === "food_delivery" && problem.slug === "lieferung-falsch") {
+    return `${merchant.name} Reklamation: Bestellung falsch oder unbrauchbar`;
+  }
+  return `${merchant.name} ${displayLabel}: Reklamation vorbereiten`;
+}
+
+function metaDescriptionForCombo(
+  merchant: MerchantDef,
+  problem: ProblemDef,
+  sentencePhrase: string
+) {
+  if (merchant.slug === "apple" && problem.slug === "abbuchung-ohne-zustimmung") {
+    return "Apple / iTunes Abbuchung unklar? Abo, Kaufhistorie, App-Store-Erstattung, Zahlungsweg und Belege sachlich prüfen.";
+  }
+  if (merchant.sector === "food_delivery" && problem.slug === "ware-nicht-erhalten") {
+    return `${merchant.name} Bestellung nicht erhalten? App-Status, Supportverlauf, Zahlungsbeleg und möglichen Käuferschutz strukturiert vorbereiten.`;
+  }
+  if (merchant.sector === "food_delivery" && problem.slug === "lieferung-falsch") {
+    return `${merchant.name} Bestellung falsch, kalt oder unbrauchbar? Fotos, App-Support, Betrag und Zahlungsweg sachlich dokumentieren.`;
+  }
+  return `Du hast bei ${merchant.name} Probleme mit ${sentencePhrase}? Belege, Fristen beim Zahlungsweg und unverbindliche Textentwürfe strukturiert vorbereiten.`;
 }
 
 function merchantFocusForCombo(m: MerchantDef, p: ProblemDef): string[] {

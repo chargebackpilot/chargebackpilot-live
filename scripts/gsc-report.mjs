@@ -81,12 +81,26 @@ function loadScheduledCandidates() {
   return new Set(config?.scheduledIndexing?.order ?? []);
 }
 
+function isUtilityPath(path) {
+  return [
+    "/datenschutz",
+    "/impressum",
+    "/agb",
+    "/widerruf",
+    "/disclaimer",
+    "/methodik",
+    "/ueber-uns",
+  ].includes(path);
+}
+
 function recommendation(row, scheduledCandidates) {
   const path = urlPath(row.url);
-  if (row.impressions < 3) return "IGNORE_LOW_SIGNAL";
-  if (scheduledCandidates.has(path) && row.position <= 15) return "PROMOTE_TO_NEXT_TRANCHE";
-  if (row.clicks === 0 && row.position <= 12) return "CTR_OPTIMIZE";
-  if (row.position > 12 && row.impressions >= 10) return "BOOST_INTERNAL_LINKS";
+  if (isUtilityPath(path)) return "WATCH";
+  if (row.impressions < 3) return "WATCH";
+  if (row.clicks === 0 && row.position <= 8) return "CTR_FIX";
+  if (row.clicks === 0 && row.position <= 12) return "WIZARD_CTA_TEST";
+  if (scheduledCandidates.has(path) && row.position <= 15) return "INTERNAL_LINK_BOOST";
+  if (row.position > 12 && row.impressions >= 10) return "INTERNAL_LINK_BOOST";
   return "WATCH";
 }
 

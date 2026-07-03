@@ -25,10 +25,11 @@ import {
   MERCHANTS,
 } from "@/data/merchants";
 import { isIndexableMerchantProblemPath } from "@/seo-quality";
+import { SEO_LASTMOD } from "@/seo-routes";
+import { trackCtaClick } from "@/lib/analytics";
 
 const SITE = "https://chargebackpilot.de";
 const DISPLAY_UPDATED_AT = "25. Juni 2026";
-const SCHEMA_UPDATED_AT = "2026-06-25";
 
 const TRUST_LABEL: Record<string, { label: string; color: string }> = {
   trusted: {
@@ -259,6 +260,7 @@ export default function MerchantProblemPage() {
   const wizardParams = new URLSearchParams({
     problem: problem.wizardProblemId,
     merchant: merchant.name,
+    source: `/hilfe/${merchant.slug}/${problem.slug}`,
     ...(wizardPayment ? { payment: wizardPayment } : {}),
   });
   const wizardHref = `/vorlagen-generator?${wizardParams.toString()}`;
@@ -302,7 +304,7 @@ export default function MerchantProblemPage() {
     },
     mainEntityOfPage: fullUrl,
     datePublished: "2026-01-15",
-    dateModified: SCHEMA_UPDATED_AT,
+    dateModified: SEO_LASTMOD,
   };
 
   const faqSchema = {
@@ -383,7 +385,10 @@ export default function MerchantProblemPage() {
               </span>
             </div>
             <div className="flex flex-wrap gap-3">
-              <Link href={wizardHref}>
+              <Link
+                href={wizardHref}
+                onClick={() => trackCtaClick("merchant_problem_hero", wizardHref)}
+              >
                 <Button size="lg" className="gap-2">
                   Kostenlosen Fall-Check starten
                   <ArrowRight className="w-4 h-4" />
@@ -582,7 +587,10 @@ export default function MerchantProblemPage() {
             <p className="text-primary-foreground/95 mb-5 text-sm md:text-base">
               Kostenlose, indikative Einschätzung — Vorlagen für 0,99 € Endpreis freischalten.
             </p>
-            <Link href={wizardHref}>
+            <Link
+              href={wizardHref}
+              onClick={() => trackCtaClick("merchant_problem_mid", wizardHref)}
+            >
               <Button size="lg" variant="secondary" className="gap-2">
                 Kostenlosen Fall-Check starten
                 <ArrowRight className="w-4 h-4" />

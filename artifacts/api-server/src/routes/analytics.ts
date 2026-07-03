@@ -27,10 +27,13 @@ const pageViewSchema = z.object({
   path: z.string().min(1).max(300),
   title: z.string().max(180).optional(),
   visitorId: z.string().min(8).max(120).optional(),
+  landingPath: z.string().min(1).max(300).optional(),
+  referrerHost: z.string().max(120).optional(),
 });
 
 const wizardEventSchema = z.object({
   eventType: z.enum([
+    "cta_click",
     "wizard_step",
     "wizard_draft",
     "analysis_submit",
@@ -47,6 +50,11 @@ const wizardEventSchema = z.object({
     .object({
       paymentMethod: z.string().max(80).optional(),
       problemType: z.string().max(80).optional(),
+      landingPath: z.string().min(1).max(300).optional(),
+      sourcePath: z.string().min(1).max(300).optional(),
+      targetPath: z.string().min(1).max(300).optional(),
+      referrerHost: z.string().max(120).optional(),
+      ctaId: z.string().max(80).optional(),
       merchantCountry: z.string().max(80).optional(),
       merchantContacted: z.boolean().optional(),
       merchantResponseType: z.string().max(80).optional(),
@@ -83,6 +91,11 @@ function normalizePath(input: string) {
   return path;
 }
 
+function cleanPathValue(input: string | undefined) {
+  if (!input) return null;
+  return normalizePath(input).slice(0, 300);
+}
+
 function shouldIgnorePath(path: string) {
   return (
     path === "/admin" ||
@@ -97,6 +110,11 @@ function cleanWizardMetadata(input: z.infer<typeof wizardEventSchema>) {
   const evidenceStatusValues = Object.values(data.evidenceStatus ?? {});
   return {
     step: input.step ?? null,
+    landingPath: cleanPathValue(data.landingPath),
+    sourcePath: cleanPathValue(data.sourcePath),
+    targetPath: cleanPathValue(data.targetPath),
+    referrerHost: data.referrerHost || null,
+    ctaId: data.ctaId || null,
     paymentMethod: data.paymentMethod || null,
     problemType: data.problemType || null,
     merchantCountry: data.merchantCountry || null,
@@ -132,7 +150,11 @@ router.post("/analytics/page-view", pageViewLimiter, async (req: Request, res: R
       path,
       sessionHash: hashVisitorId(parsed.data.visitorId),
       isAdmin: false,
-      metadata: { title: parsed.data.title ?? null },
+      metadata: {
+        title: parsed.data.title ?? null,
+        landingPath: cleanPathValue(parsed.data.landingPath),
+        referrerHost: parsed.data.referrerHost || null,
+      },
     });
     res.status(204).end();
   } catch (error) {

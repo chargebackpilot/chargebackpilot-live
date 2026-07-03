@@ -49,7 +49,10 @@ const staticRoutes = [
   "/widerruf",
 ];
 
-const sitemapLastmod = seoQualityConfig.lastmod ?? new Date().toISOString().slice(0, 10);
+const sitemapLastmod =
+  process.env.SEO_RELEASE_DATE ??
+  process.env.CBP_RELEASE_DATE ??
+  new Date().toISOString().slice(0, 10);
 const merchantRoutes = seoRuntime.merchants.map((merchant) => `/hilfe/${merchant.slug}`);
 const merchantProblemRoutes = seoRuntime.merchants.flatMap((merchant) =>
   merchant.problems.map((problemSlug) => `/hilfe/${merchant.slug}/${problemSlug}`),

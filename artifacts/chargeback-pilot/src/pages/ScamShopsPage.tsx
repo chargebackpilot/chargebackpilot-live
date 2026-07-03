@@ -6,7 +6,8 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { AlertTriangle, ArrowRight, ShieldCheck, Search, Sparkles } from "lucide-react";
 import { useState } from "react";
-import { getRouteMeta } from "@/seo-routes";
+import { getRouteMeta, SEO_LASTMOD } from "@/seo-routes";
+import { trackCtaClick } from "@/lib/analytics";
 
 interface ShopWarningSignal {
   title: string;
@@ -116,6 +117,7 @@ const FAQS = [
 
 export default function ScamShopsPage() {
   const [query, setQuery] = useState("");
+  const heroWizardHref = "/vorlagen-generator?problem=fraud&source=%2Fscam-shops-2026";
 
   const routeMeta = getRouteMeta("/scam-shops-2026");
   const title =
@@ -137,7 +139,7 @@ export default function ScamShopsPage() {
       logo: { "@type": "ImageObject", url: "https://chargebackpilot.de/favicon.svg" },
     },
     datePublished: "2026-01-15",
-    dateModified: "2026-06-22",
+    dateModified: SEO_LASTMOD,
     mainEntityOfPage: "https://chargebackpilot.de/scam-shops-2026",
     keywords:
       "fake shop erkennen, fake shop chargeback, paypal käuferschutz fake shop, auffälliger online shop",
@@ -185,7 +187,7 @@ export default function ScamShopsPage() {
               sicherst und PayPal-Käuferschutz, Kreditkarten-Chargeback, Klarna oder mögliche
               Lastschrift-Rückgabe prüfst.
             </p>
-            <Link href="/vorlagen-generator?problem=fraud">
+            <Link href={heroWizardHref} onClick={() => trackCtaClick("scam_hero", heroWizardHref)}>
               <Button size="lg" className="gap-2">
                 Verdachtsfall jetzt einordnen
                 <ArrowRight className="w-4 h-4" />
@@ -309,7 +311,8 @@ export default function ScamShopsPage() {
                 aria-label="Shop-Name oder URL"
               />
               <Link
-                href={`/vorlagen-generator?problem=fraud${query ? `&merchant=${encodeURIComponent(query)}` : ""}`}
+                href={`/vorlagen-generator?problem=fraud&source=%2Fscam-shops-2026${query ? `&merchant=${encodeURIComponent(query)}` : ""}`}
+                onClick={() => trackCtaClick("scam_shop_check", heroWizardHref)}
               >
                 <Button>Fall starten</Button>
               </Link>
@@ -383,7 +386,10 @@ export default function ScamShopsPage() {
               Typische Fristen unterscheiden sich je nach Zahlungsart. Wir helfen dir, deine
               Unterlagen strukturiert vorzubereiten und die passenden Anbieterregeln zu prüfen.
             </p>
-            <Link href="/vorlagen-generator?problem=fraud">
+            <Link
+              href={heroWizardHref}
+              onClick={() => trackCtaClick("scam_bottom", heroWizardHref)}
+            >
               <Button size="lg" variant="secondary" className="gap-2">
                 Nächste Schritte starten
                 <ArrowRight className="w-4 h-4" />

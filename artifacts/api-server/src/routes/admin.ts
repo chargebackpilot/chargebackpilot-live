@@ -2,6 +2,8 @@ import { Router, type NextFunction, type Request, type Response } from "express"
 import { db, pool, casesTable, type CaseAnalysis } from "@workspace/db";
 import { desc, eq, count, sql, and, gte, lt, type SQL } from "drizzle-orm";
 import rateLimit from "express-rate-limit";
+import { existsSync, readdirSync, readFileSync, statSync } from "node:fs";
+import { basename, join } from "node:path";
 import { getApiServerEnv } from "@workspace/env";
 import { safeCompare, sessionStore, adminAuth } from "../lib/auth";
 import { logger } from "../lib/logger";
@@ -41,6 +43,11 @@ const ADMIN_ALLOWED_IPS = new Set(
 const ADMIN_VISIBLE_CASES_FROM = new Date(
   process.env.ADMIN_VISIBLE_CASES_FROM || "2026-06-26T00:00:00.000Z"
 );
+const SEARCH_CONSOLE_DIRS = [
+  join(process.cwd(), "SearchConsole"),
+  join(process.cwd(), "..", "SearchConsole"),
+  join(process.cwd(), "..", "..", "SearchConsole"),
+];
 
 function firstHeaderValue(value: string | string[] | undefined) {
   return Array.isArray(value) ? value[0] : value;
@@ -120,6 +127,93 @@ function getStatsRangeDays(value: unknown) {
   const raw = Array.isArray(value) ? value[0] : value;
   const parsed = Number(raw ?? 30);
   return parsed === 7 || parsed === 90 ? parsed : 30;
+}
+
+function parseCsvLine(line: string) {
+  const out: string[] = [];
+  let current = "";
+  let inQuotes = false;
+  for (let i = 0; i < line.length; i += 1) {
+    const char = line[i];
+    const next = line[i + 1];
+    if (char === '"' && next === '"') {
+      current += '"';
+      i += 1;
+      continue;
+    }
+    if (char === '"') {
+      inQuotes = !inQuotes;
+      continue;
+    }
+    if (char === "," && !inQuotes) {
+      out.push(current);
+      current = "";
+      continue;
+    }
+    current += char;
+  }
+  out.push(current);
+  return out;
+}
+
+function parseGscNumber(value: string | undefined) {
+  return (
+    Number(
+      String(value ?? "")
+        .replace("%", "")
+        .replace(",", ".")
+    ) || 0
+  );
+}
+
+function gscPath(value: string | undefined) {
+  try {
+    return new URL(value ?? "").pathname.replace(/\/$/, "") || "/";
+  } catch {
+    return String(value ?? "").replace(/\/$/, "") || "/";
+  }
+}
+
+function findLatestGscCsv(prefix: string) {
+  const searchConsoleDir = SEARCH_CONSOLE_DIRS.find((dir) => existsSync(dir));
+  if (!searchConsoleDir) return null;
+  const normalizedPrefix = prefix.toLocaleLowerCase("de-DE");
+  return readdirSync(searchConsoleDir)
+    .filter((file) => {
+      const normalized = file.toLocaleLowerCase("de-DE");
+      return normalized.startsWith(normalizedPrefix) && normalized.endsWith(".csv");
+    })
+    .map((file) => {
+      const path = join(searchConsoleDir, file);
+      return { path, mtimeMs: statSync(path).mtimeMs };
+    })
+    .sort((a, b) => b.mtimeMs - a.mtimeMs)[0]?.path;
+}
+
+function isUtilityGscPath(path: string) {
+  return [
+    "/datenschutz",
+    "/impressum",
+    "/agb",
+    "/widerruf",
+    "/disclaimer",
+    "/methodik",
+    "/ueber-uns",
+  ].includes(path);
+}
+
+function gscRecommendation(row: {
+  path: string;
+  clicks: number;
+  impressions: number;
+  position: number;
+}) {
+  if (isUtilityGscPath(row.path)) return "WATCH";
+  if (row.impressions < 3) return "WATCH";
+  if (row.clicks === 0 && row.position <= 8) return "CTR_FIX";
+  if (row.clicks === 0 && row.position <= 12) return "WIZARD_CTA_TEST";
+  if (row.position > 12 && row.impressions >= 10) return "INTERNAL_LINK_BOOST";
+  return "WATCH";
 }
 
 function adminCaseResponse(found: typeof casesTable.$inferSelect, readToken?: string) {
@@ -311,6 +405,7 @@ router.get("/stats", async (req: any, res: Response): Promise<void> => {
       analysis_successes_7d: string;
       paywall_views_7d: string;
       checkout_clicks_7d: string;
+      cta_clicks_7d: string;
       validation_errors_7d: string;
       wizard_abandons_7d: string;
       avg_quality_score_7d: string | null;
@@ -357,6 +452,9 @@ router.get("/stats", async (req: any, res: Response): Promise<void> => {
             WHERE event_type = 'checkout_click' AND created_at >= $2
           )::int AS checkout_clicks_7d,
           COUNT(*) FILTER (
+            WHERE event_type = 'cta_click' AND created_at >= $2
+          )::int AS cta_clicks_7d,
+          COUNT(*) FILTER (
             WHERE event_type = 'validation_error' AND created_at >= $2
           )::int AS validation_errors_7d,
           COUNT(*) FILTER (
@@ -381,26 +479,148 @@ router.get("/stats", async (req: any, res: Response): Promise<void> => {
       path: string;
       views: string;
       visitors: string;
+      cta_clicks: string;
+      wizard_starts: string;
+      analysis_submits: string;
+      analysis_successes: string;
+      paywall_views: string;
+      checkout_clicks: string;
       last_seen: Date;
     }>(
       `
+        WITH page_counts AS (
+          SELECT
+            path,
+            COUNT(*)::int AS views,
+            COUNT(DISTINCT session_hash)::int AS visitors,
+            MAX(created_at) AS last_seen
+          FROM analytics_events
+          WHERE event_type = 'page_view'
+            AND is_admin = false
+            AND created_at >= $1
+            AND path IS NOT NULL
+            AND path <> '/'
+            AND path <> '/vorlagen-generator'
+            AND path NOT LIKE '/admin%'
+            AND path NOT LIKE '/api%'
+            AND path NOT LIKE '/assets%'
+          GROUP BY path
+        ),
+        funnel_counts AS (
+          SELECT
+            COALESCE(NULLIF(metadata->>'sourcePath', '/vorlagen-generator'), metadata->>'landingPath') AS path,
+            COUNT(*) FILTER (WHERE event_type = 'cta_click')::int AS cta_clicks,
+            COUNT(*) FILTER (WHERE event_type = 'wizard_step' AND metadata->>'step' = '1')::int AS wizard_starts,
+            COUNT(*) FILTER (WHERE event_type = 'analysis_submit')::int AS analysis_submits,
+            COUNT(*) FILTER (WHERE event_type = 'analysis_success')::int AS analysis_successes,
+            COUNT(*) FILTER (WHERE event_type = 'paywall_view')::int AS paywall_views,
+            COUNT(*) FILTER (WHERE event_type = 'checkout_click')::int AS checkout_clicks,
+            MAX(created_at) AS last_seen
+          FROM analytics_events
+          WHERE is_admin = false
+            AND created_at >= $1
+            AND COALESCE(NULLIF(metadata->>'sourcePath', '/vorlagen-generator'), metadata->>'landingPath') IS NOT NULL
+            AND COALESCE(NULLIF(metadata->>'sourcePath', '/vorlagen-generator'), metadata->>'landingPath') <> '/vorlagen-generator'
+          GROUP BY COALESCE(NULLIF(metadata->>'sourcePath', '/vorlagen-generator'), metadata->>'landingPath')
+        )
         SELECT
-          path,
-          COUNT(*)::int AS views,
-          COUNT(DISTINCT session_hash)::int AS visitors,
-          MAX(created_at) AS last_seen
-        FROM analytics_events
-        WHERE event_type = 'page_view'
-          AND is_admin = false
-          AND created_at >= $1
-          AND path IS NOT NULL
-          AND path <> '/'
-          AND path <> '/vorlagen-generator'
-          AND path NOT LIKE '/admin%'
-          AND path NOT LIKE '/api%'
-          AND path NOT LIKE '/assets%'
-        GROUP BY path
-        ORDER BY views DESC, visitors DESC, last_seen DESC
+          page_counts.path,
+          page_counts.views,
+          page_counts.visitors,
+          COALESCE(funnel_counts.cta_clicks, 0)::int AS cta_clicks,
+          COALESCE(funnel_counts.wizard_starts, 0)::int AS wizard_starts,
+          COALESCE(funnel_counts.analysis_submits, 0)::int AS analysis_submits,
+          COALESCE(funnel_counts.analysis_successes, 0)::int AS analysis_successes,
+          COALESCE(funnel_counts.paywall_views, 0)::int AS paywall_views,
+          COALESCE(funnel_counts.checkout_clicks, 0)::int AS checkout_clicks,
+          GREATEST(page_counts.last_seen, COALESCE(funnel_counts.last_seen, page_counts.last_seen)) AS last_seen
+        FROM page_counts
+        LEFT JOIN funnel_counts ON funnel_counts.path = page_counts.path
+        ORDER BY page_counts.views DESC, page_counts.visitors DESC, last_seen DESC
+        LIMIT 20
+      `,
+      [sinceRange]
+    );
+
+    const landingFunnels = await pool.query<{
+      path: string;
+      page_views: string;
+      visitors: string;
+      cta_clicks: string;
+      wizard_starts: string;
+      analysis_submits: string;
+      analysis_successes: string;
+      paywall_views: string;
+      checkout_clicks: string;
+      last_seen: Date;
+    }>(
+      `
+        WITH page_counts AS (
+          SELECT
+            path,
+            COUNT(*)::int AS page_views,
+            COUNT(DISTINCT session_hash)::int AS visitors,
+            MAX(created_at) AS last_seen
+          FROM analytics_events
+          WHERE event_type = 'page_view'
+            AND is_admin = false
+            AND created_at >= $1
+            AND path IS NOT NULL
+            AND path NOT LIKE '/admin%'
+            AND path NOT LIKE '/api%'
+            AND path NOT LIKE '/assets%'
+          GROUP BY path
+        ),
+        funnel_counts AS (
+          SELECT
+            COALESCE(NULLIF(metadata->>'sourcePath', '/vorlagen-generator'), metadata->>'landingPath') AS path,
+            COUNT(*) FILTER (WHERE event_type = 'cta_click')::int AS cta_clicks,
+            COUNT(*) FILTER (WHERE event_type = 'wizard_step' AND metadata->>'step' = '1')::int AS wizard_starts,
+            COUNT(*) FILTER (WHERE event_type = 'analysis_submit')::int AS analysis_submits,
+            COUNT(*) FILTER (WHERE event_type = 'analysis_success')::int AS analysis_successes,
+            COUNT(*) FILTER (WHERE event_type = 'paywall_view')::int AS paywall_views,
+            COUNT(*) FILTER (WHERE event_type = 'checkout_click')::int AS checkout_clicks,
+            MAX(created_at) AS last_seen
+          FROM analytics_events
+          WHERE is_admin = false
+            AND created_at >= $1
+            AND COALESCE(NULLIF(metadata->>'sourcePath', '/vorlagen-generator'), metadata->>'landingPath') IS NOT NULL
+          GROUP BY COALESCE(NULLIF(metadata->>'sourcePath', '/vorlagen-generator'), metadata->>'landingPath')
+        ),
+        paths AS (
+          SELECT path FROM page_counts
+          UNION
+          SELECT path FROM funnel_counts
+        )
+        SELECT
+          paths.path,
+          COALESCE(page_counts.page_views, 0)::int AS page_views,
+          COALESCE(page_counts.visitors, 0)::int AS visitors,
+          COALESCE(funnel_counts.cta_clicks, 0)::int AS cta_clicks,
+          COALESCE(funnel_counts.wizard_starts, 0)::int AS wizard_starts,
+          COALESCE(funnel_counts.analysis_submits, 0)::int AS analysis_submits,
+          COALESCE(funnel_counts.analysis_successes, 0)::int AS analysis_successes,
+          COALESCE(funnel_counts.paywall_views, 0)::int AS paywall_views,
+          COALESCE(funnel_counts.checkout_clicks, 0)::int AS checkout_clicks,
+          GREATEST(
+            COALESCE(page_counts.last_seen, 'epoch'::timestamp),
+            COALESCE(funnel_counts.last_seen, 'epoch'::timestamp)
+          ) AS last_seen
+        FROM paths
+        LEFT JOIN page_counts ON page_counts.path = paths.path
+        LEFT JOIN funnel_counts ON funnel_counts.path = paths.path
+        WHERE paths.path IS NOT NULL
+          AND paths.path <> '/vorlagen-generator'
+          AND paths.path NOT LIKE '/admin%'
+          AND paths.path NOT LIKE '/api%'
+          AND paths.path NOT LIKE '/assets%'
+        ORDER BY
+          (COALESCE(funnel_counts.cta_clicks, 0)
+            + COALESCE(funnel_counts.wizard_starts, 0)
+            + COALESCE(funnel_counts.analysis_submits, 0)
+            + COALESCE(funnel_counts.checkout_clicks, 0)) DESC,
+          COALESCE(page_counts.page_views, 0) DESC,
+          last_seen DESC
         LIMIT 20
       `,
       [sinceRange]
@@ -416,6 +636,7 @@ router.get("/stats", async (req: any, res: Response): Promise<void> => {
         FROM analytics_events
         WHERE event_type IN (
           'wizard_step',
+          'cta_click',
           'wizard_draft',
           'analysis_submit',
           'analysis_success',
@@ -482,6 +703,7 @@ router.get("/stats", async (req: any, res: Response): Promise<void> => {
         analysisSuccesses7d: Number(traffic.rows[0]?.analysis_successes_7d ?? 0),
         paywallViews7d: Number(traffic.rows[0]?.paywall_views_7d ?? 0),
         checkoutClicks7d: Number(traffic.rows[0]?.checkout_clicks_7d ?? 0),
+        ctaClicks7d: Number(traffic.rows[0]?.cta_clicks_7d ?? 0),
         validationErrors7d: Number(traffic.rows[0]?.validation_errors_7d ?? 0),
         wizardAbandons7d: Number(traffic.rows[0]?.wizard_abandons_7d ?? 0),
         avgQualityScore7d: Number(traffic.rows[0]?.avg_quality_score_7d ?? 0),
@@ -490,6 +712,24 @@ router.get("/stats", async (req: any, res: Response): Promise<void> => {
         path: row.path,
         views: Number(row.views),
         visitors: Number(row.visitors),
+        ctaClicks: Number(row.cta_clicks),
+        wizardStarts: Number(row.wizard_starts),
+        analysisSubmits: Number(row.analysis_submits),
+        analysisSuccesses: Number(row.analysis_successes),
+        paywallViews: Number(row.paywall_views),
+        checkoutClicks: Number(row.checkout_clicks),
+        lastSeen: row.last_seen.toISOString(),
+      })),
+      landingFunnels: landingFunnels.rows.map((row) => ({
+        path: row.path,
+        pageViews: Number(row.page_views),
+        visitors: Number(row.visitors),
+        ctaClicks: Number(row.cta_clicks),
+        wizardStarts: Number(row.wizard_starts),
+        analysisSubmits: Number(row.analysis_submits),
+        analysisSuccesses: Number(row.analysis_successes),
+        paywallViews: Number(row.paywall_views),
+        checkoutClicks: Number(row.checkout_clicks),
         lastSeen: row.last_seen.toISOString(),
       })),
       latestWizardEvents: latestWizardEvents.rows.map((row) => ({
@@ -500,6 +740,57 @@ router.get("/stats", async (req: any, res: Response): Promise<void> => {
     });
   } catch (error) {
     logAdminRouteError(error, "Failed to load admin stats");
+    sendAdminRouteError(res);
+  }
+});
+
+router.get("/gsc-opportunities", (_req: Request, res: Response) => {
+  try {
+    const pagesCsv = findLatestGscCsv("Seiten");
+    if (!pagesCsv) {
+      res.json({
+        available: false,
+        source: null,
+        generatedAt: new Date().toISOString(),
+        opportunities: [],
+      });
+      return;
+    }
+
+    const lines = readFileSync(pagesCsv, "utf8").trim().split(/\r?\n/).filter(Boolean);
+    const rows = lines.slice(1).map(parseCsvLine);
+    const opportunities = rows
+      .map(([url, clicks, impressions, ctr, position]) => {
+        const parsed = {
+          path: gscPath(url),
+          clicks: parseGscNumber(clicks),
+          impressions: parseGscNumber(impressions),
+          ctr: parseGscNumber(ctr),
+          position: parseGscNumber(position),
+        };
+        return {
+          ...parsed,
+          recommendation: gscRecommendation(parsed),
+        };
+      })
+      .filter((row) => row.impressions >= 3 || row.clicks > 0)
+      .sort((a, b) => {
+        const priorityOrder = ["CTR_FIX", "WIZARD_CTA_TEST", "INTERNAL_LINK_BOOST", "WATCH"];
+        const priorityDiff =
+          priorityOrder.indexOf(a.recommendation) - priorityOrder.indexOf(b.recommendation);
+        if (priorityDiff !== 0) return priorityDiff;
+        return b.impressions - a.impressions || a.position - b.position;
+      })
+      .slice(0, 25);
+
+    res.json({
+      available: true,
+      source: basename(pagesCsv),
+      generatedAt: new Date().toISOString(),
+      opportunities,
+    });
+  } catch (error) {
+    logAdminRouteError(error, "Failed to load GSC opportunities");
     sendAdminRouteError(res);
   }
 });

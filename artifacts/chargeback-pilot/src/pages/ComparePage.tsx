@@ -4,7 +4,8 @@ import { Breadcrumbs } from "@/components/Breadcrumbs";
 import { SeoHead } from "@/components/SeoHead";
 import { Button } from "@/components/ui/button";
 import { ArrowRight, Check, X, Minus, Sparkles } from "lucide-react";
-import { getRouteMeta } from "@/seo-routes";
+import { getRouteMeta, SEO_LASTMOD } from "@/seo-routes";
+import { trackCtaClick } from "@/lib/analytics";
 
 const ROWS: {
   label: string;
@@ -69,6 +70,8 @@ function Cell({ v }: { v: string | true | false }) {
 }
 
 export default function ComparePage() {
+  const wizardHref =
+    "/vorlagen-generator?new=1&source=%2Fvergleich%2Fpaypal-vs-kreditkarte-vs-klarna";
   const routeMeta = getRouteMeta("/vergleich/paypal-vs-kreditkarte-vs-klarna");
   const title =
     routeMeta?.title ??
@@ -90,7 +93,7 @@ export default function ComparePage() {
       logo: { "@type": "ImageObject", url: "https://chargebackpilot.de/favicon.svg" },
     },
     datePublished: "2026-01-15",
-    dateModified: "2026-06-22",
+    dateModified: SEO_LASTMOD,
     mainEntityOfPage: "https://chargebackpilot.de/vergleich/paypal-vs-kreditkarte-vs-klarna",
     keywords:
       "paypal vs kreditkarte vs klarna, käuferschutz vergleich, paypal käuferschutz kreditkarte chargeback klarna",
@@ -132,7 +135,7 @@ export default function ComparePage() {
               Welcher Käuferschutz ist im Streitfall oft passend? Direktvergleich mit Fristen,
               typischen Abläufen und unserer Einordnung pro Use-Case.
             </p>
-            <Link href="/vorlagen-generator">
+            <Link href={wizardHref} onClick={() => trackCtaClick("compare_hero", wizardHref)}>
               <Button size="lg" className="gap-2">
                 Fall strukturiert analysieren <ArrowRight className="w-4 h-4" />
               </Button>
@@ -290,7 +293,7 @@ export default function ComparePage() {
               Unsere KI strukturiert deine Angaben indikativ und nennt mögliche Anlaufstellen, die
               du selbst prüfen kannst.
             </p>
-            <Link href="/vorlagen-generator">
+            <Link href={wizardHref} onClick={() => trackCtaClick("compare_bottom", wizardHref)}>
               <Button size="lg" variant="secondary" className="gap-2">
                 Jetzt unverbindlich einordnen
                 <ArrowRight className="w-4 h-4" />

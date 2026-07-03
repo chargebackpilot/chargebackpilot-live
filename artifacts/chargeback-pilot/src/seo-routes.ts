@@ -23,7 +23,7 @@ export interface SeoRouteMeta {
 }
 
 export const SITE_ORIGIN = "https://chargebackpilot.de";
-export const SEO_LASTMOD = SEO_QUALITY_CONFIG.lastmod;
+export const SEO_LASTMOD = __CBP_RELEASE_DATE__;
 
 export function isMerchantProblemPath(pathname: string) {
   return /^\/hilfe\/[^/]+\/[^/]+$/.test(normalizeRoutePath(pathname));
@@ -179,9 +179,9 @@ export const SEO_ROUTES: SeoRouteMeta[] = [
   },
   {
     path: "/chargeback-antrag-vorlage",
-    title: "Chargeback Antrag Vorlage für Bank & Kreditkarte | ChargebackPilot",
+    title: "Chargeback Antrag Vorlage: Bank-Antrag vorbereiten | ChargebackPilot",
     description:
-      "Chargeback Antrag Vorlage für Bank und Kreditkarte: Umsatz, Sachverhalt, Händlerkontakt und Belege sachlich für die Reklamation vorbereiten.",
+      "Chargeback Antrag Vorlage für Bank und Kreditkarte: Umsatz, Sachverhalt, Händlerkontakt und Anlagenliste sachlich vorbereiten.",
     changefreq: "monthly",
     priority: 0.8,
     type: "guide",
@@ -269,7 +269,7 @@ export const SEO_ROUTES: SeoRouteMeta[] = [
   },
   {
     path: "/vergleich/paypal-vs-kreditkarte-vs-klarna",
-    title: "PayPal vs Klarna vs Kreditkarte: Käuferschutz vergleichen | ChargebackPilot",
+    title: "PayPal vs Klarna vs Kreditkarte: Käuferschutz 2026 | ChargebackPilot",
     description:
       "PayPal, Klarna oder Kreditkarte? Vergleich 2026: typische Reklamationswege, Fristen, Belege und nächste Schritte als unverbindliche Orientierung.",
     changefreq: "monthly",

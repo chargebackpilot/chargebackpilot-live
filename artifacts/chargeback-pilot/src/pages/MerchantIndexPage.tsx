@@ -13,6 +13,8 @@ import {
   getProblemDisplayLabel,
 } from "@/data/merchants";
 import { isIndexableMerchantProblemPath } from "@/seo-quality";
+import { SEO_LASTMOD } from "@/seo-routes";
+import { trackCtaClick } from "@/lib/analytics";
 
 const SITE = "https://chargebackpilot.de";
 
@@ -250,6 +252,9 @@ export default function MerchantIndexPage() {
     PRIORITY_MERCHANT_CONTENT[merchant.slug] ??
     buildFallbackHubContent(merchant.name, visibleProblemLabels);
   const canonicalPath = `/hilfe/${merchant.slug}`;
+  const hubWizardHref = `/vorlagen-generator?new=1&merchant=${encodeURIComponent(
+    merchant.name
+  )}&source=${encodeURIComponent(canonicalPath)}`;
   const jsonLd = [
     {
       "@context": "https://schema.org",
@@ -265,7 +270,7 @@ export default function MerchantIndexPage() {
       },
       mainEntityOfPage: `${SITE}${canonicalPath}`,
       datePublished: "2026-01-15",
-      dateModified: "2026-07-01",
+      dateModified: SEO_LASTMOD,
     },
     {
       "@context": "https://schema.org",
@@ -288,7 +293,10 @@ export default function MerchantIndexPage() {
           <div className="container mx-auto max-w-3xl">
             <h1 className="text-3xl md:text-5xl font-bold mb-4">{indexSeo.headline}</h1>
             <p className="text-lg text-muted-foreground mb-6">{merchant.description}</p>
-            <Link href="/vorlagen-generator">
+            <Link
+              href={hubWizardHref}
+              onClick={() => trackCtaClick("merchant_hub_hero", hubWizardHref)}
+            >
               <Button size="lg" className="gap-2">
                 Kostenlosen Fall-Check starten <ArrowRight className="w-4 h-4" />
               </Button>
@@ -398,7 +406,15 @@ export default function MerchantIndexPage() {
                     key={p.slug}
                     href={`/vorlagen-generator?merchant=${encodeURIComponent(
                       merchant.name
-                    )}&problem=${encodeURIComponent(p.wizardProblemId)}`}
+                    )}&problem=${encodeURIComponent(p.wizardProblemId)}&source=${encodeURIComponent(
+                      canonicalPath
+                    )}`}
+                    onClick={() =>
+                      trackCtaClick(
+                        `merchant_hub_problem_${p.slug}`,
+                        `/vorlagen-generator?problem=${encodeURIComponent(p.wizardProblemId)}`
+                      )
+                    }
                     className="rounded-lg border bg-muted/30 px-3 py-3 text-sm transition-colors hover:border-primary/40 hover:bg-primary/5"
                   >
                     <span className="font-semibold">{getProblemDisplayLabel(merchant, p)}</span>

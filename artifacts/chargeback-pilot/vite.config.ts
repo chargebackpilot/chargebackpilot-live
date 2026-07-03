@@ -13,18 +13,21 @@ if (Number.isNaN(port) || port <= 0) {
 
 const basePath = process.env.BASE_PATH ?? "/";
 const isProduction = process.env.NODE_ENV === "production";
-const replitPlugins = process.env.NODE_ENV !== "production" && process.env.REPL_ID !== undefined
-  ? [
-      await import("@replit/vite-plugin-cartographer").then((m) =>
-        m.cartographer({
-          root: path.resolve(import.meta.dirname, ".."),
-        }),
-      ),
-      await import("@replit/vite-plugin-dev-banner").then((m) =>
-        m.devBanner(),
-      ),
-    ]
-  : [];
+const releaseDate =
+  process.env.SEO_RELEASE_DATE ??
+  process.env.CBP_RELEASE_DATE ??
+  new Date().toISOString().slice(0, 10);
+const replitPlugins =
+  process.env.NODE_ENV !== "production" && process.env.REPL_ID !== undefined
+    ? [
+        await import("@replit/vite-plugin-cartographer").then((m) =>
+          m.cartographer({
+            root: path.resolve(import.meta.dirname, ".."),
+          })
+        ),
+        await import("@replit/vite-plugin-dev-banner").then((m) => m.devBanner()),
+      ]
+    : [];
 
 export default defineConfig(({ isSsrBuild }) => ({
   base: basePath,
@@ -41,6 +44,9 @@ export default defineConfig(({ isSsrBuild }) => ({
     },
     dedupe: ["react", "react-dom"],
   },
+  define: {
+    __CBP_RELEASE_DATE__: JSON.stringify(releaseDate),
+  },
   root: path.resolve(import.meta.dirname),
   build: {
     outDir: path.resolve(import.meta.dirname, "dist/public"),
@@ -50,11 +56,17 @@ export default defineConfig(({ isSsrBuild }) => ({
       : {
           output: {
             manualChunks: {
-              'ui-vendor': ['lucide-react', '@radix-ui/react-accordion', '@radix-ui/react-dialog', '@radix-ui/react-popover', 'framer-motion'],
-              'utils-vendor': ['date-fns', 'zod', 'react-hook-form', '@hookform/resolvers'],
-            }
-          }
-        }
+              "ui-vendor": [
+                "lucide-react",
+                "@radix-ui/react-accordion",
+                "@radix-ui/react-dialog",
+                "@radix-ui/react-popover",
+                "framer-motion",
+              ],
+              "utils-vendor": ["date-fns", "zod", "react-hook-form", "@hookform/resolvers"],
+            },
+          },
+        },
   },
   server: {
     port,
