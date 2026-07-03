@@ -192,6 +192,9 @@ Google-Search-Console-Integration:
 
 - `GSC_ENABLED=1` aktiviert den serverseitigen Sync.
 - Der Service Account muss in Search Console Zugriff auf `GSC_SITE_URL` haben.
+- `GSC_SITE_URL` muss zur Search-Console-Property passen. Bei einer Domain-Property nutze
+  `sc-domain:chargebackpilot.de`, bei einer URL-Prefix-Property z. B.
+  `https://chargebackpilot.de/`.
 - `GSC_PRIVATE_KEY` wird als Render-Environment-Variable gespeichert; Zeilenumbrüche können als
   `\n` escaped sein.
 - Keine JSON-Key-Dateien ins Repository legen.

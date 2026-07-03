@@ -326,6 +326,8 @@ Search Console integration:
   Inspection snapshots.
 - Store GSC data in Postgres, never in server files.
 - Use Render ENV variables for the service account; never commit JSON key files.
+- `GSC_SITE_URL` must match the property type. Use `sc-domain:chargebackpilot.de` for a Domain
+  property or `https://chargebackpilot.de/` for a URL-prefix property.
 - `pnpm seo` and `pnpm seo:gsc-report` prefer live Postgres GSC data and fall back to local
   `SearchConsole/*.csv` exports.
 - Do not use the Google Indexing API for normal Ratgeber pages and do not promise instant indexing.

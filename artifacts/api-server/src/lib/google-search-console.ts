@@ -44,6 +44,11 @@ type SitemapApiEntry = {
   contents?: unknown[];
 };
 
+type SiteApiEntry = {
+  siteUrl?: string;
+  permissionLevel?: string;
+};
+
 const SEARCH_SCOPE = "https://www.googleapis.com/auth/webmasters.readonly";
 const TOKEN_URL = "https://oauth2.googleapis.com/token";
 const WEBMASTERS_BASE = "https://www.googleapis.com/webmasters/v3";
@@ -87,21 +92,55 @@ function normalizePrivateKey(value: string) {
   return normalized;
 }
 
-function getOrigin() {
-  const env = getApiServerEnv();
-  if (env.GSC_SITE_URL?.startsWith("http")) {
+function domainFromSiteUrl(siteUrl: string) {
+  if (siteUrl.startsWith("sc-domain:")) {
+    return siteUrl.replace("sc-domain:", "").replace(/^www\./, "");
+  }
+
+  if (siteUrl.startsWith("http")) {
     try {
-      const url = new URL(env.GSC_SITE_URL);
-      return url.origin;
+      return new URL(siteUrl).hostname.replace(/^www\./, "");
     } catch {
-      return "https://chargebackpilot.de";
+      return null;
     }
   }
-  return "https://chargebackpilot.de";
+
+  return null;
+}
+
+function getOrigin(siteUrl = gscSiteUrl()) {
+  if (siteUrl.startsWith("http")) {
+    try {
+      return new URL(siteUrl).origin;
+    } catch {
+      // fall through
+    }
+  }
+
+  const domain = domainFromSiteUrl(siteUrl);
+  return domain ? `https://${domain}` : "https://chargebackpilot.de";
 }
 
 function gscSiteUrl() {
   return getApiServerEnv().GSC_SITE_URL?.trim() || "https://chargebackpilot.de/";
+}
+
+function normalizeUrlPrefixProperty(siteUrl: string) {
+  if (!siteUrl.startsWith("http")) return siteUrl;
+  try {
+    const url = new URL(siteUrl);
+    return `${url.origin}${url.pathname.endsWith("/") ? url.pathname : `${url.pathname}/`}`;
+  } catch {
+    return siteUrl;
+  }
+}
+
+function equivalentSiteUrl(a: string, b: string) {
+  return normalizeUrlPrefixProperty(a) === normalizeUrlPrefixProperty(b);
+}
+
+function verifiedSites(entries: SiteApiEntry[]) {
+  return entries.filter((entry) => entry.siteUrl && entry.permissionLevel !== "siteUnverifiedUser");
 }
 
 function encodeSiteUrl(siteUrl: string) {
@@ -259,6 +298,62 @@ async function googleJson<T>(url: string, init: RequestInit = {}) {
     throw new Error(`Search Console request failed (${response.status}): ${text.slice(0, 300)}`);
   }
   return (await response.json()) as T;
+}
+
+async function fetchAccessibleSites() {
+  const json = await googleJson<{ siteEntry?: SiteApiEntry[] }>(`${WEBMASTERS_BASE}/sites`);
+  return verifiedSites(json.siteEntry ?? []);
+}
+
+async function resolveGscSiteUrl() {
+  const configuredSiteUrl = gscSiteUrl();
+  const sites = await fetchAccessibleSites();
+  const exact = sites.find(
+    (entry) => entry.siteUrl && equivalentSiteUrl(entry.siteUrl, configuredSiteUrl)
+  );
+  if (exact?.siteUrl) return exact.siteUrl;
+
+  const configuredDomain = domainFromSiteUrl(configuredSiteUrl);
+  if (configuredDomain) {
+    const domainProperty = sites.find((entry) => entry.siteUrl === `sc-domain:${configuredDomain}`);
+    if (domainProperty?.siteUrl) {
+      logger.info(
+        {
+          configuredSiteUrl,
+          resolvedSiteUrl: domainProperty.siteUrl,
+        },
+        "Search Console property resolved to accessible domain property"
+      );
+      return domainProperty.siteUrl;
+    }
+
+    const matchingUrlPrefix = sites.find((entry) => {
+      const siteUrl = entry.siteUrl;
+      if (!siteUrl?.startsWith("http")) return false;
+      return domainFromSiteUrl(siteUrl) === configuredDomain;
+    });
+    if (matchingUrlPrefix?.siteUrl) {
+      logger.info(
+        {
+          configuredSiteUrl,
+          resolvedSiteUrl: matchingUrlPrefix.siteUrl,
+        },
+        "Search Console property resolved to accessible URL-prefix property"
+      );
+      return matchingUrlPrefix.siteUrl;
+    }
+  }
+
+  const accessibleSites = sites
+    .map((entry) => entry.siteUrl)
+    .filter(Boolean)
+    .slice(0, 8)
+    .join(", ");
+  throw new Error(
+    `Search Console property not accessible for service account. Configured: ${configuredSiteUrl}. Accessible: ${
+      accessibleSites || "none"
+    }. Use the exact Search Console property, e.g. sc-domain:chargebackpilot.de for a domain property.`
+  );
 }
 
 async function fetchSearchAnalytics(siteUrl: string, startDate: string, endDate: string) {
@@ -479,14 +574,22 @@ export async function syncGoogleSearchConsole(options: { manual?: boolean; force
   const runId = run.rows[0]?.id;
 
   try {
-    const siteUrl = gscSiteUrl();
+    const siteUrl = await resolveGscSiteUrl();
     const analyticsRows = await fetchSearchAnalytics(siteUrl, startDate, endDate);
     const searchAnalyticsRows = await insertSearchAnalyticsRows(analyticsRows, startDate, endDate);
 
-    const sitemaps = await fetchSitemaps(siteUrl);
-    await upsertSitemaps(sitemaps);
+    let sitemaps: SitemapApiEntry[] = [];
+    try {
+      sitemaps = await fetchSitemaps(siteUrl);
+      await upsertSitemaps(sitemaps);
+    } catch (error) {
+      logger.warn(
+        { siteUrl, error: sanitizeError(error) },
+        "Search Console sitemap status could not be synced"
+      );
+    }
 
-    const origin = getOrigin();
+    const origin = getOrigin(siteUrl);
     let inspectionCount = 0;
     for (const path of IMPORTANT_INSPECTION_PATHS) {
       const url = `${origin}${path === "/" ? "/" : path}`;
