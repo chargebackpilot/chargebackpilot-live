@@ -88,6 +88,10 @@ import {
 import { getAdminToken } from "@/lib/admin-api";
 import { trackWizardEvent } from "@/lib/analytics";
 
+const TURNSTILE_SCRIPT_SRC =
+  "https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit";
+let turnstileScriptPromise: Promise<void> | null = null;
+
 interface FormData {
   paymentMethod: string;
   problemType: string;
@@ -170,6 +174,55 @@ declare global {
       remove: (widgetId: string) => void;
     };
   }
+}
+
+function waitForTurnstileApi(timeoutMs = 8000) {
+  return new Promise<void>((resolve, reject) => {
+    if (typeof window === "undefined") {
+      reject(new Error("Turnstile is only available in the browser"));
+      return;
+    }
+    if (window.turnstile) {
+      resolve();
+      return;
+    }
+
+    const startedAt = Date.now();
+    const interval = window.setInterval(() => {
+      if (window.turnstile) {
+        window.clearInterval(interval);
+        resolve();
+        return;
+      }
+      if (Date.now() - startedAt > timeoutMs) {
+        window.clearInterval(interval);
+        reject(new Error("Turnstile script did not become ready in time"));
+      }
+    }, 100);
+  });
+}
+
+function ensureTurnstileScript() {
+  if (typeof window === "undefined" || typeof document === "undefined") {
+    return Promise.reject(new Error("Turnstile can only be loaded in the browser"));
+  }
+  if (window.turnstile) return Promise.resolve();
+  if (turnstileScriptPromise) return turnstileScriptPromise;
+
+  const existing = document.querySelector(`script[src="${TURNSTILE_SCRIPT_SRC}"]`);
+  if (!existing) {
+    const script = document.createElement("script");
+    script.src = TURNSTILE_SCRIPT_SRC;
+    script.async = true;
+    script.defer = true;
+    document.head.appendChild(script);
+  }
+
+  turnstileScriptPromise = waitForTurnstileApi().catch((error) => {
+    turnstileScriptPromise = null;
+    throw error;
+  });
+  return turnstileScriptPromise;
 }
 
 export default function Wizard() {
@@ -622,57 +675,62 @@ export default function Wizard() {
 
   const getTurnstileToken = async (): Promise<string> => {
     if (!turnstileSiteKey) {
-      console.warn(
-        "Turnstile site key is not configured. Continuing without client-side challenge token."
-      );
-      return "";
-    }
-    if (!window.turnstile) {
-      console.warn(
-        "Turnstile script is not available. Continuing without client-side challenge token."
-      );
+      if (import.meta.env.PROD) {
+        throw new Error("Turnstile site key is not configured");
+      }
+      console.warn("Turnstile site key is not configured. Continuing in development mode.");
       return "";
     }
 
-    if (!turnstileWidgetIdRef.current && turnstileContainerRef.current) {
-      turnstileWidgetIdRef.current = window.turnstile.render(turnstileContainerRef.current, {
-        sitekey: turnstileSiteKey,
-        size: "invisible",
-        appearance: "interaction-only",
-        execution: "execute",
-      });
+    await ensureTurnstileScript();
+
+    if (!turnstileContainerRef.current || !window.turnstile) {
+      throw new Error("Turnstile widget could not be initialized");
     }
 
-    const widgetId = turnstileWidgetIdRef.current;
-    if (!widgetId || !window.turnstile) {
-      console.warn(
-        "Turnstile widget could not be initialized. Continuing without client-side challenge token."
-      );
-      return "";
+    if (turnstileWidgetIdRef.current) {
+      window.turnstile.remove(turnstileWidgetIdRef.current);
+      turnstileWidgetIdRef.current = null;
     }
 
-    return await new Promise<string>((resolve) => {
-      const timeout = window.setTimeout(() => resolve(""), 3500);
-      window.turnstile!.remove(widgetId);
-      turnstileWidgetIdRef.current = window.turnstile!.render(turnstileContainerRef.current!, {
-        sitekey: turnstileSiteKey,
-        size: "invisible",
-        appearance: "interaction-only",
-        execution: "execute",
-        callback: (token: string) => {
-          window.clearTimeout(timeout);
-          resolve(token || "");
-        },
-        "error-callback": () => {
-          window.clearTimeout(timeout);
-          resolve("");
-        },
-        "expired-callback": () => {
-          window.clearTimeout(timeout);
-          resolve("");
-        },
-      });
-      window.turnstile!.execute(turnstileWidgetIdRef.current!);
+    return await new Promise<string>((resolve, reject) => {
+      let settled = false;
+      let timeout = 0;
+      const finish = (token: string) => {
+        if (settled) return;
+        settled = true;
+        window.clearTimeout(timeout);
+        if (!token) {
+          reject(new Error("Turnstile returned an empty token"));
+          return;
+        }
+        resolve(token);
+      };
+      const fail = (message: string) => {
+        if (settled) return;
+        settled = true;
+        window.clearTimeout(timeout);
+        reject(new Error(message));
+      };
+      timeout = window.setTimeout(() => {
+        fail("Turnstile challenge timed out");
+      }, 10000);
+
+      try {
+        const widgetId = window.turnstile!.render(turnstileContainerRef.current!, {
+          sitekey: turnstileSiteKey,
+          size: "invisible",
+          appearance: "interaction-only",
+          execution: "execute",
+          callback: (token: string) => finish(token || ""),
+          "error-callback": () => fail("Turnstile challenge failed"),
+          "expired-callback": () => fail("Turnstile challenge expired"),
+        });
+        turnstileWidgetIdRef.current = widgetId;
+        window.turnstile!.execute(widgetId);
+      } catch (error) {
+        fail(error instanceof Error ? error.message : "Turnstile challenge failed");
+      }
     });
   };
 
@@ -682,8 +740,16 @@ export default function Wizard() {
     let turnstileToken = "";
     try {
       turnstileToken = await getTurnstileToken();
-    } catch {
-      console.warn("Turnstile challenge threw unexpectedly. Continuing with API submission.");
+    } catch (error) {
+      console.warn("Turnstile challenge failed before API submission.", error);
+      setIsSubmittingCase(false);
+      toast({
+        title: "Sicherheitsprüfung nicht bereit",
+        description:
+          "Bitte versuche es gleich erneut. Falls es weiter passiert, prüfe Browser-Erweiterungen oder lade die Seite neu. Deine Eingaben bleiben gespeichert.",
+        variant: "destructive",
+      });
+      return;
     }
     const description = buildDescription(
       formData.structuredAnswers,
@@ -943,15 +1009,9 @@ export default function Wizard() {
   useEffect(() => {
     if (!turnstileSiteKey) return;
     if (step < 5) return;
-    const existing = document.querySelector(
-      'script[src="https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit"]'
-    );
-    if (existing) return;
-    const script = document.createElement("script");
-    script.src = "https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit";
-    script.async = true;
-    script.defer = true;
-    document.head.appendChild(script);
+    void ensureTurnstileScript().catch((error) => {
+      console.warn("Turnstile script preload failed.", error);
+    });
   }, [turnstileSiteKey, step]);
 
   const disputedPct = getDisputedPercent(
